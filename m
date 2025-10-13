@@ -1,374 +1,325 @@
-Return-Path: <ceph-devel+bounces-3836-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3837-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27AF7BD25FD
-	for <lists+ceph-devel@lfdr.de>; Mon, 13 Oct 2025 11:51:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E140FBD6358
+	for <lists+ceph-devel@lfdr.de>; Mon, 13 Oct 2025 22:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E01BC4F0008
-	for <lists+ceph-devel@lfdr.de>; Mon, 13 Oct 2025 09:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37257421D85
+	for <lists+ceph-devel@lfdr.de>; Mon, 13 Oct 2025 20:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475A12FE047;
-	Mon, 13 Oct 2025 09:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="l3vhrcEO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75FD311958;
+	Mon, 13 Oct 2025 20:35:37 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.redxen.eu (el-tigre.venezuela.redxen.eu [138.199.230.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380CB2FE045
-	for <ceph-devel@vger.kernel.org>; Mon, 13 Oct 2025 09:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E0930C375
+	for <ceph-devel@vger.kernel.org>; Mon, 13 Oct 2025 20:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.199.230.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760349007; cv=none; b=mFTNqrzrbXAX87XxCkgWtOXafFjfU9mHJxf7/cHZ/bTUBt9K+u8LaXjxJxkvDsHbiQQzGH9vwC8yGalxErvK7IEVbq1ScwqJ6l/3SwvmEtcJ/e76KvDN5Y7Fa6s2EheRqXRDFNV8RvORXomqOTFETcvoun6BcDZk+JpkOnD9Agg=
+	t=1760387737; cv=none; b=olplVTpCUUab5Muo1+f1oAVWxPaRT7Ds15lR9cr1xr1V3yo/TOuWhhb4YD6zhq2K+4yuZFXDKd+GjF4kR+AogBN1dNuKaJAe/0b+zO6W9IGbpFWXBSmVdO763dYYgcUkYaWR+tK1fsdroOKEW3BAt/32VCn2+grG8DXDnJ+T940=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760349007; c=relaxed/simple;
-	bh=BAnwDZOovV8WGEHznvS0ASUsl81ftZ3UHqcj056/iWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cwev6ABLvrjNjYZ0QRHgnJ4W9+tFmNC4YlvUaWSbbOkOy4VNXANXqIwHbhX/umZoCHCLQfMBZgZZm0RrFKWSiTUWf+4uwmTQycKrVNTX6pMjEJjeaichwNlUH2wkrWzDinW7TXC8nBWdZ1vJK0U1R/il1iW4kqrwoaKk9GJJMGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=l3vhrcEO; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-28e7cd34047so31190105ad.2
-        for <ceph-devel@vger.kernel.org>; Mon, 13 Oct 2025 02:50:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1760349003; x=1760953803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bp51fhwIp2TxChiApwV+E+DXmQ/uPeFWu0ZwqX85B3w=;
-        b=l3vhrcEOa++eozTx3XRR/r6yWBqLpeicG9EnXayMJUGW24c7j3XmsP1xcyQ4AnPgUz
-         x9InSweMCR49LENaGfJ73g7IuvBm66NnLY/WSL93rY90oHdcoDeI9RsjKwPYEvt5DwBb
-         tMFMfQnpw+9VWAPTWx7JHRK+tG/FOycvBgXA5m7OHKc6sK3NaGZM02tAyLXF6/Wv505d
-         HgOWeo7HLE2j/PwkFQauEcSmnScd+LbM5XbMMDpvJTJKRsBp8Y/s74gYMjHZTeD5zShc
-         K3nMXTmLlgLMem4khXKAvCgHlfqWZvPWMN+kPydVzAwUMW4Blhs/NthIeOYyqZe79PiN
-         CAfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760349003; x=1760953803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bp51fhwIp2TxChiApwV+E+DXmQ/uPeFWu0ZwqX85B3w=;
-        b=ogtONj+d+whnfdnfQI/kthgKZAJHKQugRZgK/VkLapA8LBTl3MThZw+gfH88tDzJv2
-         0bD5ilroOUZeRnYT8vB+D5XiKwinGtNBub6gOSXc6VZHSFmseYQj8l6GlH9N/5w2/rH9
-         71MwRIVMQiLvqqmAflqbGyEd1cYRwi3RhEyyDaS4XTRly0hfJmNeqUHreb+JvnnTjOi6
-         NeRThknMNTkgx3g4VH8vF4Ua5dMFBU3w6XupXpHQCir0aXSSZ9fgTSlqu3nlbx2yYJVi
-         YoaHleplXhZPz6Zfr+/+kXjtx4Qjgrp2ONkcdJ5/exIRdotquCboNhVTU7fYhIq0WEye
-         8Qgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWP3B7EiPyLBmxWI/TXIqhGQDYHSNIuTnxh1nnW/H1pW6iW1AZRmJCSxCrbML7Fxx1mU96Eo+1sZF17@vger.kernel.org
-X-Gm-Message-State: AOJu0YywPCX8QSqXUN5bqmWnIUVSIdFWc31gNijMn6w02RTjtaPe8vst
-	ruWPNhIsVGijJS7sEjYKHL85Zs8Y+1c5MatszpLJrXfM8SxotwUURpxMWn8wJRUDgpI=
-X-Gm-Gg: ASbGnctbnKU1Ev4HAdSq3ty9kh1UOpiUPrFlJdm5QG7JuBz+IcNsxSdHqfE5+wLaaUB
-	OxqkebtQEwoIL0ZiMGitUKr5duEiz3UTlnz8pKo6JcH6nsuC3OundI1PPScICb6ojGqlbwVmPWH
-	N7PXb5d3cggFnYKrUfg6e7kBeaG5nv7QdU4s4HDj/aRbFBCrKglvrB9SgPvHKO06ZTi8AzmlywV
-	IL3c13wqqOQr7A5+/xQUAmagS0uDz1ESSF//M8HTsrodglI+/lRQgtkKiJXqV34wfgAgA2WSwWZ
-	CpCoBSVuI4Zvn9F3gW73tqO0ILOsPLZBz7voL2ewmESyhOg3BpFLjNryt7Fwz+VjVv0RF7psRQe
-	wrQpPYuux2zu8ZlACkA0eA34XLpyoUuRL7a2Jxa2vx0tlh4tvJAu8SQ4aOG03FrixOVRHdpeEGQ
-	==
-X-Google-Smtp-Source: AGHT+IG1JzQQHQjMT21Ythm1gXAqTXhkL84Z5ZHyVJBm9N9Dh0WoFdsAzPwZjCutcgln/HrN3DWkBQ==
-X-Received: by 2002:a17:902:f60d:b0:26a:b9b4:8342 with SMTP id d9443c01a7336-2902726259dmr238303985ad.25.1760349003313;
-        Mon, 13 Oct 2025 02:50:03 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:b0a8:f639:5bec:40e9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f06c82sm129052355ad.81.2025.10.13.02.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 02:50:02 -0700 (PDT)
-Date: Mon, 13 Oct 2025 17:49:55 +0800
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	akpm@linux-foundation.org, axboe@kernel.dk,
-	ceph-devel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de,
-	home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
-	kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com,
-	xiubli@redhat.com
-Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with reverse
- lookup tables
-Message-ID: <aOzLQ2KSqGn1eYrm@wu-Pro-E500-G6-WS720T>
-References: <20250926065556.14250-1-409411716@gms.tku.edu.tw>
- <CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
- <aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
- <CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
- <20251005181803.0ba6aee4@pumpkin>
- <aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
- <CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
- <20251007192327.57f00588@pumpkin>
- <aOeprat4/97oSWE0@wu-Pro-E500-G6-WS720T>
- <20251010105138.0356ad75@pumpkin>
+	s=arc-20240116; t=1760387737; c=relaxed/simple;
+	bh=EP7R4uWZiC7U2AZTgtbBY/iBSGDrwo4exE3TT+xzsL8=;
+	h=Date:To:Subject:From:Message-Id:MIME-Version:Content-Type; b=gLbeRq6RBEb1VRspTmnhmt7/IJ+e7842IeTa0AQi0GoBe7GVvgQqA1oTvL7US3VvxFRySjlQAWGIoINsDBBNSuaNtGQO0+XuNa7OuaaNgOTY/mpClLQ8vl1V+yFGBE7pKhu48RA08/KejORQAJ99uIEhRthjNyZ4KEeDl/zj9+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=redxen.eu; spf=pass smtp.mailfrom=redxen.eu; arc=none smtp.client-ip=138.199.230.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=redxen.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redxen.eu
+Received: from localhost (karaj.iran.redxen.eu [91.107.235.83])
+	by smtp.redxen.eu (RedXen Mail Postfix) with UTF8SMTPSA id 80FA831
+	for <ceph-devel@vger.kernel.org>; Mon, 13 Oct 2025 20:35:23 +0000 (UTC)
+Authentication-Results: smtp.redxen.eu;
+	auth=pass smtp.auth=caskd smtp.mailfrom=caskd@redxen.eu
+Date: Mon, 13 Oct 2025 20:35:22 +0000
+To: ceph-devel@vger.kernel.org
+Subject: [bug report] listing cephfs snapshots causes general protection
+ fault
+From: caskd <caskd@redxen.eu>
+Message-Id: <2XRKV3P9QNXDI.37IHX7CVTJ6SD@unix.is.love.unix.is.life>
+User-Agent: mblaze/1.3
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="----_=_1f9b77a17fee1ba153ac2880_=_"
+
+This is a multipart message in MIME format.
+
+------_=_1f9b77a17fee1ba153ac2880_=_
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="----_=_7836636542de35a700fc6891_=_"
+
+This is a multipart message in MIME format.
+
+------_=_7836636542de35a700fc6891_=_
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20251010105138.0356ad75@pumpkin>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 10:51:38AM +0100, David Laight wrote:
-> On Thu, 9 Oct 2025 20:25:17 +0800
-> Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
-> 
-> ...
-> > As Eric mentioned, the decoder in fs/crypto/ needs to reject invalid input.
-> 
-> (to avoid two different input buffers giving the same output)
-> 
-> Which is annoyingly reasonable.
-> 
-> > One possible solution I came up with is to first create a shared
-> > base64_rev_common lookup table as the base for all Base64 variants.
-> > Then, depending on the variant (e.g., BASE64_STD, BASE64_URLSAFE, etc.), we
-> > can dynamically adjust the character mappings for position 62 and position 63
-> > at runtime, based on the variant.
-> > 
-> > Here are the changes to the code:
-> > 
-> > static const s8 base64_rev_common[256] = {
-> > 	[0 ... 255] = -1,
-> > 	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
-> > 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-> > 	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-> > 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-> > 	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
-> > };
-> > 
-> > static const struct {
-> > 	char char62, char63;
-> > } base64_symbols[] = {
-> > 	[BASE64_STD] = { '+', '/' },
-> > 	[BASE64_URLSAFE] = { '-', '_' },
-> > 	[BASE64_IMAP] = { '+', ',' },
-> > };
-> > 
-> > int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base64_variant variant)
-> > {
-> > 	u8 *bp = dst;
-> > 	u8 pad_cnt = 0;
-> > 	s8 input1, input2, input3, input4;
-> > 	u32 val;
-> > 	s8 base64_rev_tables[256];
-> > 
-> > 	/* Validate the input length for padding */
-> > 	if (unlikely(padding && (srclen & 0x03) != 0))
-> > 		return -1;
-> 
-> There is no need for an early check.
-> Pick it up after the loop when 'srclen != 0'.
->
+Hello Ceph developers,
 
-I think the early check is still needed, since I'm removing the
-padding '=' first.
-This makes the handling logic consistent for both padded and unpadded
-inputs, and avoids extra if conditions for padding inside the hot loop.
+i've encountered a bug on Squid 19.2.3 with the cephfs kernel client.
 
-> > 
-> > 	memcpy(base64_rev_tables, base64_rev_common, sizeof(base64_rev_common));
-> 
-> Ugg - having a memcpy() here is not a good idea.
-> It really is better to have 3 arrays, but use a 'mostly common' initialiser.
-> Perhaps:
-> #define BASE64_REV_INIT(ch_62, ch_63) = { \
-> 	[0 ... 255] = -1, \
-> 	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
-> 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, \
-> 	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, \
-> 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, \
-> 	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
-> 	[ch_62] = 62, [ch_63] = 63, \
-> }
-> 
-> static const s8 base64_rev_maps[][256] = {
-> 	[BASE64_STD] = BASE64_REV_INIT('+', '/'),
-> 	[BASE64_URLSAFE] = BASE64_REV_INIT('-', '_'),
-> 	[BASE64_IMAP] = BASE64_REV_INIT('+', ',')
-> };
-> 
-> Then (after validating variant):
-> 	const s8 *map = base64_rev_maps[variant];
->
+Listing the snapshot of any directory causes the kernel to access invalid/u=
+nexpected address.=20
 
-Got it. I'll switch to using three static tables with a common initializer
-as you suggested.
+# Logs and further information:
 
-> > 
-> > 	if (variant < BASE64_STD || variant > BASE64_IMAP)
-> > 		return -1;
-> > 
-> > 	base64_rev_tables[base64_symbols[variant].char62] = 62;
-> > 	base64_rev_tables[base64_symbols[variant].char63] = 63;
-> > 
-> > 	while (padding && srclen > 0 && src[srclen - 1] == '=') {
-> > 		pad_cnt++;
-> > 		srclen--;
-> > 		if (pad_cnt > 2)
-> > 			return -1;
-> > 	}
-> 
-> I'm not sure I'd to that there.
-> You are (in some sense) optimising for padding.
-> From what I remember, "abcd" gives 24 bits, "abc=" 16 and "ab==" 8.
-> 
-> > 
-> > 	while (srclen >= 4) {
-> > 		/* Decode the next 4 characters */
-> > 		input1 = base64_rev_tables[(u8)src[0]];
-> > 		input2 = base64_rev_tables[(u8)src[1]];
-> > 		input3 = base64_rev_tables[(u8)src[2]];
-> > 		input4 = base64_rev_tables[(u8)src[3]];
-> 
-> I'd be tempted to make src[] unsigned - probably be assigning the parameter
-> to a local at the top of the function.
-> 
-> Also you have input3 = ... src[2]...
-> Perhaps they should be input[0..3] instead.
->
 
-OK, I'll make the changes.
+------_=_7836636542de35a700fc6891_=_
+Content-Disposition: attachment; filename=klog.txt
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > 		val = (input1 << 18) |
-> > 		      (input2 << 12) |
-> > 		      (input3 << 6) |
-> > 		      input4;
-> 
-> Four lines is excessive, C doesn't require the () and I'm not sure the
-> compilers complain about << and |.
-> 
+kern.warn: [581015.841007] Oops: general protection fault, probably for non=
+-canonical address 0x5d2ecc0680000000: 0000 [#1] PREEMPT SMP PTI
+kern.warn: [581015.844081] CPU: 1 UID: 0 PID: 3825461 Comm: kworker/1:3 Not=
+ tainted 6.12.43-0-virt #1-Alpine
+kern.warn: [581015.846230] Hardware name: QEMU Standard PC (Q35 + ICH9, 200=
+9), BIOS edk2-stable202408-prebuilt.qemu.org 08/13/2024
+kern.warn: [581015.849810] Workqueue: ceph-msgr ceph_con_workfn [libceph]
+kern.warn: [581015.852352] RIP: 0010:rb_insert_color+0xa4/0x170
+kern.warn: [581015.854292] Code: 31 f6 31 ff 45 31 c0 c3 cc cc cc cc 48 89 =
+06 31 c0 31 d2 31 c9 31 f6 31 ff 45 31 c0 c3 cc cc cc cc 48 8b 51 10 48 85 =
+d2 74 05 <f6> 02 01 74 1b 48 8b 50 10 48 39 fa 74 75 48 89 c7 48 89 51 08 4=
+8
+kern.warn: [581015.861182] RSP: 0000:ffffbab5cbf9fa08 EFLAGS: 00010206
+kern.warn: [581015.863069] RAX: ffff8f5d2ecc0c40 RBX: ffff8f5d2ecc0000 RCX:=
+ ffff8f5d2ecc0ad0
+kern.warn: [581015.865096] RDX: 5d2ecc0680000000 RSI: ffff8f5d47e64da0 RDI:=
+ ffff8f5d2ecc0380
+kern.warn: [581015.866517] RBP: 0000000000005595 R08: 0000000000000000 R09:=
+ 0000000000000000
+kern.warn: [581015.867908] R10: ffff8f5d2ecc0680 R11: 0000000000000000 R12:=
+ ffff8f5d47e64d98
+kern.warn: [581015.869309] R13: ffff8f5d47d30000 R14: ffff8f5d2ecc0680 R15:=
+ ffff8f5d47e64da0
+kern.warn: [581015.871406] FS:  0000000000000000(0000) GS:ffff8f645fc40000(=
+0000) knlGS:0000000000000000
+kern.warn: [581015.872992] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003=
+3
+kern.warn: [581015.874178] CR2: 00007fe0accea180 CR3: 00000002e5ab0006 CR4:=
+ 0000000000172eb0
+kern.warn: [581015.875475] Call Trace:
+kern.warn: [581015.875948]  <TASK>
+kern.warn: [581015.876366]  ceph_get_snapid_map+0x125/0x300 [ceph]
+kern.warn: [581015.877432]  ceph_fill_inode+0x1015/0x14a0 [ceph]
+kern.warn: [581015.878288]  ceph_readdir_prepopulate+0x34d/0xe40 [ceph]
+kern.warn: [581015.879220]  mds_dispatch+0x1b2f/0x1ec0 [ceph]
+kern.warn: [581015.880024]  ? gcm_decrypt_aesni_avx+0x1e7/0x270 [aesni_inte=
+l]
+kern.warn: [581015.881054]  ceph_con_process_message+0x72/0x140 [libceph]
+kern.warn: [581015.882022]  process_message+0x9/0x110 [libceph]
+kern.warn: [581015.882856]  ceph_con_v2_try_read+0xb3b/0x1830 [libceph]
+kern.warn: [581015.883820]  ? set_next_entity+0xf1/0x200
+kern.warn: [581015.884552]  ? __schedule+0x3c3/0x1540
+kern.warn: [581015.885250]  ceph_con_workfn+0x140/0x650 [libceph]
+kern.warn: [581015.886107]  process_one_work+0x173/0x330
+kern.warn: [581015.886857]  worker_thread+0x259/0x390
+kern.warn: [581015.887514]  ? __pfx_worker_thread+0x10/0x10
+kern.warn: [581015.888264]  kthread+0xcd/0x100
+kern.warn: [581015.888865]  ? __pfx_kthread+0x10/0x10
+kern.warn: [581015.889521]  ret_from_fork+0x2f/0x50
+kern.warn: [581015.890195]  ? __pfx_kthread+0x10/0x10
+kern.warn: [581015.890858]  ret_from_fork_asm+0x1a/0x30
+kern.warn: [581015.891565]  </TASK>
+kern.warn: [581015.891983] Modules linked in: overlay rbd nft_reject_inet n=
+f_reject_ipv4 nf_reject_ipv6 nft_reject nft_chain_nat nf_nat mousedev nft_f=
+ib_ipv4 kvm_intel tiny_power_button psmouse evdev efi_pstore qemu_fw_cfg bu=
+tton nft_ct nls_utf8 nf_conntrack nls_cp437 nf_defrag_ipv6 nf_defrag_ipv4 n=
+ft_fib_ipv6 nft_fib nf_tables kvm af_packet irqbypass sch_fq_codel ext4 wir=
+eguard ceph curve25519_x86_64 libchacha20poly1305 chacha_x86_64 poly1305_x8=
+6_64 ip6_udp_tunnel crc16 libceph udp_tunnel mbcache bridge libcurve25519_g=
+eneric nfnetlink vfat netfs jbd2 fuse stp tun libchacha llc fat dm_crypt en=
+crypted_keys dm_mod virtio_balloon virtio_gpu virtio_dma_buf virtio_blk vir=
+tio_rng rng_core virtio_net net_failover failover crct10dif_pclmul crc32_pc=
+lmul ghash_clmulni_intel sha512_ssse3 sha256_ssse3 sha1_ssse3 sha1_generic =
+aesni_intel gf128mul crypto_simd cryptd xhci_pci xhci_hcd usbcore usb_commo=
+n simpledrm drm_shmem_helper syscopyarea sysfillrect sysimgblt fb_sys_fops =
+drm_kms_helper drm i2c_core drm_panel_orientation_quirks fb loop btrfs
+kern.warn: [581015.892392]  blake2b_generic libcrc32c crc32c_generic crc32c=
+_intel xor raid6_pq
+kern.warn: [581015.907981] ---[ end trace 0000000000000000 ]---
+kern.warn: [581017.966077] clocksource: Long readout interval, skipping wat=
+chdog check: cs_nsec: 2118959053 wd_nsec: 2118958425
+kern.warn: [581017.969353] RIP: 0010:rb_insert_color+0xa4/0x170
+kern.warn: [581017.972504] Code: 31 f6 31 ff 45 31 c0 c3 cc cc cc cc 48 89 =
+06 31 c0 31 d2 31 c9 31 f6 31 ff 45 31 c0 c3 cc cc cc cc 48 8b 51 10 48 85 =
+d2 74 05 <f6> 02 01 74 1b 48 8b 50 10 48 39 fa 74 75 48 89 c7 48 89 51 08 4=
+8
+kern.warn: [581017.976473] RSP: 0000:ffffbab5cbf9fa08 EFLAGS: 00010206
+kern.warn: [581017.977392] RAX: ffff8f5d2ecc0c40 RBX: ffff8f5d2ecc0000 RCX:=
+ ffff8f5d2ecc0ad0
+kern.warn: [581017.978583] RDX: 5d2ecc0680000000 RSI: ffff8f5d47e64da0 RDI:=
+ ffff8f5d2ecc0380
+kern.warn: [581017.979912] RBP: 0000000000005595 R08: 0000000000000000 R09:=
+ 0000000000000000
+kern.warn: [581017.981156] R10: ffff8f5d2ecc0680 R11: 0000000000000000 R12:=
+ ffff8f5d47e64d98
+kern.warn: [581017.982354] R13: ffff8f5d47d30000 R14: ffff8f5d2ecc0680 R15:=
+ ffff8f5d47e64da0
+kern.warn: [581017.983666] FS:  0000000000000000(0000) GS:ffff8f645fc40000(=
+0000) knlGS:0000000000000000
+kern.warn: [581017.985059] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003=
+3
+kern.warn: [581017.986020] CR2: 00007fe0accea180 CR3: 00000002e5ab0006 CR4:=
+ 0000000000172eb0
+kern.info: [581017.987213] note: kworker/1:3[3825461] exited with preempt_c=
+ount 1
 
-OK, I'll make the changes.
+------_=_7836636542de35a700fc6891_=_
+Content-Disposition: attachment; filename=mds-metadata.txt
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > 		if (unlikely((s32)val < 0))
-> > 			return -1;
-> 
-> Make 'val' signed - then you don't need the cast.
-> You can pick up the padding check here, something like:
-> 			val = input1 << 18 | input2 << 12;
-> 			if (!padding || val < 0 || src[3] != '=')
-> 				return -1;
-> 			*bp++ = val >> 16;
-> 			if (src[2] == '=')
-> 				return bp - dst;
-> 			if (input3 < 0)
-> 				return -1;
-> 			val |= input3 << 6;
-> 			*bp++ = val >> 8;
-> 			return bp - dst;
-> 
-> Or, if you really want to use the code below the loop:
-> 			if (!padding || src[3] != '=')
-> 				return -1;
-> 			padding = 0;
-> 			srclen -= 1 + (src[2] == '=');
-> 			break;
-> 
-> 
-> > 
-> > 		*bp++ = (u8)(val >> 16);
-> > 		*bp++ = (u8)(val >> 8);
-> > 		*bp++ = (u8)val;
-> 
-> You don't need those casts.
->
+{
+    "addr": "v2:REDACTED:6801/REDACTED",
+    "arch": "x86_64",
+    "ceph_release": "squid",
+    "ceph_version": "ceph version 19.2.3 (c92aebb279828e9c3c1f5d24613efca27=
+2649e62) squid (stable)",
+    "ceph_version_short": "19.2.3",
+    "cpu": "Intel(R) Xeon(R) CPU E5-2470 v2 @ 2.40GHz",
+    "distro": "nnd",
+    "distro_description": "nonamedistribution 1.0",
+    "distro_version": "1.0",
+    "hostname": "la-orilla.mexico",
+    "kernel_description": "#1-Alpine SMP PREEMPT_DYNAMIC 2025-10-02 13:09:5=
+1",
+    "kernel_version": "6.12.50-0-virt",
+    "mem_swap_kb": "0",
+    "mem_total_kb": "164821204",
+    "os": "Linux"
+}
 
-OK, I'll make the changes.
+------_=_7836636542de35a700fc6891_=_
+Content-Disposition: attachment; filename=fs-metadata.txt
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > 		src += 4;
-> > 		srclen -= 4;
-> > 	}
-> > 
-> > 	/* Handle leftover characters when padding is not used */
-> 
-> You are coming here with padding.
-> I'm not sure what should happen without padding.
-> For a multi-line file decode I suspect the characters need adding to
-> the start of the next line (ie lines aren't required to contain
-> multiples of 4 characters - even though they almost always will).
-> 
+e1041500
+btime 2025-10-13T19:11:24:543289+0000
+enable_multiple, ever_enabled_multiple: 1,1
+default compat: compat=3D{},rocompat=3D{},incompat=3D{1=3Dbase v0.20,2=3Dcl=
+ient writeable ranges,3=3Ddefault file layouts on dirs,4=3Ddir inode in sep=
+arate object,5=3Dmds uses versioned encoding,6=3Ddirfrag is stored in omap,=
+8=3Dno anchor table,9=3Dfile layout v2,10=3Dsnaprealm v2}
+legacy client fscid: -1
+=20
+#### 2 FILESYSTEMS REDACTED ####=20
+=20
+Filesystem 'caskd' (16)
+fs_name	caskd
+epoch	1041500
+flags	12 joinable allow_snaps allow_multimds_snaps
+created	2025-10-03T18:06:16.720334+0000
+modified	2025-10-13T19:11:24.492967+0000
+tableserver	0
+root	0
+session_timeout	60
+session_autoclose	300
+max_file_size	1099511627776
+max_xattr_size	65536
+required_client_features	{}
+last_failure	0
+last_failure_osd_epoch	0
+compat	compat=3D{},rocompat=3D{},incompat=3D{1=3Dbase v0.20,2=3Dclient writ=
+eable ranges,3=3Ddefault file layouts on dirs,4=3Ddir inode in separate obj=
+ect,5=3Dmds uses versioned encoding,6=3Ddirfrag is stored in omap,7=3Dmds u=
+ses inline data,8=3Dno anchor table,9=3Dfile layout v2,10=3Dsnaprealm v2,11=
+=3Dminor log segments,12=3Dquiesce subvolumes}
+max_mds	1
+in	0
+up	{0=3D368484109}
+failed=09
+damaged=09
+stopped=09
+data_pools	[106,105]
+metadata_pool	107
+inline_data	disabled
+balancer=09
+bal_rank_mask	-1
+standby_count_wanted	1
+qdb_cluster	leader: 368484109 members: 368484109
+[mds.la-orilla.mexico.2{0:368484109} state up:active seq 217880 addr v2:RED=
+ACTED:6801/REDACTED compat {c=3D[1],r=3D[1],i=3D[1fff]}]
 
-Ah, my mistake. I forgot to remove that comment.
-Based on my observation, base64_decode() should process the entire input
-buffer in a single call, so I believe it does not need to handle
-multi-line input.
+------_=_7836636542de35a700fc6891_=_
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Guan-Chun
 
-> > 	if (srclen > 0) {
-> > 		switch (srclen) {
-> 
-> You don't need an 'if' and a 'switch'.
-> srclen is likely to be zero, but perhaps write as:
-> 	if (likely(!srclen))
-> 		return bp - dst;
-> 	if (padding || srclen == 1)
-> 		return -1;
-> 
-> 	val = base64_rev_tables[(u8)src[0]] << 12 | base64_rev_tables[(u8)src[1]] << 6;
-> 	*bp++ = val >> 10;
-> 	if (srclen == 1) {
-> 		if (val & 0x800003ff)
-> 			return -1;
-> 	} else {
-> 		val |= base64_rev_tables[(u8)src[2]];
-> 		if (val & 0x80000003)
-> 			return -1;
-> 		*bp++ = val >> 2;
-> 	}
-> 	return bp - dst;
-> }
-> 
-> 	David
-> 
-> > 		case 2:
-> > 			input1 = base64_rev_tables[(u8)src[0]];
-> > 			input2 = base64_rev_tables[(u8)src[1]];
-> > 			val = (input1 << 6) | input2; /* 12 bits */
-> > 			if (unlikely((s32)val < 0 || val & 0x0F))
-> > 				return -1;
-> > 
-> > 			*bp++ = (u8)(val >> 4);
-> > 			break;
-> > 		case 3:
-> > 			input1 = base64_rev_tables[(u8)src[0]];
-> > 			input2 = base64_rev_tables[(u8)src[1]];
-> > 			input3 = base64_rev_tables[(u8)src[2]];
-> > 
-> > 			val = (input1 << 12) |
-> > 			      (input2 << 6) |
-> > 			      input3; /* 18 bits */
-> > 			if (unlikely((s32)val < 0 || val & 0x03))
-> > 				return -1;
-> > 
-> > 			*bp++ = (u8)(val >> 10);
-> > 			*bp++ = (u8)(val >> 2);
-> > 			break;
-> > 		default:
-> > 			return -1;
-> > 		}
-> > 	}
-> > 
-> > 	return bp - dst;
-> > }
-> > Based on KUnit testing, the performance results are as follows:
-> > 	base64_performance_tests: [64B] decode run : 40ns
-> > 	base64_performance_tests: [1KB] decode run : 463ns
-> > 
-> > However, this approach introduces an issue. It uses 256 bytes of memory
-> > on the stack for base64_rev_tables, which might not be ideal. Does anyone
-> > have any thoughts or alternative suggestions to solve this issue, or is it
-> > not really a concern?
-> > 
-> > Best regards,
-> > Guan-Chun
-> > 
-> > > > 
-> > > > Best,
-> > > > Caleb  
-> > >   
-> 
+Mount spec:
+admin@REDACTED.caskd=3D/ REDACTED ceph rw,relatime,name=3Dadmin,secret=3D<h=
+idden>,ms_mode=3Dsecure,acl,mon_addr=3DREDACTED:3300/REDACTED:3300,recover_=
+session=3Dclean 0 0
+
+- snap-schedule is set up on / and the filesystem is heavily used
+  - not many concurrent accesses to the same dir/inodes
+- encountered on both 6.12 and 6.16 on multiple machines, including qemu
+- i can replicate this every time with the kernel client but not with the F=
+USE client
+
+# Here is what i have tried so far.
+
+- rebuild the filesystem from scratch to rule out potential inconsistent me=
+tadata
+  - bug has returned after a few days on the new fs
+
+# Ways to replicate (UNCONFIRMED):
+
+Create a cephfs filesystem
+Setup snap-schedule with retention
+Do heavy RW on filesystem while snapshot gets deleted
+List .snap/
+
+# Misc info
+
+- The previous filesystem had the main pool on 3x replicated and this new o=
+ne is ec 6-2 jerasure
+  - This seems to play no role into this bug.
+- I would be willing to narrow down the issue to the minimal reproducible e=
+xample if this information is not enough.
+- This filesystem contains a significant amount of small files and director=
+ies if it plays any role.
+
+Please let me know if you need any further information
+
+--=20
+Alex D.
+RedXen System & Infrastructure Administration
+https://redxen.eu/
+
+------_=_7836636542de35a700fc6891_=_--
+
+------_=_1f9b77a17fee1ba153ac2880_=_
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJEBAABCgAuFiEE2k4nnbsAOnatJfEW+SuoX2H0wXMFAmjtYocQHGNhc2tkQHJl
+ZHhlbi5ldQAKCRD5K6hfYfTBc9JpD/wKJb5AAX2fT2ni8h5cc+ZcUn4EoxTEz6Tr
+CKnE5HC4/PDO8WDsWhrCGajm6TbAnhSX/NogztAau9UTZrO+yqc70Sut32nC/LKy
+InMiI5lcshXw+qHbfvxHp/aONQHYMYDdh5XR1D+C5Vzj3kDlyPXBf5hYtXY82BnE
+Bq+MyNdsTvTE/mwQ5AolaYOoiw8O1wiPfV1FU2d62HuTi2hvTN01FBeOR53fd36W
+csHFhiBaZXRTBCH15GRp3KVPF1bugJNqBnC5Z77x/uiJwpUXZfPu8pQQgpmA7Wol
+fYuorCtFULIdfnBN/+lQO0EA+8EWClTUithlGrmRQQDra54MrxlkkAX0jEO8KGew
+cZYBjvAjd0A6aj1XOIyCw10R92KncHenW2TeRuNEJ4iPCyWUvChV+Bf+zQuMAAwA
+VbvTaXwTKvqeHdtnfwyFtYZ1WqWaqrqJL1DTlbyFD+FU4fy4Px+PE0QWeocHaujh
+1Ju1tYggtCQPHujnPTWqSF3jCx/BnGOOBcZ2S6vgrB+woKq7g8U+Z6cSo/MXK8KA
+ATykzGyjGiwNOsCmnOVYF3x6ZHZYQwt1+x4TfUs9St0FJdID2M2kONe3OB2+Wna6
+cJzKFnk40Gapv/4rHrXkhmSK4yXxBhQd1KeNCXCBHllTIx8e7s+ezLJyEWu08AQ+
+VnbCC6ti0g==
+=PEfD
+-----END PGP SIGNATURE-----
+
+------_=_1f9b77a17fee1ba153ac2880_=_--
 
