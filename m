@@ -1,89 +1,89 @@
-Return-Path: <ceph-devel+bounces-3842-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3843-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEC9BDC1EE
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 Oct 2025 04:10:52 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121BBBDCA22
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Oct 2025 07:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46AB3A1F50
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 Oct 2025 02:10:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 66283351B94
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Oct 2025 05:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD7B3090D0;
-	Wed, 15 Oct 2025 02:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816A52FE078;
+	Wed, 15 Oct 2025 05:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mowiwkkc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Adq31IJP"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C353081A3
-	for <ceph-devel@vger.kernel.org>; Wed, 15 Oct 2025 02:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641832D2499
+	for <ceph-devel@vger.kernel.org>; Wed, 15 Oct 2025 05:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760494226; cv=none; b=fBPe1xkVX4bBeH7BXLLfguu2mwXv5twr/ASlRjY36g3RtK3RLddthEHkSAO0DWdz4qOYEscrYYw0Ai21WBgUITKCFnUY2zMJyUxIOqIhPlM5usUU+dYV4DXjfXACGsfX0dlbipFkYrl0eTq+eUE8n/giNoPsFKxFOfMdDVLNZVU=
+	t=1760507215; cv=none; b=gAP2Q40AT/C1xWewx5eqleDjHKiuvROVSbSur0cWeeFNjPDNNDW2DYQR9Sou7nwd5IcrLQeGyW59YLf32FMh8hqGXxa9nmg7/1RfiGXg+/53I7Bb/5+pi1DhzJA9uDCmpTy+4zg62JM5QrPy79oWQf9vDKkrnXEPvgz2RwqisRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760494226; c=relaxed/simple;
-	bh=D54eOCSdeufYDLdWrbR8Ycvs+NXgYkk492AJPpiaEtk=;
+	s=arc-20240116; t=1760507215; c=relaxed/simple;
+	bh=L9yQzwfiK6AnAj53w+M42/OMTEMETYOV7eUVo5HxABI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CFglby256Jh+zj3xB8AxFm25Z+OD1P1eQoFiS1Vw6aASszLUYGml9SA7UxjCrsggUdBL0payWGmcqyRJtH4waTEymPRD6gPMXj30Hq/gh8EWo3tKPxXevLycyhsxr3Gsny12HPYuLGS5zOBkv+20kvZ/3X598r+RonarlFGRWnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mowiwkkc; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=elzqGkmkQ3ih9EhJLzV8vKJ/5a46eiSGbFFvm7sf/HBkvSkScnZtlpM9nNNsBDWMAyhNW5f5izVV+26tj8Y7CCnBDCv7uNYXXTFY7guiviHQC64SptDDlgeuNcYkhOHVtNwEC6Qgq8omlSNMFu9Uz3Vg6jFtGMrKcz+9PvSkYYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Adq31IJP; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b4c89df6145so1004355166b.3
-        for <ceph-devel@vger.kernel.org>; Tue, 14 Oct 2025 19:10:24 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b463f986f80so368747566b.2
+        for <ceph-devel@vger.kernel.org>; Tue, 14 Oct 2025 22:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760494223; x=1761099023; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760507212; x=1761112012; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tf2fQ0gJbCyc+H10TcghIqVsJ4/+Biafcb9EsAvZcl0=;
-        b=MowiwkkcodcqOn3cLNQ53GZ+9sNXYdLITsBEgjBYyf58FCn4C2SWwlrpwlscUEMZxa
-         Ynrd8Q2jr8OtSHhjhGCMPeZA4guwEyuIjNzoPD0bE6snbgD1RTt+ePHugQ6cLGrH5Hjp
-         v6sVG5OeSm/+Wxs2O5ZU1KuEfgIqDCWUacoF6VHfAGuHQm5kapU03WTYZhr6OCb+SfXW
-         DCmk7awp025eXX8jqBH7e39fk4dhFuAev+jWfnge+3ESHl8zMMWTXAZeimi+5keg+Dre
-         cvw4LcLebikcTGi27kqRxfnLnebb8HYhEdD618c8zjYIW0PZBVehr7N7hLT3v42tTOnb
-         WReA==
+        bh=YB/8HRPSkZavRfQHyIpXrXhIqH5dcxDgrAKATWLCf7Y=;
+        b=Adq31IJPv30T6zUoF2y3H73X7Rg3/pWXDTmdnh8kEFGnxj427QLrLxman9/5UI5W2U
+         /BfcMAJFP39b/qTttenN83pLLoKQgHruzLRnAyI7r33JHzbAxexU4Hz4JiFgvuSvRjJE
+         S++28Isa33yMokJkwd5NGNEH7zm9pAspIgg8tWWicxPMILY3fP7EpgtkzrPlnN9oCzqo
+         SQu04Tg9CVpi8kJtTRzyZWVdYdhZeaWchM2nnDVNUJKPESyQa0SuKLSXQM6tLXz/b52R
+         uQ3D4kBfWD7qTw59FT/+Jkb7USrhxoKZYNVLTLXfM7hILg+wbYpzLX/4KHTjP7OIQI4C
+         +66Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760494223; x=1761099023;
+        d=1e100.net; s=20230601; t=1760507212; x=1761112012;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tf2fQ0gJbCyc+H10TcghIqVsJ4/+Biafcb9EsAvZcl0=;
-        b=JBmFyEvABXgKL6GM/VA31W1Gv4Ud8q6AWW2c99pm5y7o+NHRnrgCA1vfR3lQFncYuX
-         XTLg6c9uA1QAJx7grk0ofgbSUOkFIjPFvhtamDn+9MTlzz5CffVj110izPcDGsRHINfb
-         t71oAoknVSOgv3yOMgaCdtJxz33+7wIgIncczaVBrBew0bZkXJ6ay1Kxef33sebSK7aJ
-         iSfw1OAofSelBnoLACtCAmBBDCGwzpfxBhuVbREcXfDwBlqroavqG9MJJ2yk1RSHBodp
-         ObeSc47Go7NT57gmQ1vji+cPHd3n1IPhhhRSOG+ut2TThOn88beZY6nKKvGtPAm7CWt7
-         XiCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEihyEtuTrUBZwL6NTZN8hKd4LoNzQlgjQSeSyM5IjUlyjxyzJqnGHLaUYZ2goQidk9Fm9jos4bKWz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvDWdot8Xq6RYJCmQsWRM646Vipo/fPkwzNvoxhignS2MvoHZq
-	mlQ6jhp9lmTZfqtUsPJ2YXY7/brFkmaEvjkHU4o2XNnKQGPeX44glLPgUwJ5/YyxhwXOgp/64qO
-	ZtJ50iQHiohCIjfzUeccaCAlGMK/mivY=
-X-Gm-Gg: ASbGnctLGwK/pktxUUOIM97NAUPCzIwjdzy+t1mKRhDu0xCDqo94JHnwBgNoBAlr7ke
-	PDiqdDzXI4x0X6caPm7y+n9wMdbVr4HQZ8t/Ivb6QS/eSqD8+QZYJ7WCpd31swqgkJ51n871U5R
-	rZWAfaTd28fSOvwKnGEs2dDkWcPacs8Ckof33kRhvQDEUzlkGgtRvxF3CJuAtslit/5vq1w6aSP
-	h5sFE35jLzJ+8Ywx2K22CofxQuOeR0QA26bEioRVe+Sr/ygulI65nmklQ==
-X-Google-Smtp-Source: AGHT+IHdVVEm39YWzMl1LNpGiBlqkvaUyflBG1tNW6GMG9o/ZGDg1s+GsqNDZBzZGU20lHi3/5OtOSjsi5i+koqZYh4=
-X-Received: by 2002:a17:906:ef05:b0:b4e:d6e3:1670 with SMTP id
- a640c23a62f3a-b50aa48ca83mr2928920266b.11.1760494222641; Tue, 14 Oct 2025
- 19:10:22 -0700 (PDT)
+        bh=YB/8HRPSkZavRfQHyIpXrXhIqH5dcxDgrAKATWLCf7Y=;
+        b=IP5ucwVs63wErFDLqoJz974BjR50TVoiLU77uZnCknHt3yNkVDdITgfgoY1v3rgWza
+         zq00B3A2cSSu2VClv+fVoe19YiQIpc99oCSOp5CWtn6k/RhNyKTsP374cQSie6PBdp8Z
+         CekmCQHFB2Y99Use67r4jD+fM6UZmdsdsq9BK5guC6J1aDX3FGvZic3K9esdOZEhUE/O
+         xG7kbPXP3F3cgDkWOlAlGWjmpM5qtjAooYR2Ta8HjjGxqiv5FPB8zgW1XMkqmgAzu0E/
+         2KVQ8CDi+ADin7uhahe6b0J/XxQYS81bq9FgDT5tlt/qzfXjmOVtx3KyBhzZjfDGJio1
+         d1rg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0VUeWOmyk4j3VbW5OaT92cHaxOMsdftWXf+Uz7Ao2h4inX+EsMMVZ06CfITkyoLkIABAnUbpHn+dY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAh+jjfHMBGCiyQAgn84dTTCri2VP3vd/c26tK/l0TFpM4MyZM
+	PF2U/XRIegV6O+xbffbN7e4D4NuYUSlDD/KAhSByNbciTkzq+9OoHGeQXlfF+ZKs1544sFsrAb/
+	psIKYKzN7KkOOQdWiIWjEDEW2F4kMvx4=
+X-Gm-Gg: ASbGncs2ogmSX97ET7D1752DbxgeHPofuu+E7e6wkgbGQJ1kTRn4HxiT95Q5Xsm8ysv
+	gAwPuBRmJDfNzp6iInibtRuqHQnVGHaE5tbJ4k1R+UQWT7T7Ef/wjol0E4gmWepA3a3XgPPb1/e
+	deWYeYsvu41haJxfU7JUQWk9SB86YDud66FXdXycd0+GMjFNa9RyLBeQla3Un0gC7h0M9BnSSnF
+	LxWR4q/NRXD0FaCyiKxAFvFwIUcwt2uj4WBnkB0XErIEDWVPRGc1/yCPUU0zlS86K7G
+X-Google-Smtp-Source: AGHT+IHBOaBguuSDBJ8tBqccd4wBxjcgREccPEa2q0OFeN3z0LhFrlL5e17WKU2nQANyrLyL2KnfgEnaFifFE19VDgQ=
+X-Received: by 2002:a17:907:72c6:b0:b46:8bad:6970 with SMTP id
+ a640c23a62f3a-b50abaa43b4mr3121817866b.36.1760507211571; Tue, 14 Oct 2025
+ 22:46:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009075929.1203950-1-mjguzik@gmail.com> <20251009075929.1203950-14-mjguzik@gmail.com>
- <ua3koqbakm6e4dpbzfmhei2evc566c5p2t65nsvmlab5yyibxu@u6zp4pwex5s7>
- <CAGudoHGckJHiWN9yCngP1JMGNa1PPNvnpSuriCxSM1mwWhpBUQ@mail.gmail.com> <aO7khoBHdfPlEBAE@dread.disaster.area>
-In-Reply-To: <aO7khoBHdfPlEBAE@dread.disaster.area>
+References: <20251009075929.1203950-1-mjguzik@gmail.com> <20251009075929.1203950-4-mjguzik@gmail.com>
+ <h2etb4acmmlmcvvfyh2zbwgy7bd4xeuqqyciqjw6k5zd3thmzq@vwhxpsoauli7>
+ <CAGudoHFJxFOj=cbxcjmMtkzXCagg4vgfmexTG1e_Fo1M=QXt-g@mail.gmail.com> <aO7NqqB41VYCw4Bh@dread.disaster.area>
+In-Reply-To: <aO7NqqB41VYCw4Bh@dread.disaster.area>
 From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 15 Oct 2025 04:10:10 +0200
-X-Gm-Features: AS18NWA6lCnHDvapi5wh7WY086sFtNru8nAF8St7zzP5vFF3dZCD2VdTn7VIJY4
-Message-ID: <CAGudoHHY2ZpSjYda94FZos8jRsaqZ_XcR7ZDDuY0AgvbnvehyQ@mail.gmail.com>
-Subject: Re: [PATCH v7 13/14] xfs: use the new ->i_state accessors
+Date: Wed, 15 Oct 2025 07:46:39 +0200
+X-Gm-Features: AS18NWCB_4h8LHu2yt-FYyIBzUwuIR3RlLlbdhbf0H9i_Il0fvD54KG0vSEA_Mc
+Message-ID: <CAGudoHFpoo0Qm=b4Z85tbJJmhh+vmSHuNnm3pVaLaQsmX9mURg@mail.gmail.com>
+Subject: Re: [PATCH v7 03/14] fs: provide accessors for ->i_state
 To: Dave Chinner <david@fromorbit.com>
 Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
@@ -94,109 +94,109 @@ Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 2:02=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
-wrote:
+On Wed, Oct 15, 2025 at 12:24=E2=80=AFAM Dave Chinner <david@fromorbit.com>=
+ wrote:
 >
-> On Fri, Oct 10, 2025 at 05:40:49PM +0200, Mateusz Guzik wrote:
-> > On Fri, Oct 10, 2025 at 4:41=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> On Fri, Oct 10, 2025 at 05:51:06PM +0200, Mateusz Guzik wrote:
+> > On Fri, Oct 10, 2025 at 4:44=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 > > >
-> > > On Thu 09-10-25 09:59:27, Mateusz Guzik wrote:
-> > > > Change generated with coccinelle and fixed up by hand as appropriat=
-e.
-> > > >
-> > > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > > On Thu 09-10-25 09:59:17, Mateusz Guzik wrote:
+> > > > +static inline void inode_state_set_raw(struct inode *inode,
+> > > > +                                    enum inode_state_flags_enum fl=
+ags)
+> > > > +{
+> > > > +     WRITE_ONCE(inode->i_state, inode->i_state | flags);
+> > > > +}
 > > >
-> > > ...
-> > >
-> > > > @@ -2111,7 +2111,7 @@ xfs_rename_alloc_whiteout(
-> > > >        */
-> > > >       xfs_setup_iops(tmpfile);
-> > > >       xfs_finish_inode_setup(tmpfile);
-> > > > -     VFS_I(tmpfile)->i_state |=3D I_LINKABLE;
-> > > > +     inode_state_set_raw(VFS_I(tmpfile), I_LINKABLE);
-> > > >
-> > > >       *wip =3D tmpfile;
-> > > >       return 0;
-> > > > @@ -2330,7 +2330,7 @@ xfs_rename(
-> > > >                * flag from the inode so it doesn't accidentally get=
- misused in
-> > > >                * future.
-> > > >                */
-> > > > -             VFS_I(du_wip.ip)->i_state &=3D ~I_LINKABLE;
-> > > > +             inode_state_clear_raw(VFS_I(du_wip.ip), I_LINKABLE);
-> > > >       }
-> > > >
-> > > >  out_commit:
-> > >
-> > > These two accesses look fishy (not your fault but when we are doing t=
-his
-> > > i_state exercise better make sure all the places are correct before
-> > > papering over bugs with _raw function variant). How come they cannot =
-race
-> > > with other i_state modifications and thus corrupt i_state?
+> > > I think this shouldn't really exist as it is dangerous to use and if =
+we
+> > > deal with XFS, nobody will actually need this function.
 > > >
 > >
-> > I asked about this here:
-> > https://lore.kernel.org/linux-xfs/CAGudoHEi05JGkTQ9PbM20D98S9fv0hTqpWRd=
-5fWjEwkExSiVSw@mail.gmail.com/
+> > That's not strictly true, unless you mean code outside of fs/inode.c
+> >
+> > First, something is still needed to clear out the state in
+> > inode_init_always_gfp().
+> >
+> > Afterwards there are few spots which further modify it without the
+> > spinlock held (for example see insert_inode_locked4()).
+> >
+> > My take on the situation is that the current I_NEW et al handling is
+> > crap and the inode hash api is also crap.
 >
-> Yes, as I said, we can add locking here if necessary, but locking
-> isn't necessary at this point in time because nothing else can
-> change the state of the newly allocated whiteout inode until we
-> unlock it.
->
-
-I don't have much of an opinion about this bit. Not as per my response
-I added routines to facilitate not taking the lock (for the time being
-anyway).
-
-> Keep in mind the reason why we need I_LINKABLE here - it's not
-> needed for correctness - it's needed to avoid a warning embedded
-> in inc_nlink() because filesystems aren't trusted to implement
-> link counts correctly anymore.
-
-Ok, I did not know that. Maybe I'll take a stab at sorting this out.
-
-xfs aside, for unrelated reasons I was looking at the placement of the
-indicator to begin with. Seems like for basic correctness this in fact
-wants the inode lock (not the spin lock) and the spin lock is only
-taken to synchronize against other spots which modify i_state. Perhaps
-it should move, which would also obsolete the above woes.
-
-> Now we're being told that "it is too dangerous to let filesystems
-> manage inode state themselves" and so we have to add extra overhead
-> to code that we were forced to add to avoid VFS warnings added
-> because the VFS doesn't trust filesystems to maintain some other
-> important inode state....
+> The inode hash implementation is crap, too. The historically poor
+> scalability characteristics of the VFS inode cache is the primary
+> reason we've never considered ever trying to port XFS to use it,
+> even if we ignore all the inode lifecycle issues that would have to
+> be solved first...
 >
 
-Given that this is how XFS behaved for a long time now and that
-perhaps the I_LINKABLE handling can be redone in the first place,
-perhaps Jan will be willing to un-NAK this bit.
+I don't know of anyone defending the inode hash tho. The performance
+of the thing was already bashed a few times, I did not see anyone
+dunking on the API ;)
 
-> So, if you want to get rid of XFS using I_LINKABLE here, please fix
-> the nlink VFS api to allow us to call inc_nlink_<something>() on a
-> zero link inode without I_LINKABLE needing to be set. We do actually
-> know what we are doing here, and as such needing I_LINKABLE here is
-> nothing but a hacky workaround for inflexible, trustless VFS APIs...
+> > For starters freshly allocated inodes should not be starting with 0,
+> > but with I_NEW.
 >
-> > > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > > > index caff0125faea..ad94fbf55014 100644
-> > > > --- a/fs/xfs/xfs_iops.c
-> > > > +++ b/fs/xfs/xfs_iops.c
-> > > > @@ -1420,7 +1420,7 @@ xfs_setup_inode(
-> > > >       bool                    is_meta =3D xfs_is_internal_inode(ip)=
-;
-> > > >
-> > > >       inode->i_ino =3D ip->i_ino;
-> > > > -     inode->i_state |=3D I_NEW;
-> > > > +     inode_state_set_raw(inode, I_NEW);
+> Not all inodes are cached filesystem inodes. e.g. anonymous inodes
+> are initialised to inode->i_state =3D I_DIRTY.  pipe inodes also start
+> at I_DIRTY. socket inodes don't touch i_state at init, so they
+> essentially init i_state =3D 0....
 >
-> "set" is wrong and will introduce a regression. This must be an
-> "add" operation as inode->i_state may have already been modified
-> by the time we get here.
+> IOWs, the initial inode state depends on what the inode is being
+> used for, and I_NEW is only relevant to inodes that are cached and
+> can be found before the filesystem has fully initialised the VFS
+> inode.
+>
 
-There were complaints about original naming and _add/_del/_set got
-whacked. So now this settled on _set/_clear/_assign, per the cheat
-sheet in the patch. So this does what it was supposed to.
+Well it is true that currently the I_NEW flag is there to help out
+entities like the hash inode hash.
+
+I'm looking to change it into a generic indicator of an uninitialized
+inode. This is completely harmless for the consumers which currently
+operate on inodes which never had the flag.
+
+Here is one use: I'd like to introduce a mandatory routine to call
+when the filesystem at hand claims the inode is ready to use.
+
+Said routine would have 2 main purposes:
+- validate the state of the inode (for example that a valid mode is
+set; this would have caught some of the syzkaller bugs from the get
+go)
+- pre-compute a bunch of stuff, for example see this crapper:
+
+   static inline int do_inode_permission(struct mnt_idmap *idmap,
+                                        struct inode *inode, int mask)
+  {
+          if (unlikely(!(inode->i_opflags & IOP_FASTPERM))) {
+                  if (likely(inode->i_op->permission))
+                          return inode->i_op->permission(idmap, inode,
+mask);
+
+                  /* This gets set once for the inode lifetime */
+                  spin_lock(&inode->i_lock);
+                  inode->i_opflags |=3D IOP_FASTPERM;
+                  spin_unlock(&inode->i_lock);
+          }
+          return generic_permission(idmap, inode, mask);
+  }
+
+The IOP_FASTPERM could be computed by the new routine, so this would
+simplify to:
+  static inline int do_inode_permission(struct mnt_idmap *idmap,
+                                        struct inode *inode, int mask)
+  {
+          if (unlikely(!(inode->i_opflags & IOP_FASTPERM)))
+                  return inode->i_op->permission(idmap, inode, mask);
+          return generic_permission(idmap, inode, mask);
+  }
+
+The routine would assert the inode is I_NEW and would clear the flag,
+replacing it with something else indicating the inode is indeed ready
+to use.
+
+While technically the I_NEW change is not necessarily to get there, I
+do think it makes things cleaner.
+
+Note unlock_new_inode() and similar are not mandatory to call.
 
