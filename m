@@ -1,102 +1,93 @@
-Return-Path: <ceph-devel+bounces-3845-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3846-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF99BE2BD0
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Oct 2025 12:23:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FFABEBA2E
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Oct 2025 22:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B99C0581AAF
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Oct 2025 10:10:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBA4C4FFEAE
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Oct 2025 20:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B24F320CD6;
-	Thu, 16 Oct 2025 10:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535E7333728;
+	Fri, 17 Oct 2025 20:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="2azKSV/L"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DleTbjr3"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B3F2E5B2A
-	for <ceph-devel@vger.kernel.org>; Thu, 16 Oct 2025 10:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA97433343A
+	for <ceph-devel@vger.kernel.org>; Fri, 17 Oct 2025 20:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760609230; cv=none; b=pbzYjAwXgchM40FZ8fJCBjqCsDEhoVCFWNFIjycaaoPe7U0DugOjmM4wqmZAuMQepTHMzk1oCjcL/2JnoW0JSLYqasm4lWFQhUe0kGjTAR/ZS5Kb7RLzmJgmrYYHyjjbTjgq4Jmm9cYGKkRBZNlT/ov05+nOrjBPvGxeNb/xPBs=
+	t=1760732756; cv=none; b=eTcKqNXoT2Mai2HpW0H26bG1FkPNBISxr19UjE2onsUXnDQbOFlw/QCzJf8WStBoolQr2fphXbySyrPr4EiBLMddD8Rht2Uot4TES7MbFyL5hHVoACs70re9gC9WnUL0KZyhJBMkTg90RXn+k8PMzI0gO4sSm8ngJxrv0tCYrK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760609230; c=relaxed/simple;
-	bh=wo/Ya1/qS4gmb5ns1qZf/PbPtAozVGLxnCxAaNcd6IY=;
+	s=arc-20240116; t=1760732756; c=relaxed/simple;
+	bh=jM5A3TelHkeicjfx+wxJIKYR3jCvvcb2IvEl8LyEalw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o2JqbQsnBW8kxpE2XHvsUcoNINCC3+coK3rqiDl94poVSxM2hAdVhyArhIlkJ+t36Lo1X8dN5BAXuWzYT9MOxXiZFkYmyP5/Pe191GrjnAnwlDfhXjPqTYnf2NcK2GLwU5jX+9215bkR6d9tfQi3qn4fpVJBsZHSwRAjKnrT8cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=2azKSV/L; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2697899a202so13073045ad.0
-        for <ceph-devel@vger.kernel.org>; Thu, 16 Oct 2025 03:07:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1760609226; x=1761214026; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rJ4V0WDk+Fmgl27pDuIUO845Eexs2tBhWb+HgzxSkGw=;
-        b=2azKSV/LJlYLD9kHtl3N3D1Oej3nQerp/NmrZYimh5syH1FHulEheQKuayi9ueD06m
-         4Dk/pj0GBAQOis22XCJzMtD0xL3vqHO/esdi/Wku9//Df2bOve3e7umEJRlfqdR/arVf
-         7ThqDB11nGkSaZGMBmITwSJq/Dqj+8Tl14eLpXSLRHtZd7xhaxCmHIOPFZ0lzS8wQKCG
-         uTMpkTwquu7YstepC1DHdk6RpQBnbTHhh5xk1zYEFfkS07L4OVx04B16FnwcC+A/6t6D
-         7KOSymXghX5yasz0tuxEXsAc0f8yZzFlwIgvR9+V8bi93qSz6KIwpxJBn+lQOfEV5vt+
-         R4dg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=j9xL+e0V+B+6PJbpKi93n0uNPw5DUuWsy/yMx8iakQwZZ/hDHp4Y6Yw/dYFvB5I265Qq7QgMzIDVi1PciRhDG2pzTabPC4Uxax7Ki3xiRQQnt6fZZJZwYM/ww/szxx+IwLHJDdkoiyoKcaiPILNKviXrcZc1jueCHsFcaUbOU1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DleTbjr3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760732752;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SC+5NC1S5pdFEKz3wHqgv0vTb+teR0zOymxzWocp7FQ=;
+	b=DleTbjr3bCAMSwUKTFDzVPm4DRG4Ks5bf7Sjcmr4e9CgfXClhjzPy4Ss5aYac+ikiQaEwS
+	gucG4J0snGwaAX2IGJBZL4oT7ndsgKuFUqBOcl1fihTI/00xZ+wxZ5DV4sU9hSSInJuz9A
+	fLIMfv2Bor69xmVcujXcRlbbeFgIb2c=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-601-SkCnlwk5MFuhkztGB6CPtA-1; Fri, 17 Oct 2025 16:25:51 -0400
+X-MC-Unique: SkCnlwk5MFuhkztGB6CPtA-1
+X-Mimecast-MFC-AGG-ID: SkCnlwk5MFuhkztGB6CPtA_1760732751
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-27ee41e062cso31398925ad.1
+        for <ceph-devel@vger.kernel.org>; Fri, 17 Oct 2025 13:25:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760609226; x=1761214026;
+        d=1e100.net; s=20230601; t=1760732750; x=1761337550;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rJ4V0WDk+Fmgl27pDuIUO845Eexs2tBhWb+HgzxSkGw=;
-        b=el7TDjCWa4fkxQUXtdsx42LYpOnsRTnXHhLU/m4aa6E9RGyrTWQTqtkldiZdRj8OiO
-         iW5T/eKKG6hiJby9ievuj7UGjT27CAmlVdqYDRAmQvP0y7inbCrEDKE8+z55OJos447/
-         duH/8PY23SRuJ+0CGNwr423RRcKaxDi00f6WdYa2F3DUCYeC97cvSw12X2QkEOrm2aPI
-         PD22Ck/DzlF/hiSWrdLdPB093bVPQrQfVQVq1mPGaf4wTsQn2jtw2gqyJIHpPCKTcqAc
-         z3qPZ4Ngk4w4G9zNMjTe2w8YK+voeSTd0eo4/Kski9OIqyvlfNqc3GMjxN1LxiaMCJcJ
-         sf6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXsDYuqr6nrimVvkmvHgIIl3u6voRMc83ZVs5si/VXGP1DEStPMBCx6d9JkOBQsGU10ILphEoVOgKZQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmA+NFHghCzavPes6fPKFVE1EEKcEPplTMjWz6fDXvQEujdxuC
-	c5mXW21em87SHKQMlro/Wrl2w6Ir3YKCYPuVn9bi9x+AuS51u8DSFivFLa6eaPIoONE=
-X-Gm-Gg: ASbGnctV5B/pHE4PfayEdhbpvwGxKxZ/gmKuWNOoT8lLEYOHY9NFIVJ/kF0hKi5yAHo
-	AdCsjNkeGY71cZD6l5j+l/ozVhdU17Wi/CnXnVz4BhIKHZ2JY4ISVUM6paJCNMKaLtnJ2tO87IY
-	fqQXnM2x2B+I/ycJDZHtReohsXxJXi3/F/ftfTsZ3t73do7fUy/me+psCQ+o96iSLMO5JpMxiYi
-	dntFeVoXQmzZ+iHAZI2eUQiGarTaLr/RqzZ7haP2ptBNq6L1/1OmLcSB09ZMmR2l+BEa4hF1arI
-	MDXE3Wxjwgv1wjJiZQCJeSzPXERKsmrDuof8vDMXllKTDa7xxd2Hg12yeOrV8Kog5qI8eFmCdW9
-	4ot5yNHHBGaGpXen4D74utK37v5hNk5Rbi8enCRuQ4Q6UU8VINjJALOkvIPHdWQqWCI7vSXOxUi
-	UlLls5JPb+KeN39lRT1z0b
-X-Google-Smtp-Source: AGHT+IGke+4JqtDfjsb4VQIaIJ/VTkox7Sn1ZBEWyV9e2LxX0qBRZQ/9OBuguQWM1BsPb4D7ktTbDQ==
-X-Received: by 2002:a17:903:41c6:b0:24c:db7c:bc34 with SMTP id d9443c01a7336-29091b02a61mr44434505ad.13.1760609225745;
-        Thu, 16 Oct 2025 03:07:05 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:9edb:1072:a6d:3ebf])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29099a7c255sm24626915ad.70.2025.10.16.03.07.02
+        bh=SC+5NC1S5pdFEKz3wHqgv0vTb+teR0zOymxzWocp7FQ=;
+        b=Hivj3gGpFkfvahcMZcOiby8drvEfYwO7Oz6GFuYlhyF2JWxlqP9JYQbonyp7fqd/F5
+         wgRVrBjjjQFxnsdcd61ppdPczGtabudOZ00zGMFtNmKHVsmlBcjd4bNx8oot1rmk1Cg2
+         w2/Xdw4guId0X2J4WH+0+fLMB4PFWsXjgZ49bx4TarkV2jftuwloegE0XWtEFQTgRRga
+         r6JufpilJoKhXBzjFXd6UDdpbF2c6AHoviPa9E8O57ZYAZ0RBc06RtNSsAvcIXIFvkBR
+         KoD7jmNMuZ0wgbYOraCeWf/aOkrI1+fHY0ibiWLwdNk25EIt8CrwSVUskD0OzhwYo891
+         qT1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVyfB8LRXjULbVXaSvSl8WNQVF7NnisYONGwxf9+FZCUOuPGWMsfWeTBtszueXQlaPFDMLU1ce7/+9x@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6lhZo9MQYainE0JLbvIUUSJKXC+pKH1xIopbaU2l8KhI4o2NR
+	4OoYcz73l55RB9YZEBgP4Hdny4vyj9vAgfDtosb1M4kGYjdl7oOgZCr5Xy4/VrgPc1SkN7yMDyP
+	PUD+lQgrd+LYGwxGLDq0urhcsKvrnbtjfxwIJVQiFd66MjXPuMxZ7XbUEcCLSPurfI3Iak9M=
+X-Gm-Gg: ASbGncuYeKLmUtmduRG2OxhM3hZXvMFs+EaxeNLkvYqgC+Ssv2l1yRS8BYhU0m//t0G
+	WBOoidHYGEAMmFZRsDpYQ9Nnf9vTVJ+eRAK8EjEgg6poz42oym13PJPyAgz2RbBDNFLpMgKl9CG
+	H+siWFlCUdxCJFTCTqIi+M2NwPIHcCi3daxs8MPJbAXaMyCY3ENgPmiMjmwgkK60BaKDJYDx87f
+	dfsqkzl9USGDD2VPcAewMLwQQGPTLTFlyusOMzVivhs6KuH02HM3GL3LABU6hds4FTARHC7ixUx
+	EuDC+PeqQPpmisFOrKe15N8hX7EO76n9CucdYm8d/k7coNZBvSQGu6aPCh/ERRvWbhIk0Pdja5x
+	2p0juj/VnpDCF3h0QTlUfWqSq6wUto5hNax3RnuA=
+X-Received: by 2002:a17:903:1a4c:b0:267:ba92:4d19 with SMTP id d9443c01a7336-290c99a8ed3mr63606605ad.0.1760732749969;
+        Fri, 17 Oct 2025 13:25:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxfxr0prdBShKiiD3OH0xFK8B3tzOOnqVQzoTfYO6FzFCXRk2P6WQVkDGH421mM7plLtUZuA==
+X-Received: by 2002:a17:903:1a4c:b0:267:ba92:4d19 with SMTP id d9443c01a7336-290c99a8ed3mr63606425ad.0.1760732749517;
+        Fri, 17 Oct 2025 13:25:49 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-292472197e9sm3835075ad.116.2025.10.17.13.25.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Oct 2025 03:07:05 -0700 (PDT)
-Date: Thu, 16 Oct 2025 18:07:00 +0800
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	akpm@linux-foundation.org, axboe@kernel.dk,
-	ceph-devel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de,
-	home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
-	kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com,
-	xiubli@redhat.com
-Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with reverse
- lookup tables
-Message-ID: <aPDDxEGon1Q82pIJ@wu-Pro-E500-G6-WS720T>
-References: <aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
- <CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
- <20251005181803.0ba6aee4@pumpkin>
- <aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
- <CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
- <20251007192327.57f00588@pumpkin>
- <aOeprat4/97oSWE0@wu-Pro-E500-G6-WS720T>
- <20251010105138.0356ad75@pumpkin>
- <aOzLQ2KSqGn1eYrm@wu-Pro-E500-G6-WS720T>
- <20251014091420.173dfc9c@pumpkin>
+        Fri, 17 Oct 2025 13:25:48 -0700 (PDT)
+Date: Sat, 18 Oct 2025 04:25:44 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: ethanwu <ethanwu@synology.com>
+Cc: fstests@vger.kernel.org, ceph-devel@vger.kernel.org,
+	Slava.Dubeyko@ibm.com, ethan198912@gmail.com
+Subject: Re: [PATCH v3] ceph/006: test snapshot data integrity after punch
+ hole operations
+Message-ID: <20251017202544.3a5es5j57r6ifkwd@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20251009093129.2437815-1-ethanwu@synology.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -105,302 +96,217 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251014091420.173dfc9c@pumpkin>
+In-Reply-To: <20251009093129.2437815-1-ethanwu@synology.com>
 
-On Tue, Oct 14, 2025 at 09:14:20AM +0100, David Laight wrote:
-> On Mon, 13 Oct 2025 17:49:55 +0800
-> Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+On Thu, Oct 09, 2025 at 05:31:29PM +0800, ethanwu wrote:
+> Add test to verify that Ceph snapshots preserve original file data
+> when the live file is modified with punch hole operations. The test
+> creates a file, takes a snapshot, punches multiple holes in the
+> original file, then verifies the snapshot data remains unchanged.
 > 
-> > On Fri, Oct 10, 2025 at 10:51:38AM +0100, David Laight wrote:
-> > > On Thu, 9 Oct 2025 20:25:17 +0800
-> > > Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
-> > > 
-> > > ...  
-> > > > As Eric mentioned, the decoder in fs/crypto/ needs to reject invalid input.  
-> > > 
-> > > (to avoid two different input buffers giving the same output)
-> > > 
-> > > Which is annoyingly reasonable.
-> > >   
-> > > > One possible solution I came up with is to first create a shared
-> > > > base64_rev_common lookup table as the base for all Base64 variants.
-> > > > Then, depending on the variant (e.g., BASE64_STD, BASE64_URLSAFE, etc.), we
-> > > > can dynamically adjust the character mappings for position 62 and position 63
-> > > > at runtime, based on the variant.
-> > > > 
-> > > > Here are the changes to the code:
-> > > > 
-> > > > static const s8 base64_rev_common[256] = {
-> > > > 	[0 ... 255] = -1,
-> > > > 	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
-> > > > 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-> > > > 	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-> > > > 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-> > > > 	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
-> > > > };
-> > > > 
-> > > > static const struct {
-> > > > 	char char62, char63;
-> > > > } base64_symbols[] = {
-> > > > 	[BASE64_STD] = { '+', '/' },
-> > > > 	[BASE64_URLSAFE] = { '-', '_' },
-> > > > 	[BASE64_IMAP] = { '+', ',' },
-> > > > };
-> > > > 
-> > > > int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base64_variant variant)
-> > > > {
-> > > > 	u8 *bp = dst;
-> > > > 	u8 pad_cnt = 0;
-> > > > 	s8 input1, input2, input3, input4;
-> > > > 	u32 val;
-> > > > 	s8 base64_rev_tables[256];
-> > > > 
-> > > > 	/* Validate the input length for padding */
-> > > > 	if (unlikely(padding && (srclen & 0x03) != 0))
-> > > > 		return -1;  
-> > > 
-> > > There is no need for an early check.
-> > > Pick it up after the loop when 'srclen != 0'.
-> > >  
-> > 
-> > I think the early check is still needed, since I'm removing the
-> > padding '=' first.
-> > This makes the handling logic consistent for both padded and unpadded
-> > inputs, and avoids extra if conditions for padding inside the hot loop.
+> Signed-off-by: ethanwu <ethanwu@synology.com>
+> ---
+>  v1->v2: previous version is 'ceph/006: test snapshot data integrity
+>  after punch hole'.
+>     1. move it to generic and add _require_snapshot check.
+>     2. modify punch hole offset/len to be 64K aligned
+>  v2->v3:
+>     1. move test back to ceph specific since it uses ceph snapshot API.
+>     2. support custom snapdirname mount option.
+>     3. add _ceph_remove_snapshot and _ceph_create_snapshot functions.
 > 
-> The 'invalid input' check will detect the padding.
-> Then you don't get an extra check if there is no padding (probably normal).
-> I realised I didn't get it quite right - updated below.
-> 
-> > 
-> > > > 
-> > > > 	memcpy(base64_rev_tables, base64_rev_common, sizeof(base64_rev_common));  
-> > > 
-> > > Ugg - having a memcpy() here is not a good idea.
-> > > It really is better to have 3 arrays, but use a 'mostly common' initialiser.
-> > > Perhaps:
-> > > #define BASE64_REV_INIT(ch_62, ch_63) = { \
-> > > 	[0 ... 255] = -1, \
-> > > 	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
-> > > 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, \
-> > > 	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, \
-> > > 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, \
-> > > 	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
-> > > 	[ch_62] = 62, [ch_63] = 63, \
-> > > }
-> > > 
-> > > static const s8 base64_rev_maps[][256] = {
-> > > 	[BASE64_STD] = BASE64_REV_INIT('+', '/'),
-> > > 	[BASE64_URLSAFE] = BASE64_REV_INIT('-', '_'),
-> > > 	[BASE64_IMAP] = BASE64_REV_INIT('+', ',')
-> > > };
-> > > 
-> > > Then (after validating variant):
-> > > 	const s8 *map = base64_rev_maps[variant];
-> > >  
-> > 
-> > Got it. I'll switch to using three static tables with a common initializer
-> > as you suggested.
-> > 
-> > > > 
-> > > > 	if (variant < BASE64_STD || variant > BASE64_IMAP)
-> > > > 		return -1;
-> > > > 
-> > > > 	base64_rev_tables[base64_symbols[variant].char62] = 62;
-> > > > 	base64_rev_tables[base64_symbols[variant].char63] = 63;
-> > > > 
-> > > > 	while (padding && srclen > 0 && src[srclen - 1] == '=') {
-> > > > 		pad_cnt++;
-> > > > 		srclen--;
-> > > > 		if (pad_cnt > 2)
-> > > > 			return -1;
-> > > > 	}  
-> > > 
-> > > I'm not sure I'd to that there.
-> > > You are (in some sense) optimising for padding.
-> > > From what I remember, "abcd" gives 24 bits, "abc=" 16 and "ab==" 8.
-> > >   
-> > > > 
-> > > > 	while (srclen >= 4) {
-> > > > 		/* Decode the next 4 characters */
-> > > > 		input1 = base64_rev_tables[(u8)src[0]];
-> > > > 		input2 = base64_rev_tables[(u8)src[1]];
-> > > > 		input3 = base64_rev_tables[(u8)src[2]];
-> > > > 		input4 = base64_rev_tables[(u8)src[3]];  
-> > > 
-> > > I'd be tempted to make src[] unsigned - probably be assigning the parameter
-> > > to a local at the top of the function.
-> > > 
-> > > Also you have input3 = ... src[2]...
-> > > Perhaps they should be input[0..3] instead.
-> > >  
-> > 
-> > OK, I'll make the changes.
-> > 
-> > > > 
-> > > > 		val = (input1 << 18) |
-> > > > 		      (input2 << 12) |
-> > > > 		      (input3 << 6) |
-> > > > 		      input4;  
-> > > 
-> > > Four lines is excessive, C doesn't require the () and I'm not sure the
-> > > compilers complain about << and |.
-> > >   
-> > 
-> > OK, I'll make the changes.
-> > 
-> > > > 
-> > > > 		if (unlikely((s32)val < 0))
-> > > > 			return -1;  
-> > > 
-> > > Make 'val' signed - then you don't need the cast.
-> ...
-> > > Or, if you really want to use the code below the loop:
-> > > 			if (!padding || src[3] != '=')
-> > > 				return -1;
-> > > 			padding = 0;
-> > > 			srclen -= 1 + (src[2] == '=');
-> > > 			break;
-> 
-> That is missing a test...
-> Change to:
-> 			if (!padding || srclen != 4 || src[3] != '=')
-> 				return -1;
-> 			padding = 0;
-> 			srclen = src[2] == '=' ? 2 : 3;
-> 			break;
-> 
-> The compiler will then optimise away the first checks after the
-> loop because it knows they can't happen.
-> 
-> > > 
-> > >   
-> > > > 
-> > > > 		*bp++ = (u8)(val >> 16);
-> > > > 		*bp++ = (u8)(val >> 8);
-> > > > 		*bp++ = (u8)val;  
-> > > 
-> > > You don't need those casts.
-> > >  
-> > 
-> > OK, I'll make the changes.
-> > 
-> > > > 
-> > > > 		src += 4;
-> > > > 		srclen -= 4;
-> > > > 	}
-> > > > 
-> > > > 	/* Handle leftover characters when padding is not used */  
-> > > 
-> > > You are coming here with padding.
-> > > I'm not sure what should happen without padding.
-> > > For a multi-line file decode I suspect the characters need adding to
-> > > the start of the next line (ie lines aren't required to contain
-> > > multiples of 4 characters - even though they almost always will).
-> > >   
-> > 
-> > Ah, my mistake. I forgot to remove that comment.
-> > Based on my observation, base64_decode() should process the entire input
-> > buffer in a single call, so I believe it does not need to handle
-> > multi-line input.
-> 
-> I was thinking of the the case where it is processing the output of
-> something like base64encode.
-> The caller will have separated out the lines, but I don't know whether
-> every line has to contain a multiple of 4 characters - or whether the
-> lines can be arbitrarily split after being encoded (I know that won't
-> normally happen - but you never know). 
->
+> ---
 
-I believe the splitting should be aligned to multiples of 4,
-since Base64 encoding operates on 4-character blocks that represent 3 bytes
-of data.
-If it's split arbitrarily, the decoded result may differ from the original
-data or even become invalid.
+Thanks for your update :) I'm not familiar with ceph, so I'll try to review
+this patch from fstests side. Welcome ceph list provide more review points :)
 
-Best regards,
-Guan-Chun
+>  common/ceph        | 76 ++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/ceph/006     | 58 +++++++++++++++++++++++++++++++++++
+>  tests/ceph/006.out |  2 ++
+>  3 files changed, 136 insertions(+)
+>  create mode 100755 tests/ceph/006
+>  create mode 100644 tests/ceph/006.out
+> 
+> diff --git a/common/ceph b/common/ceph
+> index df7a6814..6a19527e 100644
+> --- a/common/ceph
+> +++ b/common/ceph
+> @@ -38,3 +38,79 @@ _ceph_get_client_id()
+>  {
+>  	$GETFATTR_PROG --only-values -n "ceph.client_id" $TEST_DIR 2>/dev/null
+>  }
+> +
+> +# Get the snapshot directory name from mount options
+> +# Defaults to ".snap" if snapdirname option is not set
+> +_ceph_get_snapdirname()
+> +{
+> +	local mnt_point=$1
+> +	local snapdirname
+> +
+> +	# Extract snapdirname from mount options
+> +	snapdirname=$(findmnt -n -o OPTIONS "$mnt_point" | grep -o 'snapdirname=[^,]*' | cut -d'=' -f2)
+> +
+> +	# Default to .snap if not set
+> +	if [ -z "$snapdirname" ]; then
+> +		echo ".snap"
+> +	else
+> +		echo "$snapdirname"
+> +	fi
+> +}
+> +
+> +# Create a CephFS snapshot
+> +# _ceph_create_snapshot <directory_path> <snapshot_name>
+> +# Creates a snapshot under <directory_path>/.snap/<snapshot_name>
+> +# or <directory_path>/<custom_snapdir>/<snapshot_name> if snapdirname is set
+> +_ceph_create_snapshot()
+> +{
+> +	local dir_path=$1
+> +	local snap_name=$2
+> +	local snapdirname
+> +	local snapdir
+> +	local mnt_point
+> +
+> +	if [ -z "$dir_path" ] || [ -z "$snap_name" ]; then
+> +		echo "Usage: _ceph_create_snapshot <directory_path> <snapshot_name>"
+> +		return 1
+> +	fi
+> +
+> +	# Find the mount point for this directory
+> +	mnt_point=$(df -P "$dir_path" | tail -1 | awk '{print $NF}')
+> +	snapdirname=$(_ceph_get_snapdirname "$mnt_point")
+> +	snapdir="$dir_path/$snapdirname/$snap_name"
+> +
+> +	mkdir "$snapdir" || return 1
+> +	echo "$snapdir"
+> +}
+> +
+> +# Remove a CephFS snapshot
+> +# _ceph_remove_snapshot <directory_path> <snapshot_name>
+> +_ceph_remove_snapshot()
+> +{
+> +	local dir_path=$1
+> +	local snap_name=$2
+> +	local snapdirname
+> +	local snapdir
+> +	local mnt_point
+> +
+> +	if [ -z "$dir_path" ] || [ -z "$snap_name" ]; then
+> +		echo "Usage: _ceph_remove_snapshot <directory_path> <snapshot_name>"
+> +		return 1
+> +	fi
+> +
+> +	# Find the mount point for this directory
+> +	mnt_point=$(df -P "$dir_path" | tail -1 | awk '{print $NF}')
+> +	snapdirname=$(_ceph_get_snapdirname "$mnt_point")
+> +	snapdir="$dir_path/$snapdirname/$snap_name"
+> +
+> +	rmdir "$snapdir" 2>/dev/null
 
-> > 
-> > Best regards,
-> > Guan-Chun
-> > 
-> > > > 	if (srclen > 0) {
-> > > > 		switch (srclen) {  
-> > > 
-> > > You don't need an 'if' and a 'switch'.
-> > > srclen is likely to be zero, but perhaps write as:
-> > > 	if (likely(!srclen))
-> > > 		return bp - dst;
-> > > 	if (padding || srclen == 1)
-> > > 		return -1;
-> > > 
-> > > 	val = base64_rev_tables[(u8)src[0]] << 12 | base64_rev_tables[(u8)src[1]] << 6;
-> > > 	*bp++ = val >> 10;
-> > > 	if (srclen == 1) {
-> Obviously should be (srclen == 2)
-> > > 		if (val & 0x800003ff)
-> > > 			return -1;
-> > > 	} else {
-> > > 		val |= base64_rev_tables[(u8)src[2]];
-> > > 		if (val & 0x80000003)
-> > > 			return -1;
-> > > 		*bp++ = val >> 2;
-> > > 	}
-> > > 	return bp - dst;
-> > > }
-> > > 
-> > > 	David
+What if the snapdir can't be removed? Is that possible?
+
+> +}
+> +
+> +# this test requires ceph snapshot support
+> +_require_ceph_snapshot()
+> +{
+> +	local snapdirname=$(_ceph_get_snapdirname "$TEST_DIR")
+> +	local test_snapdir="$TEST_DIR/$snapdirname/test_snap_$$"
+> +	mkdir "$test_snapdir" 2>/dev/null || _notrun "Ceph snapshots not supported (requires fs flag 'allow_snaps' and client auth capability 'snap')"
+
+Is "$snapdirname" created before calling this function? Do we need "-p" option?
+
+> +	rmdir "$test_snapdir"
+> +}
+> diff --git a/tests/ceph/006 b/tests/ceph/006
+> new file mode 100755
+> index 00000000..a5af6ca3
+> --- /dev/null
+> +++ b/tests/ceph/006
+> @@ -0,0 +1,58 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (C) 2025 Synology All Rights Reserved.
+> +#
+> +# FS QA Test No. ceph/006
+> +#
+> +# Test that snapshot data remains intact after punch hole operations
+> +# on the original file.
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick snapshot
+> +
+> +. common/ceph
+> +
+> +_require_test
+> +_require_xfs_io_command "pwrite"
+
+I think "pwrite" is nearly always supported, don't need to check it :)
+
+> +_require_xfs_io_command "fpunch"
+> +_require_ceph_snapshot
+> +_exclude_test_mount_option "test_dummy_encryption"
+> +
+> +# TODO: commit is not merged yet. Update with final commit SHA once merged.
+> +_fixed_by_kernel_commit 1b7b474b3a78 \
+> +	"ceph: fix snapshot context missing in ceph_zero_partial_object"
+> +
+> +workdir=$TEST_DIR/test-$seq
+> +_ceph_remove_snapshot $workdir snap1
+> +rm -rf $workdir
+> +mkdir $workdir
+> +
+> +$XFS_IO_PROG -f -c "pwrite -S 0xab 0 1048576" $workdir/foo > /dev/null
+> +
+> +snapdir=$(_ceph_create_snapshot $workdir snap1)
+
+As you just "return 1" if the _ceph_create_snapshot fails, what if the
+snapshot isn't created? So how about calling "_fail" if it fails.
+
+> +
+> +original_md5=$(md5sum $snapdir/foo | cut -d' ' -f1)
+> +
+> +$XFS_IO_PROG -c "fpunch 0 65536" $workdir/foo
+> +$XFS_IO_PROG -c "fpunch 131072 65536" $workdir/foo
+> +$XFS_IO_PROG -c "fpunch 262144 65536" $workdir/foo
+> +$XFS_IO_PROG -c "fpunch 393216 65536" $workdir/foo
+> +
+> +# Make sure we don't read from cache
+> +echo 3 > /proc/sys/vm/drop_caches
+> +
+> +snapshot_md5=$(md5sum $snapdir/foo | cut -d' ' -f1)
+> +
+> +if [ "$original_md5" != "$snapshot_md5" ]; then
+> +    echo "FAIL: Snapshot data changed after punch hole operations"
+> +    echo "Original md5sum: $original_md5"
+> +    echo "Snapshot md5sum: $snapshot_md5"
+> +fi
+> +
+> +_ceph_remove_snapshot $workdir snap1
+
+Better to make sure the snapshot is removed in _cleanup.
+
+Thanks,
+Zorro
+
+> +
+> +echo "Silence is golden"
+> +
+> +# success, all done
+> +status=0
+> +exit
+> diff --git a/tests/ceph/006.out b/tests/ceph/006.out
+> new file mode 100644
+> index 00000000..675c1b7c
+> --- /dev/null
+> +++ b/tests/ceph/006.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 006
+> +Silence is golden
+> -- 
+> 2.43.0
 > 
-> 	David
 > 
-> > >   
-> > > > 		case 2:
-> > > > 			input1 = base64_rev_tables[(u8)src[0]];
-> > > > 			input2 = base64_rev_tables[(u8)src[1]];
-> > > > 			val = (input1 << 6) | input2; /* 12 bits */
-> > > > 			if (unlikely((s32)val < 0 || val & 0x0F))
-> > > > 				return -1;
-> > > > 
-> > > > 			*bp++ = (u8)(val >> 4);
-> > > > 			break;
-> > > > 		case 3:
-> > > > 			input1 = base64_rev_tables[(u8)src[0]];
-> > > > 			input2 = base64_rev_tables[(u8)src[1]];
-> > > > 			input3 = base64_rev_tables[(u8)src[2]];
-> > > > 
-> > > > 			val = (input1 << 12) |
-> > > > 			      (input2 << 6) |
-> > > > 			      input3; /* 18 bits */
-> > > > 			if (unlikely((s32)val < 0 || val & 0x03))
-> > > > 				return -1;
-> > > > 
-> > > > 			*bp++ = (u8)(val >> 10);
-> > > > 			*bp++ = (u8)(val >> 2);
-> > > > 			break;
-> > > > 		default:
-> > > > 			return -1;
-> > > > 		}
-> > > > 	}
-> > > > 
-> > > > 	return bp - dst;
-> > > > }
-> > > > Based on KUnit testing, the performance results are as follows:
-> > > > 	base64_performance_tests: [64B] decode run : 40ns
-> > > > 	base64_performance_tests: [1KB] decode run : 463ns
-> > > > 
-> > > > However, this approach introduces an issue. It uses 256 bytes of memory
-> > > > on the stack for base64_rev_tables, which might not be ideal. Does anyone
-> > > > have any thoughts or alternative suggestions to solve this issue, or is it
-> > > > not really a concern?
-> > > > 
-> > > > Best regards,
-> > > > Guan-Chun
-> > > >   
-> > > > > > 
-> > > > > > Best,
-> > > > > > Caleb    
-> > > > >     
-> > >   
+> Disclaimer: The contents of this e-mail message and any attachments are confidential and are intended solely for addressee. The information may also be legally privileged. This transmission is sent in trust, for the sole purpose of delivery to the intended recipient. If you have received this transmission in error, any use, reproduction or dissemination of this transmission is strictly prohibited. If you are not the intended recipient, please immediately notify the sender by reply e-mail or phone and delete this message and its attachments, if any.
 > 
+
 
