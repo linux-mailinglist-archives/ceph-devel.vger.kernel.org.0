@@ -1,85 +1,85 @@
-Return-Path: <ceph-devel+bounces-3866-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3867-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BF18C05391
-	for <lists+ceph-devel@lfdr.de>; Fri, 24 Oct 2025 11:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA2FC0537F
+	for <lists+ceph-devel@lfdr.de>; Fri, 24 Oct 2025 11:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6921D4231FB
-	for <lists+ceph-devel@lfdr.de>; Fri, 24 Oct 2025 08:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7214235BE
+	for <lists+ceph-devel@lfdr.de>; Fri, 24 Oct 2025 08:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01370305958;
-	Fri, 24 Oct 2025 08:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B206307AC6;
+	Fri, 24 Oct 2025 08:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QBD5K0jb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C0chSIlc"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2D6306B11
-	for <ceph-devel@vger.kernel.org>; Fri, 24 Oct 2025 08:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05B730649D
+	for <ceph-devel@vger.kernel.org>; Fri, 24 Oct 2025 08:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761295401; cv=none; b=Ldb/XcK8LCzNddrpSKngvx6DG0qoLQnaJMPxS781MtWi1qwjzmpOjX9Zq06IxQEeKaP5n0uwibOwE+GctWHighPnM3cL6akrjEHmaPKO878cDJecRmhHYvcwposIhcxqLlNE4HUNTmIaBGYpbM7A1Vb9N5R4Bfk8oO0FgJP3bBc=
+	t=1761295403; cv=none; b=n860rh1tsd5Z4WQqta+ugKbXrhMCBfYRQlegX5v0YC/9mjJUAjrQ010s/H+vjOCRokppJUG1IHQhT8jV2yenviTC+c8gxjvMjYhniFN1L+1xd5Ay7hRFWPbVNnPHEcHdekWR5W7I6q2kpMnZishVvIbUyOyQO/qbF5an0qTe2os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761295401; c=relaxed/simple;
-	bh=KcKsAV9p8uRtNvt/D7mxzuTmC0iqU0ldEISJcoZrfu4=;
+	s=arc-20240116; t=1761295403; c=relaxed/simple;
+	bh=y9LND0hzWRB14wYS7B1g+hi9YYh9DojE2Gi5ceRFyRk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o8pD4JZlfHaU+WmA6Pr9aYvm4d++O3bvvfcWowhJq2CYvDuPVmj9jy57/SzOo1jz91uaWEsGAXBWOLv5NAHQy0wXW78Q+FDJVyVJ68mWkNRuafKCqSOGSEhbJZnLUY7Mb3gfzWw9t3S/E7a+xzN6n0y6WN4s68okDlIWunehvhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QBD5K0jb; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=iAium9hhUPCXCgN/mwO7nmB72C9gdHobXOHbTp/duJ+Q+OK6lIj5qvoqEwwnRPYFHQSBD2waEEjc9NSzi4MUPJKQwlwQKUDbSx25a/dTKPBx9qdN1pQp6XyWspswJV0eOZYD6BIiyRI4HO80OFShQ10PiGx4fF5iy6C2IIGYoC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C0chSIlc; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761295398;
+	s=mimecast20190719; t=1761295400;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+YEhQugvjJGD9rocNk61MKJgnvqoLJlUTVFDpUrcAXI=;
-	b=QBD5K0jbsx4tRpBKY/ctUxtBf3FtkCMTLSpd4rM1GLMyZTzNyMiblMI4H0fdWQutfxKcu9
-	FbG7M8utjZ1ZdzWnJPISITCyfTMrZ643hVkidJ5cBwQ3cynTwFONUxDe3I/0hMyVXj2dh1
-	cQi8MUNrRLSl1JUA4mCs/8XX9qSbB/o=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=EM/fQ7icQaeiFLlvGb7ckJc4gbojH3PiXz9mgf+NyPo=;
+	b=C0chSIlcEpQk1bo2bB0N0oSvir9nACckfStd21aN755hhj1M/+xu7niAqrUD1+uYzg7SdI
+	Bg7xaYMF8sV0VwSWuV/9SpcAa6nWnxWw/ycDlcq/DAHjx7qhlkEa603HE0007IxkQO/5U5
+	Bh4ugihhcqu+slTcUk/9p5JDgl1xS4g=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-346-jvYA7ixDOK-aZCzwridQ0A-1; Fri, 24 Oct 2025 04:43:17 -0400
-X-MC-Unique: jvYA7ixDOK-aZCzwridQ0A-1
-X-Mimecast-MFC-AGG-ID: jvYA7ixDOK-aZCzwridQ0A_1761295396
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b6d700a0894so98231866b.0
-        for <ceph-devel@vger.kernel.org>; Fri, 24 Oct 2025 01:43:16 -0700 (PDT)
+ us-mta-303-B7ZpLuEFPg67G_qZJqSICw-1; Fri, 24 Oct 2025 04:43:18 -0400
+X-MC-Unique: B7ZpLuEFPg67G_qZJqSICw-1
+X-Mimecast-MFC-AGG-ID: B7ZpLuEFPg67G_qZJqSICw_1761295397
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b4813c6cbeeso226679466b.3
+        for <ceph-devel@vger.kernel.org>; Fri, 24 Oct 2025 01:43:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761295396; x=1761900196;
+        d=1e100.net; s=20230601; t=1761295397; x=1761900197;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+YEhQugvjJGD9rocNk61MKJgnvqoLJlUTVFDpUrcAXI=;
-        b=wtzyT/x0F8pTKdMM4xzY/7MLn/4V5gqYhQ+ojZOD98x8a1gd0Ec1U03rBXrURf8a5X
-         H0AC+tixF+1UOwB5Vv51ytt5Eslvp8XV9l/HUYGnODUcNVSZOvjVagWkeNOI47f1mTTA
-         cTgHF2+qF4SEJns6KqZwut2ezis5k+l4k53mFgt/frLxptWafqQ3wpiTzvQ4wAcBDn2V
-         c7Eu5dA8xpw3jeQrODRbPyane/2cUkqzz4SdR+y09ihudij743dJGFRTDRrcELBAXQc/
-         6PMQVAkmyD+lam+b1UN+07jhCRL+QvAC9d9VAHuKOfkbg4Nc+wNcVGrrwm+0cIkyxXGb
-         IcbQ==
-X-Gm-Message-State: AOJu0YxwgdfUunLDnT159nGtgV4z219xWrWTqyDI3Tn7wpHlS68yqdNe
-	SUeVUmChUfsS/TQ/IndXVFfxZ0KsV1JoW8iRg4e7p/GTgCdOF/cCt57yMmb3mEpLGAXz5HtVhNl
-	K9/K57d0wORJvHsstY/zVfSHMRLri6cn3nSoRR17tTd1MKo/uS8YXXK5bDbSBMO6q1ANPHt1fY3
-	8LmpDQR/h8bywP8RnrDxA41Z5jBjCweeMchZfCbVEJmAGrMdUkVjwrCX0=
-X-Gm-Gg: ASbGncvR6ptpSM4T77er9yir9+VMJkdF5t2XSZFo2QORq7yayLo2OdGjci+3MzvTgYt
-	I6N9hKZf3kXmfwXtPO7bPp0EpXryuCH6Wg9mlJeaZI7QI8dx+5AvloZ8GpoybzMxzl0I9IRBl7u
-	4JLQ1gJKB1po21uzBIrs/735Cxyg5d15s1lnNjg1eaNEPm0RFgaH1nul3Cn02w0ELLzZrZXTo1b
-	vqRmW/5IngYr4OOE+kfgp5uPIPCiR5ekEOfzzVE5KQcuek1XLMTl9s8nm2p1UtcLVuVho3+f2gX
-	Nr2NiI0znVxAr+xWHNQjK64xsQayziQ6Dl0Q26zM3jhHxCrCVtXvyd/cdug5gzh5KRJsN2diG2d
-	EyIV2a4cabXrXA2Wuabpu3j82TE2D5cpj
-X-Received: by 2002:a17:907:e887:b0:afa:1d2c:bbd1 with SMTP id a640c23a62f3a-b6d6bcf8c71mr185671966b.30.1761295395525;
-        Fri, 24 Oct 2025 01:43:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGY5mEE5uypHs1peyLV3gmUlLkQrdYcM4lntYsOOHalbAYVVbBN+cXnOEwbWEvJxbWbaGXkXw==
-X-Received: by 2002:a17:907:e887:b0:afa:1d2c:bbd1 with SMTP id a640c23a62f3a-b6d6bcf8c71mr185666466b.30.1761295394894;
-        Fri, 24 Oct 2025 01:43:14 -0700 (PDT)
+        bh=EM/fQ7icQaeiFLlvGb7ckJc4gbojH3PiXz9mgf+NyPo=;
+        b=mYg+3d9U8uSERCnL4oQcvVchS7legMKNp3FeRdqaqOqm8W036Blz5idBg9Wl1AcvRA
+         Q1efRNKNRRHTc778O9JKejP0IngAjBSSdlpAzINEPz3gOc2HbG6Xw5b9fqRpKnzcULvz
+         stnQw1YDz1jWsghXBfYTELc68D4ulp1srUtWJoCxvnN0QNnnzS13+oZlhV1Cru6yYoUK
+         CWxSUroraA1889OusyOr74Tm5DM8FE3FCGqhUAAgLvNF1HFysMMBNpd5vyRSPWttep3a
+         GcX9eadh/QuwqS0BzpyBjyk7N2UwIAgl+NwkUfWcfIhFjwTm+jjYB17G7RJRn4iODckb
+         SY8g==
+X-Gm-Message-State: AOJu0YzKLPuBONSxd8/7Tl89/U2A0oh5Oq+eG2K1lISOkyrWoLTfHwVm
+	ZRWfNiyo5OQ1nvDt60KOvfZRoYxfo6ElzYOrUfNuRVhwmqyipLA1DfsGMJg1ShfSLVDdqbfOyjb
+	toHzYWk1YCgcRHFLR1YmFwyHZeWprnlMRX1X8nClVLFqHOK9oiBG+IZu5HAF6K2f71xPM4NNQtf
+	/g2wLNoR+TUG1vJ4edzKuxTqzxRZgB9L6yeZaujvBe/cqC92BHXHvULW8=
+X-Gm-Gg: ASbGncv1AFOl1u2aDPJAFRboGmpZph1+fq3OCVnV+Sgk/2s2Omz9C3yv4osfdzVJ280
+	aGwa7HsiYr1r76pxw5bJhiqB7yCuqRViegPflwAMjzuAvsuqMzJM9gw8SGp3X5uxD9e3Oh+blCD
+	aZ59eyyu/WaeTOX3qZI1RVX61O3RTyHik96RHZSJsGIpxCnURrp7aVvH3uPDO91ZxHxyhGsAoYD
+	EV9JQFwvuDm8qw9jwnhUAPdVcpgGPrkl58YsIVI3a6nNul7ObFC1yAv+if+bJ5A7k4qBxCuhKgY
+	mQm+bPx1Xjb8S0Ikj3o36JxqZyfmqgLPh71qpFmD9gA5kRY3cQEFgHRP9ldbctY9xawXz+jyRbq
+	NpjhqP0N9qsmzSvvPjC9+5WNEXUSPjGwW
+X-Received: by 2002:a17:907:9483:b0:b6d:3fc9:e60a with SMTP id a640c23a62f3a-b6d3fc9e8a3mr891834766b.19.1761295397031;
+        Fri, 24 Oct 2025 01:43:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFcTnVj9nWbOwAbV6zlbH31DU9/PeYosrmE9n0krBhv7kGFZ4f/K+hEp8Y2jQzw59pd3AeUbQ==
+X-Received: by 2002:a17:907:9483:b0:b6d:3fc9:e60a with SMTP id a640c23a62f3a-b6d3fc9e8a3mr891829566b.19.1761295396434;
+        Fri, 24 Oct 2025 01:43:16 -0700 (PDT)
 Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d511d010asm469226866b.11.2025.10.24.01.43.13
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d511d010asm469226866b.11.2025.10.24.01.43.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 01:43:14 -0700 (PDT)
+        Fri, 24 Oct 2025 01:43:16 -0700 (PDT)
 From: Alex Markuze <amarkuze@redhat.com>
 To: ceph-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -106,9 +106,9 @@ Cc: Liam.Howlett@oracle.com,
 	vbabka@suse.cz,
 	xiubli@redhat.com,
 	Slava.Dubeyko@ibm.com
-Subject: [RFC PATCH 3/5] ceph: Add BLOG scaffolding
-Date: Fri, 24 Oct 2025 08:42:57 +0000
-Message-Id: <20251024084259.2359693-4-amarkuze@redhat.com>
+Subject: [RFC PATCH 4/5] ceph: Add BLOG debugfs support
+Date: Fri, 24 Oct 2025 08:42:58 +0000
+Message-Id: <20251024084259.2359693-5-amarkuze@redhat.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251024084259.2359693-1-amarkuze@redhat.com>
 References: <20251024084259.2359693-1-amarkuze@redhat.com>
@@ -120,443 +120,525 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce the Ceph BLOG integration layer that enables the filesystem to
-register binary loggers and route log events through module-specific TLS
-contexts. This commit establishes the infrastructure for high-performance
-binary logging in the Ceph client without modifying existing logging calls.
+Introduce blog_debugfs.c to export BLOG binary logs through the Ceph debugfs
+hierarchy, enabling userspace tools to read and deserialize per-task logging
+buffers for debugging, tracing, and performance analysis.
 
 **Key Components:**
 
-**ceph_blog.h - BLOG-aware macros and interfaces:**
-- bout/boutc: Drop-in replacements for dout/doutc with identical semantics
-- CEPH_BLOG_LOG_CTX/CEPH_BLOG_LOG: Low-level logging primitives
-- Automatic fallback to traditional dout when CONFIG_BLOG is disabled
-- Type-safe parameter serialization using BLOG framework
+**blog_debugfs.c - Binary log export interface:**
+- blog_entries_show(): Seq file iterator over all active BLOG contexts
+- Lock-safe context enumeration with proper synchronization
+- Per-context buffer snapshot mechanism to prevent data corruption
+- Deserialization and formatted output of binary log entries
+- Integration with Ceph debugfs directory structure
 
-**blog_client.c - Module registration and context management:**
-- ceph_blog_init(): Register Ceph-specific BLOG logger on module load
-- ceph_blog_exit(): Cleanup and unregister logger on module unload
-- ceph_get_tls_ctx(): Acquire per-task BLOG context for current thread
-- Client-ID to logger mapping for multi-client scenarios
-- Exported symbols for context acquisition from Ceph code paths
+**Locking strategy (critical correctness fix):**
+The implementation employs a splice-snapshot-splice pattern to avoid
+deadlocks and ensure consistent reads:
 
-**Makefile integration:**
-- Conditionally build blog_client.o when CONFIG_CEPH_FS && CONFIG_BLOG
-- Clean integration with existing Ceph build system
+1. **Context enumeration:** Splice logger->contexts list to temporary list
+   under logger->lock, then drop the lock. This allows new contexts to be
+   created and logging to continue unhindered during potentially slow
+   debugfs reads (e.g., cat of large log files).
 
-**Design rationale:**
-The bout/boutc macros maintain the same call-site syntax as dout/doutc,
-allowing gradual migration and easy A/B testing. Log levels and subsystem
-filtering remain unchanged. The TLS context is acquired lazily on first use
-per task and recycled automatically on task exit via the BLOG lifecycle
-hooks wired in earlier commits.
+2. **Buffer snapshot:** For each context, acquire pf->lock, snapshot the
+   buffer (head pointer and capacity), copy data to temporary buffer, then
+   drop pf->lock. This prevents concurrent writers from corrupting the read
+   while minimizing lock hold time.
 
-No existing Ceph logging is modified in this commit. The infrastructure is
-in place but inactive until logging call sites are converted to bout/boutc
-in subsequent commits.
+3. **Context restoration:** After iteration completes, splice the temporary
+   list back onto logger->contexts under the lock.
+
+This design prevents the deadlock scenario where holding logger->lock during
+debugfs read would block all new context allocations, while holding pf->lock
+during deserialization would block all logging on that context.
+
+**debugfs.c modifications:**
+- Call ceph_blog_debugfs_init() during Ceph debugfs setup when CONFIG_BLOG
+  is enabled, registering BLOG-specific entries alongside existing debug
+  files (e.g., mds_sessions, caps, etc.)
+- Call ceph_blog_debugfs_cleanup() during teardown to remove entries
+
+**Output format:**
+Each log entry is displayed as a single line with timestamp and deserialized
+message, making it easy to parse and correlate with kernel events. Format
+strings are resolved via the BLOG source ID registry.
+
+No actual logging is performed yet; dout/doutc macros remain unchanged in
+Ceph code. This commit only establishes the drain path for binary log
+consumption. Subsequent commits will activate BLOG by converting logging
+call sites to bout/boutc.
 
 Signed-off-by: Alex Markuze <amarkuze@redhat.com>
 ---
- fs/ceph/Makefile               |   2 +
- fs/ceph/blog_client.c          | 244 +++++++++++++++++++++++++++++++++
- include/linux/ceph/ceph_blog.h | 124 +++++++++++++++++
- 3 files changed, 370 insertions(+)
- create mode 100644 fs/ceph/blog_client.c
- create mode 100644 include/linux/ceph/ceph_blog.h
+ fs/ceph/blog_debugfs.c | 361 +++++++++++++++++++++++++++++++++++++++++
+ fs/ceph/debugfs.c      |  33 +++-
+ 2 files changed, 388 insertions(+), 6 deletions(-)
+ create mode 100644 fs/ceph/blog_debugfs.c
 
-diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
-index 1f77ca04c426..ccb542870ab3 100644
---- a/fs/ceph/Makefile
-+++ b/fs/ceph/Makefile
-@@ -10,6 +10,8 @@ ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
- 	mds_client.o mdsmap.o strings.o ceph_frag.o \
- 	debugfs.o util.o metric.o
- 
-+ceph-$(CONFIG_BLOG) += blog_client.o blog_debugfs.o
-+
- ceph-$(CONFIG_CEPH_FSCACHE) += cache.o
- ceph-$(CONFIG_CEPH_FS_POSIX_ACL) += acl.o
- ceph-$(CONFIG_FS_ENCRYPTION) += crypto.o
-diff --git a/fs/ceph/blog_client.c b/fs/ceph/blog_client.c
+diff --git a/fs/ceph/blog_debugfs.c b/fs/ceph/blog_debugfs.c
 new file mode 100644
-index 000000000000..2d9c7e37f918
+index 000000000000..b34b6829b444
 --- /dev/null
-+++ b/fs/ceph/blog_client.c
-@@ -0,0 +1,244 @@
++++ b/fs/ceph/blog_debugfs.c
+@@ -0,0 +1,361 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Ceph client ID management for BLOG integration
++ * Ceph BLOG debugfs interface
 + *
-+ * Maintains mapping between Ceph's fsid/global_id and BLOG client IDs
++ * Provides debugfs entries to view and manage BLOG entries for Ceph
 + */
 +
 +#include <linux/module.h>
++#include <linux/debugfs.h>
++#include <linux/seq_file.h>
 +#include <linux/slab.h>
-+#include <linux/spinlock.h>
 +#include <linux/string.h>
++#include <linux/jiffies.h>
++#include <linux/timekeeping.h>
 +#include <linux/ceph/ceph_debug.h>
-+#include <linux/ceph/libceph.h>
 +#include <linux/ceph/ceph_blog.h>
 +#include <linux/blog/blog.h>
++#include <linux/blog/blog_des.h>
 +
-+/* Ceph's BLOG module context */
-+struct blog_module_context *ceph_blog_ctx;
-+EXPORT_SYMBOL(ceph_blog_ctx);
++static struct dentry *ceph_blog_debugfs_dir;
 +
-+/* Ceph's logger - direct access to the logger from module context */
-+struct blog_logger *ceph_logger;
-+EXPORT_SYMBOL(ceph_logger);
-+
-+/* Global client mapping state */
-+static struct {
-+	struct ceph_blog_client_info client_map[CEPH_BLOG_MAX_CLIENTS];
-+	u32 next_client_id;
-+	spinlock_t lock;  /* protects client_map */
-+	bool initialized;
-+} ceph_blog_state = {
-+	.next_client_id = 1,  /* Start from 1, 0 is reserved */
-+	.lock = __SPIN_LOCK_UNLOCKED(ceph_blog_state.lock),
-+	.initialized = false,
-+};
-+
-+static bool ceph_blog_ids_match(const struct ceph_blog_client_info *entry,
-+				     const char *fsid, u64 global_id)
-+{
-+	if (!entry)
-+		return false;
-+	if (entry->global_id != global_id)
-+		return false;
-+	return !memcmp(entry->fsid, fsid, sizeof(entry->fsid));
-+}
++static int jiffies_to_formatted_time(u64 jiffies_value, char *buffer,
++	size_t buffer_len);
 +
 +/**
-+ * ceph_blog_init - Initialize Ceph BLOG integration
++ * blog_entries_show - Show all BLOG entries for Ceph
 + *
-+ * Creates a module-specific BLOG context for Ceph and initializes
-+ * the client ID mapping state.
++ * Iterates through all contexts and their pagefrags, deserializing entries
++ * using BLOG's deserialization with Ceph's client callback
++ */
++static int blog_entries_show(struct seq_file *s, void *p)
++{
++	LIST_HEAD(snapshot);
++	struct blog_tls_ctx *ctx;
++	struct blog_log_iter iter;
++	struct blog_log_entry *entry;
++	char output_buf[1024];
++	int ret;
++	int entry_count = 0;
++	int ctx_count = 0;
++
++	if (!ceph_blog_ctx || !ceph_blog_ctx->logger) {
++		seq_puts(s, "Ceph BLOG context not initialized\n");
++		return 0;
++	}
++
++	/* Detach the current context list so producers can continue unhindered */
++	spin_lock(&ceph_blog_ctx->logger->lock);
++	list_splice_init(&ceph_blog_ctx->logger->contexts, &snapshot);
++	spin_unlock(&ceph_blog_ctx->logger->lock);
++
++	list_for_each_entry(ctx, &snapshot, list) {
++		struct blog_pagefrag *pf = blog_ctx_pf(ctx);
++		u64 head;
++
++		ctx_count++;
++
++		/* Lock to prevent buffer reset/recycling during iteration */
++		spin_lock(&pf->lock);
++		head = pf->head;
++
++		if (!head) {
++			spin_unlock(&pf->lock);
++			continue;
++		}
++
++		/* Initialize iterator with head snapshot, iterate in-place */
++		blog_log_iter_init(&iter, pf, head);
++
++		while ((entry = blog_log_iter_next(&iter)) != NULL) {
++			entry_count++;
++			memset(output_buf, 0, sizeof(output_buf));
++			ret = blog_des_entry(ceph_blog_ctx->logger, entry, output_buf,
++				     sizeof(output_buf), ceph_blog_client_des_callback);
++			if (ret < 0) {
++				seq_printf(s, "[Error deserializing entry %d: %d]\n",
++					   entry_count, ret);
++			} else {
++				char time_buf[64];
++				u64 entry_jiffies = ctx->base_jiffies + entry->ts_delta;
++				if (jiffies_to_formatted_time(entry_jiffies, time_buf,
++					sizeof(time_buf)) < 0)
++					strscpy(time_buf, "(invalid)", sizeof(time_buf));
++				seq_printf(s, "%s %s\n", time_buf, output_buf);
++			}
++		}
++
++		spin_unlock(&pf->lock);
++	}
++
++	/* Merge snapshot back into main list, preserving any new contexts */
++	spin_lock(&ceph_blog_ctx->logger->lock);
++	list_splice_tail_init(&snapshot, &ceph_blog_ctx->logger->contexts);
++	spin_unlock(&ceph_blog_ctx->logger->lock);
++
++	return 0;
++}
++
++static int blog_entries_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, blog_entries_show, inode->i_private);
++}
++
++static const struct file_operations blog_entries_fops = {
++	.open = blog_entries_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
++
++/**
++ * blog_stats_show - Show BLOG statistics
++ */
++static int blog_stats_show(struct seq_file *s, void *p)
++{
++	seq_puts(s, "Ceph BLOG Statistics\n");
++	seq_puts(s, "====================\n\n");
++
++	if (!ceph_blog_ctx || !ceph_blog_ctx->logger) {
++		seq_puts(s, "Ceph BLOG context not initialized\n");
++		return 0;
++	}
++
++	seq_puts(s, "Ceph Module Logger State:\n");
++	seq_printf(s, "  Total contexts allocated: %lu\n",
++		   ceph_blog_ctx->logger->total_contexts_allocated);
++	seq_printf(s, "  Next context ID: %llu\n", ceph_blog_ctx->logger->next_ctx_id);
++	seq_printf(s, "  Next source ID: %u\n",
++		   atomic_read(&ceph_blog_ctx->logger->next_source_id));
++
++	seq_puts(s, "\nAllocation Batch:\n");
++	seq_printf(s, "  Full magazines: %u\n", ceph_blog_ctx->logger->alloc_batch.nr_full);
++	seq_printf(s, "  Empty magazines: %u\n", ceph_blog_ctx->logger->alloc_batch.nr_empty);
++
++	seq_puts(s, "\nLog Batch:\n");
++	seq_printf(s, "  Full magazines: %u\n", ceph_blog_ctx->logger->log_batch.nr_full);
++	seq_printf(s, "  Empty magazines: %u\n", ceph_blog_ctx->logger->log_batch.nr_empty);
++
++	return 0;
++}
++
++static int blog_stats_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, blog_stats_show, inode->i_private);
++}
++
++static const struct file_operations blog_stats_fops = {
++	.open = blog_stats_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
++
++/**
++ * blog_sources_show - Show all registered source locations
++ */
++static int blog_sources_show(struct seq_file *s, void *p)
++{
++	struct blog_source_info *source;
++	u32 id;
++	int count = 0;
++
++	seq_puts(s, "Ceph BLOG Source Locations\n");
++	seq_puts(s, "===========================\n\n");
++
++	if (!ceph_blog_ctx || !ceph_blog_ctx->logger) {
++		seq_puts(s, "Ceph BLOG context not initialized\n");
++		return 0;
++	}
++
++	for (id = 1; id < BLOG_MAX_SOURCE_IDS; id++) {
++		source = blog_get_source_info(ceph_blog_ctx->logger, id);
++		if (!source || !source->file)
++			continue;
++
++		count++;
++		seq_printf(s, "ID %u: %s:%s:%u\n", id,
++			  source->file, source->func, source->line);
++		seq_printf(s, "  Format: %s\n", source->fmt ? source->fmt : "(null)");
++		seq_printf(s, "  Warnings: %d\n", source->warn_count);
++
++#if BLOG_TRACK_USAGE
++		seq_printf(s, "  NAPI usage: %d calls, %d bytes\n",
++			  atomic_read(&source->napi_usage),
++			  atomic_read(&source->napi_bytes));
++		seq_printf(s, "  Task usage: %d calls, %d bytes\n",
++			  atomic_read(&source->task_usage),
++			  atomic_read(&source->task_bytes));
++#endif
++		seq_puts(s, "\n");
++	}
++
++	seq_printf(s, "Total registered sources: %d\n", count);
++
++	return 0;
++}
++
++static int blog_sources_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, blog_sources_show, inode->i_private);
++}
++
++static const struct file_operations blog_sources_fops = {
++	.open = blog_sources_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
++
++/**
++ * blog_clients_show - Show all registered Ceph clients
++ */
++static int blog_clients_show(struct seq_file *s, void *p)
++{
++	u32 id;
++	int count = 0;
++	const struct ceph_blog_client_info *info;
++
++	seq_puts(s, "Ceph BLOG Registered Clients\n");
++	seq_puts(s, "=============================\n\n");
++
++	for (id = 1; id < CEPH_BLOG_MAX_CLIENTS; id++) {
++		info = ceph_blog_get_client_info(id);
++		if (!info || info->global_id == 0)
++			continue;
++
++		count++;
++
++		seq_printf(s, "Client ID %u:\n", id);
++		seq_printf(s, "  FSID: %pU\n", info->fsid);
++		seq_printf(s, "  Global ID: %llu\n", info->global_id);
++		seq_puts(s, "\n");
++	}
++
++	seq_printf(s, "Total registered clients: %d\n", count);
++
++	return 0;
++}
++
++static int blog_clients_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, blog_clients_show, inode->i_private);
++}
++
++static const struct file_operations blog_clients_fops = {
++	.open = blog_clients_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
++
++/**
++ * blog_clear_write - Clear all BLOG entries (write-only)
++ */
++static ssize_t blog_clear_write(struct file *file, const char __user *buf,
++				size_t count, loff_t *ppos)
++{
++	char cmd[16];
++
++	if (count >= sizeof(cmd))
++		return -EINVAL;
++
++	if (copy_from_user(cmd, buf, count))
++		return -EFAULT;
++
++	cmd[count] = '\0';
++
++	/* Only accept "clear" command */
++	if (strncmp(cmd, "clear", 5) != 0)
++		return -EINVAL;
++
++	/* Reset all contexts */
++	if (ceph_blog_ctx && ceph_blog_ctx->logger) {
++		struct blog_tls_ctx *tls_ctx;
++
++		spin_lock(&ceph_blog_ctx->logger->lock);
++		list_for_each_entry(tls_ctx, &ceph_blog_ctx->logger->contexts, list) {
++			blog_pagefrag_reset(blog_ctx_pf(tls_ctx));
++		}
++		spin_unlock(&ceph_blog_ctx->logger->lock);
++		pr_info("ceph: BLOG entries cleared via debugfs\n");
++	}
++
++	return count;
++}
++
++static const struct file_operations blog_clear_fops = {
++	.write = blog_clear_write,
++};
++
++/**
++ * ceph_blog_debugfs_init - Initialize Ceph BLOG debugfs entries
++ * @parent: Parent debugfs directory (usually ceph root)
 + *
 + * Return: 0 on success, negative error code on failure
 + */
-+int ceph_blog_init(void)
++int ceph_blog_debugfs_init(struct dentry *parent)
 +{
-+	if (ceph_blog_state.initialized)
-+		return 0;
-+
-+	/* Create Ceph's module-specific BLOG context */
-+	ceph_blog_ctx = blog_module_init("ceph");
-+	if (!ceph_blog_ctx) {
-+		pr_err("ceph: Failed to initialize BLOG module context\n");
-+		return -ENOMEM;
-+	}
-+
-+	/* Set ceph_logger for direct access to the logger */
-+	ceph_logger = ceph_blog_ctx->logger;
-+
-+	/* Initialize client mapping state */
-+	memset(ceph_blog_state.client_map, 0, sizeof(ceph_blog_state.client_map));
-+	ceph_blog_state.next_client_id = 1;
-+	ceph_blog_state.initialized = true;
-+
-+	pr_info("ceph: BLOG module context and client mapping initialized\n");
-+	return 0;
-+}
-+EXPORT_SYMBOL(ceph_blog_init);
-+
-+/**
-+ * ceph_blog_cleanup - Clean up Ceph BLOG integration
-+ *
-+ * Cleans up Ceph's module-specific BLOG context and client mappings.
-+ */
-+void ceph_blog_cleanup(void)
-+{
-+	if (!ceph_blog_state.initialized)
-+		return;
-+
-+	/* Clean up client mapping state */
-+	spin_lock(&ceph_blog_state.lock);
-+	memset(ceph_blog_state.client_map, 0, sizeof(ceph_blog_state.client_map));
-+	ceph_blog_state.next_client_id = 1;
-+	ceph_blog_state.initialized = false;
-+	spin_unlock(&ceph_blog_state.lock);
-+
-+	/* Clean up module-specific BLOG context */
-+	if (ceph_blog_ctx) {
-+		blog_module_cleanup(ceph_blog_ctx);
-+		ceph_blog_ctx = NULL;
-+		ceph_logger = NULL;
-+	}
-+
-+	pr_info("ceph: BLOG module context and client mapping cleaned up\n");
-+}
-+EXPORT_SYMBOL(ceph_blog_cleanup);
-+
-+/**
-+ * ceph_blog_check_client_id - Check if a client ID matches the given fsid:global_id pair
-+ * @id: Client ID to check
-+ * @fsid: Client FSID to compare
-+ * @global_id: Client global ID to compare
-+ *
-+ * This preserves the exact functionality of ceph_san_check_client_id.
-+ * Returns the actual ID of the pair. If the given ID doesn't match, scans for
-+ * existing matches or allocates a new ID if no match is found.
-+ *
-+ * Return: Client ID for this fsid/global_id pair
-+ */
-+u32 ceph_blog_check_client_id(u32 id, const char *fsid, u64 global_id)
-+{
-+	u32 found_id = 0;
-+	struct ceph_blog_client_info *entry;
-+
-+	if (unlikely(!ceph_blog_state.initialized)) {
-+		WARN_ON_ONCE(1);  /* Should never happen - init_ceph() initializes BLOG */
-+		return 0;  /* Drop the log entry */
-+	}
-+
-+	spin_lock(&ceph_blog_state.lock);
-+
-+	/* Reuse caller-provided hint when it still matches */
-+	if (id != 0 && id < CEPH_BLOG_MAX_CLIENTS) {
-+		entry = &ceph_blog_state.client_map[id];
-+		if (ceph_blog_ids_match(entry, fsid, global_id)) {
-+			found_id = id;
-+			goto out;
-+		}
-+	}
-+
-+	/* Search for an existing entry with matching identity */
-+	for (id = 1; id < CEPH_BLOG_MAX_CLIENTS; id++) {
-+		entry = &ceph_blog_state.client_map[id];
-+		if (ceph_blog_ids_match(entry, fsid, global_id)) {
-+			found_id = id;
-+			goto out;
-+		}
-+	}
-+
-+	/* Assign new identifier, falling back to overflow slot if exhausted */
-+	if (ceph_blog_state.next_client_id >= CEPH_BLOG_MAX_CLIENTS - 1) {
-+		found_id = CEPH_BLOG_MAX_CLIENTS - 1;
-+		entry = &ceph_blog_state.client_map[found_id];
-+	} else {
-+		found_id = ceph_blog_state.next_client_id++;
-+		entry = &ceph_blog_state.client_map[found_id];
-+	}
-+
-+	memset(entry, 0, sizeof(*entry));
-+	memcpy(entry->fsid, fsid, sizeof(entry->fsid));
-+	entry->global_id = global_id;
-+
-+	pr_info("ceph: allocating new BLOG client ID %u for fsid=%pU global_id=%llu\n",
-+		found_id, fsid, global_id);
-+
-+out:
-+	spin_unlock(&ceph_blog_state.lock);
-+	return found_id;
-+}
-+EXPORT_SYMBOL(ceph_blog_check_client_id);
-+
-+/**
-+ * ceph_blog_get_client_info - Get client info for a given ID
-+ * @id: Client ID
-+ *
-+ * Return: Client information for this ID, or NULL if invalid
-+ */
-+const struct ceph_blog_client_info *ceph_blog_get_client_info(u32 id)
-+{
-+	if (!ceph_blog_state.initialized || id == 0 || id >= CEPH_BLOG_MAX_CLIENTS)
-+		return NULL;
-+	return &ceph_blog_state.client_map[id];
-+}
-+EXPORT_SYMBOL(ceph_blog_get_client_info);
-+
-+/**
-+ * ceph_blog_client_des_callback - Deserialization callback for Ceph client info
-+ * @buf: Output buffer
-+ * @size: Buffer size
-+ * @client_id: Client ID to deserialize
-+ *
-+ * This is the callback that BLOG will use to deserialize client information.
-+ *
-+ * Return: Number of bytes written to buffer
-+ */
-+int ceph_blog_client_des_callback(char *buf, size_t size, u8 client_id)
-+{
-+	const struct ceph_blog_client_info *info;
-+
-+	if (!buf || !size)
++	if (!parent)
 +		return -EINVAL;
 +
-+	info = ceph_blog_get_client_info(client_id);
-+	if (!info)
-+		return snprintf(buf, size, "[unknown_client_%u]", client_id);
++	/* Create blog subdirectory */
++	ceph_blog_debugfs_dir = debugfs_create_dir("blog", parent);
++	if (!ceph_blog_debugfs_dir)
++		return -ENOMEM;
 +
-+	/* Use %pU to format fsid, matching boutc and other Ceph client logging */
-+	return snprintf(buf, size, "[%pU %llu] ",
-+			info->fsid, info->global_id);
++	/* Create debugfs entries */
++	debugfs_create_file("entries", 0444, ceph_blog_debugfs_dir, NULL,
++			   &blog_entries_fops);
++
++	debugfs_create_file("stats", 0444, ceph_blog_debugfs_dir, NULL,
++			   &blog_stats_fops);
++
++	debugfs_create_file("sources", 0444, ceph_blog_debugfs_dir, NULL,
++			   &blog_sources_fops);
++
++	debugfs_create_file("clients", 0444, ceph_blog_debugfs_dir, NULL,
++			   &blog_clients_fops);
++
++	debugfs_create_file("clear", 0200, ceph_blog_debugfs_dir, NULL,
++			   &blog_clear_fops);
++
++	pr_info("ceph: BLOG debugfs initialized\n");
++	return 0;
 +}
-+EXPORT_SYMBOL(ceph_blog_client_des_callback);
++EXPORT_SYMBOL(ceph_blog_debugfs_init);
 +
 +/**
-+ * ceph_blog_get_client_id - Get or allocate client ID for a Ceph client
-+ * @client: Ceph client structure
-+ *
-+ * Return: Client ID for this client
++ * ceph_blog_debugfs_cleanup - Clean up Ceph BLOG debugfs entries
 + */
-+u32 ceph_blog_get_client_id(struct ceph_client *client)
++void ceph_blog_debugfs_cleanup(void)
 +{
-+	u32 cached = 0;
-+	u32 id;
-+
-+	if (!client)
-+		return 0;
-+
-+#ifdef CONFIG_BLOG
-+	cached = READ_ONCE(client->blog_client_id);
-+#endif
-+
-+	id = ceph_blog_check_client_id(cached,
-+					 client->fsid.fsid,
-+					 client->monc.auth->global_id);
-+	if (!id)
-+		return 0;
-+
-+#ifdef CONFIG_BLOG
-+	if (READ_ONCE(client->blog_client_id) != id)
-+		WRITE_ONCE(client->blog_client_id, id);
-+#endif
-+
-+	return id;
++	debugfs_remove_recursive(ceph_blog_debugfs_dir);
++	ceph_blog_debugfs_dir = NULL;
++	pr_info("ceph: BLOG debugfs cleaned up\n");
 +}
-+EXPORT_SYMBOL(ceph_blog_get_client_id);
-diff --git a/include/linux/ceph/ceph_blog.h b/include/linux/ceph/ceph_blog.h
-new file mode 100644
-index 000000000000..0591e3f29703
---- /dev/null
-+++ b/include/linux/ceph/ceph_blog.h
-@@ -0,0 +1,124 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Ceph integration with BLOG (Binary LOGging)
-+ *
-+ * Provides compatibility layer and Ceph-specific extensions
-+ */
-+#ifndef CEPH_BLOG_H
-+#define CEPH_BLOG_H
++EXPORT_SYMBOL(ceph_blog_debugfs_cleanup);
 +
-+#include <linux/blog/blog.h>
-+#include <linux/blog/blog_module.h>
-+#include <linux/ceph/libceph.h>
++static int jiffies_to_formatted_time(u64 jiffies_value, char *buffer,
++	size_t buffer_len)
++{
++	u64 now_ns = ktime_get_real_ns();
++	u64 now_jiffies = get_jiffies_64();
++	u64 delta_jiffies = (now_jiffies > jiffies_value) ?
++		now_jiffies - jiffies_value : 0;
++	u64 delta_ns = jiffies64_to_nsecs(delta_jiffies);
++	u64 event_ns = (delta_ns > now_ns) ? 0 : now_ns - delta_ns;
++	struct timespec64 event_ts = ns_to_timespec64(event_ns);
++	struct tm tm_time;
 +
-+/* Client ID mapping structure - preserves ceph_san_client_id fields */
-+struct ceph_blog_client_info {
-+	char fsid[16];         /* Client FSID */
-+	u64 global_id;         /* Client global ID */
-+};
++	if (!buffer || !buffer_len)
++		return -EINVAL;
 +
-+/* Constants */
-+#define CEPH_BLOG_MAX_CLIENTS 256
++	time64_to_tm(event_ts.tv_sec, 0, &tm_time);
 +
-+/* Ceph's BLOG module context */
-+extern struct blog_module_context *ceph_blog_ctx;
++	return scnprintf(buffer, buffer_len,
++			"%04ld-%02d-%02d %02d:%02d:%02d.%03lu",
++			tm_time.tm_year + 1900, tm_time.tm_mon + 1, tm_time.tm_mday,
++			tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec,
++			(unsigned long)(event_ts.tv_nsec / NSEC_PER_MSEC));
++}
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index f3fe786b4143..9b9c89b88fca 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -9,11 +9,18 @@
+ #include <linux/seq_file.h>
+ #include <linux/math64.h>
+ #include <linux/ktime.h>
++#include <linux/jiffies.h>
++#include <linux/timekeeping.h>
++#include <linux/rtc.h>
++#include <linux/printk.h>
++#include <linux/time.h>
++#include <linux/time_types.h>
+ 
+ #include <linux/ceph/libceph.h>
+ #include <linux/ceph/mon_client.h>
+ #include <linux/ceph/auth.h>
+ #include <linux/ceph/debugfs.h>
++#include <linux/ceph/ceph_blog.h>
+ 
+ #include "super.h"
+ 
+@@ -360,6 +367,7 @@ static int status_show(struct seq_file *s, void *p)
+ 	return 0;
+ }
+ 
 +
-+/* Ceph's logger - direct access to the logger for macros */
-+extern struct blog_logger *ceph_logger;
+ DEFINE_SHOW_ATTRIBUTE(mdsmap);
+ DEFINE_SHOW_ATTRIBUTE(mdsc);
+ DEFINE_SHOW_ATTRIBUTE(caps);
+@@ -396,7 +404,7 @@ DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
+ 
+ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
+ {
+-	doutc(fsc->client, "begin\n");
++	boutc(fsc->client, "begin\n");
+ 	debugfs_remove(fsc->debugfs_bdi);
+ 	debugfs_remove(fsc->debugfs_congestion_kb);
+ 	debugfs_remove(fsc->debugfs_mdsmap);
+@@ -405,14 +413,20 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
+ 	debugfs_remove(fsc->debugfs_status);
+ 	debugfs_remove(fsc->debugfs_mdsc);
+ 	debugfs_remove_recursive(fsc->debugfs_metrics_dir);
+-	doutc(fsc->client, "done\n");
 +
-+/* Forward declaration for ceph_client */
-+struct ceph_client;
-+
-+/* Compatibility macros for easy migration from ceph_san to BLOG */
-+#if IS_ENABLED(CONFIG_BLOG)
-+
-+/* Ceph BLOG client management functions */
-+int ceph_blog_init(void);
-+void ceph_blog_cleanup(void);
-+u32 ceph_blog_check_client_id(u32 id, const char *fsid, u64 global_id);
-+u32 ceph_blog_get_client_id(struct ceph_client *client);
-+const struct ceph_blog_client_info *ceph_blog_get_client_info(u32 id);
-+int ceph_blog_client_des_callback(char *buf, size_t size, u8 client_id);
-+
-+/*
-+ * All ceph_san compatibility removed - use only BLOG with per-module contexts
-+ * CEPH_SAN has been replaced entirely by BLOG per-module logging
-+ */
-+
-+/*
-+ * Ceph-specific logging macros - use core BLOG functions with ceph_logger
-+ * Note: Only client-aware macros (doutc, boutc) store client_id,
-+ * regular macros (dout, bout) do not include client information
-+ */
-+#define CEPH_BLOG_LOG(fmt, ...) \
-+	do { \
-+		static u32 __source_id; \
-+		static size_t __size; \
-+		void *___buffer = NULL; \
-+		if (unlikely(!ceph_logger)) \
-+			break; \
-+		if (unlikely(__source_id == 0)) { \
-+			__source_id = blog_get_source_id(ceph_logger, \
-+				kbasename(__FILE__), __func__, __LINE__, fmt); \
-+			__size = blog_cnt(__VA_ARGS__); \
-+		} \
-+		___buffer = blog_log(ceph_logger, __source_id, 0, __size); \
-+		if (likely(___buffer)) { \
-+			void *___tmp = ___buffer; \
-+			if (__size > 0) \
-+				blog_ser(___buffer, ##__VA_ARGS__); \
-+			blog_log_commit(ceph_logger, ___buffer - ___tmp); \
-+		} \
-+	} while (0)
-+
-+#define CEPH_BLOG_LOG_CLIENT(client, fmt, ...) \
-+	do { \
-+		static u32 __source_id; \
-+		static size_t __size; \
-+		void *___buffer = NULL; \
-+		u32 __client_id; \
-+		if (unlikely(!ceph_logger)) \
-+			break; \
-+		if (unlikely(__source_id == 0)) { \
-+			__source_id = blog_get_source_id(ceph_logger, \
-+				kbasename(__FILE__), __func__, __LINE__, fmt); \
-+			__size = blog_cnt(__VA_ARGS__); \
-+		} \
-+		__client_id = ceph_blog_get_client_id(client); \
-+		___buffer = blog_log(ceph_logger, __source_id, __client_id, __size); \
-+		if (likely(___buffer)) { \
-+			void *___tmp = ___buffer; \
-+			if (__size > 0) \
-+				blog_ser(___buffer, ##__VA_ARGS__); \
-+			blog_log_commit(ceph_logger, ___buffer - ___tmp); \
-+		} \
-+	} while (0)
-+
-+/* No legacy ceph_san compatibility - use CEPH_BLOG_LOG* macros only */
-+
-+#else /* !CONFIG_BLOG */
-+
-+/* Stub macros when BLOG is not enabled */
-+#define CEPH_BLOG_LOG(fmt, ...) do {} while (0)
-+#define CEPH_BLOG_LOG_CLIENT(client, fmt, ...) do {} while (0)
-+
-+/* Stub functions should be static inline, not macros */
-+static inline int ceph_blog_init(void) { return 0; }
-+static inline void ceph_blog_cleanup(void) { }
-+static inline u32 ceph_blog_get_client_id(struct ceph_client *client) { return 0; }
-+static inline u32 ceph_blog_check_client_id(u32 id, const char *fsid, u64 global_id) { return 0; }
-+static inline const struct ceph_blog_client_info *ceph_blog_get_client_info(u32 id) { return NULL; }
-+static inline int ceph_blog_client_des_callback(char *buf, size_t size, u8 client_id) { return 0; }
-+
-+#endif /* CONFIG_BLOG */
-+
-+/* Debugfs support */
-+#ifdef CONFIG_DEBUG_FS
-+int ceph_blog_debugfs_init(struct dentry *parent);
-+void ceph_blog_debugfs_cleanup(void);
-+#else
-+static inline int ceph_blog_debugfs_init(struct dentry *parent) { return 0; }
-+static inline void ceph_blog_debugfs_cleanup(void) {}
++#ifdef CONFIG_BLOG
++	/* Clean up BLOG debugfs entries */
++	ceph_blog_debugfs_cleanup();
 +#endif
 +
-+#endif /* CEPH_BLOG_H */
++	boutc(fsc->client, "done\n");
+ }
+ 
+ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+ {
+ 	char name[NAME_MAX];
+ 
+-	doutc(fsc->client, "begin\n");
++	boutc(fsc->client, "begin\n");
+ 	fsc->debugfs_congestion_kb =
+ 		debugfs_create_file("writeback_congestion_kb",
+ 				    0600,
+@@ -457,6 +471,8 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+ 						  fsc,
+ 						  &status_fops);
+ 
++
++
+ 	fsc->debugfs_metrics_dir = debugfs_create_dir("metrics",
+ 						      fsc->client->debugfs_dir);
+ 
+@@ -468,9 +484,14 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+ 			    &metrics_size_fops);
+ 	debugfs_create_file("caps", 0400, fsc->debugfs_metrics_dir, fsc,
+ 			    &metrics_caps_fops);
+-	doutc(fsc->client, "done\n");
+-}
+ 
++#ifdef CONFIG_BLOG
++	/* Initialize BLOG debugfs entries */
++	ceph_blog_debugfs_init(fsc->client->debugfs_dir);
++#endif
++
++	boutc(fsc->client, "done\n");
++}
+ 
+ #else  /* CONFIG_DEBUG_FS */
+ 
+@@ -482,4 +503,4 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
+ {
+ }
+ 
+-#endif  /* CONFIG_DEBUG_FS */
++#endif	/* CONFIG_DEBUG_FS */
 -- 
 2.34.1
 
