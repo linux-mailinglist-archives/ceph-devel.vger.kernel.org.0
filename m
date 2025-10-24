@@ -1,169 +1,240 @@
-Return-Path: <ceph-devel+bounces-3863-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3864-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92623C03037
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Oct 2025 20:35:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7F4C05310
+	for <lists+ceph-devel@lfdr.de>; Fri, 24 Oct 2025 10:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA373A2717
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Oct 2025 18:34:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5FE7503CFA
+	for <lists+ceph-devel@lfdr.de>; Fri, 24 Oct 2025 08:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3416034C134;
-	Thu, 23 Oct 2025 18:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FB930597B;
+	Fri, 24 Oct 2025 08:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pIYhaEOe"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CmeR/de2"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBBB34679E;
-	Thu, 23 Oct 2025 18:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB3D23505E
+	for <ceph-devel@vger.kernel.org>; Fri, 24 Oct 2025 08:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244440; cv=none; b=kbyC1xfbwCdkb+zTYqXL/N8zazZyyo0Kiwgy4XiTUr06JdXXr6dkPpnvxr9g4A343Coyg9/wb7Y8pZI3jfjmWye6i4uXX/dPIbg6/9BOg20qZrw28EeuCrqfbg6ZNB5twi4ixlDN8xqFWBUB1OE6KbGRji6f/pe6qHk7J4NTb8c=
+	t=1761295396; cv=none; b=sp68mcPBQ2MZILdxN6GLTlLjA3LWaMWztErjaFP5o1vStMVHwaSzV0YvrdJY8LAh8dVYwmycCChTD9TyKQTVaDdw4BsEJ4N/FVUW1TwdiiWtvOTMMWfWXUCuzyhelvcLbZuEXUJiGsWSSBi1Ms5WLU8VcF0bG0FK4zsr3iG86co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244440; c=relaxed/simple;
-	bh=WE0GiHXM5wLFmCst3tPXj2iOCj0/6Z0FGnXt6b0lhOU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=I19UPiLqFKiUUrK6NXS0BKcpA25YYRfb1mkidYiIKgpVNTRFmluESnq3UGgCDVtBqjg+fDwydNv5Q9IB0QIphHarH6M7U7CG3zXDf3+BVVU4ohAJw0wQ5jU9oMm4gUSSeGMH51wfZtyaDCFAgOIzRraiTxCDgqXcCWUO12VnRoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pIYhaEOe; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761244417; x=1761849217; i=markus.elfring@web.de;
-	bh=WE0GiHXM5wLFmCst3tPXj2iOCj0/6Z0FGnXt6b0lhOU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pIYhaEOe9Cnm3+0JxJx5IG1rhqzaXEmXT9Yi1q4E8CoPG/KsMHvvSHti4LQbdLQ/
-	 uH/x19FxcTuOUMsm1ZNKpyACwuyZg5TBIYt1kr+BgBBiZlwnxkjjkY1A4DKyXnjjL
-	 sHfbIdaJ7EZxqHn0RA2ag7WLuIJs6Je3Ta/gl0R0cXkWt9vipZC9V5TzeX9Q9oL4a
-	 VvfffhpMO1rpV2ZRgEmjjLivZiOequ+SBjDeJIqJfsE4x4kHinUQMEeWp/3sL64rH
-	 AO/Fb+eo2nq6PcDwCOG+ABdnp9XcENuhzlhsKkvqScLY2Wbox0rfdSqjnDNLdtXYI
-	 ECoTUQSEVTTyp9pyUQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.227]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N30dT-1uBcQ01LuH-00tXZ7; Thu, 23
- Oct 2025 20:33:37 +0200
-Message-ID: <6205841f-e395-46f4-99dd-769a8bcad880@web.de>
-Date: Thu, 23 Oct 2025 20:33:36 +0200
+	s=arc-20240116; t=1761295396; c=relaxed/simple;
+	bh=W32GXGwDTigmEJXdMhFruHIsunhUEU+QbllkvpbB4D4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iAKKbRXyBfnzZgjd//ZQVEzWbtoDztCOii6Va4lFbnaSJEEmTjhfgQ4MsPf7KpAe5RylDNnYcE4U7O8+UkK1Dub8FpOi9NKExhXj8ULxBY3OnOVDw6E+2SwwlZ5e9m/tvY11ofgzMyyd8kEl2eU70Jqs/4gIHRlkggkuEIgaXD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CmeR/de2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761295393;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ihAbQbr27WsLP3ns7L6UlAE71u9nLb/VPSGVkAY4Vro=;
+	b=CmeR/de2VWCGHccHwd7DD/Hdft6qWVfPSqLuepIdzamfgogpB7YLGrOCblDdYr+1FGQaQu
+	GcIQ2sM4YsUcQUOVnlnkitY3cVJkStMredjE7plrTmITUxxupirz/zF7UP8Xg3wiJS1yga
+	wrIKjkBd3bij4s2ZcIeOwlIzkyaoA2c=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-168-ZC9tsu-JP02wCcVnJg5wiw-1; Fri, 24 Oct 2025 04:43:12 -0400
+X-MC-Unique: ZC9tsu-JP02wCcVnJg5wiw-1
+X-Mimecast-MFC-AGG-ID: ZC9tsu-JP02wCcVnJg5wiw_1761295391
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b6d4279f147so188799666b.0
+        for <ceph-devel@vger.kernel.org>; Fri, 24 Oct 2025 01:43:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761295391; x=1761900191;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ihAbQbr27WsLP3ns7L6UlAE71u9nLb/VPSGVkAY4Vro=;
+        b=RWaE1gU2tSDJIskdnYiM9LsigVJLe89vHSP4KneD6+7tinZ7hBALSO/DJ6WBnCNu1y
+         GILI3F9VA3DIhCI8mpNHe4pvPNkfd1W6xSyivFZPKhTxAQo903CpszHavlnT+mjNRIjF
+         hPJle1WAek5t7C5tFQ7gACoquTcEaaCUYsI4E/7mTy6OLFPJY3rA0ETIbQLozA+M05vi
+         X90zVJQPIZFaNttexMza6QOpEKF1EgPyQp7+p3Kqbdy3EIv2cxjCppMl6gOIIKp5tdzn
+         e5J+ZB7OKt1+YMYBIjkoYwrNASwDQ0r9xcIWucgmtIkTU6PHWRfW4G4+ElQS6P6EeDWR
+         3vRg==
+X-Gm-Message-State: AOJu0YwYA/DAP4BMEsDvQTap2F0CkzeauU9bYUyKWGBrtmWhFFuQZKrH
+	QzmoSG5Yf9wKJKm1hJKCfviu6wiw0cGq70Xh5Eo01sWb5El0yVGMHAzeQ8uAhCL8myDSRFD7Qdl
+	8lWBDODWfZ35mkpIk94BA01hZWhASA9pRxzwG0x13Y5icefaEfMwbeK5M7rRqJxdsNLysqWaBO6
+	/UL1UKhsUnGrSe2bLe81Fu+L1G3jIrDtLE96PEJY8ncriHXG+tFSoF
+X-Gm-Gg: ASbGnctBi79ntNPzeaoEhhWfo282nVQ1sSYy++aVKWn9lDF5vZ/XQAXbg36FdxvsMuN
+	PltB8fRn3RbXQG1IPzb6N8zNQIZXiGm+Cwu5HzxxLMPFJ6zikaqvMENwWBsZSkcZjhRAvm0sVEA
+	oa46BCRc98iX6xyRseziMZ1fsYH4ErbmkX6gjzX/sYM46zuZgfuHWqMMUqIdcYxqCzYMaLS23PZ
+	m4hbGkLMFdE0hX++XhFOElF2nK1qEDhZyNA/1WqgCY3eyScujlJFKobn/nriobEbxRaIrdWvHFj
+	qg+nOWKqBjZSxmGXSbfzZDOP9aqGkSG/gz+/9mVpYxJEmMwjFjfRjFitA88LauHs67HTl2Ft6Xk
+	OKSBQ1tVH9AvMPoL+FujtHE/RIcO6KPx/
+X-Received: by 2002:a17:906:9f8c:b0:b54:8670:7c2d with SMTP id a640c23a62f3a-b6475511a47mr3482251266b.55.1761295390658;
+        Fri, 24 Oct 2025 01:43:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFOHnkb1mB3ffZrYlSB2E6fBCurSJStxVjsCwJbw8nBPqLnI6mTwLJLcTU5DTEn063YP8uWQA==
+X-Received: by 2002:a17:906:9f8c:b0:b54:8670:7c2d with SMTP id a640c23a62f3a-b6475511a47mr3482245766b.55.1761295390126;
+        Fri, 24 Oct 2025 01:43:10 -0700 (PDT)
+Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d511d010asm469226866b.11.2025.10.24.01.43.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 01:43:09 -0700 (PDT)
+From: Alex Markuze <amarkuze@redhat.com>
+To: ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Liam.Howlett@oracle.com,
+	amarkuze@redhat.com,
+	akpm@linux-foundation.org,
+	bsegall@google.com,
+	david@redhat.com,
+	dietmar.eggemann@arm.com,
+	idryomov@gmail.com,
+	mingo@redhat.com,
+	juri.lelli@redhat.com,
+	kees@kernel.org,
+	lorenzo.stoakes@oracle.com,
+	mgorman@suse.de,
+	mhocko@suse.com,
+	rppt@kernel.org,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	surenb@google.com,
+	vschneid@redhat.com,
+	vincent.guittot@linaro.org,
+	vbabka@suse.cz,
+	xiubli@redhat.com,
+	Slava.Dubeyko@ibm.com
+Subject: [RFC PATCH 0/5] BLOG: per-task logging contexts with Ceph consumer
+Date: Fri, 24 Oct 2025 08:42:54 +0000
+Message-Id: <20251024084259.2359693-1-amarkuze@redhat.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: ethanwu@synology.com
-Cc: ethan198912@gmail.com, fstests@vger.kernel.org,
- ceph-devel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Zorro Lang <zlang@redhat.com>
-References: <20251009093129.2437815-1-ethanwu@synology.com>
-Subject: Re: [PATCH v3] ceph/006: test snapshot data integrity after punch
- hole operations
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251009093129.2437815-1-ethanwu@synology.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iy6w6xSGTabOyzaJhvpou2w2xd9/o7w75dM/hfnOJk3NT3cZCHY
- zg3a8TKdmxipjBw68wK84jU/t3A5pV6niRsQioL7eBIk9+UY1wMkEQvoTOkSqZhJ7mmTx4U
- p9DcNyWyCbxN1Ziu24pXA5jEqt+Cqkd0bKmu6uwPTC3oM0lwv2UiQ3O9NFS6dmvTysHkYrl
- +18kARz7B16pTcq8/27fA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:iwgczpjhgnM=;aIeEINGLxcAP9K2sfdMcBHpM1V1
- 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
- Mn5Ii8qSDaYjyoez+WqMGX1F7Q=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Disclaimer: The contents of this e-mail message and any attachments are =
-confidential and are intended solely for addressee.
+Motivation: improve observability in production by providing subsystemsawith 
+a logger that keeps up with their verbouse unstructured logs and aggregating
+logs at the process context level, akin to userspace TLS. 
 
-See also once more:
-https://subspace.kernel.org/etiquette.html#do-not-include-confidentiality-=
-disclaimers
+Binary LOGging (BLOG) introduces a task-local logging context: each context
+owns a single 512 KiB fragment that cycles through “ready → in use → queued for
+readers → reset → ready” without re-entering the allocator. Writers copy the
+raw parameters they already have; readers format them later when the log is
+inspected.
 
+BLOG borrows ideas from ftrace (captureabinary  data now, format later) but 
+unlike ftrace there is no global ring. Each module registers its own logger,
+manages its own buffers, and keeps the state small enough for production use.
 
-=E2=80=A6
-> If you have received this transmission in error, any use, reproduction o=
-r dissemination of this transmission is strictly prohibited. If you are no=
-t the intended recipient, please immediately notify the sender by reply e-=
-mail or phone and delete this message and its attachments, if any.
+To host the per-module pointers we extend `struct task_struct` with one
+additional `void *`, in line with other task extensions already in the kernel.
+Each module keeps independent batches: `alloc_batch` for contexts with
+refcount 0 and `log_batch` for contexts that have been filled and are waiting
+for readers. The batching layer and buffer management were migrated from the
+existing Ceph SAN logging code, so the behaviour is battle-tested; we simply
+made the buffer inline so every composite stays within a single 512 KiB
+allocation.
 
-Do you expect this action to happen more often with your information?
+The patch series lands the BLOG library first, then wires the task lifecycle,
+and finally switches Ceph’s `bout*` logging macros to BLOG so we exercise the
+new path.
 
-Regards,
-Markus
+Patch summary:
+  1. sched, fork: wire BLOG contexts into task lifecycle
+     - Adds `struct blog_tls_ctx *blog_contexts[BLOG_MAX_MODULES]` to
+       `struct task_struct`.
+     - Fork/exit paths initialise and recycle contexts automatically.
+
+  2. lib: introduce BLOG (Binary LOGging) subsystem
+     - Adds `lib/blog/` sources and headers under `include/linux/blog/`.
+     - Each composite (`struct blog_tls_pagefrag`) consists of the TLS
+       metadata, the pagefrag state, and an inline buffer sized at
+       `BLOG_PAGEFRAG_SIZE - sizeof(struct blog_tls_pagefrag)`.
+
+  3. ceph: add BLOG scaffolding
+     - Introduces `include/linux/ceph/ceph_blog.h` and `fs/ceph/blog_client.c`.
+     - Ceph registers a logger and maintains a client-ID map for the reader
+       callback.
+
+  4. ceph: add BLOG debugfs support
+     - Adds `fs/ceph/blog_debugfs.c` so filled contexts can be drained.
+
+  5. ceph: activate BLOG logging
+     - Switches `bout*` macros to BLOG, making Ceph the first consumer.
+
+With these patches, Ceph now writes its verbose logging to task-local buffers
+managed by BLOG, and the infrastructure is ready for other subsystems that need
+allocation-free, module-owned logging.
+
+Alex Markuze (5):
+  sched, fork: Wire BLOG contexts into task lifecycle
+  lib: Introduce BLOG (Binary LOGging) subsystem
+  ceph: Add BLOG scaffolding
+  ceph: Add BLOG debugfs support
+  ceph: Activate BLOG logging
+
+ fs/ceph/Makefile                   |   2 +
+ fs/ceph/addr.c                     | 130 ++---
+ fs/ceph/blog_client.c              | 244 +++++++++
+ fs/ceph/blog_debugfs.c             | 361 +++++++++++++
+ fs/ceph/caps.c                     | 242 ++++-----
+ fs/ceph/crypto.c                   |  18 +-
+ fs/ceph/debugfs.c                  |  33 +-
+ fs/ceph/dir.c                      |  88 ++--
+ fs/ceph/export.c                   |  20 +-
+ fs/ceph/file.c                     | 130 ++---
+ fs/ceph/inode.c                    | 182 +++----
+ fs/ceph/ioctl.c                    |   6 +-
+ fs/ceph/locks.c                    |  22 +-
+ fs/ceph/mds_client.c               | 278 +++++-----
+ fs/ceph/mdsmap.c                   |   8 +-
+ fs/ceph/quota.c                    |   2 +-
+ fs/ceph/snap.c                     |  66 +--
+ fs/ceph/super.c                    |  82 +--
+ fs/ceph/xattr.c                    |  42 +-
+ include/linux/blog/blog.h          | 515 +++++++++++++++++++
+ include/linux/blog/blog_batch.h    |  54 ++
+ include/linux/blog/blog_des.h      |  46 ++
+ include/linux/blog/blog_module.h   | 329 ++++++++++++
+ include/linux/blog/blog_pagefrag.h |  33 ++
+ include/linux/blog/blog_ser.h      | 275 ++++++++++
+ include/linux/ceph/ceph_blog.h     | 124 +++++
+ include/linux/ceph/ceph_debug.h    |   6 +-
+ include/linux/sched.h              |   7 +
+ kernel/fork.c                      |  37 ++
+ lib/Kconfig                        |   2 +
+ lib/Makefile                       |   2 +
+ lib/blog/Kconfig                   |  56 +++
+ lib/blog/Makefile                  |  15 +
+ lib/blog/blog_batch.c              | 311 ++++++++++++
+ lib/blog/blog_core.c               | 772 ++++++++++++++++++++++++++++
+ lib/blog/blog_des.c                | 385 ++++++++++++++
+ lib/blog/blog_module.c             | 781 +++++++++++++++++++++++++++++
+ lib/blog/blog_pagefrag.c           | 124 +++++
+ 38 files changed, 5163 insertions(+), 667 deletions(-)
+ create mode 100644 fs/ceph/blog_client.c
+ create mode 100644 fs/ceph/blog_debugfs.c
+ create mode 100644 include/linux/blog/blog.h
+ create mode 100644 include/linux/blog/blog_batch.h
+ create mode 100644 include/linux/blog/blog_des.h
+ create mode 100644 include/linux/blog/blog_module.h
+ create mode 100644 include/linux/blog/blog_pagefrag.h
+ create mode 100644 include/linux/blog/blog_ser.h
+ create mode 100644 include/linux/ceph/ceph_blog.h
+ create mode 100644 lib/blog/Kconfig
+ create mode 100644 lib/blog/Makefile
+ create mode 100644 lib/blog/blog_batch.c
+ create mode 100644 lib/blog/blog_core.c
+ create mode 100644 lib/blog/blog_des.c
+ create mode 100644 lib/blog/blog_module.c
+ create mode 100644 lib/blog/blog_pagefrag.c
+
+-- 
+2.34.1
+
 
