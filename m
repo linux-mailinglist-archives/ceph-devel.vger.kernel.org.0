@@ -1,138 +1,101 @@
-Return-Path: <ceph-devel+bounces-3873-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3874-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BB2C08F45
-	for <lists+ceph-devel@lfdr.de>; Sat, 25 Oct 2025 12:50:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 178BAC09250
+	for <lists+ceph-devel@lfdr.de>; Sat, 25 Oct 2025 17:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1BC4047A9
-	for <lists+ceph-devel@lfdr.de>; Sat, 25 Oct 2025 10:50:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 424B6404B40
+	for <lists+ceph-devel@lfdr.de>; Sat, 25 Oct 2025 15:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4962F532F;
-	Sat, 25 Oct 2025 10:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EAwq7C7q"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F033016F7;
+	Sat, 25 Oct 2025 15:00:00 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FC02F5316
-	for <ceph-devel@vger.kernel.org>; Sat, 25 Oct 2025 10:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE24A301460;
+	Sat, 25 Oct 2025 14:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761389455; cv=none; b=r7OZsxkkca8ElGuaeb19gWnap16sPk1ETE3kuFxq4F7wnqXvsva7VsPxa/hppWkYOrv2ki/gR31e+s6ZWBKXLM5EHgLcxTAy2PD7wrKBqWSmuSHI+BgD1/F/zNGyzCIV/x0Zi+3uUb0rK7N0yXIMrmAS+d8YvFUGml4lviuPsCI=
+	t=1761404400; cv=none; b=b9BiEFGDmxKzcqeWpjr8DEf+Zy5VxGDlsmjF0RoP6h5CklzcOfrcJvvrtf0+lQSXyoiPA18BsoKUKayIYWGJ5YWsyaMtKXq/NHsvr2Q/XEUCl1VNUqbBcTOx/ZYHpnIQVjLcCRqDkdzATjksFkbUjGPV9LCb07YM9NWa5gNzw2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761389455; c=relaxed/simple;
-	bh=POkOiJXxYyVdXoybLfPGciVsCYLxYpIyRuwaeTZ4nlg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a26bghwpoL2LsFVEr+lQAdh//Qulv0LkDEEMJH+uMDo1CTJZAxXv57KZ0P3cJ4/FcAe4OFOooEpisFY/zJ8PVwiTTztCVE8DHH1L9+1tkXvSyMsprLy+ZBkG4cM6gl2eV5DzhobIox4EZ9u5fLhf/8J3mqAYlOurU04Y+qXmYlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EAwq7C7q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761389452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=POkOiJXxYyVdXoybLfPGciVsCYLxYpIyRuwaeTZ4nlg=;
-	b=EAwq7C7qAt6Si4hjyiH+tKn59yTrAoRk/hlOL8kDzBy/Q+OcSHCuj2j/YM2baunzcGk1mP
-	v07Slp788osDc32N+NU7DNFQqTRwKMLhcq8l9+JwYcE/qkxbB1lEvl8p0TMEG/JD0TA/g9
-	Hbp2MfpYSrXNCzXPHPlknRm3Sxi22JA=
-Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
- [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-176-1mXnk7MwOQKKHsRy5YZzew-1; Sat, 25 Oct 2025 06:50:50 -0400
-X-MC-Unique: 1mXnk7MwOQKKHsRy5YZzew-1
-X-Mimecast-MFC-AGG-ID: 1mXnk7MwOQKKHsRy5YZzew_1761389450
-Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-5db2a7e1bcaso7183003137.1
-        for <ceph-devel@vger.kernel.org>; Sat, 25 Oct 2025 03:50:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761389450; x=1761994250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=POkOiJXxYyVdXoybLfPGciVsCYLxYpIyRuwaeTZ4nlg=;
-        b=J1k60O8AMUIaXAnsjQ0P5gJSx/9JVlXS0h/8IrccGTfRt+nHDv3p8j9dPhwefO4OJ0
-         dCVlY+81xceZGXbrPyhcMA+M+7JWggFKoW8YyGt0QIOvSkl3EJycrGqJkY0TbpcDSW7K
-         4b/oFiIHEn7fqLdNmZAPSNiEFLZDQP1iEmDqT9K5tvLhtRv25LX5vGwIWx43J4qL5piG
-         x8Z70MW7Wc1SHKUVL28Gm/ad7DoQfE7KmFV9iWdNMBU6njxUZMsyZAMKYk1GjezdlOuc
-         7sN+SJLm103XJsH3o032eU3gNgf3VCvKzd9chmwRbovyMyGuotyjx66Co79Pp8ci5EUV
-         GvoQ==
-X-Gm-Message-State: AOJu0Yztek2VbM5cbBqzgISK8Qn/RQBG8PnFUiMOtf7KWZKCEtGr4x17
-	jNEVi/qG1sTE9rWwQz20t6bb9SVJ/PHdSY3urheay1NKrgHm7RUJZJexIDuieAZWXwPdgam8ice
-	zkgCEw1zBSTWVIGIlltPIFhiBzgyg7kpYx01jF+yHyyD5n8BPUDxKk7VUpFWK8uWFAicm9/CD31
-	I4XvgmUDt73FzD/ojLrLCUaXa6cCkx8BE9NbCKAg==
-X-Gm-Gg: ASbGnctbmdm4chnzS++1R97LARU5oqeRbA4eZTR37AhplzChjohvbsdxuG4rfI1u4KQ
-	vwen4eWaE3yY+W71e6LJfdAq8Qy5esFTmg5oSkp47VNIH17fIwu+xwe0+TCz7tw6oclLuK3ledN
-	TZQrTPfQx4URkdN+hP6ITilF0DXyqNpmjANyq8VyU0JRm26Vj+UJ//PYc5CTYarzCQktoRuoI=
-X-Received: by 2002:a05:6102:32cb:b0:5d5:f6ae:3913 with SMTP id ada2fe7eead31-5db3e1ed199mr1939921137.21.1761389450367;
-        Sat, 25 Oct 2025 03:50:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFwsyffeJ+eI1nKhYc20dry/5VXueJq+gvTP2aaGjDy37dbuMYWFrmN6kkfCaw0QToy5vgyRxRXy6SQbOpVh7I=
-X-Received: by 2002:a05:6102:32cb:b0:5d5:f6ae:3913 with SMTP id
- ada2fe7eead31-5db3e1ed199mr1939895137.21.1761389450000; Sat, 25 Oct 2025
- 03:50:50 -0700 (PDT)
+	s=arc-20240116; t=1761404400; c=relaxed/simple;
+	bh=1JO+EN464i94sSls5+ZcLrofTbrCCyyLTqwSUlS3HrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xh65xheGk8rUV+9Mfk8zVSo/ukC6q8BCGLegxIKJ2LlwajIC8HlomQaI9mme8WDHESLCsq3ZvAfCbSGwFepMlClGiYx9JC7cC6u5E6XqnYt7LWxA751Txf7XOZdEI0+KGOZStNqAoHl0D6Fll1YIeTw+S2V2ISNNAkOuT68OdkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 2A92C56348;
+	Sat, 25 Oct 2025 14:59:49 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 6111E20026;
+	Sat, 25 Oct 2025 14:59:44 +0000 (UTC)
+Date: Sat, 25 Oct 2025 10:59:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+ bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com,
+ idryomov@gmail.com, mingo@redhat.com, juri.lelli@redhat.com,
+ kees@kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de,
+ mhocko@suse.com, rppt@kernel.org, peterz@infradead.org, surenb@google.com,
+ vschneid@redhat.com, vincent.guittot@linaro.org, vbabka@suse.cz,
+ xiubli@redhat.com, Slava.Dubeyko@ibm.com
+Subject: Re: [RFC PATCH 0/5] BLOG: per-task logging contexts with Ceph
+ consumer
+Message-ID: <20251025105944.1a04e518@batman.local.home>
+In-Reply-To: <CAO8a2ShRVUAFOc7HECWbuR7aZV0Va3eZs=zxSsxtu0cMvJmb5g@mail.gmail.com>
+References: <20251024084259.2359693-1-amarkuze@redhat.com>
+	<20251024135301.0ed4b57d@gandalf.local.home>
+	<CAO8a2ShRVUAFOc7HECWbuR7aZV0Va3eZs=zxSsxtu0cMvJmb5g@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024084259.2359693-1-amarkuze@redhat.com> <20251024135301.0ed4b57d@gandalf.local.home>
-In-Reply-To: <20251024135301.0ed4b57d@gandalf.local.home>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Sat, 25 Oct 2025 13:50:39 +0300
-X-Gm-Features: AWmQ_bmwcw8JGGEkkE3wWPKO0fCAY3lGT5ZQ4OURnSkGm9gSZBzLJvO3Udtlllo
-Message-ID: <CAO8a2ShRVUAFOc7HECWbuR7aZV0Va3eZs=zxSsxtu0cMvJmb5g@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] BLOG: per-task logging contexts with Ceph consumer
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
-	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, 
-	idryomov@gmail.com, mingo@redhat.com, juri.lelli@redhat.com, kees@kernel.org, 
-	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, rppt@kernel.org, 
-	peterz@infradead.org, surenb@google.com, vschneid@redhat.com, 
-	vincent.guittot@linaro.org, vbabka@suse.cz, xiubli@redhat.com, 
-	Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: pc3a3bfpb9hcnm9iaxnw6do4upq79gnw
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 6111E20026
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18nBZUO/jhduNiWRSKvYzbdBO98QxDlMpA=
+X-HE-Tag: 1761404384-373123
+X-HE-Meta: U2FsdGVkX1+4lKsGaA7TKsVLzBxuvMoWhjOFNULKRM5Mg0jsoYWD1a6mSIKQSnfaBR1DcTcfFpjvTbAMWYdymXTSdrSlXJdDkC3RM+lJ9uDjCpgSdxpk2ZxqRN11r1TPLtIVgMvSOdISCn0CFXKrE8tZ9SSWJagKo/U0ktmYl1lsN4n/M1if5zi06ycFz7Avb5aPvoUU9WaNalGOu6WGpUMPlpULHnk5g1BcY7RNnuNHnrTdZJSHT8TnDmxXQ13NCZAMIjzV0EXdr2FEBN9TBuvgBR8R77k6XtR/24SGMAy/GckjuLyBujCgzeWdfxKzmrP4UdmfShDq+dNV5a4mDdcPqo29q1dr
 
-First of all, Ftrace is for debugging and development; you won't see
-components or kernel modules run in production with ftrace enabled.
-The main motivation is to have verbose logging that is usable for
-production systems.
-The second improvement is that the logs have a struct task hook which
-facilitates better logging association between the kernel log and the
-user process.
-It's especially handy when debugging FS systems.
+On Sat, 25 Oct 2025 13:50:39 +0300
+Alex Markuze <amarkuze@redhat.com> wrote:
 
-Specifically we had several bugs reported from the field that we could
-not make progress on without additional logs.
+> First of all, Ftrace is for debugging and development; you won't see
+> components or kernel modules run in production with ftrace enabled.
+> The main motivation is to have verbose logging that is usable for
+> production systems.
 
-Re: MM folks, apologies for including unrelated people, the only
-change is the addition of a field in struct task.
+That is totally untrue. Several production environments use ftrace. We
+have it enabled and used in Chromebooks and in Android. Google servers
+also have it enabled.
 
-On Fri, Oct 24, 2025 at 8:52=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Fri, 24 Oct 2025 08:42:54 +0000
-> Alex Markuze <amarkuze@redhat.com> wrote:
->
-> > Motivation: improve observability in production by providing subsystems=
-awith
-> > a logger that keeps up with their verbouse unstructured logs and aggreg=
-ating
-> > logs at the process context level, akin to userspace TLS.
-> >
->
-> I still don't understand the motivation behind this.
->
-> What exactly is this doing that the current tracing infrastructure can't =
-do?
->
-> -- Steve
->
 
+> The second improvement is that the logs have a struct task hook which
+> facilitates better logging association between the kernel log and the
+> user process.
+> It's especially handy when debugging FS systems.
+
+So this is for use with debugging too?
+
+> 
+> Specifically we had several bugs reported from the field that we could
+> not make progress on without additional logs.
+
+This still doesn't answer my question about not using ftrace. Heck,
+when I worked for Red Hat, we used ftrace to debug production
+environments. Did that change?
+
+-- Steve
 
