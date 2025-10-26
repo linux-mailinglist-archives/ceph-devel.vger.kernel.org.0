@@ -1,46 +1,46 @@
-Return-Path: <ceph-devel+bounces-3878-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3879-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223F4C0AB63
-	for <lists+ceph-devel@lfdr.de>; Sun, 26 Oct 2025 15:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E168C0AB69
+	for <lists+ceph-devel@lfdr.de>; Sun, 26 Oct 2025 15:52:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C363B3945
-	for <lists+ceph-devel@lfdr.de>; Sun, 26 Oct 2025 14:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC333B2CDA
+	for <lists+ceph-devel@lfdr.de>; Sun, 26 Oct 2025 14:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3020B2E9EC4;
-	Sun, 26 Oct 2025 14:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227EB2E9ED1;
+	Sun, 26 Oct 2025 14:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boGwnm9W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ha8pX/N+"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB2321255B;
-	Sun, 26 Oct 2025 14:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B702E8E11;
+	Sun, 26 Oct 2025 14:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761490261; cv=none; b=McDmrW5a9efNxsfpLlFxTZovey7SHZcOMLrKy8Dnm2fGykQdJPI8v8aUlm1/haYcfx0AMH0nVPHMYSRy7bY5coGv2F9mYqEmAPO2Cc5ZH5AdWeWaP95gkexXloBxERBeGJgCVE9bIG3cI3gnuKZlq7mBslgf/4RBHVmcxmB3mrM=
+	t=1761490263; cv=none; b=C1OstHEEJvkfjYMdlafgUeAVn9alrnw+GCsiuptTFE7fEZB8RB/6NHMMwOVyEEaN07TsbUBs5pEm1X2f3Z7ySzEtTM//2ljM3yieCcF5SkKdL1iH6kKe1shxBNJ9dO9PLSkTq8HP//V0iDA1j7oEodNQGldd57m7XBxy79DWAx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761490261; c=relaxed/simple;
-	bh=dXeotwzdMhN+LIB60hZBFH4F856LOJKEQ6/9mVrYTV0=;
+	s=arc-20240116; t=1761490263; c=relaxed/simple;
+	bh=HlMAJ9IaNZcUJiFMGnYe3oG9DwObQe8LVhMD4NTvCpQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D4E3wl79TiDZIU4ZlM+MQWFQwGZk9Y0LWzr8CMRaIhqhfq/XpXwE75KPYnIQs6JOTGuUOcNktEVxcuhdGaHGni16xM+IH1giTST90EaSSFc4zTCvVQw9L7B4PyY+NQ/ygOwzavwP8w7X+c0TwIiSEJXdgHZVs3TT6Q56JGhSp/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boGwnm9W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD418C4CEF1;
-	Sun, 26 Oct 2025 14:50:59 +0000 (UTC)
+	 MIME-Version:Content-Type; b=LgJLmnmNS3L9o52F2fUPeEUDMeihA2feLTyOQhC5zZKvTkdtKn/bE0Hbgi3VjzD3pWIcFqDm5svLKhqKZTrZPmZEObLiatTkECNcWwRri6N1vgrjBfgdU8tjYaXhkbCbCr83/7kLlAvUNxeiQQLoiKvuLmQ4eawC6LYR3FM663o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ha8pX/N+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B61AC4CEFB;
+	Sun, 26 Oct 2025 14:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761490260;
-	bh=dXeotwzdMhN+LIB60hZBFH4F856LOJKEQ6/9mVrYTV0=;
+	s=k20201202; t=1761490263;
+	bh=HlMAJ9IaNZcUJiFMGnYe3oG9DwObQe8LVhMD4NTvCpQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=boGwnm9WKvHYQzuIbX9dJZxavNfgACe3LZ9CJPLLGDNYOeWpRm1pr3eNrjVf6peoW
-	 OH/V1SUy8j7TyGU1jceBWaLlXW0fuuBV8rM6WB4UOduOVO0u1moHGovb+YAYLVo8/c
-	 B5wTiZAhFg7GWVZM2OZ6CryYft/YqFUbqdvbOnI1DhU+6xYH2JFT8+A0mPhHCYor4V
-	 pHT+Oz0iuH0Nzz0MMY9fFgyfJqTTXISiBbhW4ZdEVOT4p4tTz/MGVgFbwH6YXKLkjg
-	 9HDoWDYwlrCFc1yEdCMa/8JI36ZjQmL8UV+Yi1wdmnhUG7cKZdt+y3YpEZJZwlAwHn
-	 R4lF61Rex/BbQ==
+	b=ha8pX/N+Xihww4TrFDpgE+t16LQM3Jc5N3Sdv3cr4fqpZYwdBKhGO6SxOmTYPZGtM
+	 zGQN9cUCcyxswNucZHr4zzG06Ke+kyh5JedffNOQ/FjVm4kI9DZ8iFRqRqy4lrzsmY
+	 MM41Hhnaw0N467YeHlwKRusnmANs5eRpZDCvGmb96MI1cUBcmZprwETjQzLOkHG5bu
+	 HcQdim7/dVOleQAykhEr0zbCkFfAU39ZLPTJ/k8GduTFeohanEqPEk6kcw6ZHg87oy
+	 1xah2+gULWXfGWv2HofbZcnO2grGz9EyD8FCbGGfYBXy8ehix8ulwpTCs6EGC8o9Xu
+	 X26TCwzf+BmoA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
 	Sasha Levin <sashal@kernel.org>,
 	xiubli@redhat.com,
 	ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17-6.6] ceph: refactor wake_up_bit() pattern of calling
-Date: Sun, 26 Oct 2025 10:49:06 -0400
-Message-ID: <20251026144958.26750-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.17-6.12] ceph: fix potential race condition in ceph_ioctl_lazyio()
+Date: Sun, 26 Oct 2025 10:49:08 -0400
+Message-ID: <20251026144958.26750-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251026144958.26750-1-sashal@kernel.org>
 References: <20251026144958.26750-1-sashal@kernel.org>
@@ -70,26 +70,28 @@ Content-Transfer-Encoding: 8bit
 
 From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-[ Upstream commit 53db6f25ee47cb1265141d31562604e56146919a ]
+[ Upstream commit 5824ccba9a39a3ad914fc9b2972a2c1119abaac9 ]
 
-The wake_up_bit() is called in ceph_async_unlink_cb(),
-wake_async_create_waiters(), and ceph_finish_async_create().
-It makes sense to switch on clear_bit() function, because
-it makes the code much cleaner and easier to understand.
-More important rework is the adding of smp_mb__after_atomic()
-memory barrier after the bit modification and before
-wake_up_bit() call. It can prevent potential race condition
-of accessing the modified bit in other threads. Luckily,
-clear_and_wake_up_bit() already implements the required
-functionality pattern:
+The Coverity Scan service has detected potential
+race condition in ceph_ioctl_lazyio() [1].
 
-static inline void clear_and_wake_up_bit(int bit, unsigned long *word)
-{
-	clear_bit_unlock(bit, word);
-	/* See wake_up_bit() for which memory barrier you need to use. */
-	smp_mb__after_atomic();
-	wake_up_bit(word, bit);
-}
+The CID 1591046 contains explanation: "Check of thread-shared
+field evades lock acquisition (LOCK_EVASION). Thread1 sets
+fmode to a new value. Now the two threads have an inconsistent
+view of fmode and updates to fields correlated with fmode
+may be lost. The data guarded by this critical section may
+be read while in an inconsistent state or modified by multiple
+racing threads. In ceph_ioctl_lazyio: Checking the value of
+a thread-shared field outside of a locked region to determine
+if a locked operation involving that thread shared field
+has completed. (CWE-543)".
+
+The patch places fi->fmode field access under ci->i_ceph_lock
+protection. Also, it introduces the is_file_already_lazy
+variable that is set under the lock and it is checked later
+out of scope of critical section.
+
+[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1591046
 
 Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 Reviewed-by: Alex Markuze <amarkuze@redhat.com>
@@ -99,74 +101,78 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
 
 LLM Generated explanations, may be completely bogus:
 
-YES – this patch fixes a real wakeup race in the Ceph client and is well
-suited for stable backporting.
-**Why Backport**
-- clear_and_wake_up_bit at fs/ceph/dir.c:1263 and fs/ceph/file.c:582,764
-  replaces the ad-hoc clear+wake sequence and injects the
-  smp_mb__after_atomic() that wake_up_bit() demands, preventing stale-
-  bit wakeups.
-- Waiters in ceph_wait_on_async_create (fs/ceph/mds_client.h:657-662)
-  and ceph_wait_on_conflict_unlink (fs/ceph/mds_client.c:836-885) depend
-  on the bit being visible before the wake; otherwise wake_bit_function
-  (kernel/sched/wait_bit.c:24-34) refuses to wake them and those threads
-  can hang.
-- Leveraging the helper also gives the release semantics of
-  clear_bit_unlock (include/linux/wait_bit.h:550-556), so any state
-  published before clearing di->flags or ci->i_ceph_flags becomes
-  observable to the awakened waiters.
+YES
+- The race arises because the pre-patch code reads `fi->fmode` without
+  holding `ci->i_ceph_lock`, so two threads can both see the lazy bit
+  clear, then each increment
+  `ci->i_nr_by_mode[ffs(CEPH_FILE_MODE_LAZY)]++` before either releases
+  the lock. That leaves the counter permanently elevated,
+  desynchronising the per-mode counts that `ceph_put_fmode()` relies on
+  to drop capability refs (`fs/ceph/ioctl.c` before line 212, contrasted
+  with `fs/ceph/caps.c:4744-4789`).
+- The patch now performs the test and update while the lock is held
+  (`fs/ceph/ioctl.c:212-220`), eliminating the window where concurrent
+  callers can both act on stale state; the new `is_file_already_lazy`
+  flag preserves the existing logging/`ceph_check_caps()` calls after
+  the lock is released (`fs/ceph/ioctl.c:221-228`) so behaviour remains
+  unchanged aside from closing the race.
+- Keeping `i_nr_by_mode` accurate is important beyond metrics: it feeds
+  `__ceph_caps_file_wanted()` when deciding what caps to request or drop
+  (`fs/ceph/caps.c:1006-1061`). With the race, a leaked lazy count
+  prevents the last close path from seeing the inode as idle, delaying
+  capability release and defeating the lazyio semantics the ioctl is
+  supposed to provide.
+- The change is tightly scoped (one function, no API or struct changes,
+  same code paths still call `__ceph_touch_fmode()` and
+  `ceph_check_caps()`), so regression risk is minimal while the fix
+  hardens a locking invariant already respected by other fmode
+  transitions such as `ceph_get_fmode()` (`fs/ceph/caps.c:4727-4754`).
+- No newer infrastructure is required—the fields, lock, and helpers
+  touched here have existed in long-term stable kernels—so this bug fix
+  is suitable for stable backporting despite the likely need to adjust
+  the `doutc` helper name on older branches.
 
-**Risk**
-- Change is limited to swapping in an existing core helper within Ceph
-  flag handling, so functional risk is minimal and there are no external
-  dependencies.
+ fs/ceph/ioctl.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-Next steps: 1) If possible, run CephFS async create/unlink regression
-tests or exercise the workloads that originally hit the wait-on-bit
-stalls.
-
- fs/ceph/dir.c  | 3 +--
- fs/ceph/file.c | 6 ++----
- 2 files changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 32973c62c1a23..d18c0eaef9b7e 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1260,8 +1260,7 @@ static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
- 	spin_unlock(&fsc->async_unlink_conflict_lock);
+diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+index e861de3c79b9e..15cde055f3da1 100644
+--- a/fs/ceph/ioctl.c
++++ b/fs/ceph/ioctl.c
+@@ -246,21 +246,28 @@ static long ceph_ioctl_lazyio(struct file *file)
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_mds_client *mdsc = ceph_inode_to_fs_client(inode)->mdsc;
+ 	struct ceph_client *cl = mdsc->fsc->client;
++	bool is_file_already_lazy = false;
  
- 	spin_lock(&dentry->d_lock);
--	di->flags &= ~CEPH_DENTRY_ASYNC_UNLINK;
--	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT);
-+	clear_and_wake_up_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags);
- 	spin_unlock(&dentry->d_lock);
++	spin_lock(&ci->i_ceph_lock);
+ 	if ((fi->fmode & CEPH_FILE_MODE_LAZY) == 0) {
+-		spin_lock(&ci->i_ceph_lock);
+ 		fi->fmode |= CEPH_FILE_MODE_LAZY;
+ 		ci->i_nr_by_mode[ffs(CEPH_FILE_MODE_LAZY)]++;
+ 		__ceph_touch_fmode(ci, mdsc, fi->fmode);
+-		spin_unlock(&ci->i_ceph_lock);
++	} else {
++		is_file_already_lazy = true;
++	}
++	spin_unlock(&ci->i_ceph_lock);
++
++	if (is_file_already_lazy) {
++		doutc(cl, "file %p %p %llx.%llx already lazy\n", file, inode,
++		      ceph_vinop(inode));
++	} else {
+ 		doutc(cl, "file %p %p %llx.%llx marked lazy\n", file, inode,
+ 		      ceph_vinop(inode));
  
- 	synchronize_rcu();
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 978acd3d4b329..d7b943feb9320 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -579,8 +579,7 @@ static void wake_async_create_waiters(struct inode *inode,
- 
- 	spin_lock(&ci->i_ceph_lock);
- 	if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
--		ci->i_ceph_flags &= ~CEPH_I_ASYNC_CREATE;
--		wake_up_bit(&ci->i_ceph_flags, CEPH_ASYNC_CREATE_BIT);
-+		clear_and_wake_up_bit(CEPH_ASYNC_CREATE_BIT, &ci->i_ceph_flags);
- 
- 		if (ci->i_ceph_flags & CEPH_I_ASYNC_CHECK_CAPS) {
- 			ci->i_ceph_flags &= ~CEPH_I_ASYNC_CHECK_CAPS;
-@@ -762,8 +761,7 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
+ 		ceph_check_caps(ci, 0);
+-	} else {
+-		doutc(cl, "file %p %p %llx.%llx already lazy\n", file, inode,
+-		      ceph_vinop(inode));
  	}
++
+ 	return 0;
+ }
  
- 	spin_lock(&dentry->d_lock);
--	di->flags &= ~CEPH_DENTRY_ASYNC_CREATE;
--	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_CREATE_BIT);
-+	clear_and_wake_up_bit(CEPH_DENTRY_ASYNC_CREATE_BIT, &di->flags);
- 	spin_unlock(&dentry->d_lock);
- 
- 	return ret;
 -- 
 2.51.0
 
