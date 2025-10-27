@@ -1,153 +1,111 @@
-Return-Path: <ceph-devel+bounces-3881-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3882-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E161FC0E681
-	for <lists+ceph-devel@lfdr.de>; Mon, 27 Oct 2025 15:27:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D39BC0ECA6
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 Oct 2025 16:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78CE7402D83
-	for <lists+ceph-devel@lfdr.de>; Mon, 27 Oct 2025 14:18:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0D542189A
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 Oct 2025 14:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737F2308F05;
-	Mon, 27 Oct 2025 14:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAHs/7Y0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3486E2ECE80;
+	Mon, 27 Oct 2025 14:58:53 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB347305E3F
-	for <ceph-devel@vger.kernel.org>; Mon, 27 Oct 2025 14:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB008309EF3;
+	Mon, 27 Oct 2025 14:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761574689; cv=none; b=h+cEQMw27km67IQRfaYZHZVU0ugfvvrNRlLkwa5jvXoa3YRRumMd4HgyOtsFprxtXYC1cn9cPWrDTKQj87ufCu8knpmH9rWvQ8gi9mmCzPCBv1cD3zmMIsrn7q328eCmfiB7lk/7oz8K3Kdifa/wtvhdTASbOcSr9gRtooGnivE=
+	t=1761577133; cv=none; b=lGZyZsV0JKQtZclJNh1PPLSpurynnFXUJKFYL6V6SSLKIfsB8FYrVdKQtotvrWVwVdOBKS5tgTjJeln+dP8khw/0SH3XgCORed8AQeuPxWd/neJqhRLXlsepDUWgvich9sWfJL8R1rNbHPCFmSvfrrVNjvA2d/Fyr+1pKrurt0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761574689; c=relaxed/simple;
-	bh=Dn6kprdecpTUxGqwDMYcg8A0ejBALzUE1/ER6YNvJuY=;
+	s=arc-20240116; t=1761577133; c=relaxed/simple;
+	bh=LBaCICudemK5hqX8hGCj3Ny3uuhnAOdCVI/QK0vqE8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tpr1QYICXHRh9NWcHw0KOrg6VmjaSMp3AkLsO2AghDJXCekS9kZH06ICmB7JIAYy9YTaK+e4ELCkE+ZKu59jt+lJ5UikqTs0zo0y+e+JVF/e/hIyASo8lpRryO1f4zzsAgCBGevb58d5oiz5B9bQcQggcCbkxyYIX8r4WGKJk/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAHs/7Y0; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-475d9de970eso21709055e9.1
-        for <ceph-devel@vger.kernel.org>; Mon, 27 Oct 2025 07:18:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761574685; x=1762179485; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6OWeVQ4AtgfB93bgZfN+1XmqssXEaSbhn0NZTenNXkU=;
-        b=EAHs/7Y0W95u/xuMGDP5awgUUSigL4xdhvGtWOJq2PBc6tOdaUHNfRO1iCqKNIuEKH
-         jBt3F1C9qFbyasiK94+aM+DMFQxHV+JeMVPkPST+MYHLEUZK94N2ZOntiMjBHbi/HvJo
-         3pRTkdeQbk0se1BLUhKKFHOTBtf1cBa5LMDfQmAF47CPc4gein+Z1iy20yqoYh65N8GT
-         YdZa9baC/YBMD+hj89ffnxU7vl/SPSF+8fNKeaMrlY+vlMKCWecoCjz7IJNNHg9tWCO6
-         6GUzO4FkpmnB7d3y+dhQXesci45jlprdmlH3jnSftAAAdRolWW/SrO563FS35NYwmvca
-         mpgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761574685; x=1762179485;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6OWeVQ4AtgfB93bgZfN+1XmqssXEaSbhn0NZTenNXkU=;
-        b=pJn1riULOkYudJTlo1Cu3Bhseus8rMjY+fq89eqADy2trPGFpdcmxuHSV9w5VFy/N/
-         X8vpP2FcxD/gBm/GzHZlQuTBA1UXi/18hYvl9zuvbBxn+CsTW7Mm9z4NN9ObU5BGvUdz
-         ZX2v9hXxx9/uVVVwr406t0XIPI3gGuFUeqIG9k4vmnV0bszbgmvk2nTyIitfewXAYB9x
-         0UClsyN9lAXT1PwPB3Xq6x7XtZLMC+yjDO7a0tB4iA4AI0sMTVJx5qR9KA7lnl1mzqsD
-         i0b/5IgDm+LyCs1NBHcfrOU9oRGdmF0yuYJrQWhLOy+KoWqxRgTp1iY4HWE9TrqBpQlL
-         cokg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9PO/+r29FeJtuRu4BbAI/pEdwCTQtxDmD77RLlTA3rIV3i13vNtxxdCmtNshakBRv0iG3yBWb+2Mq@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbfar0wyh+uwM1FUAOu4DbpC4UvPKgSBi1PoMWrzB3s+SEbGUb
-	O2LgCFFzqgLEk9Q60dLrMCVJmjF4vpAYPyzeWDR1sDnK4IO2/pgBF5n2
-X-Gm-Gg: ASbGncvr4PWfGwG9WqagYylj9giSytYEcEkTplU2d9jhcUgg5Wxz+DOyrLqnjHAeYcB
-	BFCi0bwOzEFDAnHEZ+b6a6L9rYllNSUNW2bbMoVN74YURezjW99y8usBzoLa47uPYeqWgmh8ZrB
-	t7dWIoIOXk50jXnynO8g1XhwvJxDVfGAjXIOwnDyKlhLbB/jxcQNQy1CQJE2Vrgl/ce5/7TcUpk
-	41MSEaFyGoz8FZBy1tgXVDWFQLL2iMIc6QM9R6Xmafxmo4AkQL8axv8sSxfvzkcalNWGTXjIXRQ
-	gAUp1fIG5+mGuox8LXfBVBvAoh8INRoblMqT0ZYrkGASxgwkjXsckTAy5Hd1jTDB/mXR1X2CYnW
-	G+gdeL2M8cvLikxreraU9NeN/1dgwNHjmsql9BqcStX1sw/dpGQQCL0U7/YOTHczKsArShtKR60
-	K0QfUs5Csg/Otrhd/Sy1fSEuZDa8jIe00qfMgaDNEYZP8+a+r72AJd
-X-Google-Smtp-Source: AGHT+IHOC4zgG6OF1kjm4g+wN+sLLGwPrLU1lwZ+ztIlqe61AFOMk+PmnLjf3OTwF1E1sL0nyHsaLg==
-X-Received: by 2002:a05:600c:5493:b0:475:e067:f23d with SMTP id 5b1f17b1804b1-475e067f43fmr57939265e9.25.1761574684773;
-        Mon, 27 Oct 2025 07:18:04 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dcbe5587sm168380565e9.0.2025.10.27.07.18.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 07:18:04 -0700 (PDT)
-Date: Mon, 27 Oct 2025 14:18:02 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
- akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org,
- ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
- jaegeuk@kernel.org, kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
-Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with
- reverse lookup tables
-Message-ID: <20251027141802.61dbfbb2@pumpkin>
-In-Reply-To: <aP9voK9lE/MlanGl@wu-Pro-E500-G6-WS720T>
-References: <aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
-	<CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
-	<20251005181803.0ba6aee4@pumpkin>
-	<aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
-	<CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
-	<20251007192327.57f00588@pumpkin>
-	<aOeprat4/97oSWE0@wu-Pro-E500-G6-WS720T>
-	<20251010105138.0356ad75@pumpkin>
-	<aOzLQ2KSqGn1eYrm@wu-Pro-E500-G6-WS720T>
-	<20251014091420.173dfc9c@pumpkin>
-	<aP9voK9lE/MlanGl@wu-Pro-E500-G6-WS720T>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	 MIME-Version:Content-Type; b=dFYFoMgrOfbXrgEtbyQwMPZQ6DpBc2+1Z7EzVLju3IlYts5jAMzRe9AhdVqXgNWZXvRQtUGVdfklj0WKcACG/ofrElkG4iJgrhhqkbvNqDc1oG1yD1td7IQWRVaAeEJYrNgzN+oTZw2sokSHjRYG6I2ysQ3fIGx7UhyjMZg2KVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 158CE1DE3B6;
+	Mon, 27 Oct 2025 14:53:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 28FBC20028;
+	Mon, 27 Oct 2025 14:53:28 +0000 (UTC)
+Date: Mon, 27 Oct 2025 10:54:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+ bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com,
+ idryomov@gmail.com, mingo@redhat.com, juri.lelli@redhat.com,
+ kees@kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de,
+ mhocko@suse.com, rppt@kernel.org, peterz@infradead.org, surenb@google.com,
+ vschneid@redhat.com, vincent.guittot@linaro.org, vbabka@suse.cz,
+ xiubli@redhat.com, Slava.Dubeyko@ibm.com
+Subject: Re: [RFC PATCH 0/5] BLOG: per-task logging contexts with Ceph
+ consumer
+Message-ID: <20251027105403.2d020b8d@gandalf.local.home>
+In-Reply-To: <CAO8a2SgZ8gZ0VdtBAeW8wLMDxa+Eq42ppr-99tUpiu3Tpwqz5w@mail.gmail.com>
+References: <20251024084259.2359693-1-amarkuze@redhat.com>
+	<20251024135301.0ed4b57d@gandalf.local.home>
+	<CAO8a2ShRVUAFOc7HECWbuR7aZV0Va3eZs=zxSsxtu0cMvJmb5g@mail.gmail.com>
+	<20251025105944.1a04e518@batman.local.home>
+	<CAO8a2SgZ8gZ0VdtBAeW8wLMDxa+Eq42ppr-99tUpiu3Tpwqz5w@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 28FBC20028
+X-Stat-Signature: btabxbh6rn4s9y75i8tsernxrkczhxfu
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18QkOO9R21LVBrW4cwrEsvG40q+N7FRrKg=
+X-HE-Tag: 1761576808-121962
+X-HE-Meta: U2FsdGVkX1/y2rxUidxPu/q4n8C0KJZeyG9NUfc267rFSYjiZBs19+cLFZ1Ce5eI25D7AtEIUV88ToUUjzXl12lsYbGAgOTQYwQg5nE7AyNBP1f7Bt2CIa4mybazVYojiJXsfpZEyBhhJuY8YYQW/U0XRduqJYyOMi4Xk3v9Mo1bW7ImUBopldJfQW9+NP+Moo18A+AzIZtEdv8wx0PpAiegJ9cvnQI705vJv4huyvM5eprVEIcCifuhhNtKcMV6hRz124rK2MjqUDdFccljiUkErq6KpbP2LYaxEaDSoqwcHaVp1KD7b3B6Zz26gXdoH4pIcwzKBvP09JRLCAVwIjFCzDQSEur7
 
-On Mon, 27 Oct 2025 21:12:00 +0800
-Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+On Sat, 25 Oct 2025 20:54:00 +0300
+Alex Markuze <amarkuze@redhat.com> wrote:
 
-...
-> Hi David,
->=20
-> I noticed your suggested approach:
-> val_24 =3D t[b[0]] | t[b[1]] << 6 | t[b[2]] << 12 | t[b[3]] << 18;
-> Per the C11 draft, this can lead to undefined behavior.
-> "If E1 has a signed type and nonnegative value, and E1 =C3=97 2^E2 is
-> representable in the result type, then that is the resulting value;
-> otherwise, the behavior is undefined."
-> Therefore, left-shifting a negative signed value is undefined behavior.
+> Please correct me if I am wrong, I was not aware that ftrace is used
+> by any kernel component as the default unstructured logger.
+> This is the point of BLog, having a low impact unstructured logger,
+> it's not always possible or easy to provide a debug kernel where
+> ftarce is both enabled and used for dumping logs.
+> Having an always-on binary logger facilitates better debuggability.
+> When anything happens, a client with BLog has the option to send a
+> large log file with their report.
+> An additional benefit is that each logging buffer is attached to the
+> associated tasks and the whole module has its own separate cyclical
+> log buffer.
 
-Don't worry about that, there are all sorts of places in the kernel
-where shifts of negative values are technically undefined.
+This looks like a very specific solution trying to be a little more generic.
 
-They are undefined because you get different values for 1's compliment
-and 'sign overpunch' signed integers.
-Even for 2's compliment C doesn't require a 'sign bit replicating'
-right shift.
-(And I suspect both gcc and clang only support 2's compliment.)
+The more generic a solution becomes, the more "bloated" it becomes as well.
+That's the nature of tracers and loggers. Ftrace was designed to be very
+generic, and yes, it can be more bloated because of that. But it is also
+designed to be tuned down to be a highly efficient tracer. One that can be
+used in a production environment. Sure, if you enable every event, it will
+cause a noticeable overhead, but ftrace is designed to surgically pick
+which events should be enabled or not, keeping the overhead within the
+noise.
 
-I don't think even clang is stupid enough to silently not emit any
-instructions for shifts of negative values.
-It is another place where it should be 'implementation defined' rather
-than 'undefined' behaviour.
+Ftrace is more of an "infrastructure" than a tool. It provides access to
+trace almost every function , but you can use that same code to implement
+live kernel patching or BPF hooks to functions. The trace event and
+tracepoints are part of ftrace, and are used for things other than tracing.
 
-> Perhaps we could change the code as shown below. What do you think?
+Perhaps it may be more suitable to make BLOG use the tracefs interface,
+then to create an entirely new interface based on debugfs (which BTW, a lot
+of production systems do not enable debugfs which is why ftrace uses its
+own tracefs that does not depend on it).
 
-If you are really worried, change the '<< n' to '* (1 << n)' which
-obfuscates the code.
-The compiler will convert it straight back to a simple shift.
-
-I bet that if you look hard enough even 'a | b' is undefined if
-either is negative.
-
-	David
-
-
-
-	David
+-- Steve
 
