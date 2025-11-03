@@ -1,97 +1,174 @@
-Return-Path: <ceph-devel+bounces-3899-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3900-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30F5C2940C
-	for <lists+ceph-devel@lfdr.de>; Sun, 02 Nov 2025 18:38:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CBEAC2B078
+	for <lists+ceph-devel@lfdr.de>; Mon, 03 Nov 2025 11:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A2D74E197A
-	for <lists+ceph-devel@lfdr.de>; Sun,  2 Nov 2025 17:38:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BDD54EA9B6
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Nov 2025 10:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C046F2DF134;
-	Sun,  2 Nov 2025 17:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5881F2FBE05;
+	Mon,  3 Nov 2025 10:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KBWjo7l5"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350AC2DEA77
-	for <ceph-devel@vger.kernel.org>; Sun,  2 Nov 2025 17:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9288528E5;
+	Mon,  3 Nov 2025 10:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762105084; cv=none; b=edqdDOqzrXQXlZElNKlm4eeJEXc+Ug5C8Wro01iEMv4GnO/r4GAXZtpMJkOekFbqxUxuoqADsZlLvmYRBD/YkiIe9/fj5Rju4TSHwZnonxq1NmBAtkUmrikowHdXo4u89wHySwceeYvmzbCY3JfQTx/5WYZdFG7SrSyXk5y5DM4=
+	t=1762165482; cv=none; b=cf2Wf1aPkL/kOhFsGS+jpen3vBwVGx35XWqFwFeKJ+m4UzCt6jXgkr9hBVhePrCeLNPmbPbISInPFUCvitqbAiv/fG4Bwje2Ni9KAcsTzYmxgXG9S6t/N7hhBgR8PA3SRBVsVkymkmt3ZFaOEGZ5kGFyvbQ6WCbW/Ozb6faz+iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762105084; c=relaxed/simple;
-	bh=o0FIdqFREk++l3J1v2J3tW9h4pt95Mr7/7IG2Ece5Aw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=g7G4pRLgJkIY3oKTRvx00gZwRJXlRHI9b23b/PM+OzI56CvfQuVL/e9fRwX0P6iPAbrGcx+wkQyDpjDDt/klhMKSJoaoSNqMGaiDSvj9YHv8jo+aMSKSkFjUyJsJW/1eJ7lTnOA55eWpyAYhWGrS/1GzVi15vveWTK618vBMvsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-93e7f4f7bb1so335092839f.3
-        for <ceph-devel@vger.kernel.org>; Sun, 02 Nov 2025 09:38:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762105082; x=1762709882;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/wAEv9GIPrwh1+x/pr00cLookNh43MVdSe1H945Cxs=;
-        b=ol2CyKar0CGr1zyS0MsnbTqEUSANjYge3mSkVSvpzf53gRFr98K/arkaY3nvzl4Bx6
-         Kq7I3drh+LGtebgE1hXvKxNdyL6hoDjGjG7pQNBCqPlRS/HKvVPb5GdiAGiRVFyqlofu
-         PvbIj4KnjQp/p0xtaQIEbDWaykfWt2QHk+bxhLaZKnhBVX8D30LquVVd3M1I1r3H5alH
-         bCYaOQTNCxSWKKDacJXsdmYNhGv0VTaOjJbb6XJccutailCkx517nAsafeQWBPoueiqR
-         J/eQNEyauFUPN7tpLPJ5bNHbGOEZ/ZMvj1HzYGyRE4k4mtXhxz9QXbnzcy5L6zEOYL0z
-         tAPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX672AHMoLyl15iNWY65z+1m+hcTKkEHQqfNNOtvjoC2Sm3vEuFrWZPeVTf7Gn1mmrm9ysETO6YIi89@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOm7yUcH9HLiavy6LDhydNGy1jCZdw21WFySyetFHJrQmPSEh0
-	hz4O4jJcUBgwh/VYGZWqrR2jXaAez4NCYc6jhLqE7n+a0ehkeZzy0VWuZ64oc+mS9EUgOfxvDtM
-	scOxjGChl5oqnD1xpf09VFpkdlEsEq/FC6icznlIr63FngunlqEExpMBsNrM=
-X-Google-Smtp-Source: AGHT+IG1zgigFckBfcGNeJaiPbJX6Gh9TmGX80g1LSF0Ct9iysgCECfpHX/faSxFEexyhP9Nc8O6trkMpNHWl4XussCMo5cabh/D
+	s=arc-20240116; t=1762165482; c=relaxed/simple;
+	bh=mMwseOtfch0WkUGPSpFwAXRTLyTjgl9zM2KFRVdOVDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJYlr/Dlo6mo/cdm5U8LzNVzz+zTrOAGPk9QwLloWZqXA4Qn0pXYhmtLZqmLxxhXhMu/5viZGo4RGuIQtk7ffDx7wFouix2I2FVkpCfwxD93qz6W8niD4QP5zVZtBXatclpzWLK/C94n9ejjh6pJyNLS1/yjL6M07f2fcHk0kQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KBWjo7l5; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762165480; x=1793701480;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mMwseOtfch0WkUGPSpFwAXRTLyTjgl9zM2KFRVdOVDg=;
+  b=KBWjo7l5tOq2bHskEowWq4wuwyX7pS2j1THFAbaxGI12OdRjCzcz/DcI
+   6rJqPRzrA4vK6lN67498wRbTmev19pYa/tf4GkDXGmHdJWhWUYivkybPM
+   YAovTjqNfKe2uvejqDnKrB0d5MjRktz+gRu0CH7zoWGQYWfRNg5XSufEJ
+   jz6MyYXIcxpc6Vtonbywy+1GKnLb+r0bGQrsxmMMLD6LiQvmwQc+hJW2G
+   zwc5GWEV90FT6rAqFPLUWTkkMNh/8aUNg+kVy9qH/1p/LHjyMMuvUpudT
+   Z3tvwY6lghLT84IVtHbZs532IOhAtdIYAQdI4btQAqjuAd3UbQDtpjgj5
+   w==;
+X-CSE-ConnectionGUID: 2RR3y4GZTKaZG0nhUuML1g==
+X-CSE-MsgGUID: OhQvM02NRrywjtgGMAxysQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="75684390"
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="75684390"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 02:24:40 -0800
+X-CSE-ConnectionGUID: GSkOX9xmStqEMunUgyEZ7g==
+X-CSE-MsgGUID: 0qHH5bPeSHCjgFcT4iPTOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="186705439"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa006.fm.intel.com with ESMTP; 03 Nov 2025 02:24:36 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 8D05495; Mon, 03 Nov 2025 11:24:35 +0100 (CET)
+Date: Mon, 3 Nov 2025 11:24:35 +0100
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Guan-Chun Wu <409411716@gms.tku.edu.tw>, ebiggers@kernel.org,
+	tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
+	idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
+	sagi@grimberg.me, visitorckw@gmail.com, home7438072@gmail.com,
+	linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
+ users
+Message-ID: <aQiC4zrtXobieAUm@black.igk.intel.com>
+References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
+ <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e8c:b0:430:ab63:69d6 with SMTP id
- e9e14a558f8ab-4330d1c9e60mr128484625ab.21.1762105082195; Sun, 02 Nov 2025
- 09:38:02 -0800 (PST)
-Date: Sun, 02 Nov 2025 09:38:02 -0800
-In-Reply-To: <67b454d4.050a0220.173698.0051.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690796fa.a70a0220.37351b.000b.GAE@google.com>
-Subject: Re: [syzbot] [kernfs?] [netfs?] INFO: task hung in pipe_write (6)
-From: syzbot <syzbot+5984e31a805252b3b40a@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, brauner@kernel.org, ceph-devel@vger.kernel.org, 
-	dhowells@redhat.com, gregkh@linuxfoundation.org, idryomov@gmail.com, 
-	jack@suse.cz, jlayton@kernel.org, kprateek.nayak@amd.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, netfs@lists.linux.dev, oleg@redhat.com, 
-	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
-	viro@zeniv.linux.org.uk, xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-syzbot suspects this issue was fixed by commit:
+On Fri, Oct 31, 2025 at 09:09:47PM -0700, Andrew Morton wrote:
+> On Wed, 29 Oct 2025 18:17:25 +0800 Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+> 
+> > This series introduces a generic Base64 encoder/decoder to the kernel
+> > library, eliminating duplicated implementations and delivering significant
+> > performance improvements.
+> > 
+> > The Base64 API has been extended to support multiple variants (Standard,
+> > URL-safe, and IMAP) as defined in RFC 4648 and RFC 3501. The API now takes
+> > a variant parameter and an option to control padding. As part of this
+> > series, users are migrated to the new interface while preserving their
+> > specific formats: fscrypt now uses BASE64_URLSAFE, Ceph uses BASE64_IMAP,
+> > and NVMe is updated to BASE64_STD.
+> > 
+> > On the encoder side, the implementation processes input in 3-byte blocks,
+> > mapping 24 bits directly to 4 output symbols. This avoids bit-by-bit
+> > streaming and reduces loop overhead, achieving about a 2.7x speedup compared
+> > to previous implementations.
+> > 
+> > On the decoder side, replace strchr() lookups with per-variant reverse tables
+> > and process input in 4-character groups. Each group is mapped to numeric values
+> > and combined into 3 bytes. Padded and unpadded forms are validated explicitly,
+> > rejecting invalid '=' usage and enforcing tail rules.
+> 
+> Looks like wonderful work, thanks.  And it's good to gain a selftest
+> for this code.
+> 
+> > This improves throughput by ~43-52x.
+> 
+> Well that isn't a thing we see every day.
 
-commit e8fe3f07a357c39d429e02ca34f740692d88967a
-Author: Oleg Nesterov <oleg@redhat.com>
-Date:   Tue Aug 19 16:10:13 2025 +0000
+I agree with the judgement, the problem is that this broke drastically a build:
 
-    9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
+lib/base64.c:35:17: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
+   35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+lib/base64.c:26:11: note: expanded from macro 'BASE64_REV_INIT'
+   26 |         ['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
+      |                  ^
+lib/base64.c:35:17: note: previous initialization is here
+   35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+lib/base64.c:25:16: note: expanded from macro 'BASE64_REV_INIT'
+   25 |         [0 ... 255] = -1, \
+      |                       ^~
+...
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154ba342580000
-start commit:   ad1b832bf1cf Merge tag 'devicetree-fixes-for-6.14-1' of gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
-dashboard link: https://syzkaller.appspot.com/bug?extid=5984e31a805252b3b40a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170d57df980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12df35a4580000
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> : Decode:
+> :   64B   ~1530ns  ->  ~80ns    (~19.1x)
+> :   1KB  ~27726ns  -> ~1239ns   (~22.4x)
+> 
+> 
+> : Encode:
+> :   64B   ~90ns   -> ~32ns   (~2.8x)
+> :   1KB  ~1332ns  -> ~510ns  (~2.6x)
+> : 
+> : Decode:
+> :   64B  ~1530ns  -> ~35ns   (~43.7x)
+> :   1KB ~27726ns  -> ~530ns  (~52.3x)
+> 
+> 
+> : This change also improves performance: encoding is about 2.7x faster and
+> : decoding achieves 43-52x speedups compared to the previous implementation.
+> 
+> : This change also improves performance: encoding is about 2.7x faster and
+> : decoding achieves 43-52x speedups compared to the previous local
+> : implementation.
+> 
+> 
+> Do any of these callers spend a sufficient amount of time in this
+> encoder/decoder for the above improvements to be observable/useful?
+> 
+> 
+> I'll add the series to mm.git's mm-nonmm-unstable branch to give it
+> linux-next exposure.  I ask the NVMe, ceph and fscrypt teams to check
+> the code and give it a test in the next few weeks, thanks.  
+> 
 
-#syz fix: 9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
+-- 
+With Best Regards,
+Andy Shevchenko
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
 
