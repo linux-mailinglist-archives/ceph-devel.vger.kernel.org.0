@@ -1,155 +1,230 @@
-Return-Path: <ceph-devel+bounces-3906-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3907-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A0EC2DEA8
-	for <lists+ceph-devel@lfdr.de>; Mon, 03 Nov 2025 20:38:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46939C2DF47
+	for <lists+ceph-devel@lfdr.de>; Mon, 03 Nov 2025 20:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 182E74F10EF
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 Nov 2025 19:37:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916341894FA3
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Nov 2025 19:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE092320390;
-	Mon,  3 Nov 2025 19:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E652BCF54;
+	Mon,  3 Nov 2025 19:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OiCwAPOM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJjJmrtX"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F093164A0;
-	Mon,  3 Nov 2025 19:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0005023372C
+	for <ceph-devel@vger.kernel.org>; Mon,  3 Nov 2025 19:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762198650; cv=none; b=KCc8P5cWi8LTncOlaoBgrqc9jd8Qt2T+JGCFbGtUwkz0d+7tGqC3w4k5Dma6iATU/3wy5a7ry7z7VB72+Kp6i+ywmj5Jg4HQiZPrwAv4GDucNHnx1GKKFQ/BfM4GIVbTRFhRZHH8ftMIDcr5O5PMhXuCdUtR0xldGailGbtTqSE=
+	t=1762199941; cv=none; b=SEg1Ul8eO1XT2VTz/USLVbfNq+Pl6UA+FyoOEVNmiEXH69uZf8jqvjdy9nLPLrk875Q2BtpaxFVKOTI3o4Xzy9vIQFfKhQArBVkLoKn0iR3qoZ5mwDZ63o5IfsD3qHfILayE5rGNTmSiZnFLmZVpKN5Oww2qfW6mfka++HaN1eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762198650; c=relaxed/simple;
-	bh=hgEOeQ/NAx7WrRk1gHE8VihYRMACDTSdXchi5b7f89Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pNYMFlCNFPhKYVcXyXCwXLDZvgZuqw9Lz4APo5owDnI31boldr5DEEzeyIgE2VCKT3Cr70tWH9M18lwIjm9AcYVLEuPxJvsuoxh25exsuP6eRZ1oNx2G6z/MX0cIOqwvzcTPM4XeH1xxyTxr1fJ/owDn16MB2pobIeRXl/8P/nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OiCwAPOM; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762198649; x=1793734649;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hgEOeQ/NAx7WrRk1gHE8VihYRMACDTSdXchi5b7f89Q=;
-  b=OiCwAPOMpzh/PIf2gcXm0dH7NHAO8X6KuaoGzwqI/5PHhvm49eKiLp/n
-   qEWhILJM2Od1BMEqzgLc9nVnvXC7d20FvsKMYuyiwHspJMhAgflumSgTF
-   rmq1c1R4qHpEH8Tdtq2uAkewxdmuVW4l/RFFuXqUzkRivqj6y8grXXACs
-   jiOBS1g2HraLFxnauD94abSGlZIAYq3oBXfbx7BwLPwq2m9Bym78Z1bDn
-   Sk5sOwUB1HUnmf8IrvxDPGeP69bKi0i1gDtrCpWLZx0DDqIkw3KxKNJbG
-   LrgMuhS42Vt+H1PY0tcg2XblaFy3YKsfiP7pIqHvopQImFvHn0DJpVDAG
-   w==;
-X-CSE-ConnectionGUID: Y2Ak0VAcTfaxNzD+6Jz9Eg==
-X-CSE-MsgGUID: UE76sayrSuWgxKAZVcnPFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="51853517"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="51853517"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:37:28 -0800
-X-CSE-ConnectionGUID: IkgWZNzwSI6gCDkNlx30xg==
-X-CSE-MsgGUID: A5QP/6+iRmurKpAVKqzaQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="187674793"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:37:25 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vG0Mg-00000005FeO-1lqu;
-	Mon, 03 Nov 2025 21:37:18 +0200
-Date: Mon, 3 Nov 2025 21:37:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Guan-Chun Wu <409411716@gms.tku.edu.tw>,
-	Andrew Morton <akpm@linux-foundation.org>, ebiggers@kernel.org,
-	tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
-	idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
-	sagi@grimberg.me, home7438072@gmail.com,
-	linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
- users
-Message-ID: <aQkEbZrabOzPBClg@smile.fi.intel.com>
-References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
- <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
- <aQiC4zrtXobieAUm@black.igk.intel.com>
- <aQiM7OWWM0dXTT0J@google.com>
- <20251103132213.5feb4586@pumpkin>
- <aQi_JHjSi46uUcjB@smile.fi.intel.com>
- <aQjxjlJvLnx_zRx8@smile.fi.intel.com>
- <20251103192908.1d716a7b@pumpkin>
+	s=arc-20240116; t=1762199941; c=relaxed/simple;
+	bh=7q4pM3Xb7E1uNd//nS8BqYRs4/PU+D3Ma23uRkfg0Qk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bwBF6mDVYeB2JDdnNqaeynV+nAZK43pnpyjqqWC2A+/2y92vV8NRDYeCiwbae+lTANvuxBv7qkn5edI07xSQEEBuv5aaMwlIcI8cMJ0W4jYbV0XcmRBplrolTUfVK4alp5kxgvfOJ9xiM9fDz8xn8v9cYhCDCBNrZwyr8/s7Mzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJjJmrtX; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2952048eb88so49615965ad.0
+        for <ceph-devel@vger.kernel.org>; Mon, 03 Nov 2025 11:58:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762199939; x=1762804739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PRL3ScLiWS5r2MDUzg9ClFfrht8FkZln8Q5mKnzs+ZY=;
+        b=hJjJmrtXfAO5RnnrqKxRmCEJb5XsH8sXVpS2BB0HfVhCvV5WavuAeT9m0RTKh4jk8O
+         KmadhoNk/YMIJQZXN7V6yA3qN4XZZWp6xM/8fBOGphD5OCTVp3e5AZ+F1RRZeYhqKHXs
+         8hWYiiBuYni4I4AVym95sZXwbKk4dCFudWOUFOa/d17NVnXBhCF0hSQE7lKMBq8EeMOS
+         zCYd333qzcLd8VRPQ08iKQLopfxfW/S79U4DpaBBvNeJJJ69nYLOlvJHtvt9YWztxhIb
+         w6alCALOKyxFGFYZj4f3rRVeL/UyLjImLWaESIxYfVHjXnBhdvcIe4XNvSZianxDh/yI
+         YiNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762199939; x=1762804739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PRL3ScLiWS5r2MDUzg9ClFfrht8FkZln8Q5mKnzs+ZY=;
+        b=Q/LFVh/qB/e78TIwtUDzGsEDFrPxsalMFY0AV4vGe6rCPbCCxpH6XOHENZW/YeAS/u
+         PGHBcZfJMiyXGVZHFUaeFlNd6wLh9BhiWgVHIrcTcmXPfNQmTOgSuhaujTqyiLn+FmbD
+         3Wy3CIb+I4VnJwKqt8ZLfQhLpgbU35SSFmkLkDW9lF46N52QE56j/iT8dpHYhCMPqGo2
+         irs2ET+zKZoXhS5RcE6sT97AR//+U1F1ySAoQZb+voxDf5nlCQ4NEH9y+mURAlGLmomz
+         taoFucwHSPBYQ7Ye77S85/UH0KU2iBMbMsvP4t9Z5fBXmGiRcvgDh53+rxfP4kZJnnir
+         zHuw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/g8iBu1c61pOiTlV+4EnpzeeQzD5b9uAzJbluMQliAbQpAYSR0CIvhRw9Qr1VVpLSXscfSkVBImUV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkrLFzGTFGfIil1UQXpSu1A5Rl70aD6sUyhqcMu0m/bhwZDXKS
+	VNA8yZ4VXrQ6Pj9vV7r1kMe6La6I2f8ykTDR4i1lbP6VQXTef+bzcFw31GSbAJ79d2bEb4BfEPL
+	qw5PUPWlAnDgMos5Qt45d2F42GI+9gzE=
+X-Gm-Gg: ASbGncvu+bzSmdgTECQ7gNOn2GWklUawVrGV50MkvDvVoStco9Or817SnaNQ26IuJZj
+	POWXBRfDKQ8LL+Frj5FhmTZ+QC/vTxO7pcnw4a4PolmwCPJgdAP5i482llnUgCeRcbYXb7I6k9s
+	x3lAUQkp6ra4SmtWgNhqe5gbp7w8pg7wav0kjleksztin3lbITEl/zSn/CfHUwNPF3DEO7th3+b
+	yfp15ITSFNoHANGlBeBS8TzwHKxUsVqvDl8JuA6/X4JmWXkLvJtCHqByEF0QXUUEODp/g8=
+X-Google-Smtp-Source: AGHT+IEWuX3dlSNA9ptTfOP60ilI+6QAg2Djc7tFHPEdSqDQ1aelp6YGIUK+BS3UC2DkdnTMWkra+ckpLt644WkgiX8=
+X-Received: by 2002:a17:902:d2cb:b0:293:e5f:85b7 with SMTP id
+ d9443c01a7336-2951a38de8cmr213138925ad.11.1762199939277; Mon, 03 Nov 2025
+ 11:58:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103192908.1d716a7b@pumpkin>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250821225147.37125-2-slava@dubeyko.com> <CAOi1vP_ELOunNHzg5LgDPPAye-hYviMPNED0NQ-f9bGaHiEy8A@mail.gmail.com>
+ <5e6418fa61bce3f165ffe3b6b3a2ea5a9323b2c7.camel@ibm.com>
+In-Reply-To: <5e6418fa61bce3f165ffe3b6b3a2ea5a9323b2c7.camel@ibm.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 3 Nov 2025 20:58:46 +0100
+X-Gm-Features: AWmQ_bkKhOiN2NGdFGlTH3aQyYQWzzHYQk5yIUTRkWhwqBe7QGKP9d4W7lmsgYE
+Message-ID: <CAOi1vP8PCByY3dKu9cSDWo8B9QMaqRT23BYzkd1Q2H0Vs=YjxA@mail.gmail.com>
+Subject: Re: [PATCH v8] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "slava@dubeyko.com" <slava@dubeyko.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Patrick Donnelly <pdonnell@redhat.com>, 
+	Alex Markuze <amarkuze@redhat.com>, David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 07:29:08PM +0000, David Laight wrote:
-> On Mon, 3 Nov 2025 20:16:46 +0200
-> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-> > On Mon, Nov 03, 2025 at 04:41:41PM +0200, Andy Shevchenko wrote:
-> > > On Mon, Nov 03, 2025 at 01:22:13PM +0000, David Laight wrote:  
+On Tue, Oct 28, 2025 at 4:34=E2=80=AFPM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> Hi Ilya,
+>
+> On Sun, 2025-10-12 at 22:37 +0200, Ilya Dryomov wrote:
+> > On Fri, Aug 22, 2025 at 12:52=E2=80=AFAM Viacheslav Dubeyko <slava@dube=
+yko.com> wrote:
+> > >
+> > >
+>
+> <skipped>
+>
+> > >
+> > > v8
+> > > Ilya Dryomov has pointed out that __ceph_open_session()
+> > > has incorrect logic of two nested loops and checking of
+> > > client->auth_err could be missed because of it.
+> > > The logic of __ceph_open_session() has been reworked.
+> >
+> > Hi Slava,
+> >
+> > I was confused for a good bit because the testing branch still had v7.
+> > I went ahead and dropped it from there.
+> >
+>
+> I decided to finish our discussion before changing anything in testing br=
+anch.
+>
+> > >
+> > > Reported-by: David Howells <dhowells@redhat.com>
+> > > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > > cc: Alex Markuze <amarkuze@redhat.com>
+> > > cc: Ilya Dryomov <idryomov@gmail.com>
+> > > cc: Ceph Development <ceph-devel@vger.kernel.org>
+> > > ---
+> > >  net/ceph/ceph_common.c | 43 +++++++++++++++++++++++++++++++++++-----=
+--
+> > >  net/ceph/debugfs.c     | 17 +++++++++++++----
+> > >  net/ceph/mon_client.c  |  2 ++
+> > >  net/ceph/osd_client.c  |  2 ++
+> > >  4 files changed, 53 insertions(+), 11 deletions(-)
+> > >
+> > > diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> > > index 4c6441536d55..2a7ca942bc2f 100644
+> > > --- a/net/ceph/ceph_common.c
+> > > +++ b/net/ceph/ceph_common.c
+> > > @@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+> > >   */
+> > >  static bool have_mon_and_osd_map(struct ceph_client *client)
+> > >  {
+> > > -       return client->monc.monmap && client->monc.monmap->epoch &&
+> > > -              client->osdc.osdmap && client->osdc.osdmap->epoch;
+> > > +       bool have_mon_map =3D false;
+> > > +       bool have_osd_map =3D false;
+> > > +
+> > > +       mutex_lock(&client->monc.mutex);
+> > > +       have_mon_map =3D client->monc.monmap && client->monc.monmap->=
+epoch;
+> > > +       mutex_unlock(&client->monc.mutex);
+> > > +
+> > > +       down_read(&client->osdc.lock);
+> > > +       have_osd_map =3D client->osdc.osdmap && client->osdc.osdmap->=
+epoch;
+> > > +       up_read(&client->osdc.lock);
+> > > +
+> > > +       return have_mon_map && have_osd_map;
+> > >  }
+> > >
+> > >  /*
+> > > @@ -800,6 +810,7 @@ static bool have_mon_and_osd_map(struct ceph_clie=
+nt *client)
+> > >  int __ceph_open_session(struct ceph_client *client, unsigned long st=
+arted)
+> > >  {
+> > >         unsigned long timeout =3D client->options->mount_timeout;
+> > > +       int auth_err =3D 0;
+> > >         long err;
+> > >
+> > >         /* open session, and wait for mon and osd maps */
+> > > @@ -813,13 +824,31 @@ int __ceph_open_session(struct ceph_client *cli=
+ent, unsigned long started)
+> > >
+> > >                 /* wait */
+> > >                 dout("mount waiting for mon_map\n");
+> > > -               err =3D wait_event_interruptible_timeout(client->auth=
+_wq,
+> > > -                       have_mon_and_osd_map(client) || (client->auth=
+_err < 0),
+> > > -                       ceph_timeout_jiffies(timeout));
+> > > +
+> > > +               DEFINE_WAIT_FUNC(wait, woken_wake_function);
+> > > +
+> > > +               add_wait_queue(&client->auth_wq, &wait);
+> > > +
+> > > +               if (!have_mon_and_osd_map(client)) {
+> >
+> > Only half of the original
+> >
+> >     have_mon_and_osd_map(client) || (client->auth_err < 0)
+> >
+> > condition is checked here.  This means that if finish_auth() sets
+> > client->auth_err and wakes up client->auth_wq before the entry is added
+> > to the wait queue by add_wait_queue(), that wakeup would be missed.
+> > The entire condition needs to be checked between add_wait_queue() and
+> > remove_wait_queue() calls -- anything else is prone to various race
+> > conditions that lead to hangs.
+> >
+> > > +                       if (signal_pending(current)) {
+> > > +                               err =3D -ERESTARTSYS;
+> > > +                               break;
+> >
+> > If this break is hit, remove_wait_queue() is never called and on top of
+> > that __ceph_open_session() returns success.  ERESTARTSYS gets suppresse=
+d
+> > and so instead of aborting the opening of the session the code proceeds
+> > with setting up the debugfs directory and further steps, all with no
+> > monmap or osdmap received or even potentially in spite of a failure to
+> > authenticate.
+> >
+>
+> As far as I can see, we are stuck in the discussion. I think it will be m=
+ore
+> productive if you can write your own vision of this piece of code. We are=
+ still
+> not on the same page and we can continue this hide and seek game for a lo=
+ng time
+> yet. Could you please write your vision of this piece of modification?
 
-...
+Hi Slava,
 
-> > > Pragma will be hated.
-> 
-> They have been used in a few other places.
-> and to disable more 'useful' warnings.
+Sure, I can take over and offer my own patch.
 
-You can go with pragma, but even though it just hides the potential issues.
-Not my choice.
+Thanks,
 
-> > > I believe there is a better way to do what you want. Let me cook a PoC.  
-> > 
-> > I tried locally several approaches and the best I can come up with is the pre-generated
-> > (via Python script) pieces of C code that we can copy'n'paste instead of that shortened
-> > form. So basically having a full 256 tables in the code is my suggestion to fix the build
-> > issue. Alternatively we can generate that at run-time (on the first run) in
-> > the similar way how prime_numbers.c does. The downside of such an approach is loosing
-> > the const specifier, which I consider kinda important.
-> > 
-> > Btw, in the future here might be also the side-channel attack concerns appear, which would
-> > require to reconsider the whole algo to get it constant-time execution.
-> 
-> The array lookup version is 'reasonably' time constant.
-
-The array doesn't fit the cacheline.
-
-> One option is to offset all the array entries by 1 and subtract 1 after reading the entry.
-
-Yes, I was thinking of it, but found a bit weird.
-
-> That means that the 'error' characters have zero in the array (not -1).
-> At least the compiler won't error that!
-> The extra 'subtract 1' is probably just measurable.
-
-> But I'd consider raising a bug on gcc :-)
-
-And clang? :-)
-
-> One of the uses of ranged designated initialisers for arrays is to change the
-> default value - as been done here.
-> It shouldn't cause a warning.
-
-This is prone to mistakes when it's not the default rewrite. I fixed already
-twice such an issue in drivers/hid in the past few months.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+                Ilya
 
