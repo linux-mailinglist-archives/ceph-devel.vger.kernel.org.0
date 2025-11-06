@@ -1,47 +1,47 @@
-Return-Path: <ceph-devel+bounces-3929-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3930-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC29C3AC9A
-	for <lists+ceph-devel@lfdr.de>; Thu, 06 Nov 2025 13:08:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56164C3CFE7
+	for <lists+ceph-devel@lfdr.de>; Thu, 06 Nov 2025 19:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 89CE33508F8
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Nov 2025 12:08:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F7F51894723
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Nov 2025 18:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A02326D57;
-	Thu,  6 Nov 2025 12:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DC0355817;
+	Thu,  6 Nov 2025 18:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNzO3H2p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WB7yYBKU"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74590325480;
-	Thu,  6 Nov 2025 12:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52384314D06;
+	Thu,  6 Nov 2025 18:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762430876; cv=none; b=f+fwnbhy0PtcQvw3TTTQ0N+dvLv4dXHGLR7M9bcVEMmVtKswV+fMUrSxV8E5+jSdtISwus8Qcdf4eKSaubzaPLWjDARTM1p1QuJ2rZTW8F1kyfqQhbsCx6Td/oBZH8bvjfcoKD0uEW8I0UZz4wqw1Dco3HlEChqfRebI/Fkx0k0=
+	t=1762452089; cv=none; b=tBTyZR0pq0H8EpUcEdOG0elLGJP7jdK1OE+716kxKlX1W4WG7RpC9vsoG7JqE3zjs97tQUK2XkkseLO1WKII2TWntxbXaARoSt4d8lGCeLU25pikB7HVO0tEqY0ieGDuy9E0ZeNdt34FL1fZLxSX/2AVVxpAr3o+q7Lz0S3h8W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762430876; c=relaxed/simple;
-	bh=ZSAzxLSRlNc7aHk3QQjU+Jn2ls3JaS1qMmMrb2/qUBM=;
+	s=arc-20240116; t=1762452089; c=relaxed/simple;
+	bh=dMhrb4k0NLQTzG9CdasHB8pF4LD/TSGmYxk7iyEfZqc=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Auxd+Ld9ielLhtLn2DG/r/TCeDz+g29dqqK/QyIbSvlE5dB4uDIXZXPvQph4XfMoYTAR5rYCDck10GRQ3LjAO4W61O6Tj1bOYQP7IInqCYDWoSjJOqObQaFFgsLz9alHQdAphRNtNTS0HURa6mjnp45AYYqg6+N+Tsk9xeO946g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNzO3H2p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F20C16AAE;
-	Thu,  6 Nov 2025 12:07:49 +0000 (UTC)
+	 Content-Type:MIME-Version; b=YSvsA7U5pM9RCdwxyLmsO44kV8DUB06tkewtxQgVubcX3JvN26fDexuI/FjRUqT88zF5sUGcoVnjAjBvNplrX+DfXHo9428vhCuTEvEKtlWWHsqwaEbJeQtEDSVrZi24vToeGtW6C6foyyprFtVtM2InP1pNDmu62sLWa77wkgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WB7yYBKU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBDCC116C6;
+	Thu,  6 Nov 2025 18:01:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762430876;
-	bh=ZSAzxLSRlNc7aHk3QQjU+Jn2ls3JaS1qMmMrb2/qUBM=;
+	s=k20201202; t=1762452088;
+	bh=dMhrb4k0NLQTzG9CdasHB8pF4LD/TSGmYxk7iyEfZqc=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VNzO3H2p6CwGtTyPbapCQ3QGkVPCDj0Gu4NOPyGtgJgmaYMtgBtFdfn1FNy5iqr6k
-	 vTv6ROHNpjvXI02lRsoWF/DhOh/uJCOWIGFqPaPNS7PcJjp39waeiJOYKbRPTwfrbU
-	 SMsnPJn43Jpt7c11rBBLMRgkivM7erknhuvz0QL9AVVVAnNexDJAeVEkJChDqH2EN6
-	 8oda1kH5rwMJrie0d3U1H9Cz/oc/yOp2QxL//jKy5IQ7gAhznsONMdqHufyuvBkH7Z
-	 SS+7EyYZ9fRip3j/kHm5jr4WaoPL6Ps8XzbBqB5YMKxF7epkNPAz2Ku5VI9q85h1pI
-	 bAkoyVAUJdhpA==
-Message-ID: <6758176514cdd6e2ceacb3bd0e4d63fb8784b7c6.camel@kernel.org>
+	b=WB7yYBKUOX/lE4WZY3g8QG/RvBLCrGkug7SbS55SwPbAyl2h/5knvTDVX7fdQR0dn
+	 /r2h5zqyYYg4YpTcRl4bb17O2pbs9f8Ty0hcR98EO81Rf0vm6/jnoROJ67IgB19hqt
+	 I87SfjjtAKzWhX9MRD5MywBx0QTkPqPYiAJOBd6v77Lsv/0J7lP9WK3VTY8q4pv96C
+	 sc7RfxgdkgPYVq+mqEd1yKOjQfYhp6cb6cjLMpB5vtuslVF+sXEk2nxjPYIbxlTOp7
+	 xn4l6FSe3rrrS+hYzYdvxTjPCAUZ0rwMgS5itofFbs6IlBmNPX49Qy46dSE4Ot/9So
+	 ttgrYph6IXC0g==
+Message-ID: <f5927a9bb985b9ad241bc5f9fc32acfd35340222.camel@kernel.org>
 Subject: Re: [PATCH] vfs: remove the excl argument from the ->create()
  inode_operation
 From: Jeff Layton <jlayton@kernel.org>
@@ -96,10 +96,11 @@ Cc: Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
  linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
  samba-technical@lists.samba.org, 	linux-xfs@vger.kernel.org,
  linux-hardening@vger.kernel.org
-Date: Thu, 06 Nov 2025 07:07:48 -0500
-In-Reply-To: <176237780417.634289.15818324160940255011@noble.neil.brown.name>
+Date: Thu, 06 Nov 2025 13:01:20 -0500
+In-Reply-To: <6758176514cdd6e2ceacb3bd0e4d63fb8784b7c6.camel@kernel.org>
 References: <20251105-create-excl-v1-1-a4cce035cc55@kernel.org>
-	 <176237780417.634289.15818324160940255011@noble.neil.brown.name>
+		 <176237780417.634289.15818324160940255011@noble.neil.brown.name>
+	 <6758176514cdd6e2ceacb3bd0e4d63fb8784b7c6.camel@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -184,37 +185,60 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Thu, 2025-11-06 at 08:23 +1100, NeilBrown wrote:
-> On Thu, 06 Nov 2025, Jeff Layton wrote:
-> > Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
-> > the "excl" argument to the ->create() inode_operation is always set to
-> > true. Remove it, and fix up all of the create implementations.
+On Thu, 2025-11-06 at 07:07 -0500, Jeff Layton wrote:
+> On Thu, 2025-11-06 at 08:23 +1100, NeilBrown wrote:
+> > On Thu, 06 Nov 2025, Jeff Layton wrote:
+> > > Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()")=
+,
+> > > the "excl" argument to the ->create() inode_operation is always set t=
+o
+> > > true. Remove it, and fix up all of the create implementations.
+> >=20
+> > nonono
+> >=20
+> >=20
+> > > @@ -3802,7 +3802,7 @@ static struct dentry *lookup_open(struct nameid=
+ata *nd, struct file *file,
+> > >  		}
+> > > =20
+> > >  		error =3D dir_inode->i_op->create(idmap, dir_inode, dentry,
+> > > -						mode, open_flag & O_EXCL);
+> > > +						mode);
+> >=20
+> > "open_flag & O_EXCL" is not the same as "true".
+> >=20
+> > It is true that "all calls to vfs_create() pass true for 'excl'"
+> > The same is NOT true for inode_operations.create.
+> >=20
 >=20
-> nonono
+> I don't think this is a problem, actually:
 >=20
->=20
-> > @@ -3802,7 +3802,7 @@ static struct dentry *lookup_open(struct nameidat=
-a *nd, struct file *file,
-> >  		}
-> > =20
-> >  		error =3D dir_inode->i_op->create(idmap, dir_inode, dentry,
-> > -						mode, open_flag & O_EXCL);
-> > +						mode);
->=20
-> "open_flag & O_EXCL" is not the same as "true".
->=20
-> It is true that "all calls to vfs_create() pass true for 'excl'"
-> The same is NOT true for inode_operations.create.
->=20
+> Almost all of the existing ->create() operations ignore the "excl"
+> bool. There are only two that I found that do not: NFS and GFS2. Both
+> of those have an ->atomic_open() operation though, so lookup_open()
+> will never call ->create() for those filesystems. This means that -
+> > create() _is_ always called with excl =3D=3D true.
 
-I don't think this is a problem, actually:
+How about this for a revised changelog, which makes the above clear:
 
-Almost all of the existing ->create() operations ignore the "excl"
-bool. There are only two that I found that do not: NFS and GFS2. Both
-of those have an ->atomic_open() operation though, so lookup_open()
-will never call ->create() for those filesystems. This means that -
->create() _is_ always called with excl =3D=3D true.
+    vfs: remove the excl argument from the ->create() inode_operation
+   =20
+    Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
+    the "excl" argument to the ->create() inode_operation is always set to
+    true in vfs_create().
+   =20
+    There is another call to ->create() in lookup_open() that can set it to
+    either true or false. All of the ->create() operations in the kernel
+    ignore the excl argument, except for NFS and GFS2. Both NFS and GFS2
+    have an ->atomic_open() operation, however so lookup_open() will never
+    call ->create() on those filesystems.
+   =20
+    Remove the "excl" argument from the ->create() operation, and fix up th=
+e
+    filesystems accordingly.
 
+Maybe we also need some comments or updates to Documentation/ to make
+it clear that ->create() always implies O_EXCL semantics?
 --=20
 Jeff Layton <jlayton@kernel.org>
 
