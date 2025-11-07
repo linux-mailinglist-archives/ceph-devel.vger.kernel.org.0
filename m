@@ -1,1066 +1,973 @@
-Return-Path: <ceph-devel+bounces-3933-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3934-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285E8C3F9ED
-	for <lists+ceph-devel@lfdr.de>; Fri, 07 Nov 2025 12:02:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A563FC40860
+	for <lists+ceph-devel@lfdr.de>; Fri, 07 Nov 2025 16:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A5E3A9878
-	for <lists+ceph-devel@lfdr.de>; Fri,  7 Nov 2025 11:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB833BE4A8
+	for <lists+ceph-devel@lfdr.de>; Fri,  7 Nov 2025 15:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AC72C21FB;
-	Fri,  7 Nov 2025 11:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A6332B98B;
+	Fri,  7 Nov 2025 15:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NvPmoC2t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWNoLxCi"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5002F6596
-	for <ceph-devel@vger.kernel.org>; Fri,  7 Nov 2025 11:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809D129E115;
+	Fri,  7 Nov 2025 15:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762513357; cv=none; b=mG8knGNKJtMfuO4ouAwu+xZtrvzd0Weflflh5Z6vrZ0yBVNVSh4dOdXlz1ZjtTixqoskjq+F+QrU3taEUCiqAA4GsisJWMb4gNogEse0Jd5wf3xbxKYcZ5WsTXfnFFzizyGHkT0KhXD4GwDfOEiUKw5G92FMUmZbhxmZo9jOGkM=
+	t=1762527917; cv=none; b=XZD8r3KpBKrAB6PexLhgPTkIuCkQUvnUy/OouyrZL5sPA6d5wnlu3sRpg0966qW3lr7qBpdlokS0iuuwoXXdss1lSRDy/t20J2h5qa3UMtIVPF795p8um6rBWt/l251xqoTIdFl3xn72fMGaLH7edctBE488fN11JNay5xHryxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762513357; c=relaxed/simple;
-	bh=0glgNOUYrPm5zcd0MVefgG0hgXf5oB9bFbZPXEg7K2o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PwoEqSJG6t6/aSETJ+bCBWtBezfKqIMs5lu+g1DqkOWDx7naqjNkAyBhwjRyhQlHU1bsJAtQO51HGd+wNTdl1WrWbPpq5UGKiSKEyyK+9NB1lKY7XRgLu6Ir4HVF+GFeOBseGniZFKjbw51m0dwfY+HXHlNfLlR+rpHRcWJoCjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NvPmoC2t; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-ba507fe592dso379987a12.2
-        for <ceph-devel@vger.kernel.org>; Fri, 07 Nov 2025 03:02:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762513354; x=1763118154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XK1J1xn4Q03FzpnmhRDFHoASVG7PU1bHG/9O/porqGU=;
-        b=NvPmoC2tx+QW7E3oQ3he7+lu6af94zG2DX97z0qhnb8RAuJsmwLntmJUVKneEOKtAo
-         CwA1A/KQw7pW/ClN/ClbD6sDffFr5k0wOXClYWzVkCLsyUTEdFnXHMztn+48LU1V4Hew
-         u7krKY5Fhs52q0mClG3tElHxH8qnO0p74OPKt/xqRxlWHhlNo02QAUITZp+c+IZPqyqX
-         43mv+efZTH8LKJMJWZSSTbdKgAVmxbk1RZuB4Wc2FU+tAguVBWgV5KAw1PxePWPvi/Z5
-         4nCeCzsV3kuo+cd3BSOgTe1wUj/0xOQ5l+W4awqQ8pPekio4P8Sra9M3NrFs235UPcrS
-         7roA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762513354; x=1763118154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XK1J1xn4Q03FzpnmhRDFHoASVG7PU1bHG/9O/porqGU=;
-        b=To/1UkihsYA5D5Gp/5uuqn2Q9wb4TqNx4Qs2FnFdUwgxHXredOH9NJRUxqfD+lDNa0
-         yJGm8PIQUWMVaiiAi/J2fFnBfLxqw6xUdec2p1lqb5ie3MP9RKsiC3qmJ1gsWw4vonuZ
-         S39cRVcgYCBGXFidHAt7jBXM9AGyBd0qynSW6mrf+gwJVrnHQOUunhOEF+Tf3Uj74/Aq
-         FHYz6IE/iE9aXbGMrFYQWpQKOGEpV1VNYsRwSfA/gmnrsklWrN/zsrYzOvkWFdmrCjd3
-         y8yZXMjLwHLEn7q2ymGuEFYOigMEeDGlKTz3TII8gRfs3EzBcsr9hxFtYvX4F1MhOLn3
-         +fDA==
-X-Gm-Message-State: AOJu0YwzEUjUZObmdLH6IXvdEv/+ff64h06RpsaYMQ20Zf3C9+LEx+Jr
-	g3OMCnU6gwK6fvNulHnpiJJSPG6/lqkPc/WEQgqAzeYeVyvhZAzYwbbdSKK1hGKxUu5iLGob2Vl
-	EnzGFY/wvjiaM6w7XHajzSUkBkS7wk3E=
-X-Gm-Gg: ASbGnctgtArHu9YVSAfye3t8zwnre6Sd4IkC9X5MBl09Yr3poXNbxPxaru/QCxaKXyw
-	LIdz1ZE3sfunzvuF+i1d9BC1HKM/3WbSmhtcY3EJkkFWvYtJ4XXrxnAW/jKTA2LunoeYDEhjzuc
-	INKJjCQEjwMLhCbVcV1dK+YK3t27ZJyjz2gCdlLDib1t80QHjx//6GrgpFIV6czZ/SF4yHqM/IN
-	PD+c6mN3E/vpv2JOlRAjDgwkS/Aurth0BH+NopummIBmGlzk8mBGs+qYGYB
-X-Google-Smtp-Source: AGHT+IFun5AFjkDOhHtX6jQ3MMnLVmx4iGsxXuQ5aMgn+kynwKuAAaTcA4A8ZquVgFrWpZX+Lwu+nmuUSf0swu94PZg=
-X-Received: by 2002:a17:902:f709:b0:267:a1f1:9b23 with SMTP id
- d9443c01a7336-297c03c72d9mr41381385ad.18.1762513353463; Fri, 07 Nov 2025
- 03:02:33 -0800 (PST)
+	s=arc-20240116; t=1762527917; c=relaxed/simple;
+	bh=dzo1lWDea29qPvWwT1yhTEu1knqMua7rcPZDlmamKZc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ghhgFg/YAYTkFklH5RnUMrtq9y8vjQwXl34bkwRSjpW0Zg4IJBz+gBZ2074oGO31oqytXt9a1TLYQH4083AsMhRYLrQ5LLdhAXTvdMd6JSdSRFhb8yQnnONSKJNsWSc7sliIeG4xk0EWU/Cbww/lOjfoE4mnwhLnoPeIwPLr2pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWNoLxCi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9641FC4CEF5;
+	Fri,  7 Nov 2025 15:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762527917;
+	bh=dzo1lWDea29qPvWwT1yhTEu1knqMua7rcPZDlmamKZc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=VWNoLxCigoSwPETtpRM9FFqu2XzZX8Dm9z1dJ1xFKQGpwC272zP4gpsPexnh0StpD
+	 2JUJ4A6/zcBqwXOtxYLNRJ5/pka8n3kim0TmIhm9u50ir0OZJvAd69Po8Yb8JUuses
+	 zntkyZJgRJ8upIus4M/SM9DZCfK6f9jC2jlNE0X05nRWdTto9XZrOC0/2nOlMBnhre
+	 jSSS+Gb0BlmeEcMArxuUG7/a7DKctouGUl0H+dh24Z8RoXtsrQhjtTH7M/w62YUyxd
+	 uom1xYi+ufK5Pn4UwUTEpB35bclns4H8hWPBOSOueBFcwJbXs+f3zNaBzySTokAFfI
+	 o9wdzcO7TFeaQ==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Fri, 07 Nov 2025 10:05:03 -0500
+Subject: [PATCH v2] vfs: remove the excl argument from the ->create()
+ inode_operation
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dfc5c18d506d6183d1c3940dc819616dd24988b5.camel@ibm.com>
-In-Reply-To: <dfc5c18d506d6183d1c3940dc819616dd24988b5.camel@ibm.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Fri, 7 Nov 2025 12:02:21 +0100
-X-Gm-Features: AWmQ_bl1EgnINHltUOWxlwlwcxD2ppWVCbrPVKejmvlh4TqNIbIfinLTFj0milw
-Message-ID: <CAOi1vP_dh+SgsD7qeWgrrFsyG+-wtrzXJtatF+9pZ6qj_uRZmg@mail.gmail.com>
-Subject: Re: [RFC] sparse read failure in fscrypt-encrypted directories for
- Ceph msgr2 protocol
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
-	Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251107-create-excl-v2-1-f678165d7f3f@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/23MywqDMBCF4VeRWTcll0ZoV30PcZGMo4ZKUiYiF
+ sm7N3Xd5X/gfAdk4kAZHs0BTFvIIcUa+tIAzi5OJMJQG7TUVilpBTK5lQTtuAjtTdsOdz8a76E
+ +3kxj2E+t62vPIa+JPye+qd/639mUUMLdEEkai2jt80UcabkmnqAvpXwBJbwgzKcAAAA=
+X-Change-ID: 20251105-create-excl-2b366d9bf3bb
+To: Eric Van Hensbergen <ericvh@kernel.org>, 
+ Latchesar Ionkov <lucho@ionkov.net>, 
+ Dominique Martinet <asmadeus@codewreck.org>, 
+ Christian Schoenebeck <linux_oss@crudebyte.com>, 
+ David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>, 
+ Marc Dionne <marc.dionne@auristor.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ "Tigran A. Aivazian" <aivazian.tigran@gmail.com>, Chris Mason <clm@fb.com>, 
+ Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
+ Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, 
+ Tyler Hicks <code@tyhicks.com>, Jeremy Kerr <jk@ozlabs.org>, 
+ Ard Biesheuvel <ardb@kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, 
+ Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+ Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+ Miklos Szeredi <miklos@szeredi.hu>, 
+ Andreas Gruenbacher <agruenba@redhat.com>, 
+ Viacheslav Dubeyko <slava@dubeyko.com>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Yangtao Li <frank.li@vivo.com>, Richard Weinberger <richard@nod.at>, 
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+ Johannes Berg <johannes@sipsolutions.net>, 
+ Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, 
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+ David Hildenbrand <david@redhat.com>, David Woodhouse <dwmw2@infradead.org>, 
+ Dave Kleikamp <shaggy@kernel.org>, Trond Myklebust <trondmy@kernel.org>, 
+ Anna Schumaker <anna@kernel.org>, 
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+ Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+ Joseph Qi <joseph.qi@linux.alibaba.com>, Bob Copeland <me@bobcopeland.com>, 
+ Mike Marshall <hubcap@omnibond.com>, 
+ Martin Brandenburg <martin@omnibond.com>, 
+ Amir Goldstein <amir73il@gmail.com>, Steve French <sfrench@samba.org>, 
+ Paulo Alcantara <pc@manguebit.org>, 
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+ Bharath SM <bharathsm@microsoft.com>, 
+ Zhihao Cheng <chengzhihao1@huawei.com>, Hans de Goede <hansg@kernel.org>, 
+ Carlos Maiolino <cem@kernel.org>, Hugh Dickins <hughd@google.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: NeilBrown <neilb@ownmail.net>, linux-kernel@vger.kernel.org, 
+ v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+ linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org, 
+ ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu, 
+ ecryptfs@vger.kernel.org, linux-efi@vger.kernel.org, 
+ linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+ gfs2@lists.linux.dev, linux-um@lists.infradead.org, linux-mm@kvack.org, 
+ linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, 
+ linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+ ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
+ linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org, 
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+ samba-technical@lists.samba.org, linux-xfs@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=35187; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=dzo1lWDea29qPvWwT1yhTEu1knqMua7rcPZDlmamKZc=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpDgql+pM1LOl3u5v87v7BKGjc3+XPqo5DRdYEe
+ L9pZOuSpvaJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaQ4KpQAKCRAADmhBGVaC
+ FcdZD/4m9QS3CjCOyJdwmHnwQ1Ln0b4ztUy7WIntlPC9z5nrkvohB5Kl3ogekvblo/JQG5MEf8g
+ Kp9xU7psXHaV3NZuTvVK14NPafZWBJGFIAKg8CfoMvpqdMcLLtcG4gXQvT7G79OOyt17WsoElkN
+ ff09WcVWlPwMKmxAbT5g033n5kGiCACCnTHPIF5k2IAyp393gvWeOTY1qITh9q26b1dsV/7sJ/N
+ z09w4fsO5FFguBZEgPdnWYc1yvqu7EksYAabxipzEeCPAUpGlvgI2IVjhbQM3uplZKjWwoVuZLz
+ L+kYyNgANgNBLFHHoMcIY3MEtjzj/u7fVQy2BkstKFNyfX2FQ6rDthhdUXgWA1nLF+UEIRqc//8
+ B+cngUMGW7W16yOVgqGD1FFn0i+Ul2T/ahU7Zcis71QSBA96FC+82oEVT6phflthbfqwwwL6DSN
+ 2zZXHaxr4IrkHB+E4vPsehLCVupLcd6DDaN2zMREXw7OqEtfN09xgZSg+EDJWchTIcmyznWA69O
+ nuH9XZnNwcCiu1Td04pS+qw3ohRpV0YSC7YlTWpGVoL1HNeInqIP1hBjF4dmJOtZcNzJQvjGgU8
+ wYa+laAlH6vKF2ENAbLHIA1TTuhoB18p+N72kDPj4iC+dn7E9hfqDgaLY//5cQ1fUnspOm41mxS
+ /+Bc+ULA31x88QA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Thu, Nov 6, 2025 at 9:04=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyko@ib=
-m.com> wrote:
->
-> Hi Ilya,
->
-> I am investigated the issue of Ceph msgr2 protocol implementation for the=
- case
-> of fscrypt-encrypted directories. The issue has been reported in tracker =
-[1]. I
-> was able to reproduce the issue by this steps:
->
-> sudo mount -t ceph :/ /mnt/cephfs/ -o name=3Dadmin,fs=3Dcephfs,ms_mode=3D=
-secure
->
-> The reproducing path:
-> (1) mkdir /mnt/cephfs/fscrypt-test-3
-> (2) cp area_decrypted.tar /mnt/cephfs/fscrypt-test-3
-> (3) fscrypt encrypt --source=3Draw_key --key=3D./my.key /mnt/cephfs/fscry=
-pt-test-3
-> (4) fscrypt lock /mnt/cephfs/fscrypt-test-3
-> (5) fscrypt unlock --key=3Dmy.key /mnt/cephfs/fscrypt-test-3
-> (6) cat /mnt/cephfs/fscrypt-test-3/area_decrypted.tar
-> (7) Issue has been triggered
->
-> We have the call trace for the issue:
->
-> [  408.072247] ------------[ cut here ]------------
-> [  408.072251] WARNING: CPU: 1 PID: 392 at net/ceph/messenger_v2.c:865
-> ceph_con_v2_try_read+0x4b39/0x72f0
-> [  408.072267] Modules linked in: intel_rapl_msr intel_rapl_common
-> intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discovery
-> pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm irqby=
-pass
-> polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmouse
-> serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid qemu_=
-fw_cfg
-> pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
-> [  408.072304] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Not tainted 6.17.=
-0-rc7+
-> #1 PREEMPT(voluntary)
-> [  408.072307] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
-S
-> 1.17.0-5.fc42 04/01/2014
-> [  408.072310] Workqueue: ceph-msgr ceph_con_workfn
-> [  408.072314] RIP: 0010:ceph_con_v2_try_read+0x4b39/0x72f0
-> [  408.072317] Code: c7 c1 20 f0 d4 ae 50 31 d2 48 c7 c6 60 27 d5 ae 48 c=
-7 c7 f8
-> 8e 6f b0 68 60 38 d5 ae e8 00 47 61 fe 48 83 c4 18 e9 ac fc ff ff <0f> 0b=
- e9 06
-> fe ff ff 4c 8b 9d 98 fd ff ff 0f 84 64 e7 ff ff 89 85
-> [  408.072319] RSP: 0018:ffff88811c3e7a30 EFLAGS: 00010246
-> [  408.072322] RAX: ffffed1024874c6f RBX: ffffea00042c2b40 RCX: 000000000=
-0000f38
-> [  408.072324] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000=
-0000000
-> [  408.072325] RBP: ffff88811c3e7ca8 R08: 0000000000000000 R09: 000000000=
-00000c8
-> [  408.072326] R10: 00000000000000c8 R11: 0000000000000000 R12: 000000000=
-00000c8
-> [  408.072327] R13: dffffc0000000000 R14: ffff8881243a6030 R15: 000000000=
-0003000
-> [  408.072329] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> knlGS:0000000000000000
-> [  408.072331] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  408.072332] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 000000000=
-0772ef0
-> [  408.072336] PKRU: 55555554
-> [  408.072337] Call Trace:
-> [  408.072338]  <TASK>
-> [  408.072340]  ? sched_clock_noinstr+0x9/0x10
-> [  408.072344]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
-> [  408.072347]  ? _raw_spin_unlock+0xe/0x40
-> [  408.072349]  ? finish_task_switch.isra.0+0x15d/0x830
-> [  408.072353]  ? __kasan_check_write+0x14/0x30
-> [  408.072357]  ? mutex_lock+0x84/0xe0
-> [  408.072359]  ? __pfx_mutex_lock+0x10/0x10
-> [  408.072361]  ceph_con_workfn+0x27e/0x10e0
-> [  408.072364]  ? metric_delayed_work+0x311/0x2c50
-> [  408.072367]  process_one_work+0x611/0xe20
-> [  408.072371]  ? __kasan_check_write+0x14/0x30
-> [  408.072373]  worker_thread+0x7e3/0x1580
-> [  408.072375]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> [  408.072378]  ? __pfx_worker_thread+0x10/0x10
-> [  408.072381]  kthread+0x381/0x7a0
-> [  408.072383]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> [  408.072385]  ? __pfx_kthread+0x10/0x10
-> [  408.072387]  ? __kasan_check_write+0x14/0x30
-> [  408.072389]  ? recalc_sigpending+0x160/0x220
-> [  408.072392]  ? _raw_spin_unlock_irq+0xe/0x50
-> [  408.072394]  ? calculate_sigpending+0x78/0xb0
-> [  408.072395]  ? __pfx_kthread+0x10/0x10
-> [  408.072397]  ret_from_fork+0x2b6/0x380
-> [  408.072400]  ? __pfx_kthread+0x10/0x10
-> [  408.072402]  ret_from_fork_asm+0x1a/0x30
-> [  408.072406]  </TASK>
-> [  408.072407] ---[ end trace 0000000000000000 ]---
-> [  408.072418] Oops: general protection fault, probably for non-canonical
-> address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
-> [  408.072984] KASAN: null-ptr-deref in range [0x0000000000000000-
-> 0x0000000000000007]
-> [  408.073350] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Tainted: G       =
- W
-> 6.17.0-rc7+ #1 PREEMPT(voluntary)
-> [  408.073886] Tainted: [W]=3DWARN
-> [  408.074042] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
-S
-> 1.17.0-5.fc42 04/01/2014
-> [  408.074468] Workqueue: ceph-msgr ceph_con_workfn
-> [  408.074694] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
-> [  408.074976] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f 85 0=
-7 11 00
-> 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f> b6=
- 14 16
-> 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
-> [  408.075884] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
-> [  408.076305] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 000000000=
-0000000
-> [  408.076909] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff88812=
-43a6378
-> [  408.077466] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 000000000=
-00000c8
-> [  408.078034] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffed102=
-4874c71
-> [  408.078575] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff88812=
-43a6378
-> [  408.079159] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> knlGS:0000000000000000
-> [  408.079736] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  408.080039] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 000000000=
-0772ef0
-> [  408.080376] PKRU: 55555554
-> [  408.080513] Call Trace:
-> [  408.080630]  <TASK>
-> [  408.080729]  ceph_con_v2_try_read+0x49b9/0x72f0
-> [  408.081115]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
-> [  408.081348]  ? _raw_spin_unlock+0xe/0x40
-> [  408.081538]  ? finish_task_switch.isra.0+0x15d/0x830
-> [  408.081768]  ? __kasan_check_write+0x14/0x30
-> [  408.081986]  ? mutex_lock+0x84/0xe0
-> [  408.082160]  ? __pfx_mutex_lock+0x10/0x10
-> [  408.082343]  ceph_con_workfn+0x27e/0x10e0
-> [  408.082529]  ? metric_delayed_work+0x311/0x2c50
-> [  408.082737]  process_one_work+0x611/0xe20
-> [  408.082948]  ? __kasan_check_write+0x14/0x30
-> [  408.083156]  worker_thread+0x7e3/0x1580
-> [  408.083331]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> [  408.083557]  ? __pfx_worker_thread+0x10/0x10
-> [  408.083751]  kthread+0x381/0x7a0
-> [  408.083922]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> [  408.084139]  ? __pfx_kthread+0x10/0x10
-> [  408.084310]  ? __kasan_check_write+0x14/0x30
-> [  408.084510]  ? recalc_sigpending+0x160/0x220
-> [  408.084708]  ? _raw_spin_unlock_irq+0xe/0x50
-> [  408.084917]  ? calculate_sigpending+0x78/0xb0
-> [  408.085138]  ? __pfx_kthread+0x10/0x10
-> [  408.085335]  ret_from_fork+0x2b6/0x380
-> [  408.085525]  ? __pfx_kthread+0x10/0x10
-> [  408.085720]  ret_from_fork_asm+0x1a/0x30
-> [  408.085922]  </TASK>
-> [  408.086036] Modules linked in: intel_rapl_msr intel_rapl_common
-> intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discovery
-> pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm irqby=
-pass
-> polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmouse
-> serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid qemu_=
-fw_cfg
-> pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
-> [  408.087778] ---[ end trace 0000000000000000 ]---
-> [  408.088007] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
-> [  408.088260] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f 85 0=
-7 11 00
-> 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f> b6=
- 14 16
-> 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
-> [  408.089118] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
-> [  408.089357] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 000000000=
-0000000
-> [  408.089678] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff88812=
-43a6378
-> [  408.090020] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 000000000=
-00000c8
-> [  408.090360] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffed102=
-4874c71
-> [  408.090687] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff88812=
-43a6378
-> [  408.091035] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> knlGS:0000000000000000
-> [  408.091452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  408.092015] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 000000000=
-0772ef0
-> [  408.092530] PKRU: 55555554
-> [  417.112915]
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [  417.113491] BUG: KASAN: slab-use-after-free in
-> __mutex_lock.constprop.0+0x1522/0x1610
-> [  417.114014] Read of size 4 at addr ffff888124870034 by task kworker/2:=
-0/4951
->
-> [  417.114587] CPU: 2 UID: 0 PID: 4951 Comm: kworker/2:0 Tainted: G      =
-D W
-> 6.17.0-rc7+ #1 PREEMPT(voluntary)
-> [  417.114592] Tainted: [D]=3DDIE, [W]=3DWARN
-> [  417.114593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
-S
-> 1.17.0-5.fc42 04/01/2014
-> [  417.114596] Workqueue: events handle_timeout
-> [  417.114601] Call Trace:
-> [  417.114602]  <TASK>
-> [  417.114604]  dump_stack_lvl+0x5c/0x90
-> [  417.114610]  print_report+0x171/0x4dc
-> [  417.114613]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> [  417.114617]  ? kasan_complete_mode_report_info+0x80/0x220
-> [  417.114621]  kasan_report+0xbd/0x100
-> [  417.114625]  ? __mutex_lock.constprop.0+0x1522/0x1610
-> [  417.114628]  ? __mutex_lock.constprop.0+0x1522/0x1610
-> [  417.114630]  __asan_report_load4_noabort+0x14/0x30
-> [  417.114633]  __mutex_lock.constprop.0+0x1522/0x1610
-> [  417.114635]  ? queue_con_delay+0x8d/0x200
-> [  417.114638]  ? __pfx___mutex_lock.constprop.0+0x10/0x10
-> [  417.114641]  ? __send_subscribe+0x529/0xb20
-> [  417.114644]  __mutex_lock_slowpath+0x13/0x20
-> [  417.114646]  mutex_lock+0xd4/0xe0
-> [  417.114649]  ? __pfx_mutex_lock+0x10/0x10
-> [  417.114652]  ? ceph_monc_renew_subs+0x2a/0x40
-> [  417.114654]  ceph_con_keepalive+0x22/0x110
-> [  417.114656]  handle_timeout+0x6b3/0x11d0
-> [  417.114659]  ? _raw_spin_unlock_irq+0xe/0x50
-> [  417.114662]  ? __pfx_handle_timeout+0x10/0x10
-> [  417.114664]  ? queue_delayed_work_on+0x8e/0xa0
-> [  417.114669]  process_one_work+0x611/0xe20
-> [  417.114672]  ? __kasan_check_write+0x14/0x30
-> [  417.114676]  worker_thread+0x7e3/0x1580
-> [  417.114678]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> [  417.114682]  ? __pfx_sched_setscheduler_nocheck+0x10/0x10
-> [  417.114687]  ? __pfx_worker_thread+0x10/0x10
-> [  417.114689]  kthread+0x381/0x7a0
-> [  417.114692]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> [  417.114694]  ? __pfx_kthread+0x10/0x10
-> [  417.114697]  ? __kasan_check_write+0x14/0x30
-> [  417.114699]  ? recalc_sigpending+0x160/0x220
-> [  417.114703]  ? _raw_spin_unlock_irq+0xe/0x50
-> [  417.114705]  ? calculate_sigpending+0x78/0xb0
-> [  417.114707]  ? __pfx_kthread+0x10/0x10
-> [  417.114710]  ret_from_fork+0x2b6/0x380
-> [  417.114713]  ? __pfx_kthread+0x10/0x10
-> [  417.114715]  ret_from_fork_asm+0x1a/0x30
-> [  417.114720]  </TASK>
->
-> [  417.125171] Allocated by task 2:
-> [  417.125333]  kasan_save_stack+0x26/0x60
-> [  417.125522]  kasan_save_track+0x14/0x40
-> [  417.125742]  kasan_save_alloc_info+0x39/0x60
-> [  417.125945]  __kasan_slab_alloc+0x8b/0xb0
-> [  417.126133]  kmem_cache_alloc_node_noprof+0x13b/0x460
-> [  417.126381]  copy_process+0x320/0x6250
-> [  417.126595]  kernel_clone+0xb7/0x840
-> [  417.126792]  kernel_thread+0xd6/0x120
-> [  417.126995]  kthreadd+0x85c/0xbe0
-> [  417.127176]  ret_from_fork+0x2b6/0x380
-> [  417.127378]  ret_from_fork_asm+0x1a/0x30
->
-> [  417.127692] Freed by task 0:
-> [  417.127851]  kasan_save_stack+0x26/0x60
-> [  417.128057]  kasan_save_track+0x14/0x40
-> [  417.128267]  kasan_save_free_info+0x3b/0x60
-> [  417.128491]  __kasan_slab_free+0x6c/0xa0
-> [  417.128708]  kmem_cache_free+0x182/0x550
-> [  417.128906]  free_task+0xeb/0x140
-> [  417.129070]  __put_task_struct+0x1d2/0x4f0
-> [  417.129259]  __put_task_struct_rcu_cb+0x15/0x20
-> [  417.129480]  rcu_do_batch+0x3d3/0xe70
-> [  417.129681]  rcu_core+0x549/0xb30
-> [  417.129839]  rcu_core_si+0xe/0x20
-> [  417.130005]  handle_softirqs+0x160/0x570
-> [  417.130190]  __irq_exit_rcu+0x189/0x1e0
-> [  417.130369]  irq_exit_rcu+0xe/0x20
-> [  417.130531]  sysvec_apic_timer_interrupt+0x9f/0xd0
-> [  417.130768]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
->
-> [  417.131082] Last potentially related work creation:
-> [  417.131305]  kasan_save_stack+0x26/0x60
-> [  417.131484]  kasan_record_aux_stack+0xae/0xd0
-> [  417.131695]  __call_rcu_common+0xcd/0x14b0
-> [  417.131909]  call_rcu+0x31/0x50
-> [  417.132071]  delayed_put_task_struct+0x128/0x190
-> [  417.132295]  rcu_do_batch+0x3d3/0xe70
-> [  417.132478]  rcu_core+0x549/0xb30
-> [  417.132658]  rcu_core_si+0xe/0x20
-> [  417.132808]  handle_softirqs+0x160/0x570
-> [  417.132993]  __irq_exit_rcu+0x189/0x1e0
-> [  417.133181]  irq_exit_rcu+0xe/0x20
-> [  417.133353]  sysvec_apic_timer_interrupt+0x9f/0xd0
-> [  417.133584]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
->
-> [  417.133921] Second to last potentially related work creation:
-> [  417.134183]  kasan_save_stack+0x26/0x60
-> [  417.134362]  kasan_record_aux_stack+0xae/0xd0
-> [  417.134566]  __call_rcu_common+0xcd/0x14b0
-> [  417.134782]  call_rcu+0x31/0x50
-> [  417.134929]  put_task_struct_rcu_user+0x58/0xb0
-> [  417.135143]  finish_task_switch.isra.0+0x5d3/0x830
-> [  417.135366]  __schedule+0xd30/0x5100
-> [  417.135534]  schedule_idle+0x5a/0x90
-> [  417.135712]  do_idle+0x25f/0x410
-> [  417.135871]  cpu_startup_entry+0x53/0x70
-> [  417.136053]  start_secondary+0x216/0x2c0
-> [  417.136233]  common_startup_64+0x13e/0x141
->
-> [  417.136894] The buggy address belongs to the object at ffff88812487000=
-0
->                 which belongs to the cache task_struct of size 10504
-> [  417.138122] The buggy address is located 52 bytes inside of
->                 freed 10504-byte region [ffff888124870000, ffff8881248729=
-08)
->
-> [  417.139465] The buggy address belongs to the physical page:
-> [  417.140016] page: refcount:0 mapcount:0 mapping:0000000000000000 index=
-:0x0
-> pfn:0x124870
-> [  417.140789] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped=
-:0
-> pincount:0
-> [  417.141519] memcg:ffff88811aa20e01
-> [  417.141874] anon flags:
-> 0x17ffffc0000040(head|node=3D0|zone=3D2|lastcpupid=3D0x1fffff)
-> [  417.142600] page_type: f5(slab)
-> [  417.142922] raw: 0017ffffc0000040 ffff88810094f040 0000000000000000
-> dead000000000001
-> [  417.143554] raw: 0000000000000000 0000000000030003 00000000f5000000
-> ffff88811aa20e01
-> [  417.143954] head: 0017ffffc0000040 ffff88810094f040 0000000000000000
-> dead000000000001
-> [  417.144329] head: 0000000000000000 0000000000030003 00000000f5000000
-> ffff88811aa20e01
-> [  417.144710] head: 0017ffffc0000003 ffffea0004921c01 00000000ffffffff
-> 00000000ffffffff
-> [  417.145106] head: ffffffffffffffff 0000000000000000 00000000ffffffff
-> 0000000000000008
-> [  417.145485] page dumped because: kasan: bad access detected
->
-> [  417.145859] Memory state around the buggy address:
-> [  417.146094]  ffff88812486ff00: fc fc fc fc fc fc fc fc fc fc fc fc fc =
-fc fc
-> fc
-> [  417.146439]  ffff88812486ff80: fc fc fc fc fc fc fc fc fc fc fc fc fc =
-fc fc
-> fc
-> [  417.146791] >ffff888124870000: fa fb fb fb fb fb fb fb fb fb fb fb fb =
-fb fb
-> fb
-> [  417.147145]                                      ^
-> [  417.147387]  ffff888124870080: fb fb fb fb fb fb fb fb fb fb fb fb fb =
-fb fb
-> fb
-> [  417.147751]  ffff888124870100: fb fb fb fb fb fb fb fb fb fb fb fb fb =
-fb fb
-> fb
-> [  417.148123]
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> As far as I can see, we have warning here [2]:
->
-> static void get_bvec_at(struct ceph_msg_data_cursor *cursor,
->             struct bio_vec *bv)
-> {
->     struct page *page;
->     size_t off, len;
->
->     WARN_ON(!cursor->total_resid); <-- We have warning here!
->
->     /* skip zero-length data items */
->     while (!cursor->resid)
->         ceph_msg_data_advance(cursor, 0);
->
->     /* get a piece of data, cursor isn't advanced */
->     page =3D ceph_msg_data_next(cursor, &off, &len);
->     bvec_set_page(bv, page, len, off);
-> }
->
-> And we have crash in ceph_msg_data_advance() [3] because cursor->data is =
-NULL:
->
-> void ceph_msg_data_advance(struct ceph_msg_data_cursor *cursor, size_t by=
-tes)
-> {
->         bool new_piece;
->
->         BUG_ON(bytes > cursor->resid);
->         switch (cursor->data->type) {
->         case CEPH_MSG_DATA_PAGELIST:
->                 new_piece =3D ceph_msg_data_pagelist_advance(cursor, byte=
-s);
->                 break;
->         case CEPH_MSG_DATA_PAGES:
->                 new_piece =3D ceph_msg_data_pages_advance(cursor, bytes);
->                 break;
-> #ifdef CONFIG_BLOCK
->         case CEPH_MSG_DATA_BIO:
->                 new_piece =3D ceph_msg_data_bio_advance(cursor, bytes);
->                 break;
-> #endif /* CONFIG_BLOCK */
->         case CEPH_MSG_DATA_BVECS:
->                 new_piece =3D ceph_msg_data_bvecs_advance(cursor, bytes);
->                 break;
->         case CEPH_MSG_DATA_ITER:
->                 new_piece =3D ceph_msg_data_iter_advance(cursor, bytes);
->                 break;
->         case CEPH_MSG_DATA_NONE:
->         default:
->                 BUG();
->                 break;
->         }
->         cursor->total_resid -=3D bytes;
->
->         if (!cursor->resid && cursor->total_resid) {
->                 cursor->data++;
->                 __ceph_msg_data_cursor_init(cursor);
->                 new_piece =3D true;
->         }
->         cursor->need_crc =3D new_piece;
-> }
->
-> So, somehow, we feed get_bvec_at() with not initialized struct
-> ceph_msg_data_cursor because data is NULL and total_resid contains zero.
->
-> Moreover, as far as I can see, Ceph msgr1 protocol can manage this situat=
-ion
-> without any issues:
->
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.841846] libceph: pid
-> 67:net/ceph/messenger.c:1075 ceph_msg_data_cursor_init(): length 12288, m=
-sg-
-> >data_length 12288, msg->num_data_items 1
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.842656] libceph: pid
-> 67:net/ceph/messenger.c:1040 __ceph_msg_data_cursor_init(): cursor->total=
-_resid
-> 12288, cursor->data->type 0x1
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.843360] libceph: pid
-> 67:net/ceph/osd_client.c:5805 osd_sparse_read(): sr->sr_state 0x0
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.843946] libceph: pid
-> 67:net/ceph/osd_client.c:5813 osd_sparse_read(): CEPH_SPARSE_READ_HDR
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.844458] libceph: pid
-> 67:net/ceph/osd_client.c:5805 osd_sparse_read(): sr->sr_state 0x1
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.845112] libceph: pid
-> 67:net/ceph/osd_client.c:5831 osd_sparse_read(): CEPH_SPARSE_READ_EXTENTS=
-: count
-> 1
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.845547] libceph: pid
-> 67:net/ceph/osd_client.c:5805 osd_sparse_read(): sr->sr_state 0x2
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.846068] libceph: pid
-> 67:net/ceph/osd_client.c:5862 osd_sparse_read(): CEPH_SPARSE_READ_DATA_LE=
-N: sr-
-> >sr_datalen 0
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.846642] libceph: pid
-> 67:net/ceph/osd_client.c:5805 osd_sparse_read(): sr->sr_state 0x3
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.847170] libceph: pid
-> 67:net/ceph/osd_client.c:5871 osd_sparse_read(): CEPH_SPARSE_READ_DATA_PR=
-E: sr-
-> >sr_datalen 12288
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.847746] libceph: pid
-> 67:net/ceph/osd_client.c:5893 osd_sparse_read(): CEPH_SPARSE_READ_DATA: e=
-xt 0
-> off 0x0 len 0x3000
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.848434] libceph: pid
-> 67:net/ceph/osd_client.c:5805 osd_sparse_read(): sr->sr_state 0x4
-> Nov  5 14:51:43 ceph-0006 kernel: [  214.848852] libceph: pid
-> 67:net/ceph/osd_client.c:5813 osd_sparse_read(): CEPH_SPARSE_READ_HDR
->
-> And we call ceph_msg_data_cursor_init() for the case of Ceph msgr1 protoc=
-ol. But
-> I don't see any likewise call for the case of Ceph msgr2 protocol:
->
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.114531] libceph: pid
-> 232:net/ceph/messenger_v2.c:1013 setup_message_sgs(): starting...
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.115066] libceph: pid
-> 232:net/ceph/messenger_v2.c:1016 setup_message_sgs(): front_len(msg) 164,
-> middle_len(msg) 0, data_len(msg) 12312, pages 00000000f99807bf
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.116089] libceph: pid
-> 232:net/ceph/messenger_v2.c:1243 decrypt_tail(): data_length 12288, data
-> 00000000e2dbb152, num_data_items 1, max_data_items 1, more_to_follow 0x0,
-> needs_out_seq 0x0, sparse_read_total 12288, front_alloc_len 570
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.117599] libceph: pid
-> 232:net/ceph/messenger_v2.c:1127 process_v2_sparse_read(): BEFORE sparse_=
-read:
-> total_resid 0, data 0000000000000000, resid 0, sr_resid 0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.118669] libceph: pid
-> 232:net/ceph/osd_client.c:5805 osd_sparse_read(): sr->sr_state 0x0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.119311] libceph: pid
-> 232:net/ceph/osd_client.c:5813 osd_sparse_read(): CEPH_SPARSE_READ_HDR
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.119924] libceph: pid
-> 232:net/ceph/messenger_v2.c:1144 process_v2_sparse_read(): AFTER sparse_r=
-ead:
-> total_resid 0, data 0000000000000000, resid 0, sr_resid 0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.120948] libceph: pid
-> 232:net/ceph/messenger_v2.c:1161 process_v2_sparse_read(): data_length 12=
-288,
-> data 00000000e2dbb152, num_data_items 1, max_data_items 1, more_to_follow=
- 0x0,
-> needs_out_seq 0x0, sparse_read_total 12288, front_alloc_len 570
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.122307] libceph: pid
-> 232:net/ceph/messenger_v2.c:1175 process_v2_sparse_read(): sparse_read re=
-turn 4
-> buf 00000000d8193189
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.123118] libceph: pid
-> 232:net/ceph/messenger_v2.c:1127 process_v2_sparse_read(): BEFORE sparse_=
-read:
-> total_resid 0, data 0000000000000000, resid 0, sr_resid 0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.124009] libceph: pid
-> 232:net/ceph/osd_client.c:5805 osd_sparse_read(): sr->sr_state 0x1
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.124600] libceph: pid
-> 232:net/ceph/osd_client.c:5831 osd_sparse_read(): CEPH_SPARSE_READ_EXTENT=
-S:
-> count 1
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.125214] libceph: pid
-> 232:net/ceph/messenger_v2.c:1144 process_v2_sparse_read(): AFTER sparse_r=
-ead:
-> total_resid 0, data 0000000000000000, resid 0, sr_resid 0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.126123] libceph: pid
-> 232:net/ceph/messenger_v2.c:1161 process_v2_sparse_read(): data_length 12=
-288,
-> data 00000000e2dbb152, num_data_items 1, max_data_items 1, more_to_follow=
- 0x0,
-> needs_out_seq 0x0, sparse_read_total 12288, front_alloc_len 570
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.127607] libceph: pid
-> 232:net/ceph/messenger_v2.c:1175 process_v2_sparse_read(): sparse_read re=
-turn 10
-> buf 00000000b993b4dc
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.128398] libceph: pid
-> 232:net/ceph/messenger_v2.c:1127 process_v2_sparse_read(): BEFORE sparse_=
-read:
-> total_resid 0, data 0000000000000000, resid 0, sr_resid 0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.129117] libceph: pid
-> 232:net/ceph/osd_client.c:5805 osd_sparse_read(): sr->sr_state 0x2
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.129619] libceph: pid
-> 232:net/ceph/osd_client.c:5862 osd_sparse_read(): CEPH_SPARSE_READ_DATA_L=
-EN: sr-
-> >sr_datalen 0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.130239] libceph: pid
-> 232:net/ceph/messenger_v2.c:1144 process_v2_sparse_read(): AFTER sparse_r=
-ead:
-> total_resid 0, data 0000000000000000, resid 0, sr_resid 0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.131008] libceph: pid
-> 232:net/ceph/messenger_v2.c:1161 process_v2_sparse_read(): data_length 12=
-288,
-> data 00000000e2dbb152, num_data_items 1, max_data_items 1, more_to_follow=
- 0x0,
-> needs_out_seq 0x0, sparse_read_total 12288, front_alloc_len 570
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.132205] libceph: pid
-> 232:net/ceph/messenger_v2.c:1175 process_v2_sparse_read(): sparse_read re=
-turn 4
-> buf 000000006ad6b16a
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.132907] libceph: pid
-> 232:net/ceph/messenger_v2.c:1127 process_v2_sparse_read(): BEFORE sparse_=
-read:
-> total_resid 0, data 0000000000000000, resid 0, sr_resid 0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.133764] libceph: pid
-> 232:net/ceph/osd_client.c:5805 osd_sparse_read(): sr->sr_state 0x3
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.134251] libceph: pid
-> 232:net/ceph/osd_client.c:5871 osd_sparse_read(): CEPH_SPARSE_READ_DATA_P=
-RE: sr-
-> >sr_datalen 12288
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.134878] libceph: pid
-> 232:net/ceph/osd_client.c:5893 osd_sparse_read(): CEPH_SPARSE_READ_DATA: =
-ext 0
-> off 0x0 len 0x3000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.135604] libceph: pid
-> 232:net/ceph/messenger_v2.c:1144 process_v2_sparse_read(): AFTER sparse_r=
-ead:
-> total_resid 0, data 0000000000000000, resid 0, sr_resid 12288
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.136434] libceph: pid
-> 232:net/ceph/messenger_v2.c:1161 process_v2_sparse_read(): data_length 12=
-288,
-> data 00000000e2dbb152, num_data_items 1, max_data_items 1, more_to_follow=
- 0x0,
-> needs_out_seq 0x0, sparse_read_total 12288, front_alloc_len 570
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.137576] libceph: pid
-> 232:net/ceph/messenger_v2.c:1175 process_v2_sparse_read(): sparse_read re=
-turn
-> 3000 buf 0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.138299]
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.138682] BUG: KASAN: slab-out-of-=
-bounds
-> in __ceph_msg_data_cursor_init+0x75/0x9ad
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139053] Read of size 4 at addr
-> ffff888113bcffb0 by task kworker/3:2/232
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139412]
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139495] CPU: 3 UID: 0 PID: 232 C=
-omm:
-> kworker/3:2 Not tainted 6.17.0-rc7+ #11 PREEMPT(voluntary)
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139498] Hardware name: QEMU Stan=
-dard PC
-> (i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139499] Workqueue: ceph-msgr
-> ceph_con_workfn
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139510] Call Trace:
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139511]  <TASK>
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139512]  dump_stack_lvl+0x5c/0x9=
-0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139516]  print_report+0x171/0x4d=
-c
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139520]  ?
-> __pfx__raw_spin_lock_irqsave+0x10/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139523]  ?
-> kasan_complete_mode_report_info+0x2d/0x220
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139527]  kasan_report+0xbd/0x100
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139530]  ?
-> __ceph_msg_data_cursor_init+0x75/0x9ad
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139532]  ?
-> __ceph_msg_data_cursor_init+0x75/0x9ad
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139534]
-> __asan_report_load4_noabort+0x14/0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139536]
-> __ceph_msg_data_cursor_init+0x75/0x9ad
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139538]
-> ceph_msg_data_advance.cold+0x30/0xfd
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139540]  ? vprintk_default+0x1d/=
-0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139544]  get_bvec_at+0xdb/0x230
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139546]  ? __pfx__printk+0x10/0x=
-10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139550]  ? __pfx_get_bvec_at+0x1=
-0/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139552]
-> ceph_con_v2_try_read.cold+0x1a90/0x1bb4
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139554]  ? update_entity_lag+0x4=
-9/0x190
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139558]  ?
-> __pfx_ceph_con_v2_try_read+0x10/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139560]  ?
-> finish_task_switch.isra.0+0x15d/0x830
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139564]  ?
-> __kasan_check_write+0x14/0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139565]  ? mutex_lock+0x84/0xe0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139567]  ? __pfx_mutex_lock+0x10=
-/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139570]  ceph_con_workfn+0x27e/0=
-x10e0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139572]  process_one_work+0x611/=
-0xe20
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139575]  ?
-> __kasan_check_write+0x14/0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139577]  worker_thread+0x7e3/0x1=
-580
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139579]  ?
-> __pfx__raw_spin_lock_irqsave+0x10/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139582]  ?
-> __pfx_worker_thread+0x10/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139584]  kthread+0x381/0x7a0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139587]  ?
-> __pfx__raw_spin_lock_irq+0x10/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139588]  ? __pfx_kthread+0x10/0x=
-10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139590]  ?
-> __kasan_check_write+0x14/0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139592]  ?
-> recalc_sigpending+0x160/0x220
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139594]  ?
-> _raw_spin_unlock_irq+0xe/0x50
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139596]  ?
-> calculate_sigpending+0x78/0xb0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139597]  ? __pfx_kthread+0x10/0x=
-10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139599]  ret_from_fork+0x2b6/0x3=
-80
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139602]  ? __pfx_kthread+0x10/0x=
-10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139604]  ret_from_fork_asm+0x1a/=
-0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139608]  </TASK>
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.139609]
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149701] Allocated by task 1989:
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149914]  kasan_save_stack+0x26/0=
-x60
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149917]  kasan_save_track+0x14/0=
-x40
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149920]
-> kasan_save_alloc_info+0x39/0x60
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149922]  __kasan_kmalloc+0xa9/0x=
-d0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149925]  __kmalloc_noprof+0x1ec/=
-0x5c0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149928]  ceph_msg_new2+0x2ff/0x4=
-90
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149931]
-> __ceph_osdc_alloc_messages+0x3c0/0x650
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149934]
-> ceph_osdc_alloc_messages+0x179/0x240
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149937]
-> ceph_osdc_new_request+0x792/0x8a0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149939]
-> ceph_netfs_issue_read+0xabd/0x2010
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149944]
-> netfs_read_to_pagecache+0x3d0/0xf70
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149948]  netfs_readahead+0x47b/0=
-x970
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149951]  read_pages+0x186/0x8b0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149954]
-> page_cache_ra_unbounded+0x385/0x670
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149957]
-> page_cache_ra_order+0x7c9/0xb00
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149960]  page_cache_sync_ra+0x45=
-f/0xa60
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149962]  filemap_get_pages+0x2e2=
-/0x17f0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149966]  filemap_read+0x311/0xd6=
-0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149968]
-> generic_file_read_iter+0x29a/0x430
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149971]  ceph_read_iter+0xdd9/0x=
-1a70
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149974]  vfs_read+0x6e7/0xb00
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149977]  ksys_read+0xfc/0x230
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149980]  __x64_sys_read+0x72/0xd=
-0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149983]  x64_sys_call+0x1e95/0x2=
-330
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149986]  do_syscall_64+0x83/0x32=
-0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149990]
-> entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.149992]
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.150089] The buggy address belong=
-s to
-> the object at ffff888113bcff80
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.150089]  which belongs to the ca=
-che
-> kmalloc-64 of size 64
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.150713] The buggy address is loc=
-ated 0
-> bytes to the right of
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.150713]  allocated 48-byte regio=
-n
-> [ffff888113bcff80, ffff888113bcffb0)
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151407]
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151497] The buggy address belong=
-s to
-> the physical page:
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151802] page: refcount:0 mapcoun=
-t:0
-> mapping:0000000000000000 index:0xffff888113bcf300 pfn:0x113bcf
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151805] anon flags:
-> 0x17ffffc0000000(node=3D0|zone=3D2|lastcpupid=3D0x1fffff)
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151808] page_type: f5(slab)
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151812] raw: 0017ffffc0000000
-> ffff8881000428c0 0000000000000000 dead000000000001
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151814] raw: ffff888113bcf300
-> 000000008020001a 00000000f5000000 0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151816] page dumped because: kas=
-an: bad
-> access detected
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151817]
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.151910] Memory state around the =
-buggy
-> address:
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.152180]  ffff888113bcfe80: fa fb=
- fb fb
-> fb fb fb fb fc fc fc fc fc fc fc fc
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.152598]  ffff888113bcff00: fa fb=
- fb fb
-> fb fb fb fb fc fc fc fc fc fc fc fc
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.152986] >ffff888113bcff80: 00 00=
- 00 00
-> 00 00 fc fc fc fc fc fc fc fc fc fc
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.153383]
-> ^
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.153658]  ffff888113bd0000: 00 00=
- 00 00
-> 00 00 00 00 00 00 00 00 00 00 00 00
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.154048]  ffff888113bd0080: 00 00=
- 00 00
-> 00 00 00 00 00 00 00 00 00 00 00 00
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.154437]
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.154885] Disabling lock debugging=
- due to
-> kernel taint
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.154887] libceph: pid
-> 232:net/ceph/messenger.c:1040 __ceph_msg_data_cursor_init(): cursor->tota=
-l_resid
-> 12288, cursor->data->type 0x0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.155814] ------------[ cut here ]=
--------
-> -----
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.155816] kernel BUG at
-> net/ceph/messenger.c:1164!
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.156088] Oops: invalid opcode: 00=
-00 [#1]
-> SMP KASAN NOPTI
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.156383] CPU: 3 UID: 0 PID: 232 C=
-omm:
-> kworker/3:2 Tainted: G    B               6.17.0-rc7+ #11 PREEMPT(volunta=
-ry)
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.156948] Tainted: [B]=3DBAD_PAGE
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.157121] Hardware name: QEMU Stan=
-dard PC
-> (i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.157590] Workqueue: ceph-msgr
-> ceph_con_workfn
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.157842] RIP:
-> 0010:ceph_msg_data_advance+0x10e7/0x1a50
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.158114] Code: b0 4c 89 5d b8 4c =
-89 45
-> c8 e8 05 46 36 fd 48 8b 4d 98 44 8b 4d a0 8b 75 a8 4c 8b 55 b0 4c 8b 5d b=
-8 4c 8b
-> 45 c8 e9 ab f3 ff ff <0f> 0b 49 8d 7f 08 48 89 4d c0 4c 89 55 c8 4c 89 45=
- d0 e8
-> 12 46 36
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.159059] RSP: 0018:ffff888122ec78=
-80
-> EFLAGS: 00010293
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.159323] RAX: 0000000000000000 RB=
-X:
-> ffff888113bcffb0 RCX: 0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.159716] RDX: 0000000000000000 RS=
-I:
-> 0000000000000000 RDI: 0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.160088] RBP: ffff888122ec7910 R0=
-8:
-> 0000000000000000 R09: 0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.160744] R10: ffff88811fce4388 R1=
-1:
-> 0000000000000000 R12: ffffed1023f9c871
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.161630] R13: 1ffff110245d8f25 R1=
-4:
-> ffff888122ec7ba0 R15: ffff88811fce4378
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.162099] FS:  0000000000000000(00=
-00)
-> GS:ffff8882449de000(0000) knlGS:0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.162998] CS:  0010 DS: 0000 ES: 0=
-000
-> CR0: 0000000080050033
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.163577] CR2: 00007dba67d08bc0 CR=
-3:
-> 0000000193c9e002 CR4: 0000000000772ef0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.164470] PKRU: 55555554
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.165041] Call Trace:
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.165458]  <TASK>
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.165699]  get_bvec_at+0xdb/0x230
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.166202]  ? __pfx__printk+0x10/0x=
-10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.166853]  ? __pfx_get_bvec_at+0x1=
-0/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.167990]
-> ceph_con_v2_try_read.cold+0x1a90/0x1bb4
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.169097]  ? update_entity_lag+0x4=
-9/0x190
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.169791]  ?
-> __pfx_ceph_con_v2_try_read+0x10/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.170067]  ?
-> finish_task_switch.isra.0+0x15d/0x830
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.170450]  ?
-> __kasan_check_write+0x14/0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.170720]  ? mutex_lock+0x84/0xe0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.171026]  ? __pfx_mutex_lock+0x10=
-/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.171246]  ceph_con_workfn+0x27e/0=
-x10e0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.171596]  process_one_work+0x611/=
-0xe20
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.171822]  ?
-> __kasan_check_write+0x14/0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.172058]  worker_thread+0x7e3/0x1=
-580
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.172403]  ?
-> __pfx__raw_spin_lock_irqsave+0x10/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.172817]  ?
-> __pfx_worker_thread+0x10/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.173049]  kthread+0x381/0x7a0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.173348]  ?
-> __pfx__raw_spin_lock_irq+0x10/0x10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.174274]  ? __pfx_kthread+0x10/0x=
-10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.175073]  ?
-> __kasan_check_write+0x14/0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.176356]  ?
-> recalc_sigpending+0x160/0x220
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.177248]  ?
-> _raw_spin_unlock_irq+0xe/0x50
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.178145]  ?
-> calculate_sigpending+0x78/0xb0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.179061]  ? __pfx_kthread+0x10/0x=
-10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.179595]  ret_from_fork+0x2b6/0x3=
-80
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.179792]  ? __pfx_kthread+0x10/0x=
-10
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.179984]  ret_from_fork_asm+0x1a/=
-0x30
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.180200]  </TASK>
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.180337] Modules linked in:
-> intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_=
-core
-> pmt_telemetry pmt_discovery pmt_class intel_pmc_ssram_telemetry intel_vse=
-c
-> kvm_intel kvm joydev irqbypass polyval_clmulni ghash_clmulni_intel aesni_=
-intel
-> rapl psmouse input_leds vga16fb serio_raw vgastate floppy i2c_piix4 mac_h=
-id
-> qemu_fw_cfg i2c_smbus pata_acpi bochs sch_fq_codel rbd msr parport_pc ppd=
-ev lp
-> parport efi_pstore
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.182337] ---[ end trace 000000000=
-0000000
-> ]---
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.182582] RIP:
-> 0010:ceph_msg_data_advance+0x10e7/0x1a50
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.182882] Code: b0 4c 89 5d b8 4c =
-89 45
-> c8 e8 05 46 36 fd 48 8b 4d 98 44 8b 4d a0 8b 75 a8 4c 8b 55 b0 4c 8b 5d b=
-8 4c 8b
-> 45 c8 e9 ab f3 ff ff <0f> 0b 49 8d 7f 08 48 89 4d c0 4c 89 55 c8 4c 89 45=
- d0 e8
-> 12 46 36
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.184326] RSP: 0018:ffff888122ec78=
-80
-> EFLAGS: 00010293
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.184697] RAX: 0000000000000000 RB=
-X:
-> ffff888113bcffb0 RCX: 0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.185118] RDX: 0000000000000000 RS=
-I:
-> 0000000000000000 RDI: 0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.185553] RBP: ffff888122ec7910 R0=
-8:
-> 0000000000000000 R09: 0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.186033] R10: ffff88811fce4388 R1=
-1:
-> 0000000000000000 R12: ffffed1023f9c871
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.186455] R13: 1ffff110245d8f25 R1=
-4:
-> ffff888122ec7ba0 R15: ffff88811fce4378
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.186905] FS:  0000000000000000(00=
-00)
-> GS:ffff8882449de000(0000) knlGS:0000000000000000
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.187420] CS:  0010 DS: 0000 ES: 0=
-000
-> CR0: 0000000080050033
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.187820] CR2: 00007dba67d08bc0 CR=
-3:
-> 0000000193c9e002 CR4: 0000000000772ef0
-> Nov  4 15:22:33 ceph-0006 kernel: [   51.188230] PKRU: 55555554
->
-> So, where could be the proper place of calling ceph_msg_data_cursor_init(=
-) for
-> the case of Ceph msgr2 protocol?
->
-> I tried to consider the setup_message_sgs() but it doesn't work. What cou=
-ld be
-> the proper solution of this issue? Maybe, I am misunderstanding the logic=
- of
-> Ceph msgr2 protocol but get_bvec_at() and ceph_msg_data_advance() expect =
-to have
-> the initialized cursor.
+With two exceptions, ->create() methods provided by filesystems ignore
+the "excl" flag.  Those exception are NFS and GFS2 which both also
+provide ->atomic_open.
 
-Hi Slava,
+Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
+the "excl" argument to the ->create() inode_operation is always set to
+true in vfs_create(). The ->create() call in lookup_open() sets it
+according to the O_EXCL open flag, but is never called if the filesystem
+provides ->atomic_open().
 
-Yes, they do.
+The excl flag is therefore always either ignored or true.  Remove it,
+and change NFS and GFS2 to act as if it were always true.
 
-Based on a quick look, I'd expect the cursor to be initialized at the
-top of process_v2_sparse_read(), before the for loop.  Keep in mind
-that the initial submission for sparse read support didn't go through
-me so I wouldn't necessarily know what the "proper" place is though.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Note that this is based on top of the dir delegation series [1]. LMK
+if the Documentation/ updates are too wordy.
 
-Thanks,
+Full disclosure: I did use Claude code to generate the first
+approximation of this patch, but I had to fix a number of things that it
+missed.  I probably could have given it better prompts. In any case, I'm
+not sure how to properly attribute this (or if I even need to).
 
-                Ilya
+[1]: https://lore.kernel.org/linux-nfs/20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org/
+---
+Changes in v2:
+- better describe why the argument isn't needed in the changelog
+- updates do Documentation/
+- Link to v1: https://lore.kernel.org/r/20251105-create-excl-v1-1-a4cce035cc55@kernel.org
+---
+ Documentation/filesystems/porting.rst | 12 ++++++++++++
+ Documentation/filesystems/vfs.rst     | 13 ++++++++++---
+ fs/9p/vfs_inode.c                     |  2 +-
+ fs/9p/vfs_inode_dotl.c                |  2 +-
+ fs/affs/affs.h                        |  2 +-
+ fs/affs/namei.c                       |  2 +-
+ fs/afs/dir.c                          |  4 ++--
+ fs/bad_inode.c                        |  2 +-
+ fs/bfs/dir.c                          |  2 +-
+ fs/btrfs/inode.c                      |  2 +-
+ fs/ceph/dir.c                         |  2 +-
+ fs/coda/dir.c                         |  2 +-
+ fs/ecryptfs/inode.c                   |  2 +-
+ fs/efivarfs/inode.c                   |  2 +-
+ fs/exfat/namei.c                      |  2 +-
+ fs/ext2/namei.c                       |  2 +-
+ fs/ext4/namei.c                       |  2 +-
+ fs/f2fs/namei.c                       |  2 +-
+ fs/fat/namei_msdos.c                  |  2 +-
+ fs/fat/namei_vfat.c                   |  2 +-
+ fs/fuse/dir.c                         |  2 +-
+ fs/gfs2/inode.c                       |  5 ++---
+ fs/hfs/dir.c                          |  2 +-
+ fs/hfsplus/dir.c                      |  2 +-
+ fs/hostfs/hostfs_kern.c               |  2 +-
+ fs/hpfs/namei.c                       |  2 +-
+ fs/hugetlbfs/inode.c                  |  2 +-
+ fs/jffs2/dir.c                        |  4 ++--
+ fs/jfs/namei.c                        |  2 +-
+ fs/minix/namei.c                      |  2 +-
+ fs/namei.c                            |  4 ++--
+ fs/nfs/dir.c                          |  4 ++--
+ fs/nfs/internal.h                     |  2 +-
+ fs/nilfs2/namei.c                     |  2 +-
+ fs/ntfs3/namei.c                      |  2 +-
+ fs/ocfs2/dlmfs/dlmfs.c                |  3 +--
+ fs/ocfs2/namei.c                      |  3 +--
+ fs/omfs/dir.c                         |  2 +-
+ fs/orangefs/namei.c                   |  3 +--
+ fs/overlayfs/dir.c                    |  2 +-
+ fs/ramfs/inode.c                      |  2 +-
+ fs/smb/client/cifsfs.h                |  2 +-
+ fs/smb/client/dir.c                   |  2 +-
+ fs/ubifs/dir.c                        |  2 +-
+ fs/udf/namei.c                        |  2 +-
+ fs/ufs/namei.c                        |  3 +--
+ fs/vboxsf/dir.c                       |  2 +-
+ fs/xfs/xfs_iops.c                     |  3 +--
+ include/linux/fs.h                    |  4 ++--
+ ipc/mqueue.c                          |  2 +-
+ mm/shmem.c                            |  2 +-
+ 51 files changed, 77 insertions(+), 64 deletions(-)
+
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index 7233b04668fcce75f1ed170329a2cd18110a7d89..d71a3f5c626e578f0370986975ca50292c8e15c3 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -1309,3 +1309,15 @@ a different length, use
+ 	vfs_parse_fs_qstr(fc, key, &QSTR_LEN(value, len))
+ 
+ instead.
++
++---
++
++**mandatory**
++
++The ->create() operation has dropped the bool "excl" argument. This operation
++should now always provide O_EXCL semantics (i.e. fail with -EEXIST if the file
++exists). If the filesystem needs to handle the case where another entity could
++create the file on the backing store after a negative lookup or revalidate
++(e.g. it's a network filesystem and another client could create the file after
++a negative lookup), then it will require ->atomic_open() in addition to
++->create().
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 4f13b01e42eb5e2ad9d60cbbce7e47d09ad831e6..7a55e491e0c87a0d18909bd181754d6d68318059 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -467,7 +467,7 @@ As of kernel 2.6.22, the following members are defined:
+ .. code-block:: c
+ 
+ 	struct inode_operations {
+-		int (*create) (struct mnt_idmap *, struct inode *,struct dentry *, umode_t, bool);
++		int (*create) (struct mnt_idmap *, struct inode *,struct dentry *, umode_t);
+ 		struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);
+ 		int (*link) (struct dentry *,struct inode *,struct dentry *);
+ 		int (*unlink) (struct inode *,struct dentry *);
+@@ -505,7 +505,10 @@ otherwise noted.
+ 	if you want to support regular files.  The dentry you get should
+ 	not have an inode (i.e. it should be a negative dentry).  Here
+ 	you will probably call d_instantiate() with the dentry and the
+-	newly created inode
++        newly created inode. This operation should always provide O_EXCL
++        semantics (i.e. it should fail with -EEXIST if the file exists).
++        If the filesystem needs to mediate non-exclusive creation,
++        then the filesystem must also provide an ->atomic_open() operation.
+ 
+ ``lookup``
+ 	called when the VFS needs to look up an inode in a parent
+@@ -654,7 +657,11 @@ otherwise noted.
+ 	handled by f_op->open().  If the file was created, FMODE_CREATED
+ 	flag should be set in file->f_mode.  In case of O_EXCL the
+ 	method must only succeed if the file didn't exist and hence
+-	FMODE_CREATED shall always be set on success.
++        FMODE_CREATED shall always be set on success. This method is
++        usually needed on filesystems where the dentry to be created could
++        unexpectedly become positive after the kernel has looked it up or
++        revalidated it. (e.g. another host racing in and creating the file
++        on an NFS server).
+ 
+ ``tmpfile``
+ 	called in the end of O_TMPFILE open().  Optional, equivalent to
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 69f378a837753e934c20b599660f8a756127e40a..595244d57cba62869b9af8b909af67d3c61e7f6c 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -643,7 +643,7 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
+ 
+ static int
+ v9fs_vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-		struct dentry *dentry, umode_t mode, bool excl)
++		struct dentry *dentry, umode_t mode)
+ {
+ 	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(dir);
+ 	u32 perm = unixmode2p9mode(v9ses, mode);
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 0b404e8484d22e2cbe60d846e0fa653001cdc4b1..de8fe9954d433c9b14ff5dd72ba13c3d5a67ebe7 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -218,7 +218,7 @@ int v9fs_open_to_dotl_flags(int flags)
+  */
+ static int
+ v9fs_vfs_create_dotl(struct mnt_idmap *idmap, struct inode *dir,
+-		     struct dentry *dentry, umode_t omode, bool excl)
++		     struct dentry *dentry, umode_t omode)
+ {
+ 	return v9fs_vfs_mknod_dotl(idmap, dir, dentry, omode, 0);
+ }
+diff --git a/fs/affs/affs.h b/fs/affs/affs.h
+index ac4e9a02910b72d63c8ec5291347b54518e67f4b..665be23c42cfa206dc0a2c9ffa119b7c3c747389 100644
+--- a/fs/affs/affs.h
++++ b/fs/affs/affs.h
+@@ -167,7 +167,7 @@ extern int	affs_hash_name(struct super_block *sb, const u8 *name, unsigned int l
+ extern struct dentry *affs_lookup(struct inode *dir, struct dentry *dentry, unsigned int);
+ extern int	affs_unlink(struct inode *dir, struct dentry *dentry);
+ extern int	affs_create(struct mnt_idmap *idmap, struct inode *dir,
+-			struct dentry *dentry, umode_t mode, bool);
++			struct dentry *dentry, umode_t mode);
+ extern struct dentry *affs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 			struct dentry *dentry, umode_t mode);
+ extern int	affs_rmdir(struct inode *dir, struct dentry *dentry);
+diff --git a/fs/affs/namei.c b/fs/affs/namei.c
+index f883be50db122d3b09f0ae4d24618bd49b55186b..5591e1b5a2f68fc7600115e241f01f81d3aac010 100644
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -243,7 +243,7 @@ affs_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ int
+ affs_create(struct mnt_idmap *idmap, struct inode *dir,
+-	    struct dentry *dentry, umode_t mode, bool excl)
++	    struct dentry *dentry, umode_t mode)
+ {
+ 	struct super_block *sb = dir->i_sb;
+ 	struct inode	*inode;
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 89d36e3e5c7999c2e448b78e86896d8893a8a7a9..09224aca8cad37ad273fd0c1ac292f0c15e078b5 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -32,7 +32,7 @@ static bool afs_lookup_one_filldir(struct dir_context *ctx, const char *name, in
+ static bool afs_lookup_filldir(struct dir_context *ctx, const char *name, int nlen,
+ 			      loff_t fpos, u64 ino, unsigned dtype);
+ static int afs_create(struct mnt_idmap *idmap, struct inode *dir,
+-		      struct dentry *dentry, umode_t mode, bool excl);
++		      struct dentry *dentry, umode_t mode);
+ static struct dentry *afs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 				struct dentry *dentry, umode_t mode);
+ static int afs_rmdir(struct inode *dir, struct dentry *dentry);
+@@ -1637,7 +1637,7 @@ static const struct afs_operation_ops afs_create_operation = {
+  * create a regular file on an AFS filesystem
+  */
+ static int afs_create(struct mnt_idmap *idmap, struct inode *dir,
+-		      struct dentry *dentry, umode_t mode, bool excl)
++		      struct dentry *dentry, umode_t mode)
+ {
+ 	struct afs_operation *op;
+ 	struct afs_vnode *dvnode = AFS_FS_I(dir);
+diff --git a/fs/bad_inode.c b/fs/bad_inode.c
+index 0ef9bcb744dd620bf47caa024d97a1316ff7bc89..5701361cf98155a61cb75a4ec602e8fc615eb3ae 100644
+--- a/fs/bad_inode.c
++++ b/fs/bad_inode.c
+@@ -29,7 +29,7 @@ static const struct file_operations bad_file_ops =
+ 
+ static int bad_inode_create(struct mnt_idmap *idmap,
+ 			    struct inode *dir, struct dentry *dentry,
+-			    umode_t mode, bool excl)
++			    umode_t mode)
+ {
+ 	return -EIO;
+ }
+diff --git a/fs/bfs/dir.c b/fs/bfs/dir.c
+index c375e22c4c0c15ba27307d266adfe3f093b90ab8..6beb8605c523cc2c7250d7b1a61508e103f0f3fd 100644
+--- a/fs/bfs/dir.c
++++ b/fs/bfs/dir.c
+@@ -76,7 +76,7 @@ const struct file_operations bfs_dir_operations = {
+ };
+ 
+ static int bfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-		      struct dentry *dentry, umode_t mode, bool excl)
++		      struct dentry *dentry, umode_t mode)
+ {
+ 	int err;
+ 	struct inode *inode;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 3b1b3a0553eea06229255ad0284d76074bdb958a..8e06baeabae594850607366ea4f4f0fa41e3b464 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -6816,7 +6816,7 @@ static int btrfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ }
+ 
+ static int btrfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-			struct dentry *dentry, umode_t mode, bool excl)
++			struct dentry *dentry, umode_t mode)
+ {
+ 	struct inode *inode;
+ 
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index d18c0eaef9b7e7be7eb517c701d6c4af08fd78ac..308903dc0780dbed2382228005d0221f185c61ee 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -976,7 +976,7 @@ static int ceph_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ }
+ 
+ static int ceph_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode, bool excl)
++		       struct dentry *dentry, umode_t mode)
+ {
+ 	return ceph_mknod(idmap, dir, dentry, mode, 0);
+ }
+diff --git a/fs/coda/dir.c b/fs/coda/dir.c
+index ca99900172657d80a479b2eb27f50effdf834995..554e7fd44e5df1aae6da2c41a492a02ae9e0d616 100644
+--- a/fs/coda/dir.c
++++ b/fs/coda/dir.c
+@@ -134,7 +134,7 @@ static inline void coda_dir_drop_nlink(struct inode *dir)
+ 
+ /* creation routines: create, mknod, mkdir, link, symlink */
+ static int coda_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *de, umode_t mode, bool excl)
++		       struct dentry *de, umode_t mode)
+ {
+ 	int error;
+ 	const char *name=de->d_name.name;
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index ba15e7359dfa6e150b577205991010873a633511..9a1ba68b16f3d6c4551e2d75e1e27309159c062e 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -262,7 +262,7 @@ int ecryptfs_initialize_file(struct dentry *ecryptfs_dentry,
+ static int
+ ecryptfs_create(struct mnt_idmap *idmap,
+ 		struct inode *directory_inode, struct dentry *ecryptfs_dentry,
+-		umode_t mode, bool excl)
++		umode_t mode)
+ {
+ 	struct inode *ecryptfs_inode;
+ 	int rc;
+diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
+index 2891614abf8d554f563319187b6d54c2bc006a91..043b3e3a4f0adefe27855f8156b946c1dc4bd184 100644
+--- a/fs/efivarfs/inode.c
++++ b/fs/efivarfs/inode.c
+@@ -75,7 +75,7 @@ static bool efivarfs_valid_name(const char *str, int len)
+ }
+ 
+ static int efivarfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-			   struct dentry *dentry, umode_t mode, bool excl)
++			   struct dentry *dentry, umode_t mode)
+ {
+ 	struct inode *inode = NULL;
+ 	struct efivar_entry *var;
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 7eb9c67fd35f4c54e18061a948806f20455675cf..c272a522c571044fd0cdc7630be30bdcec2ab8e5 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -543,7 +543,7 @@ static int exfat_add_entry(struct inode *inode, const char *path,
+ }
+ 
+ static int exfat_create(struct mnt_idmap *idmap, struct inode *dir,
+-			struct dentry *dentry, umode_t mode, bool excl)
++			struct dentry *dentry, umode_t mode)
+ {
+ 	struct super_block *sb = dir->i_sb;
+ 	struct inode *inode;
+diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+index bde617a66cecd4a2bf12a713a2297bb4fee45916..edea7784ad39acd4afffc7f5ae6e50a20c04999d 100644
+--- a/fs/ext2/namei.c
++++ b/fs/ext2/namei.c
+@@ -101,7 +101,7 @@ struct dentry *ext2_get_parent(struct dentry *child)
+  */
+ static int ext2_create (struct mnt_idmap * idmap,
+ 			struct inode * dir, struct dentry * dentry,
+-			umode_t mode, bool excl)
++			umode_t mode)
+ {
+ 	struct inode *inode;
+ 	int err;
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 2cd36f59c9e363124ee949f742adccd88447295a..a1e77390a7ce300db02db9af90e45d69efabfea5 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2806,7 +2806,7 @@ static int ext4_add_nondir(handle_t *handle,
+  * with d_instantiate().
+  */
+ static int ext4_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode, bool excl)
++		       struct dentry *dentry, umode_t mode)
+ {
+ 	handle_t *handle;
+ 	struct inode *inode;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index b882771e469971dcf4e7a42416f9fbb8a5d9bf39..9bcbb8b521501b22d0fe2238b7729c342e95baa4 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -351,7 +351,7 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
+ }
+ 
+ static int f2fs_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode, bool excl)
++		       struct dentry *dentry, umode_t mode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+ 	struct inode *inode;
+diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
+index 0b920ee40a7f9fe3c57af5d939d3efedf001a3d9..905ffa9e5b99f1507734d99b7c16dcad21d7b5b5 100644
+--- a/fs/fat/namei_msdos.c
++++ b/fs/fat/namei_msdos.c
+@@ -262,7 +262,7 @@ static int msdos_add_entry(struct inode *dir, const unsigned char *name,
+ 
+ /***** Create a file */
+ static int msdos_create(struct mnt_idmap *idmap, struct inode *dir,
+-			struct dentry *dentry, umode_t mode, bool excl)
++			struct dentry *dentry, umode_t mode)
+ {
+ 	struct super_block *sb = dir->i_sb;
+ 	struct inode *inode = NULL;
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 5dbc4cbb8fce3d9b891cbc597f876c2c7b8d6aa0..8396b1ec4ec582fcdfadbcb12b04694ef0b8c5fc 100644
+--- a/fs/fat/namei_vfat.c
++++ b/fs/fat/namei_vfat.c
+@@ -754,7 +754,7 @@ static struct dentry *vfat_lookup(struct inode *dir, struct dentry *dentry,
+ }
+ 
+ static int vfat_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode, bool excl)
++		       struct dentry *dentry, umode_t mode)
+ {
+ 	struct super_block *sb = dir->i_sb;
+ 	struct inode *inode;
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 667774cc72a1d49796f531fcb342d2e4878beb85..b7a2cee9b18313f88e745c5bb406bcc72866e390 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -889,7 +889,7 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ }
+ 
+ static int fuse_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *entry, umode_t mode, bool excl)
++		       struct dentry *entry, umode_t mode)
+ {
+ 	return fuse_mknod(idmap, dir, entry, mode, 0);
+ }
+diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+index 8a7ed80d9f2d6e829b240629bdd18b5e0d30b5fc..b8e399dd1182b6ede0bcf1aa78bd7f9f2dca8b2b 100644
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -942,15 +942,14 @@ static int gfs2_create_inode(struct inode *dir, struct dentry *dentry,
+  * @dir: The directory in which to create the file
+  * @dentry: The dentry of the new file
+  * @mode: The mode of the new file
+- * @excl: Force fail if inode exists
+  *
+  * Returns: errno
+  */
+ 
+ static int gfs2_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode, bool excl)
++		       struct dentry *dentry, umode_t mode)
+ {
+-	return gfs2_create_inode(dir, dentry, NULL, S_IFREG | mode, 0, NULL, 0, excl);
++	return gfs2_create_inode(dir, dentry, NULL, S_IFREG | mode, 0, NULL, 0, 1);
+ }
+ 
+ /**
+diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+index 86a6b317b474a95f283f6a0908582efadde80892..c585942aa985686ca428d2d17f4401aa845a0eb8 100644
+--- a/fs/hfs/dir.c
++++ b/fs/hfs/dir.c
+@@ -190,7 +190,7 @@ static int hfs_dir_release(struct inode *inode, struct file *file)
+  * the directory and the name (and its length) of the new file.
+  */
+ static int hfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-		      struct dentry *dentry, umode_t mode, bool excl)
++		      struct dentry *dentry, umode_t mode)
+ {
+ 	struct inode *inode;
+ 	int res;
+diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+index 1b3e27a0d5e038b559bd19b37d769078b2996d1b..c5ea04e078340a91b992095e189e978a3345f03c 100644
+--- a/fs/hfsplus/dir.c
++++ b/fs/hfsplus/dir.c
+@@ -518,7 +518,7 @@ static int hfsplus_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ }
+ 
+ static int hfsplus_create(struct mnt_idmap *idmap, struct inode *dir,
+-			  struct dentry *dentry, umode_t mode, bool excl)
++			  struct dentry *dentry, umode_t mode)
+ {
+ 	return hfsplus_mknod(&nop_mnt_idmap, dir, dentry, mode, 0);
+ }
+diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+index 1e1acf5775ab5f6daf13bb917966d05f410d5ff5..18ca8cb9aa15e4015582ee5bd3db968c6b32de4b 100644
+--- a/fs/hostfs/hostfs_kern.c
++++ b/fs/hostfs/hostfs_kern.c
+@@ -593,7 +593,7 @@ static struct inode *hostfs_iget(struct super_block *sb, char *name)
+ }
+ 
+ static int hostfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-			 struct dentry *dentry, umode_t mode, bool excl)
++			 struct dentry *dentry, umode_t mode)
+ {
+ 	struct inode *inode;
+ 	char *name;
+diff --git a/fs/hpfs/namei.c b/fs/hpfs/namei.c
+index 353e13a615f56664638f08a3408f90a727f5458b..809113d8248d50c0eaa57047b6c4bd87b9a5c6be 100644
+--- a/fs/hpfs/namei.c
++++ b/fs/hpfs/namei.c
+@@ -129,7 +129,7 @@ static struct dentry *hpfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ }
+ 
+ static int hpfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode, bool excl)
++		       struct dentry *dentry, umode_t mode)
+ {
+ 	const unsigned char *name = dentry->d_name.name;
+ 	unsigned len = dentry->d_name.len;
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 9c94ed8c3ab0028772b7afb5d03a91d280c38106..0fd0d73e450bdedd92b953b9dd00f6babe1246e7 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1001,7 +1001,7 @@ static struct dentry *hugetlbfs_mkdir(struct mnt_idmap *idmap, struct inode *dir
+ 
+ static int hugetlbfs_create(struct mnt_idmap *idmap,
+ 			    struct inode *dir, struct dentry *dentry,
+-			    umode_t mode, bool excl)
++			    umode_t mode)
+ {
+ 	return hugetlbfs_mknod(idmap, dir, dentry, mode | S_IFREG, 0);
+ }
+diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
+index dd91f725ded69ccb3a240aafd72a4b552f21bcd9..e77c84e43621a8c53e9852843f18cc3514315650 100644
+--- a/fs/jffs2/dir.c
++++ b/fs/jffs2/dir.c
+@@ -25,7 +25,7 @@
+ static int jffs2_readdir (struct file *, struct dir_context *);
+ 
+ static int jffs2_create (struct mnt_idmap *, struct inode *,
+-		         struct dentry *, umode_t, bool);
++			 struct dentry *, umode_t);
+ static struct dentry *jffs2_lookup (struct inode *,struct dentry *,
+ 				    unsigned int);
+ static int jffs2_link (struct dentry *,struct inode *,struct dentry *);
+@@ -161,7 +161,7 @@ static int jffs2_readdir(struct file *file, struct dir_context *ctx)
+ 
+ 
+ static int jffs2_create(struct mnt_idmap *idmap, struct inode *dir_i,
+-			struct dentry *dentry, umode_t mode, bool excl)
++			struct dentry *dentry, umode_t mode)
+ {
+ 	struct jffs2_raw_inode *ri;
+ 	struct jffs2_inode_info *f, *dir_f;
+diff --git a/fs/jfs/namei.c b/fs/jfs/namei.c
+index 65a218eba8faf9508f5727515b812f6de2661618..48111f8d3efe40becadd857c56c84ed09de867ef 100644
+--- a/fs/jfs/namei.c
++++ b/fs/jfs/namei.c
+@@ -60,7 +60,7 @@ static inline void free_ea_wmap(struct inode *inode)
+  *
+  */
+ static int jfs_create(struct mnt_idmap *idmap, struct inode *dip,
+-		      struct dentry *dentry, umode_t mode, bool excl)
++		      struct dentry *dentry, umode_t mode)
+ {
+ 	int rc = 0;
+ 	tid_t tid;		/* transaction id */
+diff --git a/fs/minix/namei.c b/fs/minix/namei.c
+index 8938536d8d3cf65c7e57f88f1819689365951fea..6540574f54781eab487074de7fe10ed38b1a8d1e 100644
+--- a/fs/minix/namei.c
++++ b/fs/minix/namei.c
+@@ -64,7 +64,7 @@ static int minix_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+ }
+ 
+ static int minix_create(struct mnt_idmap *idmap, struct inode *dir,
+-			struct dentry *dentry, umode_t mode, bool excl)
++			struct dentry *dentry, umode_t mode)
+ {
+ 	return minix_mknod(&nop_mnt_idmap, dir, dentry, mode, 0);
+ }
+diff --git a/fs/namei.c b/fs/namei.c
+index d5ab28947b2b6c6e19c7bb4a9140ccec407dc07c..83da60fc298e523096e881b25c727d14f9553476 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3493,7 +3493,7 @@ int vfs_create(struct mnt_idmap *idmap, struct dentry *dentry, umode_t mode,
+ 	error = try_break_deleg(dir, di);
+ 	if (error)
+ 		return error;
+-	error = dir->i_op->create(idmap, dir, dentry, mode, true);
++	error = dir->i_op->create(idmap, dir, dentry, mode);
+ 	if (!error)
+ 		fsnotify_create(dir, dentry);
+ 	return error;
+@@ -3802,7 +3802,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 		}
+ 
+ 		error = dir_inode->i_op->create(idmap, dir_inode, dentry,
+-						mode, open_flag & O_EXCL);
++						mode);
+ 		if (error)
+ 			goto out_dput;
+ 	}
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index 46d9c65d50f83fc1dc73f3d7f5868b84132bb0fd..7fe18efcd37b08030c7a4e17832801abfc19a3bd 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -2377,9 +2377,9 @@ static int nfs_do_create(struct inode *dir, struct dentry *dentry,
+ }
+ 
+ int nfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-	       struct dentry *dentry, umode_t mode, bool excl)
++	       struct dentry *dentry, umode_t mode)
+ {
+-	return nfs_do_create(dir, dentry, mode, excl ? O_EXCL : 0);
++	return nfs_do_create(dir, dentry, mode, O_EXCL);
+ }
+ EXPORT_SYMBOL_GPL(nfs_create);
+ 
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index 2ecd38e1d17a8053a9134702588d57efc35f49e9..b122c4f34f7b53c5102a8b5138efe269af433c81 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -398,7 +398,7 @@ extern unsigned long nfs_access_cache_scan(struct shrinker *shrink,
+ struct dentry *nfs_lookup(struct inode *, struct dentry *, unsigned int);
+ void nfs_d_prune_case_insensitive_aliases(struct inode *inode);
+ int nfs_create(struct mnt_idmap *, struct inode *, struct dentry *,
+-	       umode_t, bool);
++	       umode_t);
+ struct dentry *nfs_mkdir(struct mnt_idmap *, struct inode *, struct dentry *,
+ 			 umode_t);
+ int nfs_rmdir(struct inode *, struct dentry *);
+diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
+index 40f4b1a28705b6e0eb8f0978cf3ac18b43aa1331..31d1d466c03048aaaab23f64c3f413c095939770 100644
+--- a/fs/nilfs2/namei.c
++++ b/fs/nilfs2/namei.c
+@@ -86,7 +86,7 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+  * with d_instantiate().
+  */
+ static int nilfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-			struct dentry *dentry, umode_t mode, bool excl)
++			struct dentry *dentry, umode_t mode)
+ {
+ 	struct inode *inode;
+ 	struct nilfs_transaction_info ti;
+diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+index 82c8ae56beee6d79046dd6c8f02ff0f35e9a1ad3..49fe635b550d3f51f81138649b47c9c831a73e3b 100644
+--- a/fs/ntfs3/namei.c
++++ b/fs/ntfs3/namei.c
+@@ -105,7 +105,7 @@ static struct dentry *ntfs_lookup(struct inode *dir, struct dentry *dentry,
+  * ntfs_create - inode_operations::create
+  */
+ static int ntfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode, bool excl)
++		       struct dentry *dentry, umode_t mode)
+ {
+ 	return ntfs_create_inode(idmap, dir, dentry, NULL, S_IFREG | mode, 0,
+ 				 NULL, 0, NULL);
+diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
+index cccaa1d6fbbac13ebcaf14a9183277890708e643..bd4b2269598b49c6f88dd8d201e246ee5ed855a6 100644
+--- a/fs/ocfs2/dlmfs/dlmfs.c
++++ b/fs/ocfs2/dlmfs/dlmfs.c
+@@ -454,8 +454,7 @@ static struct dentry *dlmfs_mkdir(struct mnt_idmap * idmap,
+ static int dlmfs_create(struct mnt_idmap *idmap,
+ 			struct inode *dir,
+ 			struct dentry *dentry,
+-			umode_t mode,
+-			bool excl)
++			umode_t mode)
+ {
+ 	int status = 0;
+ 	struct inode *inode;
+diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+index c90b254da75eb5b90d2af5e37d41e781efe8b836..7443f468f45657cf68779a02e4edf4e38fb70f59 100644
+--- a/fs/ocfs2/namei.c
++++ b/fs/ocfs2/namei.c
+@@ -666,8 +666,7 @@ static struct dentry *ocfs2_mkdir(struct mnt_idmap *idmap,
+ static int ocfs2_create(struct mnt_idmap *idmap,
+ 			struct inode *dir,
+ 			struct dentry *dentry,
+-			umode_t mode,
+-			bool excl)
++			umode_t mode)
+ {
+ 	int ret;
+ 
+diff --git a/fs/omfs/dir.c b/fs/omfs/dir.c
+index 2ed541fccf331d796805dd1594fbf05c1f7f3b9a..a09a98f7e30bc66deca60725f9462d081b5e4784 100644
+--- a/fs/omfs/dir.c
++++ b/fs/omfs/dir.c
+@@ -286,7 +286,7 @@ static struct dentry *omfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ }
+ 
+ static int omfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-		       struct dentry *dentry, umode_t mode, bool excl)
++		       struct dentry *dentry, umode_t mode)
+ {
+ 	return omfs_add_node(dir, dentry, mode | S_IFREG);
+ }
+diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
+index bec5475de094dada6bb29eaf8520a875880f3bab..0ebaa7f000f26f1c1ecffd22cfe4272f20a783ed 100644
+--- a/fs/orangefs/namei.c
++++ b/fs/orangefs/namei.c
+@@ -18,8 +18,7 @@
+ static int orangefs_create(struct mnt_idmap *idmap,
+ 			struct inode *dir,
+ 			struct dentry *dentry,
+-			umode_t mode,
+-			bool exclusive)
++			umode_t mode)
+ {
+ 	struct orangefs_inode_s *parent = ORANGEFS_I(dir);
+ 	struct orangefs_kernel_op_s *new_op;
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index a5e9ddf3023b3942fafb9adb2770f26780a1b86b..0f70b3835f4a08c29d6bba8ae9143df55895e56b 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -704,7 +704,7 @@ static int ovl_create_object(struct dentry *dentry, int mode, dev_t rdev,
+ }
+ 
+ static int ovl_create(struct mnt_idmap *idmap, struct inode *dir,
+-		      struct dentry *dentry, umode_t mode, bool excl)
++		      struct dentry *dentry, umode_t mode)
+ {
+ 	return ovl_create_object(dentry, (mode & 07777) | S_IFREG, 0, NULL);
+ }
+diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+index 41f9995da7cab0d11395cb40a98fb4936d52597f..b6502aaa4fb44d27c939da9fae4449af7edd28d4 100644
+--- a/fs/ramfs/inode.c
++++ b/fs/ramfs/inode.c
+@@ -129,7 +129,7 @@ static struct dentry *ramfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ }
+ 
+ static int ramfs_create(struct mnt_idmap *idmap, struct inode *dir,
+-			struct dentry *dentry, umode_t mode, bool excl)
++			struct dentry *dentry, umode_t mode)
+ {
+ 	return ramfs_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFREG, 0);
+ }
+diff --git a/fs/smb/client/cifsfs.h b/fs/smb/client/cifsfs.h
+index e9534258d1efd0bb34f36bf2c725c64d0a8ca8f4..294c66cea2eca3344e09cd77619761e9cb79a807 100644
+--- a/fs/smb/client/cifsfs.h
++++ b/fs/smb/client/cifsfs.h
+@@ -50,7 +50,7 @@ extern void cifs_sb_deactive(struct super_block *sb);
+ extern const struct inode_operations cifs_dir_inode_ops;
+ extern struct inode *cifs_root_iget(struct super_block *);
+ extern int cifs_create(struct mnt_idmap *, struct inode *,
+-		       struct dentry *, umode_t, bool excl);
++		       struct dentry *, umode_t);
+ extern int cifs_atomic_open(struct inode *, struct dentry *,
+ 			    struct file *, unsigned, umode_t);
+ extern struct dentry *cifs_lookup(struct inode *, struct dentry *,
+diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
+index da5597dbf5b9f140c6801158ac2357fa911c52ab..b00bc214db9f0e9533f481f41ac99ac8937610ac 100644
+--- a/fs/smb/client/dir.c
++++ b/fs/smb/client/dir.c
+@@ -566,7 +566,7 @@ cifs_atomic_open(struct inode *inode, struct dentry *direntry,
+ }
+ 
+ int cifs_create(struct mnt_idmap *idmap, struct inode *inode,
+-		struct dentry *direntry, umode_t mode, bool excl)
++		struct dentry *direntry, umode_t mode)
+ {
+ 	int rc;
+ 	unsigned int xid = get_xid();
+diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+index 3c3d3ad4fa6cb719e9ec08fa2164c55371c017c1..4840a6f7974e254eba4ca249357e968764e326e0 100644
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -303,7 +303,7 @@ static int ubifs_prepare_create(struct inode *dir, struct dentry *dentry,
+ }
+ 
+ static int ubifs_create(struct mnt_idmap *idmap, struct inode *dir,
+-			struct dentry *dentry, umode_t mode, bool excl)
++			struct dentry *dentry, umode_t mode)
+ {
+ 	struct inode *inode;
+ 	struct ubifs_info *c = dir->i_sb->s_fs_info;
+diff --git a/fs/udf/namei.c b/fs/udf/namei.c
+index 5f2e9a892bffa9579143cedf71d80efa7ad6e9fb..f83b5564cbc4c68c02c07bb3ab2109bfabdc799d 100644
+--- a/fs/udf/namei.c
++++ b/fs/udf/namei.c
+@@ -371,7 +371,7 @@ static int udf_add_nondir(struct dentry *dentry, struct inode *inode)
+ }
+ 
+ static int udf_create(struct mnt_idmap *idmap, struct inode *dir,
+-		      struct dentry *dentry, umode_t mode, bool excl)
++		      struct dentry *dentry, umode_t mode)
+ {
+ 	struct inode *inode = udf_new_inode(dir, mode);
+ 
+diff --git a/fs/ufs/namei.c b/fs/ufs/namei.c
+index 5b3c85c9324298f4ff6aa3d4feeb962ce5ede539..5012e056200aca671364d34a7faf647e6747e1d2 100644
+--- a/fs/ufs/namei.c
++++ b/fs/ufs/namei.c
+@@ -70,8 +70,7 @@ static struct dentry *ufs_lookup(struct inode * dir, struct dentry *dentry, unsi
+  * with d_instantiate(). 
+  */
+ static int ufs_create (struct mnt_idmap * idmap,
+-		struct inode * dir, struct dentry * dentry, umode_t mode,
+-		bool excl)
++		struct inode * dir, struct dentry * dentry, umode_t mode)
+ {
+ 	struct inode *inode;
+ 
+diff --git a/fs/vboxsf/dir.c b/fs/vboxsf/dir.c
+index 42bedc4ec7af7709c564a7174805d185ce86f854..9ce4310c891044db17b6af98c06e3130002a7dda 100644
+--- a/fs/vboxsf/dir.c
++++ b/fs/vboxsf/dir.c
+@@ -298,7 +298,7 @@ static int vboxsf_dir_create(struct inode *parent, struct dentry *dentry,
+ 
+ static int vboxsf_dir_mkfile(struct mnt_idmap *idmap,
+ 			     struct inode *parent, struct dentry *dentry,
+-			     umode_t mode, bool excl)
++			     umode_t mode)
+ {
+ 	return vboxsf_dir_create(parent, dentry, mode, false, excl, NULL);
+ }
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index caff0125faeac093c1c05a722d3588e3f2e99926..2bc7faac35678b5b78acd6a50695a0d7b1c9a263 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -293,8 +293,7 @@ xfs_vn_create(
+ 	struct mnt_idmap	*idmap,
+ 	struct inode		*dir,
+ 	struct dentry		*dentry,
+-	umode_t			mode,
+-	bool			flags)
++	umode_t			mode)
+ {
+ 	return xfs_generic_create(idmap, dir, dentry, mode, 0, NULL);
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 64323e618724bc20dc101db13035b042f5f88e4d..b9a32e10078f5a1a0bbeb0d8913ac3e4b5b3a85d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2345,8 +2345,8 @@ struct inode_operations {
+ 
+ 	int (*readlink) (struct dentry *, char __user *,int);
+ 
+-	int (*create) (struct mnt_idmap *, struct inode *,struct dentry *,
+-		       umode_t, bool);
++	int (*create) (struct mnt_idmap *, struct inode *, struct dentry *,
++		       umode_t);
+ 	int (*link) (struct dentry *,struct inode *,struct dentry *);
+ 	int (*unlink) (struct inode *,struct dentry *);
+ 	int (*symlink) (struct mnt_idmap *, struct inode *,struct dentry *,
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 093551fe66a7eb884fc34ef853a0ca92b95770af..9ae28c79fe0578bf96b2d22daed45b48aba0b946 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -610,7 +610,7 @@ static int mqueue_create_attr(struct dentry *dentry, umode_t mode, void *arg)
+ }
+ 
+ static int mqueue_create(struct mnt_idmap *idmap, struct inode *dir,
+-			 struct dentry *dentry, umode_t mode, bool excl)
++			 struct dentry *dentry, umode_t mode)
+ {
+ 	return mqueue_create_attr(dentry, mode, NULL);
+ }
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b9081b817d28f3db1fbdd90ed3f04b6904d6ff18..8fdc9cbecb908e127f8173ca8888b5e038354fed 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3912,7 +3912,7 @@ static struct dentry *shmem_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ }
+ 
+ static int shmem_create(struct mnt_idmap *idmap, struct inode *dir,
+-			struct dentry *dentry, umode_t mode, bool excl)
++			struct dentry *dentry, umode_t mode)
+ {
+ 	return shmem_mknod(idmap, dir, dentry, mode | S_IFREG, 0);
+ }
+
+---
+base-commit: 76ddfe7d66d631e5e31ef4e5dd59797fa03acbf7
+change-id: 20251105-create-excl-2b366d9bf3bb
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
