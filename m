@@ -1,54 +1,84 @@
-Return-Path: <ceph-devel+bounces-3941-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3942-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D524C4280E
-	for <lists+ceph-devel@lfdr.de>; Sat, 08 Nov 2025 07:13:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CAD2C42A2E
+	for <lists+ceph-devel@lfdr.de>; Sat, 08 Nov 2025 10:19:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 92BB634C82B
-	for <lists+ceph-devel@lfdr.de>; Sat,  8 Nov 2025 06:13:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D9044E4EEC
+	for <lists+ceph-devel@lfdr.de>; Sat,  8 Nov 2025 09:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0EB2DE702;
-	Sat,  8 Nov 2025 06:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC532EBBB4;
+	Sat,  8 Nov 2025 09:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="B+D3byKt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XbCrXJqp"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6822C0270;
-	Sat,  8 Nov 2025 06:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9FE2DF6E9
+	for <ceph-devel@vger.kernel.org>; Sat,  8 Nov 2025 09:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762582386; cv=none; b=h1pusQwfaQxnPeg6yU3BqrThk4NwPltas9Shxy60ruowit28ttmw02GAZer2DX6aHj4SYN6RT7Ay32QppMdQarTBfFmUP9UohsBwSLIqmHM9IjQdULOolIb7ltCUJ4DciUgXu2FYv8MpFmDC4+9a7EjRsX60UtHHWw2RXcYVY5w=
+	t=1762593581; cv=none; b=rV8YJFcm9IzrGvx0gm6KYcYcBd75n2UxPPNlfkIMXpDAp45Bi3EzDmvF1jlM6aKBCAkTlxIJ7WNuMLdX7ef2meS9uD0FF7kbJh5Ti3XMrPa7kByGth7jnI16SHs7fl9YlXeH6D+bl1y5UQquBA4SnpamqGz+Qm0WLVqx0eLWtPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762582386; c=relaxed/simple;
-	bh=DgH5GUT7j3a/+liLaMLDQ+ppgc87s/ERzvidbBqi8Oc=;
+	s=arc-20240116; t=1762593581; c=relaxed/simple;
+	bh=Y49FEVhEZCj60/+Ylnua7B5NNXsJ25LsdBXGXmWxbi8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bkikl/JRoX4zln4YTg/f/wrUrA+yGv5EE4xNA2rco9ct1p3/Ep5t5+ccuLWMtRTY0rjfC0TZpHDgxaxIbymlkTKFPAEjnUy3Pv5GTMV9SHITJvc/mS4ym28yzZzas4icQjD63IrTsk21HMoVa6qVLROFf7rJ/2/TH8os8YoZzn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=B+D3byKt; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id A419014C2D3;
-	Sat,  8 Nov 2025 07:12:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1762582373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LTM5LkyL3mfB0IbHJeS1oRharyj4iNDNdaZ7y5irjmg=;
-	b=B+D3byKtJ5aLyRiu2rooP0B2TJlyh9NnWKaBHKY3oGl5WrI9R/ZTOokRqfrmQkRjA4d6PF
-	hVA+2jtaIxDHKJVm19YOlIu00RJFzbMjiJ2IJMY5v8SjTtfCjEZWBxEPfRtzuPasj++KiY
-	8Sahe5eVbfmwmhQeo5uzL3Rp7AKK7Nzr7m3ipU5qmaiTEStLej1x9iBcfVqKnY9WidAi8X
-	rwVB6qqUGBZMEcUSkoPWBbqf240gmgWcLbAb7B4RNHuho0O1rPy72OuweBfiXGGrgaJqO1
-	amO1aDXHVrMyRWIApKs7c+o9NFvUODZZvMkcXugNCGdZ2S65dzPgh2BACKmoHA==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 26a2c8b4;
-	Sat, 8 Nov 2025 06:12:25 +0000 (UTC)
-Date: Sat, 8 Nov 2025 15:12:10 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Jeff Layton <jlayton@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tf+Sfu1a4qPnc9YDFTCNgt5F1AbIkA8v9/0YNwVUeFf1ocPgu30AszpYFhg8UinAoQXbSgxMHsmiwVAL14jYL/NkbxRebEzubMEgmJq7H0G1nxQqv5upIX2OtfC7yVNetEOIoyXFP0ATJzMrxZmwMzFLeQ4z3oAqxgQ9Y7rFHEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XbCrXJqp; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-295ceaf8dacso15663855ad.0
+        for <ceph-devel@vger.kernel.org>; Sat, 08 Nov 2025 01:19:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762593577; x=1763198377; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xMJJSbsWQXZcDWYlPD+q/sMKmcoPg7XO2KNCJJBRcPk=;
+        b=XbCrXJqpU5Fw1gS912IzNS7KgBmBpEzt7BjCmmVFTL8kHJTuGLWxxwgdaXCUg4CV2D
+         tKCOjl7wqtFqq2KqtRwQmCQoZ2kxqJrxqAaLSYbI9D+6BC6bJNEbr7E7KTvOL4UqahSf
+         w/QgA8EXXBEeLOZgkH/mm2j8/uswIitunMmgBdG766MxnsGJq42mTLMaDjXhzkm/zaEH
+         UtlB680jTq7xY0S9vzTnm9oN5yO7Du7xhiUuoHeQloIlgSzi/qSU8H/Y2rUf/XMJj6Bh
+         tzv4XdJ7tB0GUfU9Ij+3Tup68eVUiffb9PZoDl640BmypjzahazCqHEiCv+hciS4uHrF
+         TsZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762593577; x=1763198377;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xMJJSbsWQXZcDWYlPD+q/sMKmcoPg7XO2KNCJJBRcPk=;
+        b=qcFr7VKvqyel8gcBt7CxGrFM7p6VzY+rvNPM7wCH/1ArokvygmOUJQ0uWJSvk6boPi
+         /J59I4d2V81oKtuFdua20fqyZa7Gb1ul7LxVaUATpbgj9QM5FMQ08xliUCx4DTvAtO3T
+         dZEp2jGgwA5WSrP6GGFF4Wh3qoY6tNtkxVnS2QF8oK+Q06y4kMp0rnw6ewsOWqLlyIP7
+         MEWw0kxOyP2fqVyE7hVRSOx9jTFMUzQs5MJjQw2+En5XsZ97Whfu+DlFdDmyRnIzVNT0
+         TdpVZ0hV2T53bDeSI/32f23WAhINs+mmWlRELQIFS2hcmvt6gIhzffWZySPn2W20vuxt
+         pToQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfa4Y8hD6Rn4IFhoLytrvt13lg3taUzAxDFBA0HywlJS9nXUMdndJ8O2zBhoclYHsmt7aSRDLsPGkL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPFbyClnIAn4YKlulFFRo0MDHn/yBxWzo8tEkOdhnRXXiMqCox
+	9RzJM2QuUoUb5B7LM2Ei4lu5Zu7B3X2vDY9OQhK7hbTiGi/KLc+WfDx+
+X-Gm-Gg: ASbGnctjAuoGVJbRFMIRuHd3ZjkUw/yADVHrQaiuOxh72J+YwPRAvsEU8Tt3XHR7rOR
+	S32n80I0LGbNpMfmDriFsZcuH6RHFmYU34esrIxQqVzjI7xmEqfk1rTxy55C09XQC7YAD9du5qY
+	Jq/ulh9oj7gMhDlP4u9/R/h8adhWF2YUnkKQzXZn6t9XcSRVQeTEwyQwp4Du2zOyd8ifcFGBEg8
+	gcO7+GsUtPJPohwCaTo0eZkJAjbfXi9dCu2an6Mu45MjsBseKSrb6bAId31Vs9y3bvX6dyD6yEB
+	ICpZ0wncJgk34iJ+gGQ44jLau9DsbsrLi1Q25xBe/d2mjkYXgugCgsc0S4yTNAWFAFd9/yxK1hV
+	ikh1zsc64Riw/m+lz5xA2lYlPXpVdzaAitQbNFpZ7yT8g1Wvp7hVkPuq2REqFOsw4f0limU5CrV
+	JPuVZOJjpMThs=
+X-Google-Smtp-Source: AGHT+IGxcceL/cUmEO7hnoApXfEFPAPpQerRMJTCvaDgcasBmFqwVjXcVlI2/yGLIfmLK+orIB3gUw==
+X-Received: by 2002:a17:902:da84:b0:292:fc65:3584 with SMTP id d9443c01a7336-297e56f9b21mr24987685ad.50.1762593577039;
+        Sat, 08 Nov 2025 01:19:37 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5c6b3sm82791745ad.24.2025.11.08.01.19.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Nov 2025 01:19:35 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 77412400200B; Sat, 08 Nov 2025 16:19:33 +0700 (WIB)
+Date: Sat, 8 Nov 2025 16:19:33 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Dominique Martinet <asmadeus@codewreck.org>,
+	Jeff Layton <jlayton@kernel.org>
 Cc: Eric Van Hensbergen <ericvh@kernel.org>,
 	Latchesar Ionkov <lucho@ionkov.net>,
 	Christian Schoenebeck <linux_oss@crudebyte.com>,
@@ -122,57 +152,92 @@ Cc: Eric Van Hensbergen <ericvh@kernel.org>,
 	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org
 Subject: Re: [PATCH v2] vfs: remove the excl argument from the ->create()
  inode_operation
-Message-ID: <aQ7fOmknHIxcxuha@codewreck.org>
+Message-ID: <aQ8LJfKC0R-4ehLU@archie.me>
 References: <20251107-create-excl-v2-1-f678165d7f3f@kernel.org>
+ <aQ7fOmknHIxcxuha@codewreck.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hTQgJTXrd9+JcPiP"
+Content-Disposition: inline
+In-Reply-To: <aQ7fOmknHIxcxuha@codewreck.org>
+
+
+--hTQgJTXrd9+JcPiP
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251107-create-excl-v2-1-f678165d7f3f@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-Jeff Layton wrote on Fri, Nov 07, 2025 at 10:05:03AM -0500:
-> With two exceptions, ->create() methods provided by filesystems ignore
-> the "excl" flag.  Those exception are NFS and GFS2 which both also
-> provide ->atomic_open.
-> 
-> Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
-> the "excl" argument to the ->create() inode_operation is always set to
-> true in vfs_create(). The ->create() call in lookup_open() sets it
-> according to the O_EXCL open flag, but is never called if the filesystem
-> provides ->atomic_open().
-> 
-> The excl flag is therefore always either ignored or true.  Remove it,
-> and change NFS and GFS2 to act as if it were always true.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Sat, Nov 08, 2025 at 03:12:10PM +0900, Dominique Martinet wrote:
+> Jeff Layton wrote on Fri, Nov 07, 2025 at 10:05:03AM -0500:
+> > diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesyst=
+ems/vfs.rst
+> > index 4f13b01e42eb5e2ad9d60cbbce7e47d09ad831e6..7a55e491e0c87a0d18909bd=
+181754d6d68318059 100644
+> > --- a/Documentation/filesystems/vfs.rst
+> > +++ b/Documentation/filesystems/vfs.rst
+> > @@ -505,7 +505,10 @@ otherwise noted.
+> >  	if you want to support regular files.  The dentry you get should
+> >  	not have an inode (i.e. it should be a negative dentry).  Here
+> >  	you will probably call d_instantiate() with the dentry and the
+> > -	newly created inode
+> > +        newly created inode. This operation should always provide O_EX=
+CL
+>=20
+> This and the block below change halfway from tab (old text) to spaces
+> (your patch)
+>=20
+> Looks like the file has a few space-indented sections though so it won't
+> be the first if that goes in as is, the html-rendering doesn't seem to
+> care :)
 
-Good cleanup, just one whitespace nitpick below but:
-Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
+FYI: I'm using Vim. My important settings (in ~/.vimrc) are:
 
+```
+set nojoinspaces
+set textwidth=3D0
+set backspace=3D2
+```
 
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 4f13b01e42eb5e2ad9d60cbbce7e47d09ad831e6..7a55e491e0c87a0d18909bd181754d6d68318059 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -505,7 +505,10 @@ otherwise noted.
->  	if you want to support regular files.  The dentry you get should
->  	not have an inode (i.e. it should be a negative dentry).  Here
->  	you will probably call d_instantiate() with the dentry and the
-> -	newly created inode
-> +        newly created inode. This operation should always provide O_EXCL
+However, ftplugin override these for each file type, so you have to essenti=
+ally
+"fork" the relevant ftplugin file for each type if you want for your settin=
+gs
+to take precedence. For example, in case of reST, copy
+/usr/share/vim/vim91/ftplugin/rst.vim to ~/.vim/ftplugin/rst and override t=
+he
+already defined options there:
 
-This and the block below change halfway from tab (old text) to spaces
-(your patch)
+```
+=2E..
+" keep tabs as-is
+setlocal comments=3Dfb:.. commentstring=3D..\ %s noexpandtab
+=2E..
+if exists("g:rst_style") && g:rst_style !=3D 0
+    setlocal noexpandtab shiftwidth=3D8 softtabstop=3D0 tabstop=3D8
+endif
+=2E..
+```
 
-Looks like the file has a few space-indented sections though so it won't
-be the first if that goes in as is, the html-rendering doesn't seem to
-care :)
+Thanks.
 
-Cheers,
--- 
-Dominique Martinet | Asmadeus
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--hTQgJTXrd9+JcPiP
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaQ8LHwAKCRD2uYlJVVFO
+o2WVAPsFBRuUsYfWxAnWROgP/61sBqVYDc/UsPimcXm5dJJfgQD9ESTXpfxlpefS
+VKeWBneX6svZYShHE5RzrbcYO+G5GA0=
+=gW2v
+-----END PGP SIGNATURE-----
+
+--hTQgJTXrd9+JcPiP--
 
