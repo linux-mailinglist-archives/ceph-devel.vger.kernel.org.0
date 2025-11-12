@@ -1,576 +1,361 @@
-Return-Path: <ceph-devel+bounces-4024-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4025-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7471CC501F3
-	for <lists+ceph-devel@lfdr.de>; Wed, 12 Nov 2025 01:21:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E1CC5262E
+	for <lists+ceph-devel@lfdr.de>; Wed, 12 Nov 2025 14:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3750B3B1B95
-	for <lists+ceph-devel@lfdr.de>; Wed, 12 Nov 2025 00:21:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA55C189D718
+	for <lists+ceph-devel@lfdr.de>; Wed, 12 Nov 2025 13:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39321A2C0B;
-	Wed, 12 Nov 2025 00:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DC73375A3;
+	Wed, 12 Nov 2025 13:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBPrKBxd"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y7xvYCpr"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791C2C8FE
-	for <ceph-devel@vger.kernel.org>; Wed, 12 Nov 2025 00:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762906857; cv=none; b=jE6R+X3ubkAuOeTJs4jXAIOeskGc/dzvnGN69kH7avy5a+UoUowQ0oPtYBuZYXFW6R2bz26xOx1MXIH7X41ItthB+MVqfyEsAjVqwb4oex920F9X/YQHG50N09F2U0KSy7bgtoPQkEwx60zAK7OpWocgKHjllCIsQUyAK2wEV0w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762906857; c=relaxed/simple;
-	bh=Du1xdTuFPxPqV+cy1MN7MQN13jhs9J8ZFgabtWpUjjs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K7zfG2nf2xtWAbo/Q903J5MMbjXbZNpNn3BRL42on6DtzV1SBfnUApfBVfCK7bcTEWeEvr7kqlaCFTkHLpkcRJyLMZNTpII9ETLe3hy418rSEhbDfC+kzTeCEHjWF4L/Xfn4oWwCzOklEtyeDdIYs6BZZacD55Tz9kIdjhBU61A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBPrKBxd; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7af6a6f20easo229113b3a.0
-        for <ceph-devel@vger.kernel.org>; Tue, 11 Nov 2025 16:20:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762906855; x=1763511655; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yj0hihk69aqDbqTxggc9GCNALPvDE34anqiHVSb+iM4=;
-        b=KBPrKBxdc4jqCRnrAGo7suheWXgZUkPuJbz/h/yzu6ttO1RcrZnrdIhCTuLCEheIbh
-         PIm0CV8Y3pcUBpQzwjgv/HmF33PClZtvROz9JwhP/pUXHWj8dGKvt3oUjN6pMKUEG9lq
-         H5WT8b/aKhG5kgATutn17uWWSR/hD6ElyIRMUHt87mEKtRWm7/BNifeVId2Wl2IwqXDF
-         dlwXhkFnSrt3qeEVtCpx8Vxkb/EklmTmCB5Uk3QQRPJLYy1sdS/eYB+Jgb2PtX6HWLxa
-         /r7OSC75Zu3pfxxflD4v8SSKoNqTH8hv37eaQxvSbHIvfC6yLZATgqPHeJDvi7JHX2AR
-         LrJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762906855; x=1763511655;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yj0hihk69aqDbqTxggc9GCNALPvDE34anqiHVSb+iM4=;
-        b=KLEMFnBr8IAOBANQauy4lnnjFz1TpqYUUanHTBxplM0Nlsc/+CfihW729EymNpHRwh
-         S8eB5dx4OphkaNW34V7WpAd7IQp11jexlx2lUfeU5IH6EmPqqAZqoEvVmM86dfS6hhJe
-         NeRaXNjgwP/hPCjOW059t5wbu+2AnrlCynHBu6alKXP67rRV91f8gkd+bgB89qp3bhzL
-         iNDcjTLO1RWY+mUeE9J+0DKRFhhpMJc1RmxHbhc5ig9ntWT2AWSnECblZKiwgJvBFVT0
-         BQF4vTxm7WE3d0WI18qT9n/ee8vNxn7Bp5uRJA835y4ui1Sdn8WdkvfGVzS0oh0C9NoU
-         jw9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWhkSbEMuynfwal6mIDLeUrScwkkGm/KEJTcOELwkf2N0RcE4ls9xCgdfJYDWMdfLIvUOmRtp59YelI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjbj6nEmDf8apLKbKQzp4EibN6Uvc34hR78u8WTzm/RKUFw17B
-	9NY6s4Fsu9yK4rpcv8GBqktm22H/VcFnJtjqy9C94FTamTSF/SCyxJsdJUwRnf/pydt/Q6vX2U4
-	6L6SBGhxsVhp6GdDH8QIyumKceCfTgk4=
-X-Gm-Gg: ASbGncuHbzGQoZMomKair1lN1PYTJsiCFvXJH7PjeUubP7ZM7PYa+D9q53hd+j4lhvh
-	tafAvKdLBNsVxTZIqhSyb+t6PYAf4JBH7zopkH5R0c+rb/ePGK5/j0/7RbJDDLyWrCb8Cwc2KY3
-	4sTXsRu8CVuwgyBNO/HjxvCHmhVf/VyycZ4gA7smpmQQerB1AVLP39GdXZsGf/AgiVeup/lDBRh
-	sC8kycKQNJJfly5lSRAzt9H0Ta7Ze2WL7ZXgDSPN1lqaoYa7egOwe3nfXyO
-X-Google-Smtp-Source: AGHT+IHg+DziRLID6i7hwpJPHpOVPegKxccNB8Gjn0Aso9+3tIfh42+uklmaIK/whl/cfsQ7eWC7Itw3/zQYEnogW8c=
-X-Received: by 2002:a05:6a20:3d81:b0:34e:1009:4205 with SMTP id
- adf61e73a8af0-3590a069af6mr1151003637.27.1762906854587; Tue, 11 Nov 2025
- 16:20:54 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA2632E15F;
+	Wed, 12 Nov 2025 13:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762952885; cv=fail; b=U2xuxnKHUWxcRYTHeb8/Kw9NDNc9Ki74/TBjkayLB7x1RDVjkbcbwapFwRf/5Qv8MgkPsZfPYakBoy1OgtclOAYUrZXRbwxyhEDLtg0XvtfT4jRBQ5xciKJ09vtWhOL1rtRL7iPQgGGTdqPocA8kZvHrEaO91LcSRyFyPXzKKko=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762952885; c=relaxed/simple;
+	bh=Mb1Bj19rSfimNr2BM/TuxfUxNEi5wXSShmC2fhFvnNc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JEctpxHEAXbpjwgd6OEVspHmrz9tEWth9SpGCV40X0DrGEAM0vpxvBQu4KCmAqgYBdebsHzHoK78+3DYMHWxS9I4BjSJviK7M5pE2Vb7M1l/vjMWBIPCpJlt0B4qw3x25EH3orUB+NDPMWLCyiRDQhdGZLIHGnnaZJh9VnCtNjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y7xvYCpr; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762952883; x=1794488883;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Mb1Bj19rSfimNr2BM/TuxfUxNEi5wXSShmC2fhFvnNc=;
+  b=Y7xvYCprbKG1Ldbiar+zH1Vk0A8N/t2+lVxyyDQWM9lncVyYMEnOs5Kt
+   EwJlRwlyc4+Wohb8SHUcL7y8nGkWOofJLn6aQd/PFFJFOv4ZrgKs9gbs5
+   5LbW19OUzyH6aMHUkvH+gD78na0RQXsWsC/iAgcux2kwMsEbP6vOJbm5f
+   Dg62SB1KFxSesWR8Fa/qQAgZrbwSbOFsVmzS4FTH1gohg2GU1fEuCz/0m
+   UHVwgAGvPLGFcBXuD0/Eab+jr4gqHxTTK2vZuDaJDD2jVT/9XRcNkQ+BB
+   yis1RlR5U+Ppouqc3VJ5XzeiAh4xz/zOUr1G9GXI7ujgnbmiiFHSfGcpb
+   Q==;
+X-CSE-ConnectionGUID: KXTN/FEWRBq6mJ8bfZyP1w==
+X-CSE-MsgGUID: ZiprV2S+S/Kb8hzHHChK5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="64896652"
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="64896652"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:08:01 -0800
+X-CSE-ConnectionGUID: 87Wy+9BAStyEcZQAhoYfTw==
+X-CSE-MsgGUID: NKTLzhD0TlSrdZ3BjEWk5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="189192400"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:08:01 -0800
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 12 Nov 2025 05:08:00 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 12 Nov 2025 05:08:00 -0800
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.27)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 12 Nov 2025 05:08:00 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bctvslf9uAmO6LVk6cLn1F07877WZNp2U1nTbBfhzoOEEWWAJZCuenYAj+E9ATBHhGln5fAC29Y3v/EfOPjLGXVWXU1TgM+b/9HI9FOopqpopoaQjP44t1fV/foo8TUF6wpoSJ7h6PM0ZUMKgrHHG2cZJdpPIsLRLEDP7blhlTHmrt3lVy7p5qa5o6d5mrztw+TfMSEdf4v+hUM3Quzbqj13XLRNSuVERAEo1w8/46F1o9L/ng9iLdW037lVEKXyu3JECIuPisokipLtiRu7Qskk1fM95epATDcLrVTmhkhOk/b0u/Ls3s8+vQx+VclWnYuURh0SB/dvjxozzkSH6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+He0JKHwNRfFkUXMs/gw6414DItcEqwBVsiweZMelus=;
+ b=CwkhCL610JfjeffNrW63fwUr/Nvh5AEN3JrZSrTAt2GeL5bHNCP8EkNHPWmt3NslVeQk6/AsR28vOOf8V9lvsIpLahQHH0T6JBsCRqdHc7gIFc54RBRvZhJxYRiISO/BJnR3xasqQn8B/LMtCj6CbwueQkCT/RXBQVeVuYxoPdemv41fH5hE5oEQ7LmjTpruiBAkqaoCw5rFU3NcMsoOm7XmwULi6hXX+EhkJNgjAWeeVnNh2M5s67h30KCpSiCIj9Om8oY6Vymv1XxV8bmkDE8dGRRzssmcTk3Jm+gr/BrwMPtA8ckJA/KxrStHvJO9QT7kGoCoHbbJ1kINsse1DQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
+ by DS7PR11MB6128.namprd11.prod.outlook.com (2603:10b6:8:9c::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.15; Wed, 12 Nov 2025 13:07:55 +0000
+Received: from IA3PR11MB8986.namprd11.prod.outlook.com
+ ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
+ ([fe80::395e:7a7f:e74c:5408%3]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 13:07:55 +0000
+From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Corey Minyard
+	<corey@minyard.net>, =?iso-8859-2?Q?Christian_K=F6nig?=
+	<christian.koenig@amd.com>, "Dr. David Alan Gilbert" <linux@treblig.org>,
+	Alex Deucher <alexander.deucher@amd.com>, Thomas Zimmermann
+	<tzimmermann@suse.de>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>, "Brost, Matthew"
+	<matthew.brost@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Lifshits,
+ Vitaly" <vitaly.lifshits@intel.com>, Manivannan Sadhasivam <mani@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>, "Vadim
+ Fedorenko" <vadim.fedorenko@linux.dev>, Sagi Maimon <maimon.sagi@gmail.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Karan Tilak Kumar
+	<kartilak@cisco.com>, Hans Verkuil <hverkuil+cisco@kernel.org>, "Casey
+ Schaufler" <casey@schaufler-ca.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Petr Mladek <pmladek@suse.com>, Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	Max Kellermann <max.kellermann@ionos.com>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "openipmi-developer@lists.sourceforge.net"
+	<openipmi-developer@lists.sourceforge.net>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "amd-gfx@lists.freedesktop.org"
+	<amd-gfx@lists.freedesktop.org>, "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>, "freedreno@lists.freedesktop.org"
+	<freedreno@lists.freedesktop.org>, "intel-xe@lists.freedesktop.org"
+	<intel-xe@lists.freedesktop.org>, "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org"
+	<intel-wired-lan@lists.osuosl.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-s390@vger.kernel.org"
+	<linux-s390@vger.kernel.org>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>, "linux-staging@lists.linux.dev"
+	<linux-staging@lists.linux.dev>, "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
+	<linux-trace-kernel@vger.kernel.org>
+CC: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
+	<senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Sumit Semwal
+	<sumit.semwal@linaro.org>, Gustavo Padovan <gustavo@padovan.org>, "David
+ Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+	<abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul
+	<sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, "Konrad
+ Dybcio" <konradybcio@kernel.org>, "De Marchi, Lucas"
+	<lucas.demarchi@intel.com>, =?iso-8859-2?Q?Thomas_Hellstr=F6m?=
+	<thomas.hellstrom@linux.intel.com>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Nguyen,
+ Anthony L" <anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, =?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?=
+	<kwilczynski@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, Rodolfo Giometti <giometti@enneenne.com>,
+	Richard Cochran <richardcochran@gmail.com>, Jonathan Lemon
+	<jonathan.lemon@gmail.com>, Stefan Haberland <sth@linux.ibm.com>, "Jan
+ Hoeppner" <hoeppner@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Satish Kharat <satishkh@cisco.com>,
+	"Baddela, Sesidhar" <sebaddel@cisco.com>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Xiubo
+ Li" <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Masami Hiramatsu
+	<mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: RE: [Intel-wired-lan] [PATCH v2 09/21] e1000e: Switch to use %ptSp
+Thread-Topic: [Intel-wired-lan] [PATCH v2 09/21] e1000e: Switch to use %ptSp
+Thread-Index: AQHcUwa0J2CvCRf/ME+WZDB2JQIFo7TvBJOg
+Date: Wed, 12 Nov 2025 13:07:54 +0000
+Message-ID: <IA3PR11MB89868413E1F3C7F5793ECB3FE5CCA@IA3PR11MB8986.namprd11.prod.outlook.com>
+References: <20251111122735.880607-1-andriy.shevchenko@linux.intel.com>
+ <20251111122735.880607-10-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20251111122735.880607-10-andriy.shevchenko@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|DS7PR11MB6128:EE_
+x-ms-office365-filtering-correlation-id: 3a3dd84b-2201-416c-b63d-08de21ec7e67
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700021|921020;
+x-microsoft-antispam-message-info: =?iso-8859-2?Q?3sXmqmBPnfs2n6v+QTVhjEZBknMKm66SiA7h5/IajrMwrnBSCzWdQ5sXa7?=
+ =?iso-8859-2?Q?EWJigVZjZg4WqvEu+tBVOrcsjR2RbVDazxcFBWqnvaFdudW9Edu3mS9rQw?=
+ =?iso-8859-2?Q?OoRZkC4ZmYF02yvBGmR5f0T1E2fC7acs5ETJQnq+S2f7OLBez0RlvDVCoq?=
+ =?iso-8859-2?Q?uqeR0lySAI7IMfjrU9wpAonS9DBwXQhwySL/jFvKrbHVwYLMNkjXmnzuMc?=
+ =?iso-8859-2?Q?bzBxsyme3oxIgGMR1MlTOmpi5YI/lXa0hzmjBgHshcMSUbTz7igHf36CRc?=
+ =?iso-8859-2?Q?/dhLuQW9Fw1qFVAOgpCQf17PxUotRO0NbPLDDwrXUj7QsPRZCM/faGj5j9?=
+ =?iso-8859-2?Q?vJzZO9GNEoNIWNsH5PKN4V0fHSYZTmE2FDYj97395B60ZpUSvC5GbVr9G1?=
+ =?iso-8859-2?Q?wbAVU+seoyvlWmJmrDe97Ybpsq6Ix/b2EkhFGFmVUQhAdNcjUXbojnJSJd?=
+ =?iso-8859-2?Q?V+D+Neo395HPacd4MJ+NmhvmF3fJy/Xgkn8F2fbE1DK8J68++zW8IrGnpB?=
+ =?iso-8859-2?Q?R+lCJaUCqgxz8Xl4uAsa2rOI0qWKMaQRLVitMsyEId/ECbZja/kbTWstW9?=
+ =?iso-8859-2?Q?rgRdOJhnpf0E004EhNp3feFQec5am2Te8rb6psCXgMe5atdKj5N3F9uyXx?=
+ =?iso-8859-2?Q?MIAo7n/kQdXrJ3h3tbM73JLS0OFg/ya7LSKh6F2MQ0jjrQiEKKVQFIhmHJ?=
+ =?iso-8859-2?Q?jiWwLuV2xXpE5CDoniIHQAYxQTJvhI1KpQpYc1ou42WkD2rN5/XbvrX1NQ?=
+ =?iso-8859-2?Q?k3eqLnKe84AGzHsnNA/g7+/so8LjQxu1L+fJbTpirTRpfvMR23i2aqi+UJ?=
+ =?iso-8859-2?Q?2J8QhaXPMpjLQVv2+6dSuPrIy39u0HX9mS1ly7qVkKNUMaO+3kQ/9qJvj4?=
+ =?iso-8859-2?Q?f0iPsq3luDtYOdpLvxnZFhGQfm3vv6z1xSQA+zgEodJNzVmF+ec+w/+q8a?=
+ =?iso-8859-2?Q?HYphAamXFyEZqhl/rsSQBk6MbhY8/smKEXF3bmUA7Xjao/Pq/dcCHH/yPS?=
+ =?iso-8859-2?Q?3jrjiev7EVPXp3FAXF9QUUSE4op9QsMnjQhqnkH5TZfTYbQgqpFgHQPboA?=
+ =?iso-8859-2?Q?Xuiyw/q4PtZGAXUjwS0v3wj5dYHdyHnhrITCqhTIsomayV5ca7IxPy2S20?=
+ =?iso-8859-2?Q?2qaq5c/YVT3uRwQA0GnfPIlTXEzel8mXeCHRrvRgKn8Uug7ug9L+Zwftoy?=
+ =?iso-8859-2?Q?46vtDhcCyOwBONnxxbD8VAIriveBQsFlteNaEmwy9CSVEOrq8KhujPMH23?=
+ =?iso-8859-2?Q?xRrAx+RKki7GK5/SojVanNu78tQCHoCx0ygteOdfVpTEuY5tmQOwCvtUWI?=
+ =?iso-8859-2?Q?vBUvXyse+98CiSmrDvw5k4anKV1uBg+dd6vMwXmuRqoD8KZ/1IoRk21wH1?=
+ =?iso-8859-2?Q?8jYLQPWk7qW4huDmzp/jCM5/6nlUZecYamZCrspiyiJiJ33ewL2G1X/kNr?=
+ =?iso-8859-2?Q?qeUoyyuy628H89Zb1p7FbZkK6nRSboUY8q1dY5x6Ip9r7HtZApUoRnDPWb?=
+ =?iso-8859-2?Q?r2xMLpf+gFhYpfOwE3b+twFIyxo5hLj3s5hCxlzygvuoZJ0UIlYvnpugl8?=
+ =?iso-8859-2?Q?pSmkTNxgoFWMfqka1M/sXXf+rhuL6ytEX3TnX9QTb5YEhQQksw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700021)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-2?Q?GPQQ+FddiDSmqqqY2U4Lif65spO+BvG6ifqwhw0a04aLRYmYLcerde1g/U?=
+ =?iso-8859-2?Q?C6pjIeTnxQU8yV7eg91W5UALu3LUiXE/Buyp3VEBMySAL60RHgAJEYvx6C?=
+ =?iso-8859-2?Q?xoxAZ7EriN9jUfxZs3d25fKxIfByEil9NWz8oLIZksckPgmPeXZq3juQ2/?=
+ =?iso-8859-2?Q?RYqLmKhruOTrmyV0syYODTJrScBlvmJ+84KlFJeuh0x5BtrnOpmM1o3vor?=
+ =?iso-8859-2?Q?c0FvfNaGEf0J44U6zfVWnrVs6GB7eHuBlUl7mM4eOF7cd0gCGu3w53xvEs?=
+ =?iso-8859-2?Q?F5jiW6Us2t88mjb0Dq3pvzWGjs01DMhnKrcXvtrXaVu4PT1fDkFZaB6Htq?=
+ =?iso-8859-2?Q?zTd4zibkYe82qJYfSyGXejXmcmg/BfmXKMtMFxsmNb1hMf6UTAdEdOSG+U?=
+ =?iso-8859-2?Q?Ik+DH7DEYnHLJfjqIaROFQe60etDJtb2v3+WBe65FVfzfsuoTPCcfYKamN?=
+ =?iso-8859-2?Q?uvy4DnIup4D3UWUMg8yfhtvfVa6W4mlP/mal8lSTZmSqcorYMbkJGABOQ9?=
+ =?iso-8859-2?Q?jo13SRBBHSsKTKB2AhV+E+xm9HhV+GaaxNu5AUkNRMgG3lIC4VChUerYXo?=
+ =?iso-8859-2?Q?39aZyiUAEGqOtPX3/W3iPGYOZyKcfQ22wGzVCxbs6kV/9/aFVEsc9+xtJ6?=
+ =?iso-8859-2?Q?s1aVmwlW18TU1AVGlhiagzkik/8p1iqTxvwLsm6kF9QdvKyMF6V4QExshF?=
+ =?iso-8859-2?Q?JCLh/rth6z8DEk9GEwtZr5BO8Ni9FqbuU3/ct1LZU0lUk1ZFrjUMo+Kipw?=
+ =?iso-8859-2?Q?yGmUAXIhtAf1D9+56MvjnMgCXAVcGUhbPrT2XuBxZ+xkE/kmRxqcAH46dK?=
+ =?iso-8859-2?Q?XBXx9KwwV0Sg7RJoxBP/AriyEW8j7Y8LNJKkWlz7J0sBWe5ZywklJWZC/X?=
+ =?iso-8859-2?Q?N3gpJUPXuem5ivecOPzhgx+ujKjgtL+31bOe46bLFYu3uxADQixRcO0uVF?=
+ =?iso-8859-2?Q?Nb0SembweP8GLMyK4LyM4xxU4TQ622axfZ4gUEiTbrQtD4FpEXalNYG7E0?=
+ =?iso-8859-2?Q?zPRd9sBQF8UsU7MvNMz0DZX3nV2nZhWeo38VHogbVzaezAr+trHuYvTs1a?=
+ =?iso-8859-2?Q?A2zJAZ6tSKZMzlqVpcLK2PRDpODwkgTpZS5grK+39KEjAORKW+osftBe08?=
+ =?iso-8859-2?Q?qzHD68Hm+YN2AXeZeqSrzdUwEJVqTU4P/vq0CAL0q3TkGe4SG8pJ35hpe1?=
+ =?iso-8859-2?Q?BhBRR6SEggFE/yFCr1gnUGgXDxARUTd2oXCcMPzfqOwC5R4s1q0SdEIwVX?=
+ =?iso-8859-2?Q?ofpt0cn/ZzAjomBzXFKIUyG903wIo5vN9Vrjag8qSCYjEkGv6RkTBDfddo?=
+ =?iso-8859-2?Q?KoCb0NW6pGoOSrvrfEmMSPAvGh1TPp7yohKdw2vZd9wxtmmePpe59NMJfz?=
+ =?iso-8859-2?Q?NmcCg4h1EjZLoio3HOS7LcaeP0mHDv2qzghTNDnW4Laox8+0K1gyl6Du1J?=
+ =?iso-8859-2?Q?7vcKzJ1SS209Nrbx5Uw0a7ppNDlFvtFGF00d5t/SltsUSu0kLFxlIg4RjM?=
+ =?iso-8859-2?Q?fkOAANTeQTvfXlHGyQjCHpFjq1vZbideCQ1ThKmcfQH8Ovr4h5ZXyWk/xK?=
+ =?iso-8859-2?Q?la5Lz5DWNB/P7O3F2HhJS+fkFFZFnIj0NthhElwBt6GKqqXIiQpI9hiTLy?=
+ =?iso-8859-2?Q?e1ooHe97PDT+yD1Mm3UM7WFEtHKFKNX5Qsd/bRxRcnt8iTkJE7MmyktA?=
+ =?iso-8859-2?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111205627.475128-2-slava@dubeyko.com> <CAOi1vP_tHEgBn-+EmSeOtpWnQezEZDnGWapGZ3ngXZYkzvPpiw@mail.gmail.com>
- <8e4d0443f5789b5335ab8526ee707fcb04156968.camel@ibm.com>
-In-Reply-To: <8e4d0443f5789b5335ab8526ee707fcb04156968.camel@ibm.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Wed, 12 Nov 2025 01:20:42 +0100
-X-Gm-Features: AWmQ_blPvDIcNbqAu0ed-E80Nt56PmcrtT4bdGNkzmjWuQOBZLaZTJjb01Nw2ZE
-Message-ID: <CAOi1vP_JNL3nzbyE=4O+rn2Y9hF7g_=pFvQsePz5gyFbGdN8dg@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix crash in process_v2_sparse_read() for
- fscrypt-encrypted directories
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "slava@dubeyko.com" <slava@dubeyko.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Patrick Donnelly <pdonnell@redhat.com>, 
-	Alex Markuze <amarkuze@redhat.com>, Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a3dd84b-2201-416c-b63d-08de21ec7e67
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 13:07:54.9747
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: BxfxWKp+SC6aEUjMkfQJJksWX5hM2VDCZsDP3MmuQz7OxEW+JTH5J4AkYmO80ARAYEcW5QKoECfFmXcbmiSpLI5CHafn7t4e/k2PdhPB6Ws=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6128
+X-OriginatorOrg: intel.com
 
-On Tue, Nov 11, 2025 at 11:27=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
->
-> On Tue, 2025-11-11 at 22:35 +0100, Ilya Dryomov wrote:
-> > On Tue, Nov 11, 2025 at 9:57=E2=80=AFPM Viacheslav Dubeyko <slava@dubey=
-ko.com> wrote:
-> > >
-> > > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> > >
-> > > The crash in process_v2_sparse_read() for fscrypt-encrypted
-> > > directories has been reported [1]. Issue takes place for
-> > > Ceph msgr2 protocol. It can be reproduced by the steps:
-> > >
-> > > sudo mount -t ceph :/ /mnt/cephfs/ -o name=3Dadmin,fs=3Dcephfs,ms_mod=
-e=3Dsecure
-> > >
-> > > (1) mkdir /mnt/cephfs/fscrypt-test-3
-> > > (2) cp area_decrypted.tar /mnt/cephfs/fscrypt-test-3
-> > > (3) fscrypt encrypt --source=3Draw_key --key=3D./my.key /mnt/cephfs/f=
-scrypt-test-3
-> > > (4) fscrypt lock /mnt/cephfs/fscrypt-test-3
-> > > (5) fscrypt unlock --key=3Dmy.key /mnt/cephfs/fscrypt-test-3
-> > > (6) cat /mnt/cephfs/fscrypt-test-3/area_decrypted.tar
-> > > (7) Issue has been triggered
-> > >
-> > > [  408.072247] ------------[ cut here ]------------
-> > > [  408.072251] WARNING: CPU: 1 PID: 392 at net/ceph/messenger_v2.c:86=
-5
-> > > ceph_con_v2_try_read+0x4b39/0x72f0
-> > > [  408.072267] Modules linked in: intel_rapl_msr intel_rapl_common
-> > > intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discov=
-ery
-> > > pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm i=
-rqbypass
-> > > polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmou=
-se
-> > > serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid q=
-emu_fw_cfg
-> > > pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
-> > > [  408.072304] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Not tainted 6=
-.17.0-rc7+
-> > > [  408.072307] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),=
- BIOS
-> > > 1.17.0-5.fc42 04/01/2014
-> > > [  408.072310] Workqueue: ceph-msgr ceph_con_workfn
-> > > [  408.072314] RIP: 0010:ceph_con_v2_try_read+0x4b39/0x72f0
-> > > [  408.072317] Code: c7 c1 20 f0 d4 ae 50 31 d2 48 c7 c6 60 27 d5 ae =
-48 c7 c7 f8
-> > > 8e 6f b0 68 60 38 d5 ae e8 00 47 61 fe 48 83 c4 18 e9 ac fc ff ff <0f=
-> 0b e9 06
-> > > fe ff ff 4c 8b 9d 98 fd ff ff 0f 84 64 e7 ff ff 89 85
-> > > [  408.072319] RSP: 0018:ffff88811c3e7a30 EFLAGS: 00010246
-> > > [  408.072322] RAX: ffffed1024874c6f RBX: ffffea00042c2b40 RCX: 00000=
-00000000f38
-> > > [  408.072324] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000=
-00000000000
-> > > [  408.072325] RBP: ffff88811c3e7ca8 R08: 0000000000000000 R09: 00000=
-000000000c8
-> > > [  408.072326] R10: 00000000000000c8 R11: 0000000000000000 R12: 00000=
-000000000c8
-> > > [  408.072327] R13: dffffc0000000000 R14: ffff8881243a6030 R15: 00000=
-00000003000
-> > > [  408.072329] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> > > knlGS:0000000000000000
-> > > [  408.072331] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  408.072332] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 00000=
-00000772ef0
-> > > [  408.072336] PKRU: 55555554
-> > > [  408.072337] Call Trace:
-> > > [  408.072338]  <TASK>
-> > > [  408.072340]  ? sched_clock_noinstr+0x9/0x10
-> > > [  408.072344]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
-> > > [  408.072347]  ? _raw_spin_unlock+0xe/0x40
-> > > [  408.072349]  ? finish_task_switch.isra.0+0x15d/0x830
-> > > [  408.072353]  ? __kasan_check_write+0x14/0x30
-> > > [  408.072357]  ? mutex_lock+0x84/0xe0
-> > > [  408.072359]  ? __pfx_mutex_lock+0x10/0x10
-> > > [  408.072361]  ceph_con_workfn+0x27e/0x10e0
-> > > [  408.072364]  ? metric_delayed_work+0x311/0x2c50
-> > > [  408.072367]  process_one_work+0x611/0xe20
-> > > [  408.072371]  ? __kasan_check_write+0x14/0x30
-> > > [  408.072373]  worker_thread+0x7e3/0x1580
-> > > [  408.072375]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  408.072378]  ? __pfx_worker_thread+0x10/0x10
-> > > [  408.072381]  kthread+0x381/0x7a0
-> > > [  408.072383]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> > > [  408.072385]  ? __pfx_kthread+0x10/0x10
-> > > [  408.072387]  ? __kasan_check_write+0x14/0x30
-> > > [  408.072389]  ? recalc_sigpending+0x160/0x220
-> > > [  408.072392]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  408.072394]  ? calculate_sigpending+0x78/0xb0
-> > > [  408.072395]  ? __pfx_kthread+0x10/0x10
-> > > [  408.072397]  ret_from_fork+0x2b6/0x380
-> > > [  408.072400]  ? __pfx_kthread+0x10/0x10
-> > > [  408.072402]  ret_from_fork_asm+0x1a/0x30
-> > > [  408.072406]  </TASK>
-> > > [  408.072407] ---[ end trace 0000000000000000 ]---
-> > > [  408.072418] Oops: general protection fault, probably for non-canon=
-ical
-> > > address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
-> > > [  408.072984] KASAN: null-ptr-deref in range [0x0000000000000000-
-> > > 0x0000000000000007]
-> > > [  408.073350] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Tainted: G   =
-     W
-> > > 6.17.0-rc7+ #1 PREEMPT(voluntary)
-> > > [  408.073886] Tainted: [W]=3DWARN
-> > > [  408.074042] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),=
- BIOS
-> > > 1.17.0-5.fc42 04/01/2014
-> > > [  408.074468] Workqueue: ceph-msgr ceph_con_workfn
-> > > [  408.074694] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
-> > > [  408.074976] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f =
-85 07 11 00
-> > > 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f=
-> b6 14 16
-> > > 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
-> > > [  408.075884] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
-> > > [  408.076305] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 00000=
-00000000000
-> > > [  408.076909] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8=
-881243a6378
-> > > [  408.077466] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000=
-000000000c8
-> > > [  408.078034] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffe=
-d1024874c71
-> > > [  408.078575] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8=
-881243a6378
-> > > [  408.079159] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> > > knlGS:0000000000000000
-> > > [  408.079736] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  408.080039] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 00000=
-00000772ef0
-> > > [  408.080376] PKRU: 55555554
-> > > [  408.080513] Call Trace:
-> > > [  408.080630]  <TASK>
-> > > [  408.080729]  ceph_con_v2_try_read+0x49b9/0x72f0
-> > > [  408.081115]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
-> > > [  408.081348]  ? _raw_spin_unlock+0xe/0x40
-> > > [  408.081538]  ? finish_task_switch.isra.0+0x15d/0x830
-> > > [  408.081768]  ? __kasan_check_write+0x14/0x30
-> > > [  408.081986]  ? mutex_lock+0x84/0xe0
-> > > [  408.082160]  ? __pfx_mutex_lock+0x10/0x10
-> > > [  408.082343]  ceph_con_workfn+0x27e/0x10e0
-> > > [  408.082529]  ? metric_delayed_work+0x311/0x2c50
-> > > [  408.082737]  process_one_work+0x611/0xe20
-> > > [  408.082948]  ? __kasan_check_write+0x14/0x30
-> > > [  408.083156]  worker_thread+0x7e3/0x1580
-> > > [  408.083331]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  408.083557]  ? __pfx_worker_thread+0x10/0x10
-> > > [  408.083751]  kthread+0x381/0x7a0
-> > > [  408.083922]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> > > [  408.084139]  ? __pfx_kthread+0x10/0x10
-> > > [  408.084310]  ? __kasan_check_write+0x14/0x30
-> > > [  408.084510]  ? recalc_sigpending+0x160/0x220
-> > > [  408.084708]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  408.084917]  ? calculate_sigpending+0x78/0xb0
-> > > [  408.085138]  ? __pfx_kthread+0x10/0x10
-> > > [  408.085335]  ret_from_fork+0x2b6/0x380
-> > > [  408.085525]  ? __pfx_kthread+0x10/0x10
-> > > [  408.085720]  ret_from_fork_asm+0x1a/0x30
-> > > [  408.085922]  </TASK>
-> > > [  408.086036] Modules linked in: intel_rapl_msr intel_rapl_common
-> > > intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discov=
-ery
-> > > pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm i=
-rqbypass
-> > > polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmou=
-se
-> > > serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid q=
-emu_fw_cfg
-> > > pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
-> > > [  408.087778] ---[ end trace 0000000000000000 ]---
-> > > [  408.088007] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
-> > > [  408.088260] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f =
-85 07 11 00
-> > > 00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f=
-> b6 14 16
-> > > 84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
-> > > [  408.089118] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
-> > > [  408.089357] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 00000=
-00000000000
-> > > [  408.089678] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8=
-881243a6378
-> > > [  408.090020] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000=
-000000000c8
-> > > [  408.090360] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffe=
-d1024874c71
-> > > [  408.090687] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8=
-881243a6378
-> > > [  408.091035] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
-> > > knlGS:0000000000000000
-> > > [  408.091452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  408.092015] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 00000=
-00000772ef0
-> > > [  408.092530] PKRU: 55555554
-> > > [  417.112915]
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > [  417.113491] BUG: KASAN: slab-use-after-free in
-> > > __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114014] Read of size 4 at addr ffff888124870034 by task kworke=
-r/2:0/4951
-> > >
-> > > [  417.114587] CPU: 2 UID: 0 PID: 4951 Comm: kworker/2:0 Tainted: G  =
-    D W
-> > > 6.17.0-rc7+ #1 PREEMPT(voluntary)
-> > > [  417.114592] Tainted: [D]=3DDIE, [W]=3DWARN
-> > > [  417.114593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),=
- BIOS
-> > > 1.17.0-5.fc42 04/01/2014
-> > > [  417.114596] Workqueue: events handle_timeout
-> > > [  417.114601] Call Trace:
-> > > [  417.114602]  <TASK>
-> > > [  417.114604]  dump_stack_lvl+0x5c/0x90
-> > > [  417.114610]  print_report+0x171/0x4dc
-> > > [  417.114613]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  417.114617]  ? kasan_complete_mode_report_info+0x80/0x220
-> > > [  417.114621]  kasan_report+0xbd/0x100
-> > > [  417.114625]  ? __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114628]  ? __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114630]  __asan_report_load4_noabort+0x14/0x30
-> > > [  417.114633]  __mutex_lock.constprop.0+0x1522/0x1610
-> > > [  417.114635]  ? queue_con_delay+0x8d/0x200
-> > > [  417.114638]  ? __pfx___mutex_lock.constprop.0+0x10/0x10
-> > > [  417.114641]  ? __send_subscribe+0x529/0xb20
-> > > [  417.114644]  __mutex_lock_slowpath+0x13/0x20
-> > > [  417.114646]  mutex_lock+0xd4/0xe0
-> > > [  417.114649]  ? __pfx_mutex_lock+0x10/0x10
-> > > [  417.114652]  ? ceph_monc_renew_subs+0x2a/0x40
-> > > [  417.114654]  ceph_con_keepalive+0x22/0x110
-> > > [  417.114656]  handle_timeout+0x6b3/0x11d0
-> > > [  417.114659]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  417.114662]  ? __pfx_handle_timeout+0x10/0x10
-> > > [  417.114664]  ? queue_delayed_work_on+0x8e/0xa0
-> > > [  417.114669]  process_one_work+0x611/0xe20
-> > > [  417.114672]  ? __kasan_check_write+0x14/0x30
-> > > [  417.114676]  worker_thread+0x7e3/0x1580
-> > > [  417.114678]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-> > > [  417.114682]  ? __pfx_sched_setscheduler_nocheck+0x10/0x10
-> > > [  417.114687]  ? __pfx_worker_thread+0x10/0x10
-> > > [  417.114689]  kthread+0x381/0x7a0
-> > > [  417.114692]  ? __pfx__raw_spin_lock_irq+0x10/0x10
-> > > [  417.114694]  ? __pfx_kthread+0x10/0x10
-> > > [  417.114697]  ? __kasan_check_write+0x14/0x30
-> > > [  417.114699]  ? recalc_sigpending+0x160/0x220
-> > > [  417.114703]  ? _raw_spin_unlock_irq+0xe/0x50
-> > > [  417.114705]  ? calculate_sigpending+0x78/0xb0
-> > > [  417.114707]  ? __pfx_kthread+0x10/0x10
-> > > [  417.114710]  ret_from_fork+0x2b6/0x380
-> > > [  417.114713]  ? __pfx_kthread+0x10/0x10
-> > > [  417.114715]  ret_from_fork_asm+0x1a/0x30
-> > > [  417.114720]  </TASK>
-> > >
-> > > [  417.125171] Allocated by task 2:
-> > > [  417.125333]  kasan_save_stack+0x26/0x60
-> > > [  417.125522]  kasan_save_track+0x14/0x40
-> > > [  417.125742]  kasan_save_alloc_info+0x39/0x60
-> > > [  417.125945]  __kasan_slab_alloc+0x8b/0xb0
-> > > [  417.126133]  kmem_cache_alloc_node_noprof+0x13b/0x460
-> > > [  417.126381]  copy_process+0x320/0x6250
-> > > [  417.126595]  kernel_clone+0xb7/0x840
-> > > [  417.126792]  kernel_thread+0xd6/0x120
-> > > [  417.126995]  kthreadd+0x85c/0xbe0
-> > > [  417.127176]  ret_from_fork+0x2b6/0x380
-> > > [  417.127378]  ret_from_fork_asm+0x1a/0x30
-> > >
-> > > [  417.127692] Freed by task 0:
-> > > [  417.127851]  kasan_save_stack+0x26/0x60
-> > > [  417.128057]  kasan_save_track+0x14/0x40
-> > > [  417.128267]  kasan_save_free_info+0x3b/0x60
-> > > [  417.128491]  __kasan_slab_free+0x6c/0xa0
-> > > [  417.128708]  kmem_cache_free+0x182/0x550
-> > > [  417.128906]  free_task+0xeb/0x140
-> > > [  417.129070]  __put_task_struct+0x1d2/0x4f0
-> > > [  417.129259]  __put_task_struct_rcu_cb+0x15/0x20
-> > > [  417.129480]  rcu_do_batch+0x3d3/0xe70
-> > > [  417.129681]  rcu_core+0x549/0xb30
-> > > [  417.129839]  rcu_core_si+0xe/0x20
-> > > [  417.130005]  handle_softirqs+0x160/0x570
-> > > [  417.130190]  __irq_exit_rcu+0x189/0x1e0
-> > > [  417.130369]  irq_exit_rcu+0xe/0x20
-> > > [  417.130531]  sysvec_apic_timer_interrupt+0x9f/0xd0
-> > > [  417.130768]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
-> > >
-> > > [  417.131082] Last potentially related work creation:
-> > > [  417.131305]  kasan_save_stack+0x26/0x60
-> > > [  417.131484]  kasan_record_aux_stack+0xae/0xd0
-> > > [  417.131695]  __call_rcu_common+0xcd/0x14b0
-> > > [  417.131909]  call_rcu+0x31/0x50
-> > > [  417.132071]  delayed_put_task_struct+0x128/0x190
-> > > [  417.132295]  rcu_do_batch+0x3d3/0xe70
-> > > [  417.132478]  rcu_core+0x549/0xb30
-> > > [  417.132658]  rcu_core_si+0xe/0x20
-> > > [  417.132808]  handle_softirqs+0x160/0x570
-> > > [  417.132993]  __irq_exit_rcu+0x189/0x1e0
-> > > [  417.133181]  irq_exit_rcu+0xe/0x20
-> > > [  417.133353]  sysvec_apic_timer_interrupt+0x9f/0xd0
-> > > [  417.133584]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
-> > >
-> > > [  417.133921] Second to last potentially related work creation:
-> > > [  417.134183]  kasan_save_stack+0x26/0x60
-> > > [  417.134362]  kasan_record_aux_stack+0xae/0xd0
-> > > [  417.134566]  __call_rcu_common+0xcd/0x14b0
-> > > [  417.134782]  call_rcu+0x31/0x50
-> > > [  417.134929]  put_task_struct_rcu_user+0x58/0xb0
-> > > [  417.135143]  finish_task_switch.isra.0+0x5d3/0x830
-> > > [  417.135366]  __schedule+0xd30/0x5100
-> > > [  417.135534]  schedule_idle+0x5a/0x90
-> > > [  417.135712]  do_idle+0x25f/0x410
-> > > [  417.135871]  cpu_startup_entry+0x53/0x70
-> > > [  417.136053]  start_secondary+0x216/0x2c0
-> > > [  417.136233]  common_startup_64+0x13e/0x141
-> > >
-> > > [  417.136894] The buggy address belongs to the object at ffff8881248=
-70000
-> > >                 which belongs to the cache task_struct of size 10504
-> > > [  417.138122] The buggy address is located 52 bytes inside of
-> > >                 freed 10504-byte region [ffff888124870000, ffff888124=
-872908)
-> > >
-> > > [  417.139465] The buggy address belongs to the physical page:
-> > > [  417.140016] page: refcount:0 mapcount:0 mapping:0000000000000000 i=
-ndex:0x0
-> > > pfn:0x124870
-> > > [  417.140789] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_ma=
-pped:0
-> > > pincount:0
-> > > [  417.141519] memcg:ffff88811aa20e01
-> > > [  417.141874] anon flags:
-> > > 0x17ffffc0000040(head|node=3D0|zone=3D2|lastcpupid=3D0x1fffff)
-> > > [  417.142600] page_type: f5(slab)
-> > > [  417.142922] raw: 0017ffffc0000040 ffff88810094f040 000000000000000=
-0
-> > > dead000000000001
-> > > [  417.143554] raw: 0000000000000000 0000000000030003 00000000f500000=
-0
-> > > ffff88811aa20e01
-> > > [  417.143954] head: 0017ffffc0000040 ffff88810094f040 00000000000000=
-00
-> > > dead000000000001
-> > > [  417.144329] head: 0000000000000000 0000000000030003 00000000f50000=
-00
-> > > ffff88811aa20e01
-> > > [  417.144710] head: 0017ffffc0000003 ffffea0004921c01 00000000ffffff=
-ff
-> > > 00000000ffffffff
-> > > [  417.145106] head: ffffffffffffffff 0000000000000000 00000000ffffff=
-ff
-> > > 0000000000000008
-> > > [  417.145485] page dumped because: kasan: bad access detected
-> > >
-> > > [  417.145859] Memory state around the buggy address:
-> > > [  417.146094]  ffff88812486ff00: fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc fc
-> > > fc
-> > > [  417.146439]  ffff88812486ff80: fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc fc
-> > > fc
-> > > [  417.146791] >ffff888124870000: fa fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > fb
-> > > [  417.147145]                                      ^
-> > > [  417.147387]  ffff888124870080: fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > fb
-> > > [  417.147751]  ffff888124870100: fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > fb
-> > > [  417.148123]
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > > First of all, we have warning in get_bvec_at() because
-> > > cursor->total_resid contains zero value. And, finally,
-> > > we have crash in ceph_msg_data_advance() because
-> > > cursor->data is NULL. It means that get_bvec_at()
-> > > receives not initialized ceph_msg_data_cursor structure
-> > > because data is NULL and total_resid contains zero.
-> > >
-> > > Moreover, we don't have likewise issue for the case of
-> > > Ceph msgr1 protocol because ceph_msg_data_cursor_init()
-> > > has been called before reading sparse data.
-> > >
-> > > This patch adds calling of ceph_msg_data_cursor_init()
-> > > in the beginning of process_v2_sparse_read() with
-> > > the goal to guarantee that logic of reading sparse data
-> > > works correctly for the case of Ceph msgr2 protocol.
-> > >
-> > > [1] https://tracker.ceph.com/issues/73152
-> > >
-> > > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> > > cc: Alex Markuze <amarkuze@redhat.com>
-> > > cc: Ilya Dryomov <idryomov@gmail.com>
-> > > cc: Ceph Development <ceph-devel@vger.kernel.org>
-> > > ---
-> > >  net/ceph/messenger.c    | 1 +
-> > >  net/ceph/messenger_v2.c | 2 ++
-> > >  2 files changed, 3 insertions(+)
-> > >
-> > > diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-> > > index f8181acaf870..02d2fc075ce7 100644
-> > > --- a/net/ceph/messenger.c
-> > > +++ b/net/ceph/messenger.c
-> > > @@ -1129,6 +1129,7 @@ void ceph_msg_data_advance(struct ceph_msg_data=
-_cursor *cursor, size_t bytes)
-> > >         bool new_piece;
-> > >
-> > >         BUG_ON(bytes > cursor->resid);
-> > > +       BUG_ON(!cursor->data);
-> >
-> > Hi Slava,
-> >
-> > What is the reason for adding this BUG_ON?  If cursor->data is NULL,
-> > it should result in a distinctive crash on the very next line because
-> > the data item is dereferenced there to get its type.
-> >
-> > I'd rather we remove some existing BUG_ONs than add more of them.
->
-> We crashed here because of trying to dereference the cursor->data that is=
- NULL.
-> So, I've added this BUG_ON() to show that we expect to have cursor->data =
-of
-> properly initialized.
->
-> Technically speaking, I can remove both BUG_ON() here, if you like. I rem=
-ember
-> one of our discussion before and you said that BUG_ON() is good way to st=
-op
-> execution at the issue place. :)
 
-In general, yes.  However, in this case the execution would be stopped on t=
-he
-next statement with a very distinct splat anyway, leaving no doubt about wh=
-at
-the issue is.
 
->
-> So, should I remove both BUG_ON()?
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf
+> Of Andy Shevchenko
+> Sent: Tuesday, November 11, 2025 1:20 PM
+> To: Corey Minyard <corey@minyard.net>; Christian K=F6nig
+> <christian.koenig@amd.com>; Dr. David Alan Gilbert
+> <linux@treblig.org>; Alex Deucher <alexander.deucher@amd.com>; Thomas
+> Zimmermann <tzimmermann@suse.de>; Dmitry Baryshkov
+> <dmitry.baryshkov@oss.qualcomm.com>; Rob Clark
+> <robin.clark@oss.qualcomm.com>; Brost, Matthew
+> <matthew.brost@intel.com>; Ulf Hansson <ulf.hansson@linaro.org>; Andy
+> Shevchenko <andriy.shevchenko@linux.intel.com>; Lifshits, Vitaly
+> <vitaly.lifshits@intel.com>; Manivannan Sadhasivam <mani@kernel.org>;
+> Niklas Cassel <cassel@kernel.org>; Calvin Owens <calvin@wbinvd.org>;
+> Vadim Fedorenko <vadim.fedorenko@linux.dev>; Sagi Maimon
+> <maimon.sagi@gmail.com>; Martin K. Petersen
+> <martin.petersen@oracle.com>; Karan Tilak Kumar <kartilak@cisco.com>;
+> Hans Verkuil <hverkuil+cisco@kernel.org>; Casey Schaufler
+> <casey@schaufler-ca.com>; Steven Rostedt <rostedt@goodmis.org>; Petr
+> Mladek <pmladek@suse.com>; Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>;
+> Max Kellermann <max.kellermann@ionos.com>; linux-doc@vger.kernel.org;
+> linux-kernel@vger.kernel.org; openipmi-
+> developer@lists.sourceforge.net; linux-media@vger.kernel.org; dri-
+> devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; amd-
+> gfx@lists.freedesktop.org; linux-arm-msm@vger.kernel.org;
+> freedreno@lists.freedesktop.org; intel-xe@lists.freedesktop.org;
+> linux-mmc@vger.kernel.org; netdev@vger.kernel.org; intel-wired-
+> lan@lists.osuosl.org; linux-pci@vger.kernel.org; linux-
+> s390@vger.kernel.org; linux-scsi@vger.kernel.org; linux-
+> staging@lists.linux.dev; ceph-devel@vger.kernel.org; linux-trace-
+> kernel@vger.kernel.org
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>; Sergey Senozhatsky
+> <senozhatsky@chromium.org>; Jonathan Corbet <corbet@lwn.net>; Sumit
+> Semwal <sumit.semwal@linaro.org>; Gustavo Padovan
+> <gustavo@padovan.org>; David Airlie <airlied@gmail.com>; Simona Vetter
+> <simona@ffwll.ch>; Maarten Lankhorst
+> <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+> <mripard@kernel.org>; Dmitry Baryshkov <lumag@kernel.org>; Abhinav
+> Kumar <abhinav.kumar@linux.dev>; Jessica Zhang
+> <jesszhan0024@gmail.com>; Sean Paul <sean@poorly.run>; Marijn Suijten
+> <marijn.suijten@somainline.org>; Konrad Dybcio
+> <konradybcio@kernel.org>; De Marchi, Lucas <lucas.demarchi@intel.com>;
+> Thomas Hellstr=F6m <thomas.hellstrom@linux.intel.com>; Vivi, Rodrigo
+> <rodrigo.vivi@intel.com>; Vladimir Oltean <olteanv@gmail.com>; Andrew
+> Lunn <andrew@lunn.ch>; David S. Miller <davem@davemloft.net>; Eric
+> Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo
+> Abeni <pabeni@redhat.com>; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
+> <przemyslaw.kitszel@intel.com>; Krzysztof Wilczy=F1ski
+> <kwilczynski@kernel.org>; Kishon Vijay Abraham I <kishon@kernel.org>;
+> Bjorn Helgaas <bhelgaas@google.com>; Rodolfo Giometti
+> <giometti@enneenne.com>; Richard Cochran <richardcochran@gmail.com>;
+> Jonathan Lemon <jonathan.lemon@gmail.com>; Stefan Haberland
+> <sth@linux.ibm.com>; Jan Hoeppner <hoeppner@linux.ibm.com>; Heiko
+> Carstens <hca@linux.ibm.com>; Vasily Gorbik <gor@linux.ibm.com>;
+> Alexander Gordeev <agordeev@linux.ibm.com>; Christian Borntraeger
+> <borntraeger@linux.ibm.com>; Sven Schnelle <svens@linux.ibm.com>;
+> Satish Kharat <satishkh@cisco.com>; Baddela, Sesidhar
+> <sebaddel@cisco.com>; James E.J. Bottomley
+> <James.Bottomley@HansenPartnership.com>; Mauro Carvalho Chehab
+> <mchehab@kernel.org>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>;
+> Xiubo Li <xiubli@redhat.com>; Ilya Dryomov <idryomov@gmail.com>;
+> Masami Hiramatsu <mhiramat@kernel.org>; Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com>; Andrew Morton <akpm@linux-
+> foundation.org>
+> Subject: [Intel-wired-lan] [PATCH v2 09/21] e1000e: Switch to use
+> %ptSp
+>=20
+> Use %ptSp instead of open coded variants to print content of struct
+> timespec64 in human readable format.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/net/ethernet/intel/e1000e/ptp.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/intel/e1000e/ptp.c
+> b/drivers/net/ethernet/intel/e1000e/ptp.c
+> index ea3c3eb2ef20..ec39e35f3857 100644
+> --- a/drivers/net/ethernet/intel/e1000e/ptp.c
+> +++ b/drivers/net/ethernet/intel/e1000e/ptp.c
+> @@ -229,14 +229,11 @@ static void e1000e_systim_overflow_work(struct
+> work_struct *work)
+>=20
+> systim_overflow_work.work);
+>  	struct e1000_hw *hw =3D &adapter->hw;
+>  	struct timespec64 ts;
+> -	u64 ns;
+>=20
+>  	/* Update the timecounter */
+> -	ns =3D timecounter_read(&adapter->tc);
+> +	ts =3D ns_to_timespec64(timecounter_read(&adapter->tc));
+>=20
+> -	ts =3D ns_to_timespec64(ns);
+> -	e_dbg("SYSTIM overflow check at %lld.%09lu\n",
+> -	      (long long) ts.tv_sec, ts.tv_nsec);
+> +	e_dbg("SYSTIM overflow check at %ptSp\n", &ts);
+>=20
+>  	schedule_delayed_work(&adapter->systim_overflow_work,
+>  			      E1000_SYSTIM_OVERFLOW_PERIOD);
+> --
+> 2.50.1
 
-Yes, that would be my preference.
-
->
-> >
-> > >         switch (cursor->data->type) {
-> > >         case CEPH_MSG_DATA_PAGELIST:
-> > >                 new_piece =3D ceph_msg_data_pagelist_advance(cursor, =
-bytes);
-> > > diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-> > > index 9e39378eda00..445a60e6fe91 100644
-> > > --- a/net/ceph/messenger_v2.c
-> > > +++ b/net/ceph/messenger_v2.c
-> > > @@ -1064,6 +1064,8 @@ static int process_v2_sparse_read(struct ceph_c=
-onnection *con,
-> > >         struct ceph_msg_data_cursor *cursor =3D &con->v2.in_cursor;
-> >
-> > Instead of con->v2.in_cursor, I'd suggest using a private cursor here
-> > like it's done in setup_message_sgs().  This is to highlight to the
-> > reader that this cursor isn't being advanced as the data is read in
-> > (which requires maintaining connection-wide state) but rather just
-> > arranging a simple copy from con->v2.in_enc_pages to the user-provided
-> > buffer.
->
-> OK. If I understood correctly, you suggest this:
->
-> struct ceph_msg_data_cursor *cursor;
-
-No, I'm suggesting
-
-struct ceph_msg_data_cursor cursor;
-
-(i.e. no star) that would be initialized and used as
-
-ceph_msg_data_cursor_init(&cursor, ...
-
-ceph_msg_data_advance(&cursor, ...
-
-Thanks,
-
-                Ilya
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
 
