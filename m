@@ -1,445 +1,477 @@
-Return-Path: <ceph-devel+bounces-4057-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4058-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80716C5A5A0
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Nov 2025 23:40:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E55C5A57C
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Nov 2025 23:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 470CD4E8EA0
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Nov 2025 22:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 067803AA938
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Nov 2025 22:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F51312826;
-	Thu, 13 Nov 2025 22:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F772E0915;
+	Thu, 13 Nov 2025 22:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="Rv2ofXhP"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="FhrZg319"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from alln-iport-2.cisco.com (alln-iport-2.cisco.com [173.37.142.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19432E1C63;
-	Thu, 13 Nov 2025 22:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=173.37.142.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763073356; cv=fail; b=gpkSzXAjuCRDh2tKaJHe8U06w9SipaNVdc43gx7CSwaHoOJ749jXbnGWmUtzud0JOF4jPJNhHegcSu5i/oIpo8Hl71A7daMDaaqjxjDSF/s4CngUQk5J4KO6v+cqq3jIcSB1xbg3w2LtXQ2u2v4LafU9FcTQEvAy3d9gRa0QcBA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763073356; c=relaxed/simple;
-	bh=/LFIz8b/vnOk4xaxu82tLCxZVOvqSWxIrQzi12AREJM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PhlQjx3itgFoMs6azyk0HoR2xgCigG9E/O7Ez82AVL/BNxooD6V8JX3yZ7fVTBv4txu1KEOadFBqHvcIh1fj6WpXW6GJdOUKNwB5DnYO64grawSn9ibweU9rVjQoILdPcwMdwsTCQLe2I+wIup7kiQA7bCprHfl0fs3poZqRkKQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=Rv2ofXhP; arc=fail smtp.client-ip=173.37.142.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26CB2E03FE
+	for <ceph-devel@vger.kernel.org>; Thu, 13 Nov 2025 22:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763073412; cv=none; b=nOOkbw/3msQuM1M+dWNZBUvr/1fF6uDQQruujDpBdC3UuOEVhKrB8009rfOYnSYX7TGdehxJQSKRR5vMt9LThzky1g1ES2oFxN768B19TJJGP/8VfYZ1PV1l4vzuGVRN9JBw9fPhhK29UT6rGq09pTC2OPOu5l7ysGBRnEWO5PI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763073412; c=relaxed/simple;
+	bh=Px9gLVsLkG4j4m5UiaFd7dY3bn0T+WdRBACT8O9gCew=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QxC/V75/ystdcRjT0Z1hXZTD1CHp0GQlJLwxWkLObi1yF3JMzaiyy+uLgcNkb++Bf8uZHiBYbnBOecafU0X8LGqXNOaXgz0lodGku2FESDayB4usU2hl1XwWERv+GSReT2s6UkMAyVX0iGHHwboJTYJWidw9kRPvaFzYSBfwcLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=FhrZg319; arc=none smtp.client-ip=74.125.224.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-63f74b43db8so1300073d50.3
+        for <ceph-devel@vger.kernel.org>; Thu, 13 Nov 2025 14:36:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=5367; q=dns/txt;
-  s=iport01; t=1763073354; x=1764282954;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=8JVJ68Ci8hH+vA9bF8YiFlkwB1Lv6uIdcNwtst+8pPM=;
-  b=Rv2ofXhPV9RN97WVfOoeyGdrIgy7IdOjBIoeEu/ltUs6h2Ga+cT3J1HV
-   Yv1de5p5pwCuWUuzNbHvS34w4P2Dip3yo9oxiCIQkReLS2iDmSHW3nPf8
-   Dtpl3gIa3ShCn2HVianjr33gpnJLX1+fgExRPVSydX3zXtQAdGqbTpPNp
-   cg39wc9xbimquxzYCHMSsNokH1bhC+MWpXvb43qb7fyIK2tngku0RLTpD
-   ucHobNinUBP6frOzAidQSXkl7Vqk798HE6GsZR36VtyVFB36aoQgVqNOV
-   jruAXzhHttTkAZyGhiFlDf11admcsFYScy/+qw/sRBgyunGEOWekYdGn2
-   Q==;
-X-CSE-ConnectionGUID: +04yFXkrTtOIXKIUyztPdQ==
-X-CSE-MsgGUID: /IUTXCN/RjGGLrAdlPRTIg==
-X-IPAS-Result: =?us-ascii?q?A0BAAAByXBZp/5EQJK1aHAEBAQEBAQcBARIBAQQEAQFAJ?=
- =?us-ascii?q?YEYBgEBCwGBbVIHghtJiCADhSyGWIIhA54aFIFrDwEBAQ0CUQQBAYUHAoxaA?=
- =?us-ascii?q?iY1CA4BAgQBAQEBAwIDAQEBAQEBAQEBAQELAQEFAQEBAgEHBYEOE4ZchloBA?=
- =?us-ascii?q?QEBAxIVUhACAQgOCi4xJQIEAQ0FCBqFVAMBAqRLAYFAAooreIEBM4EB4CaBS?=
- =?us-ascii?q?gGIUgGFbjuEPScbgg2BV3mBbz6EKhuEE4IvBIIigQ6GJ3mLYIZjUngcA1ksA?=
- =?us-ascii?q?VUTFwsHBYEgEDMDIAo0LQIUDRASDwQWBS0dcAwoEhAfGBFgVECDSRAMBmgPB?=
- =?us-ascii?q?oESGUkCAgIFAisVOoFoBQEcBhwSAgMBAgI6VQ2BdwICBIIZfoFvGw+JSIEaA?=
- =?us-ascii?q?wttPTcGDhsFBIE1BZQUghNpAT1RgTEMUwQsY5JsCIMjAbAfCoQcog0XhASNE?=
- =?us-ascii?q?4cCklKZBiKodAIEAgQFAhABAQaBaQE6gVlwFYMiUhkPji0WkxsBtUN4AjoCB?=
- =?us-ascii?q?wsBAQMJk2cBAQ?=
-IronPort-PHdr: A9a23:j7lK4hJIypBFWO3lXtmcuVQyDhhOgF28FgcR7pxijKpBbeH4uZ/jJ
- 0fYo/5qiQyBUYba7qdcgvHN++D7WGMG6Iqcqn1KbpFWVhEEhMlX1wwtCcKIEwv6edbhbjcxG
- 4JJU1oNwg==
-IronPort-Data: A9a23:gE7Qka1YRYGtvW/mYfbD5bhxkn2cJEfYwER7XKvMYLTBsI5bp2EAm
- mIaX2mEa6rYZWXwf9gjYISwoUgHvp6HxtZiHQA/3Hw8FHgiRegpqji6wuYcGwvIc6UvmWo+t
- 512huHodZ5yFjmH4E/xbtANlFEkvYmQXL3wFeXYDS54QA5gWU8JhAlq8wIDqtYAbeORXUXU6
- Lsen+WFYAX4gmctaTpPg06+gEoHUMra6WtwUmMWPZinjHeG/1EJAZQWI72GLneQauF8Au6gS
- u/f+6qy92Xf8g1FIovNfmHTKxBirhb6ZGBiu1IOM0SQqkEqSh8ajs7XAMEhhXJ/0F1lqTzeJ
- OJl7vRcQS9xVkHFdX90vxNwS0mSNoUekFPLzOTWXcG7lyX7n3XQL/pGTxlqLKMo+fxLHUZvx
- d85FSEfciiPvrfjqF67YrEEasULJc3vOsYb/3pn1zycVaZgSpHYSKKM7thdtNsyrpkRRrCFO
- YxAN3w2MEmojx5nYj/7DLo9lf20h332cBVTqUmeouw85G27IAlZjuG0bYKEJo3TLSlTtgG5m
- 1721EK+OBM1G/iF4DaBykiQp+CayEsXX6pXTtVU7MVCi1CLxikfBQMbUXOlrvSjzE2zQdRSL
- woT4CVGhawz8lG7C9DnWli9u3usoBERQZxTHvc85QXLzbDbiy6dB24ZXntNb9cOqsA7X3op2
- 0WPktevAiZg2JWRSHSA5vKXoCm0NCw9M2APf2kHQBED7t2lp5s85jrLT9B+AOuwg9H0EBnuz
- D2Q6isznbMeiYgMzarT1VTGhS+8453MRSYr6QjNGGGo9AV0YMiifYPAwVza6+tQaZ6ST3Gfs
- 3Ue3cuT9uYDCdeKjiPlaOEMGqy5ou3eYWX0n1FiBd8i+i6r9nrleppfiBl6JUF0IoMfciToS
- FHctBkX55JJOnauK6htbOqZD8Us0LilCc7sXf2RbddUZJV1XBGI8TsoZkOK2W3p1k82nskXP
- 5qHfcuyJWgVBL4hzzesQeoZl7gxyUgDKXj7TJT/yVGjlLGZfnPQEedDO1qVZed/56SByOnIz
- +ti2wKx40w3eMX1YzLc9sgYKlViEJTxLcueRxB/HgJbHjdbJQ==
-IronPort-HdrOrdr: A9a23:9WIcX6+bVKvIj4Bhjcpuk+GXdr1zdoMgy1knxilNoENuA6+lfp
- GV/MjziyWUtN9IYgBfpTnhAsW9qXO1z+8S3WBjB8bSYOCAghrmEGgC1/qv/9SOIVyFygcw79
- YFT0E6MqyOMbEYt7e13ODbKadc/DDvysnB7omurQYJcegpUdAd0+4TMHfjLqQCfng8OXNPLu
- vl2iMonUvGRV0nKu6AKj0uWe/Fq9fXlJTgTyInKnccgjWmvHeD0pK/NwKX8Cs/flp0rIvK91
- KrryXJooGY992rwB7V0GHeq75MnsH699dFDMuQzuAINzTFkG+TFcRccozHmApwjPCk6V4snt
- WJiQwnJd5P53TYeXzwiQfx2jPnzC0l5xbZuBylaDrY0I7ErQABeo58bLFiA1zkAo0bzZdBOZ
- dwriekXlxsfEr9dWrGloD1vlpR5zqJSDIZ4J0uZjpkIMojgHs7l/1EwKuTe61wRx7S+cQpFv
- JjA9rb4+sTeVSGb2rBtm0q29C0WG8vdy32CXTql/blmgS+pkoJh3cw1YgahDMN5Zg9Q55L66
- DNNblpjqhHSosTYbhmDOkMTMOrAiiVKCi8fV66MBDiDuUKKnjNo5n47PE84/yrYoUByN83lI
- 7aWF1VuGYucwblCNGI3pdM7hfRKV/NFwjF24Vb/dx0q7f8TL3kPWmKT00vidKpp7EFDsjSS5
- +ISeRr6j/YXBzT8KpyrnnDssNpWAsjueUuy6MGZ24=
-X-Talos-CUID: =?us-ascii?q?9a23=3AFhUfb2iPb0If+ybfR88GUNh/fTJuMSWB3VngIFW?=
- =?us-ascii?q?EFUFIeJ60dE6C5Jtoqp87?=
-X-Talos-MUID: =?us-ascii?q?9a23=3A4HUZpAx+b1Sk0ZQLTa73jUOR4RWaqOOPNXw9urN?=
- =?us-ascii?q?BgcurGghqEjuZtA6LY4Byfw=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-Received: from alln-l-core-08.cisco.com ([173.36.16.145])
-  by alln-iport-2.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 13 Nov 2025 22:34:45 +0000
-Received: from alln-opgw-3.cisco.com (alln-opgw-3.cisco.com [173.37.147.251])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by alln-l-core-08.cisco.com (Postfix) with ESMTPS id 922FB1800075E;
-	Thu, 13 Nov 2025 22:34:45 +0000 (GMT)
-X-CSE-ConnectionGUID: GCrkPvmrQQyYT0zT2MC+fg==
-X-CSE-MsgGUID: XijHqBfrRMaTSrqVw0ziAg==
-Authentication-Results: alln-opgw-3.cisco.com; dkim=pass (signature verified) header.i=@cisco.com
-X-IronPort-AV: E=Sophos;i="6.19,303,1754956800"; 
-   d="scan'208";a="36153306"
-Received: from mail-ch4pr07cu00101.outbound.protection.outlook.com (HELO CH4PR07CU001.outbound.protection.outlook.com) ([40.93.20.97])
-  by alln-opgw-3.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 13 Nov 2025 22:34:40 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gzxoebjS9ToWZ6hkFn/yQS0iiplaQq1B4uUQr0RFXuTMtZe72qWKPaG3zeMn26vWbIUlrcW0xe1x5Z6AE/AQ0C3bRseVPhIvBh3olnvhwkAvI1F8xuvYDAqZY+ca8QP9WQOpcwDN0FIJjZm7eFuCIJCHeOFchgTOrzE5tGxI318PpwHZH/atRcXt0450+vS7OqWhGblRJM6hGqVaLVHf+Gn0pfH59UDzAzTCqwBFYuynnIPrV8z/D0SF780/FcP5TPFqLGc4Jz7vVUu5owU/wPyl+CqljKGnPurboag5vnjAWCn0pDFc7X1cRjSr929YyrQV+gyZrAx+Dk/ie/Bu7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8JVJ68Ci8hH+vA9bF8YiFlkwB1Lv6uIdcNwtst+8pPM=;
- b=wQak6JIoINwHL1xP/fq5L8vTabF8f9R4aD+z5MVNdyLO+dN/g9+GwFS4wtQ4KpOUrOV/kRnaI+ktN3ACIpuQul8qUUSJt04bppepZcDS8kp98Ps9pCxaNLxJkNI7pJXih62kvQ2gfhiToK69kKhcJA49IIEDsk4YkNzmRnS7EqBTimK6tiMMDQnRpHB2J7BO0RHFdWfEiwT++GtOp40H2PsMvirkCTQ6e25HPa76rYFIrzzc+kbkUO5v43lrHyZ47I8j8uICIS3yyPyUrko2G3AXGl4YRv5pOeXPVjDK9CtK2HT3DJjv3kY5fNw+MwypfUD15ctnAIHmdjTbfUdP8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com (2603:10b6:a03:42c::19)
- by IA1PR11MB7755.namprd11.prod.outlook.com (2603:10b6:208:420::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Thu, 13 Nov
- 2025 22:34:36 +0000
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd]) by SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd%4]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 22:34:36 +0000
-From: "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Corey Minyard
-	<corey@minyard.net>, =?iso-8859-2?Q?Christian_K=F6nig?=
-	<christian.koenig@amd.com>, "Dr. David Alan Gilbert" <linux@treblig.org>,
-	Alex Deucher <alexander.deucher@amd.com>, Thomas Zimmermann
-	<tzimmermann@suse.de>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>, Matthew Brost
-	<matthew.brost@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Aleksandr
- Loktionov <aleksandr.loktionov@intel.com>, Vitaly Lifshits
-	<vitaly.lifshits@intel.com>, Manivannan Sadhasivam <mani@kernel.org>, Niklas
- Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>, Vadim Fedorenko
-	<vadim.fedorenko@linux.dev>, Sagi Maimon <maimon.sagi@gmail.com>, "Martin K.
- Petersen" <martin.petersen@oracle.com>, Hans Verkuil
-	<hverkuil+cisco@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, Steven
- Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>, Viacheslav
- Dubeyko <Slava.Dubeyko@ibm.com>, Max Kellermann <max.kellermann@ionos.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"openipmi-developer@lists.sourceforge.net"
-	<openipmi-developer@lists.sourceforge.net>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, "amd-gfx@lists.freedesktop.org"
-	<amd-gfx@lists.freedesktop.org>, "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>, "freedreno@lists.freedesktop.org"
-	<freedreno@lists.freedesktop.org>, "intel-xe@lists.freedesktop.org"
-	<intel-xe@lists.freedesktop.org>, "linux-mmc@vger.kernel.org"
-	<linux-mmc@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org"
-	<intel-wired-lan@lists.osuosl.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "linux-s390@vger.kernel.org"
-	<linux-s390@vger.kernel.org>, "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>, "linux-staging@lists.linux.dev"
-	<linux-staging@lists.linux.dev>, "ceph-devel@vger.kernel.org"
-	<ceph-devel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
-	<linux-trace-kernel@vger.kernel.org>
-CC: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
-	<senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Sumit Semwal
-	<sumit.semwal@linaro.org>, Gustavo Padovan <gustavo@padovan.org>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
-	<abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul
-	<sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, Konrad
- Dybcio <konradybcio@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?iso-8859-2?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek
- Kitszel <przemyslaw.kitszel@intel.com>,
-	=?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>, Kishon
- Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Rodolfo Giometti <giometti@enneenne.com>, Jonathan Lemon
-	<jonathan.lemon@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
-	Stefan Haberland <sth@linux.ibm.com>, Jan Hoeppner <hoeppner@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
-	<borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, "Satish
- Kharat (satishkh)" <satishkh@cisco.com>, "Sesidhar Baddela (sebaddel)"
-	<sebaddel@cisco.com>, "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Xiubo
- Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Masami Hiramatsu
-	<mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: RE: [PATCH v3 19/21] scsi: fnic: Switch to use %ptSp
-Thread-Topic: [PATCH v3 19/21] scsi: fnic: Switch to use %ptSp
-Thread-Index: AQHcVK6ozanKNwbcFU2LSi/oClNkW7TxMIPg
-Date: Thu, 13 Nov 2025 22:34:36 +0000
-Message-ID:
- <SJ0PR11MB5896D2F9DAC35FF8ADB29087C3CDA@SJ0PR11MB5896.namprd11.prod.outlook.com>
-References: <20251113150217.3030010-1-andriy.shevchenko@linux.intel.com>
- <20251113150217.3030010-20-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20251113150217.3030010-20-andriy.shevchenko@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5896:EE_|IA1PR11MB7755:EE_
-x-ms-office365-filtering-correlation-id: 3cf75da7-1b8e-4777-1265-08de2304d313
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700021|921020;
-x-microsoft-antispam-message-info:
- =?iso-8859-2?Q?EV+qDQ4opgT6YErEt+UTHCFYqvHTNJI5xuKV0TWvVDABI0Ef8+VDdGTavR?=
- =?iso-8859-2?Q?SNJR5b3R0U9xD3zMHb8nX29wKP3IboINDE5Vu3YwhbTGwLiATuVYXvnS/z?=
- =?iso-8859-2?Q?IuCxsetISmon5JlHrjND3OG8FJcZK0TctHcd7wsSq0vX5gTK4Mly8e2tXB?=
- =?iso-8859-2?Q?8niGQPhFBtcfIvxSP02U+OsRVhVAlAZU9FNl3umrxpWNh2Ou/gAUtKMMja?=
- =?iso-8859-2?Q?vuk/ZOK8y62KRUh4+Yqy1hLRgoy4MzxIQm9ENoDUDKejiY6VAmxaHBtFMv?=
- =?iso-8859-2?Q?khC+LYVKosq8tq4fM65y1+JzsHqZPyWKtv2KiMvx/00QoNn4AxpcNxgov/?=
- =?iso-8859-2?Q?f7J3E9cKAtg2zReMnMxzzrtN3tDrlmZvQPQGDFohM7peloBOxRkKX2glgv?=
- =?iso-8859-2?Q?6p593bO9o3W6G9PSesKeQ9Qk4a9MIRTejqyErN++fwt7BiOL2Oda2guwYK?=
- =?iso-8859-2?Q?DzzccPSUzCrJOelr77JA9iEVIu8KJnD2fd66UlCv7gk3Fh/B5QZXLJaGtu?=
- =?iso-8859-2?Q?5LG5k8+7w3IoPhyFfMFqo25jCT+TxxiBwFSXTUJEPDjp9yLPR/o545NFJ7?=
- =?iso-8859-2?Q?dqplbeu5arprxhwRAyU085ei3Qb9ABYMk0kBR5G3nrwItNBjoNKE7rLfZ2?=
- =?iso-8859-2?Q?WL5jfsO+dsZjt6gxuOMRbyO47AgSAm5bCq5TMLEEoXRz3bwvr6uK1rr3Ns?=
- =?iso-8859-2?Q?yRSBerbmJD/ZZ+ObnNDbOOH2iCkHUJuVJxvO43eV7MHOp354KyauFmaAnx?=
- =?iso-8859-2?Q?ve3W8QuXW9HC8E002cKp+JmxPMtAaet0UYmffOQ/QtH9pwqs4RWURUqq10?=
- =?iso-8859-2?Q?AjWtBDSOgaBz07nb/wVUnhjGu3IlwbuOc05yLo7NAt+ogtQuPheZLWdkse?=
- =?iso-8859-2?Q?sVJEQXE+iIsU6NtdDfGyvgqpPx+wEai/fzTe1OsBTT3g4ISw8I0lqUo7PN?=
- =?iso-8859-2?Q?Ui58IOsGbxGXrkTbfHasebGXowPe7ji1AbBtVYVvz/fA7riU7f6beYLRg1?=
- =?iso-8859-2?Q?s8CRYhMj5gncWcknGIRth3Ni/LpRDlE3jvW0TIByQodKFwcoTNRcZqS9VZ?=
- =?iso-8859-2?Q?u3BmU+kB3fay6joTlS1WDA4diI9X9Pduq+SPZuk3EqHOLxb3YEP2NNMM+V?=
- =?iso-8859-2?Q?F9ehoScC422VY4fWpfpEaSZpNiOMQNq0233ZGVagJMez1oEpHJolJ4IYDF?=
- =?iso-8859-2?Q?rr95lC/zxpoLNZwcwqL5nHwh+kfByty09Vl9v6IhYVaw416rCIM5swf9cr?=
- =?iso-8859-2?Q?cPUHa7lW/29d0PAAhUgphYMjq79TEGuuu+U9e5RQGvksOA26HWqQdVvcN0?=
- =?iso-8859-2?Q?+WW1bi3sCAWfoKq6H5qjbVJe21oBV3lx6AnX6rS+XSG4QMSETxmaFEKKVb?=
- =?iso-8859-2?Q?7y5luHp8/I+Y8wqeUtKPqJ5rH2x/El887tArDaXVwW1B6ayD3B+SPdK+E5?=
- =?iso-8859-2?Q?ju2AWJVNKsxRVZOx/Fi/WE971MHiHUvsR/yupHVmPZC/6Ewd+LlaC1Q8uA?=
- =?iso-8859-2?Q?iV1i/kX1mV6VgVa4nc14YAcu9qryk57wAI+Wd+gH+oypoZd76+5cQufEzy?=
- =?iso-8859-2?Q?1EOlIiZCP+WpsYf5xLKPUCNLz49r?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5896.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700021)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?JAcZu+XLiUOU8CJSSgwLGu7Y/XMu8k1WUI7Ah4cqVJUMBWde4kmxiTEO9K?=
- =?iso-8859-2?Q?dpJ5rZhOLpU5T9t2I/XlB3US7ufDrG0lM/DZfTCqdaK946hnz5F77s3wKJ?=
- =?iso-8859-2?Q?qgMA0wh2jdBFePzNXbR77En+zJXbyV1ndr+UumsF8SMXKQJ+OOdSR8UrSN?=
- =?iso-8859-2?Q?RklHn/G95gf/JEC5Pdn9PYix/KgqLWjYnGNlXVniFqQzmiQWxxn4ht70VM?=
- =?iso-8859-2?Q?KVEpzpUuas1b+v/EjYw8umW4FzWillX9WIeKnPt/6oQBFIJI/oLhWHdQP1?=
- =?iso-8859-2?Q?wnDX4bYaOllhPkyzIUDdEAo0NLx6N78O8eMe8ZJmYBnW2JmZXA2nqFIXpP?=
- =?iso-8859-2?Q?IuZUYiIFNz+bkdMYmPth6KYoNyyeT22qA89rVpsfDxgYbRNhk+PEGwIJTg?=
- =?iso-8859-2?Q?EUmtoXbbYR/FobrnsouXDWjP1UYOdDAcAqbXlCqucsdi+lqasmhosWEH6D?=
- =?iso-8859-2?Q?yNcXgt2c/bB/umXc8F0Faueqx5RwVzzx1kJs3F9ENKkf1aAs988BbpP98s?=
- =?iso-8859-2?Q?Hs9lqXCsJKbR2SjsIP71J7dJzshIi1m/+MaiOcNcZZwmFLH6OA0oLN1v/R?=
- =?iso-8859-2?Q?gFzW/ELHRS0DbgWKB7GYozXa+3UMEldiHkSWT8gJ8bswch5/+t8VcYpSM2?=
- =?iso-8859-2?Q?7SxAuxLOsE4QePikmND7AeXMC6ojUIO228eQUOPqV8Q/DBI8skTva0pEq8?=
- =?iso-8859-2?Q?zvS9imhV+clIJAH2JfiiDhLUVs2sscc4qUGi7J2MtsE/vr2xHwA4aYNEAH?=
- =?iso-8859-2?Q?6yrdru3DI77uvaD6At6OwOqH8Cmm7+UoYAq8DCO9E8LN6OJrIuO2BtQ4pM?=
- =?iso-8859-2?Q?zCcBbB7unQO+pQnEjPMFLwaweL6TuXmQ6cYEaSaS2pEssJFr1F8vb617QA?=
- =?iso-8859-2?Q?uT/5s+cP16uCXXJFqfF3HTg9YOlpH/R/l6hTu4a/BhcvDzGOiSOjsgsPIi?=
- =?iso-8859-2?Q?n9HTEQdHTjI25vY7N5PqZRdEsd8G4jP3CZT8lPbyLaEWO+vCshV22lTRxr?=
- =?iso-8859-2?Q?L1R9JCkMR7q2rtXScfGH7K7h/L8Y4ssMradPA8ycNfEVRJ9hs7vFneUsaZ?=
- =?iso-8859-2?Q?NjLQJ46yxpyfzQipPYwIHLDKqzhQa/+bo1lTBGm4YOEMP318iH+ibcrv5q?=
- =?iso-8859-2?Q?R1IVAFTppmRUMzxJLuJTqV57wDRNmFlU7iqH65Jni/Bvxaf6pbLIE7shYi?=
- =?iso-8859-2?Q?/2BGpuUbA4hZwANp5E2Ih0hTWre1X0SeJHcQSXLAbEfTlpiVg7+yPt6E8N?=
- =?iso-8859-2?Q?JRr22MREJHr68n99H9VNcbUoTQWVXswgoHEiBGZHzfX7HKaT4Yc7Lfh/ek?=
- =?iso-8859-2?Q?75nIHJeeC9hhA4SXFNcxHI4uVyIrmRngkUolr2urenyu5zezfaxO8JmDX4?=
- =?iso-8859-2?Q?euhetnR8XyZRSStChswMTaP4l+NvTgcbWtuVl/Qe+7Q+bANcHMFtChFlcX?=
- =?iso-8859-2?Q?rNZDbbAepHlFEvJYUvQOhkjbDJ5+ve7TfD5nwyLfqN6vDPi+FVRCaB0GDX?=
- =?iso-8859-2?Q?K2I1JeGZQuGp30dM9ISX8xW5V+CTM78+bCoYjXzG4dt2onHVAGTQagC4Xu?=
- =?iso-8859-2?Q?0sHGJ1xqsQUIK7WWDvUVIyf7n4jVA4sIYkNo5AI1i7GyLjrvEd2IlwNxsF?=
- =?iso-8859-2?Q?Q9PMXYfRADkiwN7AmZyMvDbaLqpemSwu9Y?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1763073407; x=1763678207; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FL9JOpgRoly/FumsY/X52GcOZM++/sZDqBg5Ju+EuOI=;
+        b=FhrZg319m+on9l1WEmb+CHDOP2lLgrgz4fG33G5aUjTMWliB+c+GOKqDoH5TZEtHbt
+         EdI8wOaK0t5VG+3xhETbB4p9tFGsrTEsS5KJ8wUPulkoKPwftV0tFXWKRrEPeQAsJ+v3
+         QWdiC/6R7OPNnzt9RKfI5vBNzyfokI218dcgaZnfOlCMHeY+btj2VVLjMjg5U7qaSVgN
+         AKfRLiUHX5qOj8dnRfJkLHlx6r/WrGCMXDX6SJsVGdYRdwBdeEZJNTTT4u50efWWrIYp
+         vbl76d7c5wvG+CaGQOX/2/5yBGacyuTBPde7iBg+AOVlcofNNtsZiQW1hXNcLoV6Qpvx
+         hMbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763073407; x=1763678207;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FL9JOpgRoly/FumsY/X52GcOZM++/sZDqBg5Ju+EuOI=;
+        b=sNawZQz5PAafOcEuCbNqT0SfbF3u+ZBCozT4X4h7gbLPKWUXo9EsN7SulFslOb3R5Y
+         cW3JFnanYu5Y+e0skAQn8PN6lrsSOJYOXoefTfp/9Yd9LFksOEvQ8k32vNayW9HIvc/v
+         aNupCMnnHZvPnE07P+B/Ca0cjh0SaKnMcqka8y7gKRK6/OMP8pqOKgEWiHJcNJN5kyir
+         TwqXD2F1NEj7lvhlA+82JveqweJrGkCfy+dEtsDgMiyTtet1ZTg1EO+NuavGFjh56KDT
+         8rigvPQIFC9SAxypDRlJUS23eOoFKR5+3MCh/r/7n63yKl3H7WyrLh8KdCZ7IILUQTO5
+         +Tvw==
+X-Gm-Message-State: AOJu0YwWY2ZrYjGO8beZJsdR0qT6saUq14qkVaeeDENVutEwDq5sIpq8
+	HOUCTPD6dZxiJtZYsT6cIA+YVYlQaqOMPEIIZsLLglqVjT3kF++GD35FcMDbWT1JV+yYFKQ2lAt
+	+tqS4s2c=
+X-Gm-Gg: ASbGncvSojxSqTEGl8TajQlecDYLU6cmToXWu17LYO39PlhKZdLROa2YRn8byd/J+wf
+	WhPXmRXATSR4eiDMRapEYQoX89pFzeI2Wu4+kltIugB4BquZTBN9QaHSZhP19maPcf7jFClykk+
+	4TcPeJVHvOhVTYXZlQdrHtBZ54t3i9wZjeZ9wfS8ppz0ErIQWKhOgv4LLIsvTFq7l9WiMQXUsp1
+	hWlGDm2ujB7/tBXs19IEv8xv60HcBCvSOBm7rjulSwAYPD7eL/7bDZmQNyMpI7oEFf9pPRBZlNY
+	qFPYYKQ+adWxq3R+tx/98L4mZzo6397YRyq7uJRce3OdY0GTU5UL5a4tqZbjjxGPgeWgMj2SSKw
+	5bc8f9AkTAaLnjAmuAjiXlP0TxG1/qbAE7jyqqRZtBFj0W6feNKTh0oT/SPgooJBqBkpqIhkF0f
+	PRkEx23Id5zPLoZX6Gcws=
+X-Google-Smtp-Source: AGHT+IHZZImGSGHYMJpLjUO5BNVGDQVE4s3svn2SD4yF1YCQ3JMU1gemb44xklukNDmvbZ55OLqAtA==
+X-Received: by 2002:a53:d008:0:b0:63f:a856:5f50 with SMTP id 956f58d0204a3-641e755319bmr848109d50.6.1763073407226;
+        Thu, 13 Nov 2025 14:36:47 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:c35e:6f4a:5c45:b019])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6410e9e9641sm1144924d50.2.2025.11.13.14.36.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 14:36:46 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org,
+	idryomov@gmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com,
+	Pavan.Rallabhandi@ibm.com
+Subject: [PATCH v3] ceph: fix crash in process_v2_sparse_read() for fscrypt-encrypted directories
+Date: Thu, 13 Nov 2025 14:36:24 -0800
+Message-ID: <20251113223623.508000-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cisco.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5896.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cf75da7-1b8e-4777-1265-08de2304d313
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2025 22:34:36.0943
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qzy1shonmI5zJGs1dmaG8CrCP6foCu3hlDlOh8wFz+DyMGfoDNvNl+htR9RXXM+Thcff9uKfnLugIX4fvwAgxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7755
-X-Outbound-SMTP-Client: 173.37.147.251, alln-opgw-3.cisco.com
-X-Outbound-Node: alln-l-core-08.cisco.com
+Content-Transfer-Encoding: 8bit
 
-On Thursday, November 13, 2025 6:33 AM, Andy Shevchenko <andriy.shevchenko@=
-linux.intel.com> wrote:
->
-> Use %ptSp instead of open coded variants to print content of
-> struct timespec64 in human readable format.
->
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> drivers/scsi/fnic/fnic_trace.c | 52 ++++++++++++++--------------------
-> 1 file changed, 22 insertions(+), 30 deletions(-)
->
-> diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trac=
-e.c
-> index cdc6b12b1ec2..0a849a195a8e 100644
-> --- a/drivers/scsi/fnic/fnic_trace.c
-> +++ b/drivers/scsi/fnic/fnic_trace.c
-> @@ -138,9 +138,8 @@ int fnic_get_trace_data(fnic_dbgfs_t *fnic_dbgfs_prt)
-> */
-> len +=3D scnprintf(fnic_dbgfs_prt->buffer + len,
-> (trace_max_pages * PAGE_SIZE * 3) - len,
-> -                               "%16llu.%09lu %-50s %8x %8x %16llx %16llx=
- "
-> -                               "%16llx %16llx %16llx\n", (u64)val.tv_sec=
-,
-> -                               val.tv_nsec, str, tbp->host_no, tbp->tag,
-> +                               "%ptSp %-50s %8x %8x %16llx %16llx %16llx=
- %16llx %16llx\n",
-> +                               &val, str, tbp->host_no, tbp->tag,
-> tbp->data[0], tbp->data[1], tbp->data[2],
-> tbp->data[3], tbp->data[4]);
-> rd_idx++;
-> @@ -180,9 +179,8 @@ int fnic_get_trace_data(fnic_dbgfs_t *fnic_dbgfs_prt)
-> */
-> len +=3D scnprintf(fnic_dbgfs_prt->buffer + len,
-> (trace_max_pages * PAGE_SIZE * 3) - len,
-> -                               "%16llu.%09lu %-50s %8x %8x %16llx %16llx=
- "
-> -                               "%16llx %16llx %16llx\n", (u64)val.tv_sec=
-,
-> -                               val.tv_nsec, str, tbp->host_no, tbp->tag,
-> +                               "%ptSp %-50s %8x %8x %16llx %16llx %16llx=
- %16llx %16llx\n",
-> +                               &val, str, tbp->host_no, tbp->tag,
-> tbp->data[0], tbp->data[1], tbp->data[2],
-> tbp->data[3], tbp->data[4]);
-> rd_idx++;
-> @@ -215,30 +213,26 @@ int fnic_get_stats_data(struct stats_debug_info *de=
-bug,
-> {
-> int len =3D 0;
-> int buf_size =3D debug->buf_size;
-> -     struct timespec64 val1, val2;
-> +     struct timespec64 val, val1, val2;
-> int i =3D 0;
->
-> -     ktime_get_real_ts64(&val1);
-> +     ktime_get_real_ts64(&val);
-> len =3D scnprintf(debug->debug_buffer + len, buf_size - len,
-> "------------------------------------------\n"
-> "\t\tTime\n"
-> "------------------------------------------\n");
->
-> +     val1 =3D timespec64_sub(val, stats->stats_timestamps.last_reset_tim=
-e);
-> +     val2 =3D timespec64_sub(val, stats->stats_timestamps.last_read_time=
-);
-> len +=3D scnprintf(debug->debug_buffer + len, buf_size - len,
-> -             "Current time :          [%lld:%ld]\n"
-> -             "Last stats reset time:  [%lld:%09ld]\n"
-> -             "Last stats read time:   [%lld:%ld]\n"
-> -             "delta since last reset: [%lld:%ld]\n"
-> -             "delta since last read:  [%lld:%ld]\n",
-> -     (s64)val1.tv_sec, val1.tv_nsec,
-> -     (s64)stats->stats_timestamps.last_reset_time.tv_sec,
-> -     stats->stats_timestamps.last_reset_time.tv_nsec,
-> -     (s64)stats->stats_timestamps.last_read_time.tv_sec,
-> -     stats->stats_timestamps.last_read_time.tv_nsec,
-> -     (s64)timespec64_sub(val1, stats->stats_timestamps.last_reset_time).=
-tv_sec,
-> -     timespec64_sub(val1, stats->stats_timestamps.last_reset_time).tv_ns=
-ec,
-> -     (s64)timespec64_sub(val1, stats->stats_timestamps.last_read_time).t=
-v_sec,
-> -     timespec64_sub(val1, stats->stats_timestamps.last_read_time).tv_nse=
-c);
-> +                      "Current time :          [%ptSp]\n"
-> +                      "Last stats reset time:  [%ptSp]\n"
-> +                      "Last stats read time:   [%ptSp]\n"
-> +                      "delta since last reset: [%ptSp]\n"
-> +                      "delta since last read:  [%ptSp]\n",
-> +                      &val,
-> +                      &stats->stats_timestamps.last_reset_time, &val1,
-> +                      &stats->stats_timestamps.last_read_time, &val2);
->
-> stats->stats_timestamps.last_read_time =3D val1;
->
-> @@ -416,8 +410,8 @@ int fnic_get_stats_data(struct stats_debug_info *debu=
-g,
-> jiffies_to_timespec64(stats->misc_stats.last_ack_time, &val2);
->
-> len +=3D scnprintf(debug->debug_buffer + len, buf_size - len,
-> -               "Last ISR time: %llu (%8llu.%09lu)\n"
-> -               "Last ACK time: %llu (%8llu.%09lu)\n"
-> +               "Last ISR time: %llu (%ptSp)\n"
-> +               "Last ACK time: %llu (%ptSp)\n"
-> "Max ISR jiffies: %llu\n"
-> "Max ISR time (ms) (0 denotes < 1 ms): %llu\n"
-> "Corr. work done: %llu\n"
-> @@ -437,10 +431,8 @@ int fnic_get_stats_data(struct stats_debug_info *deb=
-ug,
-> "Number of rport not ready: %lld\n"
-> "Number of receive frame errors: %lld\n"
-> "Port speed (in Mbps): %lld\n",
-> -               (u64)stats->misc_stats.last_isr_time,
-> -               (s64)val1.tv_sec, val1.tv_nsec,
-> -               (u64)stats->misc_stats.last_ack_time,
-> -               (s64)val2.tv_sec, val2.tv_nsec,
-> +               (u64)stats->misc_stats.last_isr_time, &val1,
-> +               (u64)stats->misc_stats.last_ack_time, &val2,
-> (u64)atomic64_read(&stats->misc_stats.max_isr_jiffies),
-> (u64)atomic64_read(&stats->misc_stats.max_isr_time_ms),
-> (u64)atomic64_read(&stats->misc_stats.corr_work_done),
-> @@ -857,8 +849,8 @@ void copy_and_format_trace_data(struct fc_trace_hdr *=
-tdata,
-> len =3D *orig_len;
->
-> len +=3D scnprintf(fnic_dbgfs_prt->buffer + len, max_size - len,
-> -                      "%ptTs.%09lu ns%8x       %c%8x\t",
-> -                      &tdata->time_stamp.tv_sec, tdata->time_stamp.tv_ns=
-ec,
-> +                      "%ptSs ns%8x       %c%8x\t",
-> +                      &tdata->time_stamp,
-> tdata->host_no, tdata->frame_type, tdata->frame_len);
->
-> fc_trace =3D (char *)FC_TRACE_ADDRESS(tdata);
-> --
-> 2.50.1
->
->
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-Acked-by: Karan Tilak Kumar <kartilak@cisco.com>
+The crash in process_v2_sparse_read() for fscrypt-encrypted
+directories has been reported [1]. Issue takes place for
+Ceph msgr2 protocol. It can be reproduced by the steps:
 
-Thanks for the change, Andy.
+sudo mount -t ceph :/ /mnt/cephfs/ -o name=admin,fs=cephfs,ms_mode=secure
 
-Can you please advise how I can compile test this change?
+(1) mkdir /mnt/cephfs/fscrypt-test-3
+(2) cp area_decrypted.tar /mnt/cephfs/fscrypt-test-3
+(3) fscrypt encrypt --source=raw_key --key=./my.key /mnt/cephfs/fscrypt-test-3
+(4) fscrypt lock /mnt/cephfs/fscrypt-test-3
+(5) fscrypt unlock --key=my.key /mnt/cephfs/fscrypt-test-3
+(6) cat /mnt/cephfs/fscrypt-test-3/area_decrypted.tar
+(7) Issue has been triggered
 
-Regards,
-Karan
+[  408.072247] ------------[ cut here ]------------
+[  408.072251] WARNING: CPU: 1 PID: 392 at net/ceph/messenger_v2.c:865
+ceph_con_v2_try_read+0x4b39/0x72f0
+[  408.072267] Modules linked in: intel_rapl_msr intel_rapl_common
+intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discovery
+pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm irqbypass
+polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmouse
+serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid qemu_fw_cfg
+pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
+[  408.072304] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Not tainted 6.17.0-rc7+
+[  408.072307] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.17.0-5.fc42 04/01/2014
+[  408.072310] Workqueue: ceph-msgr ceph_con_workfn
+[  408.072314] RIP: 0010:ceph_con_v2_try_read+0x4b39/0x72f0
+[  408.072317] Code: c7 c1 20 f0 d4 ae 50 31 d2 48 c7 c6 60 27 d5 ae 48 c7 c7 f8
+8e 6f b0 68 60 38 d5 ae e8 00 47 61 fe 48 83 c4 18 e9 ac fc ff ff <0f> 0b e9 06
+fe ff ff 4c 8b 9d 98 fd ff ff 0f 84 64 e7 ff ff 89 85
+[  408.072319] RSP: 0018:ffff88811c3e7a30 EFLAGS: 00010246
+[  408.072322] RAX: ffffed1024874c6f RBX: ffffea00042c2b40 RCX: 0000000000000f38
+[  408.072324] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  408.072325] RBP: ffff88811c3e7ca8 R08: 0000000000000000 R09: 00000000000000c8
+[  408.072326] R10: 00000000000000c8 R11: 0000000000000000 R12: 00000000000000c8
+[  408.072327] R13: dffffc0000000000 R14: ffff8881243a6030 R15: 0000000000003000
+[  408.072329] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
+knlGS:0000000000000000
+[  408.072331] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  408.072332] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 0000000000772ef0
+[  408.072336] PKRU: 55555554
+[  408.072337] Call Trace:
+[  408.072338]  <TASK>
+[  408.072340]  ? sched_clock_noinstr+0x9/0x10
+[  408.072344]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
+[  408.072347]  ? _raw_spin_unlock+0xe/0x40
+[  408.072349]  ? finish_task_switch.isra.0+0x15d/0x830
+[  408.072353]  ? __kasan_check_write+0x14/0x30
+[  408.072357]  ? mutex_lock+0x84/0xe0
+[  408.072359]  ? __pfx_mutex_lock+0x10/0x10
+[  408.072361]  ceph_con_workfn+0x27e/0x10e0
+[  408.072364]  ? metric_delayed_work+0x311/0x2c50
+[  408.072367]  process_one_work+0x611/0xe20
+[  408.072371]  ? __kasan_check_write+0x14/0x30
+[  408.072373]  worker_thread+0x7e3/0x1580
+[  408.072375]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  408.072378]  ? __pfx_worker_thread+0x10/0x10
+[  408.072381]  kthread+0x381/0x7a0
+[  408.072383]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+[  408.072385]  ? __pfx_kthread+0x10/0x10
+[  408.072387]  ? __kasan_check_write+0x14/0x30
+[  408.072389]  ? recalc_sigpending+0x160/0x220
+[  408.072392]  ? _raw_spin_unlock_irq+0xe/0x50
+[  408.072394]  ? calculate_sigpending+0x78/0xb0
+[  408.072395]  ? __pfx_kthread+0x10/0x10
+[  408.072397]  ret_from_fork+0x2b6/0x380
+[  408.072400]  ? __pfx_kthread+0x10/0x10
+[  408.072402]  ret_from_fork_asm+0x1a/0x30
+[  408.072406]  </TASK>
+[  408.072407] ---[ end trace 0000000000000000 ]---
+[  408.072418] Oops: general protection fault, probably for non-canonical
+address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
+[  408.072984] KASAN: null-ptr-deref in range [0x0000000000000000-
+0x0000000000000007]
+[  408.073350] CPU: 1 UID: 0 PID: 392 Comm: kworker/1:3 Tainted: G        W
+6.17.0-rc7+ #1 PREEMPT(voluntary)
+[  408.073886] Tainted: [W]=WARN
+[  408.074042] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.17.0-5.fc42 04/01/2014
+[  408.074468] Workqueue: ceph-msgr ceph_con_workfn
+[  408.074694] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
+[  408.074976] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f 85 07 11 00
+00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f> b6 14 16
+84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
+[  408.075884] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
+[  408.076305] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 0000000000000000
+[  408.076909] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8881243a6378
+[  408.077466] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000000000000c8
+[  408.078034] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffed1024874c71
+[  408.078575] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8881243a6378
+[  408.079159] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
+knlGS:0000000000000000
+[  408.079736] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  408.080039] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 0000000000772ef0
+[  408.080376] PKRU: 55555554
+[  408.080513] Call Trace:
+[  408.080630]  <TASK>
+[  408.080729]  ceph_con_v2_try_read+0x49b9/0x72f0
+[  408.081115]  ? __pfx_ceph_con_v2_try_read+0x10/0x10
+[  408.081348]  ? _raw_spin_unlock+0xe/0x40
+[  408.081538]  ? finish_task_switch.isra.0+0x15d/0x830
+[  408.081768]  ? __kasan_check_write+0x14/0x30
+[  408.081986]  ? mutex_lock+0x84/0xe0
+[  408.082160]  ? __pfx_mutex_lock+0x10/0x10
+[  408.082343]  ceph_con_workfn+0x27e/0x10e0
+[  408.082529]  ? metric_delayed_work+0x311/0x2c50
+[  408.082737]  process_one_work+0x611/0xe20
+[  408.082948]  ? __kasan_check_write+0x14/0x30
+[  408.083156]  worker_thread+0x7e3/0x1580
+[  408.083331]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  408.083557]  ? __pfx_worker_thread+0x10/0x10
+[  408.083751]  kthread+0x381/0x7a0
+[  408.083922]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+[  408.084139]  ? __pfx_kthread+0x10/0x10
+[  408.084310]  ? __kasan_check_write+0x14/0x30
+[  408.084510]  ? recalc_sigpending+0x160/0x220
+[  408.084708]  ? _raw_spin_unlock_irq+0xe/0x50
+[  408.084917]  ? calculate_sigpending+0x78/0xb0
+[  408.085138]  ? __pfx_kthread+0x10/0x10
+[  408.085335]  ret_from_fork+0x2b6/0x380
+[  408.085525]  ? __pfx_kthread+0x10/0x10
+[  408.085720]  ret_from_fork_asm+0x1a/0x30
+[  408.085922]  </TASK>
+[  408.086036] Modules linked in: intel_rapl_msr intel_rapl_common
+intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discovery
+pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm irqbypass
+polyval_clmulni ghash_clmulni_intel aesni_intel rapl input_leds psmouse
+serio_raw i2c_piix4 vga16fb bochs vgastate i2c_smbus floppy mac_hid qemu_fw_cfg
+pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
+[  408.087778] ---[ end trace 0000000000000000 ]---
+[  408.088007] RIP: 0010:ceph_msg_data_advance+0x79/0x1a80
+[  408.088260] Code: fc ff df 49 8d 77 08 48 c1 ee 03 80 3c 16 00 0f 85 07 11 00
+00 48 ba 00 00 00 00 00 fc ff df 49 8b 5f 08 48 89 de 48 c1 ee 03 <0f> b6 14 16
+84 d2 74 09 80 fa 03 0f 8e 0f 0e 00 00 8b 13 83 fa 03
+[  408.089118] RSP: 0018:ffff88811c3e7990 EFLAGS: 00010246
+[  408.089357] RAX: ffff8881243a6388 RBX: 0000000000000000 RCX: 0000000000000000
+[  408.089678] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8881243a6378
+[  408.090020] RBP: ffff88811c3e7a20 R08: 0000000000000000 R09: 00000000000000c8
+[  408.090360] R10: ffff8881243a6388 R11: 0000000000000000 R12: ffffed1024874c71
+[  408.090687] R13: dffffc0000000000 R14: ffff8881243a6030 R15: ffff8881243a6378
+[  408.091035] FS:  0000000000000000(0000) GS:ffff88823eadf000(0000)
+knlGS:0000000000000000
+[  408.091452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  408.092015] CR2: 000000c0003c6000 CR3: 000000010c106005 CR4: 0000000000772ef0
+[  408.092530] PKRU: 55555554
+[  417.112915]
+==================================================================
+[  417.113491] BUG: KASAN: slab-use-after-free in
+__mutex_lock.constprop.0+0x1522/0x1610
+[  417.114014] Read of size 4 at addr ffff888124870034 by task kworker/2:0/4951
+
+[  417.114587] CPU: 2 UID: 0 PID: 4951 Comm: kworker/2:0 Tainted: G      D W
+6.17.0-rc7+ #1 PREEMPT(voluntary)
+[  417.114592] Tainted: [D]=DIE, [W]=WARN
+[  417.114593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.17.0-5.fc42 04/01/2014
+[  417.114596] Workqueue: events handle_timeout
+[  417.114601] Call Trace:
+[  417.114602]  <TASK>
+[  417.114604]  dump_stack_lvl+0x5c/0x90
+[  417.114610]  print_report+0x171/0x4dc
+[  417.114613]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  417.114617]  ? kasan_complete_mode_report_info+0x80/0x220
+[  417.114621]  kasan_report+0xbd/0x100
+[  417.114625]  ? __mutex_lock.constprop.0+0x1522/0x1610
+[  417.114628]  ? __mutex_lock.constprop.0+0x1522/0x1610
+[  417.114630]  __asan_report_load4_noabort+0x14/0x30
+[  417.114633]  __mutex_lock.constprop.0+0x1522/0x1610
+[  417.114635]  ? queue_con_delay+0x8d/0x200
+[  417.114638]  ? __pfx___mutex_lock.constprop.0+0x10/0x10
+[  417.114641]  ? __send_subscribe+0x529/0xb20
+[  417.114644]  __mutex_lock_slowpath+0x13/0x20
+[  417.114646]  mutex_lock+0xd4/0xe0
+[  417.114649]  ? __pfx_mutex_lock+0x10/0x10
+[  417.114652]  ? ceph_monc_renew_subs+0x2a/0x40
+[  417.114654]  ceph_con_keepalive+0x22/0x110
+[  417.114656]  handle_timeout+0x6b3/0x11d0
+[  417.114659]  ? _raw_spin_unlock_irq+0xe/0x50
+[  417.114662]  ? __pfx_handle_timeout+0x10/0x10
+[  417.114664]  ? queue_delayed_work_on+0x8e/0xa0
+[  417.114669]  process_one_work+0x611/0xe20
+[  417.114672]  ? __kasan_check_write+0x14/0x30
+[  417.114676]  worker_thread+0x7e3/0x1580
+[  417.114678]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  417.114682]  ? __pfx_sched_setscheduler_nocheck+0x10/0x10
+[  417.114687]  ? __pfx_worker_thread+0x10/0x10
+[  417.114689]  kthread+0x381/0x7a0
+[  417.114692]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+[  417.114694]  ? __pfx_kthread+0x10/0x10
+[  417.114697]  ? __kasan_check_write+0x14/0x30
+[  417.114699]  ? recalc_sigpending+0x160/0x220
+[  417.114703]  ? _raw_spin_unlock_irq+0xe/0x50
+[  417.114705]  ? calculate_sigpending+0x78/0xb0
+[  417.114707]  ? __pfx_kthread+0x10/0x10
+[  417.114710]  ret_from_fork+0x2b6/0x380
+[  417.114713]  ? __pfx_kthread+0x10/0x10
+[  417.114715]  ret_from_fork_asm+0x1a/0x30
+[  417.114720]  </TASK>
+
+[  417.125171] Allocated by task 2:
+[  417.125333]  kasan_save_stack+0x26/0x60
+[  417.125522]  kasan_save_track+0x14/0x40
+[  417.125742]  kasan_save_alloc_info+0x39/0x60
+[  417.125945]  __kasan_slab_alloc+0x8b/0xb0
+[  417.126133]  kmem_cache_alloc_node_noprof+0x13b/0x460
+[  417.126381]  copy_process+0x320/0x6250
+[  417.126595]  kernel_clone+0xb7/0x840
+[  417.126792]  kernel_thread+0xd6/0x120
+[  417.126995]  kthreadd+0x85c/0xbe0
+[  417.127176]  ret_from_fork+0x2b6/0x380
+[  417.127378]  ret_from_fork_asm+0x1a/0x30
+
+[  417.127692] Freed by task 0:
+[  417.127851]  kasan_save_stack+0x26/0x60
+[  417.128057]  kasan_save_track+0x14/0x40
+[  417.128267]  kasan_save_free_info+0x3b/0x60
+[  417.128491]  __kasan_slab_free+0x6c/0xa0
+[  417.128708]  kmem_cache_free+0x182/0x550
+[  417.128906]  free_task+0xeb/0x140
+[  417.129070]  __put_task_struct+0x1d2/0x4f0
+[  417.129259]  __put_task_struct_rcu_cb+0x15/0x20
+[  417.129480]  rcu_do_batch+0x3d3/0xe70
+[  417.129681]  rcu_core+0x549/0xb30
+[  417.129839]  rcu_core_si+0xe/0x20
+[  417.130005]  handle_softirqs+0x160/0x570
+[  417.130190]  __irq_exit_rcu+0x189/0x1e0
+[  417.130369]  irq_exit_rcu+0xe/0x20
+[  417.130531]  sysvec_apic_timer_interrupt+0x9f/0xd0
+[  417.130768]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
+
+[  417.131082] Last potentially related work creation:
+[  417.131305]  kasan_save_stack+0x26/0x60
+[  417.131484]  kasan_record_aux_stack+0xae/0xd0
+[  417.131695]  __call_rcu_common+0xcd/0x14b0
+[  417.131909]  call_rcu+0x31/0x50
+[  417.132071]  delayed_put_task_struct+0x128/0x190
+[  417.132295]  rcu_do_batch+0x3d3/0xe70
+[  417.132478]  rcu_core+0x549/0xb30
+[  417.132658]  rcu_core_si+0xe/0x20
+[  417.132808]  handle_softirqs+0x160/0x570
+[  417.132993]  __irq_exit_rcu+0x189/0x1e0
+[  417.133181]  irq_exit_rcu+0xe/0x20
+[  417.133353]  sysvec_apic_timer_interrupt+0x9f/0xd0
+[  417.133584]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
+
+[  417.133921] Second to last potentially related work creation:
+[  417.134183]  kasan_save_stack+0x26/0x60
+[  417.134362]  kasan_record_aux_stack+0xae/0xd0
+[  417.134566]  __call_rcu_common+0xcd/0x14b0
+[  417.134782]  call_rcu+0x31/0x50
+[  417.134929]  put_task_struct_rcu_user+0x58/0xb0
+[  417.135143]  finish_task_switch.isra.0+0x5d3/0x830
+[  417.135366]  __schedule+0xd30/0x5100
+[  417.135534]  schedule_idle+0x5a/0x90
+[  417.135712]  do_idle+0x25f/0x410
+[  417.135871]  cpu_startup_entry+0x53/0x70
+[  417.136053]  start_secondary+0x216/0x2c0
+[  417.136233]  common_startup_64+0x13e/0x141
+
+[  417.136894] The buggy address belongs to the object at ffff888124870000
+                which belongs to the cache task_struct of size 10504
+[  417.138122] The buggy address is located 52 bytes inside of
+                freed 10504-byte region [ffff888124870000, ffff888124872908)
+
+[  417.139465] The buggy address belongs to the physical page:
+[  417.140016] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0
+pfn:0x124870
+[  417.140789] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0
+pincount:0
+[  417.141519] memcg:ffff88811aa20e01
+[  417.141874] anon flags:
+0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
+[  417.142600] page_type: f5(slab)
+[  417.142922] raw: 0017ffffc0000040 ffff88810094f040 0000000000000000
+dead000000000001
+[  417.143554] raw: 0000000000000000 0000000000030003 00000000f5000000
+ffff88811aa20e01
+[  417.143954] head: 0017ffffc0000040 ffff88810094f040 0000000000000000
+dead000000000001
+[  417.144329] head: 0000000000000000 0000000000030003 00000000f5000000
+ffff88811aa20e01
+[  417.144710] head: 0017ffffc0000003 ffffea0004921c01 00000000ffffffff
+00000000ffffffff
+[  417.145106] head: ffffffffffffffff 0000000000000000 00000000ffffffff
+0000000000000008
+[  417.145485] page dumped because: kasan: bad access detected
+
+[  417.145859] Memory state around the buggy address:
+[  417.146094]  ffff88812486ff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+fc
+[  417.146439]  ffff88812486ff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+fc
+[  417.146791] >ffff888124870000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+fb
+[  417.147145]                                      ^
+[  417.147387]  ffff888124870080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+fb
+[  417.147751]  ffff888124870100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+fb
+[  417.148123]
+==================================================================
+
+First of all, we have warning in get_bvec_at() because
+cursor->total_resid contains zero value. And, finally,
+we have crash in ceph_msg_data_advance() because
+cursor->data is NULL. It means that get_bvec_at()
+receives not initialized ceph_msg_data_cursor structure
+because data is NULL and total_resid contains zero.
+
+Moreover, we don't have likewise issue for the case of
+Ceph msgr1 protocol because ceph_msg_data_cursor_init()
+has been called before reading sparse data.
+
+This patch adds calling of ceph_msg_data_cursor_init()
+in the beginning of process_v2_sparse_read() with
+the goal to guarantee that logic of reading sparse data
+works correctly for the case of Ceph msgr2 protocol.
+
+v2
+Ilya Dryomov suggested to rework cursor initialization
+logic, and to make additional minor cleanup.
+
+v3
+Ilya Dryomov suggested to use sparse_read_total instead of
+data_length here for consistency with other sparse read
+code paths.
+
+[1] https://tracker.ceph.com/issues/73152
+
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
+---
+ net/ceph/messenger_v2.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+index 9e39378eda00..9e48623018a3 100644
+--- a/net/ceph/messenger_v2.c
++++ b/net/ceph/messenger_v2.c
+@@ -1061,13 +1061,16 @@ static int decrypt_control_remainder(struct ceph_connection *con)
+ static int process_v2_sparse_read(struct ceph_connection *con,
+ 				  struct page **pages, int spos)
+ {
+-	struct ceph_msg_data_cursor *cursor = &con->v2.in_cursor;
++	struct ceph_msg_data_cursor cursor;
+ 	int ret;
+ 
++	ceph_msg_data_cursor_init(&cursor, con->in_msg,
++				  con->in_msg->sparse_read_total);
++
+ 	for (;;) {
+ 		char *buf = NULL;
+ 
+-		ret = con->ops->sparse_read(con, cursor, &buf);
++		ret = con->ops->sparse_read(con, &cursor, &buf);
+ 		if (ret <= 0)
+ 			return ret;
+ 
+@@ -1085,11 +1088,11 @@ static int process_v2_sparse_read(struct ceph_connection *con,
+ 			} else {
+ 				struct bio_vec bv;
+ 
+-				get_bvec_at(cursor, &bv);
++				get_bvec_at(&cursor, &bv);
+ 				len = min_t(int, len, bv.bv_len);
+ 				memcpy_page(bv.bv_page, bv.bv_offset,
+ 					    spage, soff, len);
+-				ceph_msg_data_advance(cursor, len);
++				ceph_msg_data_advance(&cursor, len);
+ 			}
+ 			spos += len;
+ 			ret -= len;
+-- 
+2.51.1
+
 
