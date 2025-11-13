@@ -1,64 +1,65 @@
-Return-Path: <ceph-devel+bounces-4036-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4038-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D160AC5832B
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Nov 2025 16:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5209C5838B
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Nov 2025 16:09:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F521356612
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Nov 2025 15:03:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 561D135A69F
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Nov 2025 15:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC472EBBA8;
-	Thu, 13 Nov 2025 15:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBDC2F39A8;
+	Thu, 13 Nov 2025 15:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VRe81eVr"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LgL5cDPl"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5E62E5429;
-	Thu, 13 Nov 2025 15:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A881C2ED168;
+	Thu, 13 Nov 2025 15:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763046164; cv=none; b=buzQqCvsp94Qlfnuvm0AVarUqsmtGca7CojrB7VLXiamedlsmfEfiKQFpKhZNQ1uQ77Be7OXvthG3MfhWUkUTPETgnMjrbOcPN89dtoojJu2Om7ql684bqlFErK96cVSsw1C+FQQN5oLueiY977L2Qk8oB1uN85Ug8DrRyf86i8=
+	t=1763046168; cv=none; b=sHUgjf6QQFFZmhwdSMe+2kiDsHK+fukoPf/g273VjE2uRgJjaDzVdS5flBFMRfr2xC614D3LrgqWpFqzHjPirUpnuux8zMrToIoPF5Sjy/PKqpiOpDHdFL69Iim3LNQUDzRO4j4DLSBT/5kZzBTqufIGhWJafoHBV0UhMADo8qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763046164; c=relaxed/simple;
-	bh=vx0/Sdb0miwmSnREMEy30Z2f25MQbxHWNPqxk4mpfZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fO8ppQznr8OHjx8PyrBQcy88qgnRphpbNMmEbBfwnKNT6d+JMkXuQ17xDhzOl9CId9CMExBalCnKX7RDeaC0ZOg4KjRgE35cjkYvJbSRBA2hsB/rlRg40Hhzz49twLrnLC/ZZ11iHtMA9cff0qrTp0wLt+L8aoUhwyTDzASeJjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VRe81eVr; arc=none smtp.client-ip=198.175.65.21
+	s=arc-20240116; t=1763046168; c=relaxed/simple;
+	bh=+UQGsnSg1BaEGnQW/GmmVLAGeLaVWJuQCcCUScfVp7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=f659LYWDytKuCHQ49X7IR4lQ9mhL5gMnt7Uh4VKRle6czj3xgxXsCsKisSLL1EqVhL6m2xSanLwmnniUxDqo03Ql1MfkTY4dqP3VACe2Q7vsQrLLaWMGaxhIPk2C1tImCZPWTfufbsEVgjO7D+ucfAZDSL4B7wugKRa8d3gEqFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LgL5cDPl; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763046162; x=1794582162;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vx0/Sdb0miwmSnREMEy30Z2f25MQbxHWNPqxk4mpfZk=;
-  b=VRe81eVrxoCBcgzavv3+aNRPrGhNBHEh7nmxzooX0ReTUfIZs8jAxNP4
-   /tX+MOjoLOsdyd/1ZKHTia1TRiGwI6t7WnmqDOz3F6XTm8AjTJgezyfeX
-   1EeNWEc4NiiAUTLLOymowCHjAjqUrDBTotzOssGvl49sqmIIG7UjEgq7O
-   QDnFA7oN+K309bir8LcArClFjq9EU9US4PZRkzgS/W2OoGG3iVyBnfqxC
-   0m75w/LEM5KsUEYdEnbfTlaLAIinVZY69V7cM+Klr6/AXvfMp3USRP4Qd
-   9qGG98IeTPjLKQCJAR+iSREJNr7Du7v37w8CEMsJCdo6BIxeDuQw2Msns
-   w==;
-X-CSE-ConnectionGUID: 7EPVwNgAQSWdDwd00ZQDZQ==
-X-CSE-MsgGUID: 6/jJcZf/QleX9QsyyS8Pqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65054025"
+  t=1763046166; x=1794582166;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=+UQGsnSg1BaEGnQW/GmmVLAGeLaVWJuQCcCUScfVp7s=;
+  b=LgL5cDPlVDZTgIHP2nAdigFnGLHkkBE9hBPRXP3FuNHhUjQ1y/9nM0E1
+   t6MRH5mwvF4uViENMHoB3m23ActmfumSbMLwYR6OoNGyfHzN1+eXaV9i4
+   2RVBXdaMk+1maBmI6uFTCMUSrLutOK5kReB+wVju7nTnHH7W8kyhS6Kwg
+   KP5+g4QSvY7tDF1saihG8NFC0s+NgTMPxnyhG5783UaYOsRi0fK58/HiZ
+   4GyDrZ5jV/mrCdJ3KYNNUzSsX8s/lE9lcTAhNz/DwTkzJu8OuYZhg1eBE
+   gB1xRVzdwDOUer3qSwRy79KQivFG9DjV+IKh/Q3oUpGvrnqR+KtfuJ1Kp
+   Q==;
+X-CSE-ConnectionGUID: MY8aR5rpRFamKg8beK2JhQ==
+X-CSE-MsgGUID: YTsU242pQ760nFfYUu0MFw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65054107"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="65054025"
+   d="scan'208";a="65054107"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:02:41 -0800
-X-CSE-ConnectionGUID: LWhFLovNRgWDoJiNm0HUow==
-X-CSE-MsgGUID: nE6QdQs7Rjq7/OOgIgzs2g==
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:02:43 -0800
+X-CSE-ConnectionGUID: Gh81ul90S4eaqrN4Ccmlxg==
+X-CSE-MsgGUID: fLgdc4n6TQqGiy/oFGdUSA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="220324615"
+   d="scan'208";a="220324829"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa001.fm.intel.com with ESMTP; 13 Nov 2025 07:02:20 -0800
+  by fmviesa001.fm.intel.com with ESMTP; 13 Nov 2025 07:02:29 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 008C496; Thu, 13 Nov 2025 16:02:18 +0100 (CET)
+	id 0D0C998; Thu, 13 Nov 2025 16:02:19 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Corey Minyard <corey@minyard.net>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -153,100 +154,182 @@ Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v3 00/21] treewide: Introduce %ptS for struct timespec64 and convert users
-Date: Thu, 13 Nov 2025 15:32:14 +0100
-Message-ID: <20251113150217.3030010-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 02/21] ceph: Switch to use %ptSp
+Date: Thu, 13 Nov 2025 15:32:16 +0100
+Message-ID: <20251113150217.3030010-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251113150217.3030010-1-andriy.shevchenko@linux.intel.com>
+References: <20251113150217.3030010-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Here is the third part of the unification time printing in the kernel.
-This time for struct timespec64. The first patch brings a support
-into printf() implementation (test cases and documentation update
-included) followed by the treewide conversion of the current users.
+Use %ptSp instead of open coded variants to print content of
+struct timespec64 in human readable format.
 
-Petr, we got like more than a half being Acked, I think if you are okay
-with this, the patches that have been tagged can be applied.
+Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ fs/ceph/dir.c   |  5 ++---
+ fs/ceph/inode.c | 49 ++++++++++++++++---------------------------------
+ fs/ceph/xattr.c |  6 ++----
+ 3 files changed, 20 insertions(+), 40 deletions(-)
 
-Note, not everything was compile-tested. Kunit test has been passed, though.
-
-Changelog v3:
-- fixed a compilation issue with fnic (LKP), also satisfied checkpatch
-- collected more tags
-
-Petr, I have not renamed 'p' to 'n' due to much of rework and
-noise introduction for the changes that has been reviewed.
-However, I addressed the documentation issues.
-
-v2: <20251111122735.880607-1-andriy.shevchenko@linux.intel.com>
-
-Changelog v2:
-- dropped wrong patches (Hans, Takashi)
-- fixed most of the checkpatch warnings (fdo CI, media CI)
-- collected tags
-
-v1: <20251110184727.666591-1-andriy.shevchenko@linux.intel.com>
-
-Andy Shevchenko (21):
-  lib/vsprintf: Add specifier for printing struct timespec64
-  ceph: Switch to use %ptSp
-  libceph: Switch to use %ptSp
-  dma-buf: Switch to use %ptSp
-  drm/amdgpu: Switch to use %ptSp
-  drm/msm: Switch to use %ptSp
-  drm/vblank: Switch to use %ptSp
-  drm/xe: Switch to use %ptSp
-  e1000e: Switch to use %ptSp
-  igb: Switch to use %ptSp
-  ipmi: Switch to use %ptSp
-  media: av7110: Switch to use %ptSp
-  mmc: mmc_test: Switch to use %ptSp
-  net: dsa: sja1105: Switch to use %ptSp
-  PCI: epf-test: Switch to use %ptSp
-  pps: Switch to use %ptSp
-  ptp: ocp: Switch to use %ptSp
-  s390/dasd: Switch to use %ptSp
-  scsi: fnic: Switch to use %ptSp
-  scsi: snic: Switch to use %ptSp
-  tracing: Switch to use %ptSp
-
- Documentation/core-api/printk-formats.rst     | 11 +++-
- drivers/char/ipmi/ipmi_si_intf.c              |  3 +-
- drivers/char/ipmi/ipmi_ssif.c                 |  6 +--
- drivers/dma-buf/sync_debug.c                  |  2 +-
- .../gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c  |  3 +-
- drivers/gpu/drm/drm_vblank.c                  |  6 +--
- .../gpu/drm/msm/disp/msm_disp_snapshot_util.c |  3 +-
- drivers/gpu/drm/msm/msm_gpu.c                 |  3 +-
- drivers/gpu/drm/xe/xe_devcoredump.c           |  4 +-
- drivers/mmc/core/mmc_test.c                   | 20 +++----
- drivers/net/dsa/sja1105/sja1105_tas.c         |  8 ++-
- drivers/net/ethernet/intel/e1000e/ptp.c       |  7 +--
- drivers/net/ethernet/intel/igb/igb_ptp.c      |  7 +--
- drivers/pci/endpoint/functions/pci-epf-test.c |  5 +-
- drivers/pps/generators/pps_gen_parport.c      |  3 +-
- drivers/pps/kapi.c                            |  3 +-
- drivers/ptp/ptp_ocp.c                         | 13 ++---
- drivers/s390/block/dasd.c                     |  3 +-
- drivers/scsi/fnic/fnic_trace.c                | 52 ++++++++-----------
- drivers/scsi/snic/snic_debugfs.c              | 10 ++--
- drivers/scsi/snic/snic_trc.c                  |  5 +-
- drivers/staging/media/av7110/av7110.c         |  2 +-
- fs/ceph/dir.c                                 |  5 +-
- fs/ceph/inode.c                               | 49 ++++++-----------
- fs/ceph/xattr.c                               |  6 +--
- kernel/trace/trace_output.c                   |  6 +--
- lib/tests/printf_kunit.c                      |  4 ++
- lib/vsprintf.c                                | 28 +++++++++-
- net/ceph/messenger_v2.c                       |  6 +--
- 29 files changed, 130 insertions(+), 153 deletions(-)
-
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index d18c0eaef9b7..bf50c6e7a029 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -2155,7 +2155,7 @@ static ssize_t ceph_read_dir(struct file *file, char __user *buf, size_t size,
+ 				" rfiles:   %20lld\n"
+ 				" rsubdirs: %20lld\n"
+ 				"rbytes:    %20lld\n"
+-				"rctime:    %10lld.%09ld\n",
++				"rctime:    %ptSp\n",
+ 				ci->i_files + ci->i_subdirs,
+ 				ci->i_files,
+ 				ci->i_subdirs,
+@@ -2163,8 +2163,7 @@ static ssize_t ceph_read_dir(struct file *file, char __user *buf, size_t size,
+ 				ci->i_rfiles,
+ 				ci->i_rsubdirs,
+ 				ci->i_rbytes,
+-				ci->i_rctime.tv_sec,
+-				ci->i_rctime.tv_nsec);
++				&ci->i_rctime);
+ 	}
+ 
+ 	if (*ppos >= dfi->dir_info_len)
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 37d3a2477c17..a596cb53f1ac 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -879,7 +879,9 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+ {
+ 	struct ceph_client *cl = ceph_inode_to_client(inode);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
++	struct timespec64 iatime = inode_get_atime(inode);
+ 	struct timespec64 ictime = inode_get_ctime(inode);
++	struct timespec64 imtime = inode_get_mtime(inode);
+ 	int warn = 0;
+ 
+ 	if (issued & (CEPH_CAP_FILE_EXCL|
+@@ -889,39 +891,26 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+ 		      CEPH_CAP_XATTR_EXCL)) {
+ 		if (ci->i_version == 0 ||
+ 		    timespec64_compare(ctime, &ictime) > 0) {
+-			doutc(cl, "ctime %lld.%09ld -> %lld.%09ld inc w/ cap\n",
+-			     ictime.tv_sec, ictime.tv_nsec,
+-			     ctime->tv_sec, ctime->tv_nsec);
++			doutc(cl, "ctime %ptSp -> %ptSp inc w/ cap\n", &ictime, ctime);
+ 			inode_set_ctime_to_ts(inode, *ctime);
+ 		}
+ 		if (ci->i_version == 0 ||
+ 		    ceph_seq_cmp(time_warp_seq, ci->i_time_warp_seq) > 0) {
+ 			/* the MDS did a utimes() */
+-			doutc(cl, "mtime %lld.%09ld -> %lld.%09ld tw %d -> %d\n",
+-			     inode_get_mtime_sec(inode),
+-			     inode_get_mtime_nsec(inode),
+-			     mtime->tv_sec, mtime->tv_nsec,
+-			     ci->i_time_warp_seq, (int)time_warp_seq);
++			doutc(cl, "mtime %ptSp -> %ptSp tw %d -> %d\n", &imtime, mtime,
++			      ci->i_time_warp_seq, (int)time_warp_seq);
+ 
+ 			inode_set_mtime_to_ts(inode, *mtime);
+ 			inode_set_atime_to_ts(inode, *atime);
+ 			ci->i_time_warp_seq = time_warp_seq;
+ 		} else if (time_warp_seq == ci->i_time_warp_seq) {
+-			struct timespec64	ts;
+-
+ 			/* nobody did utimes(); take the max */
+-			ts = inode_get_mtime(inode);
+-			if (timespec64_compare(mtime, &ts) > 0) {
+-				doutc(cl, "mtime %lld.%09ld -> %lld.%09ld inc\n",
+-				     ts.tv_sec, ts.tv_nsec,
+-				     mtime->tv_sec, mtime->tv_nsec);
++			if (timespec64_compare(mtime, &imtime) > 0) {
++				doutc(cl, "mtime %ptSp -> %ptSp inc\n", &imtime, mtime);
+ 				inode_set_mtime_to_ts(inode, *mtime);
+ 			}
+-			ts = inode_get_atime(inode);
+-			if (timespec64_compare(atime, &ts) > 0) {
+-				doutc(cl, "atime %lld.%09ld -> %lld.%09ld inc\n",
+-				     ts.tv_sec, ts.tv_nsec,
+-				     atime->tv_sec, atime->tv_nsec);
++			if (timespec64_compare(atime, &iatime) > 0) {
++				doutc(cl, "atime %ptSp -> %ptSp inc\n", &iatime, atime);
+ 				inode_set_atime_to_ts(inode, *atime);
+ 			}
+ 		} else if (issued & CEPH_CAP_FILE_EXCL) {
+@@ -2703,10 +2692,8 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 	if (ia_valid & ATTR_ATIME) {
+ 		struct timespec64 atime = inode_get_atime(inode);
+ 
+-		doutc(cl, "%p %llx.%llx atime %lld.%09ld -> %lld.%09ld\n",
+-		      inode, ceph_vinop(inode),
+-		      atime.tv_sec, atime.tv_nsec,
+-		      attr->ia_atime.tv_sec, attr->ia_atime.tv_nsec);
++		doutc(cl, "%p %llx.%llx atime %ptSp -> %ptSp\n",
++		      inode, ceph_vinop(inode), &atime, &attr->ia_atime);
+ 		if (!do_sync && (issued & CEPH_CAP_FILE_EXCL)) {
+ 			ci->i_time_warp_seq++;
+ 			inode_set_atime_to_ts(inode, attr->ia_atime);
+@@ -2780,10 +2767,8 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 	if (ia_valid & ATTR_MTIME) {
+ 		struct timespec64 mtime = inode_get_mtime(inode);
+ 
+-		doutc(cl, "%p %llx.%llx mtime %lld.%09ld -> %lld.%09ld\n",
+-		      inode, ceph_vinop(inode),
+-		      mtime.tv_sec, mtime.tv_nsec,
+-		      attr->ia_mtime.tv_sec, attr->ia_mtime.tv_nsec);
++		doutc(cl, "%p %llx.%llx mtime %ptSp -> %ptSp\n",
++		      inode, ceph_vinop(inode), &mtime, &attr->ia_mtime);
+ 		if (!do_sync && (issued & CEPH_CAP_FILE_EXCL)) {
+ 			ci->i_time_warp_seq++;
+ 			inode_set_mtime_to_ts(inode, attr->ia_mtime);
+@@ -2804,13 +2789,11 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 
+ 	/* these do nothing */
+ 	if (ia_valid & ATTR_CTIME) {
++		struct timespec64 ictime = inode_get_ctime(inode);
+ 		bool only = (ia_valid & (ATTR_SIZE|ATTR_MTIME|ATTR_ATIME|
+ 					 ATTR_MODE|ATTR_UID|ATTR_GID)) == 0;
+-		doutc(cl, "%p %llx.%llx ctime %lld.%09ld -> %lld.%09ld (%s)\n",
+-		      inode, ceph_vinop(inode),
+-		      inode_get_ctime_sec(inode),
+-		      inode_get_ctime_nsec(inode),
+-		      attr->ia_ctime.tv_sec, attr->ia_ctime.tv_nsec,
++		doutc(cl, "%p %llx.%llx ctime %ptSp -> %ptSp (%s)\n",
++		      inode, ceph_vinop(inode), &ictime, &attr->ia_ctime,
+ 		      only ? "ctime only" : "ignored");
+ 		if (only) {
+ 			/*
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index 537165db4519..ad1f30bea175 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -249,8 +249,7 @@ static ssize_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
+ static ssize_t ceph_vxattrcb_dir_rctime(struct ceph_inode_info *ci, char *val,
+ 					size_t size)
+ {
+-	return ceph_fmt_xattr(val, size, "%lld.%09ld", ci->i_rctime.tv_sec,
+-				ci->i_rctime.tv_nsec);
++	return ceph_fmt_xattr(val, size, "%ptSp", &ci->i_rctime);
+ }
+ 
+ /* dir pin */
+@@ -307,8 +306,7 @@ static bool ceph_vxattrcb_snap_btime_exists(struct ceph_inode_info *ci)
+ static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
+ 					size_t size)
+ {
+-	return ceph_fmt_xattr(val, size, "%lld.%09ld", ci->i_snap_btime.tv_sec,
+-				ci->i_snap_btime.tv_nsec);
++	return ceph_fmt_xattr(val, size, "%ptSp", &ci->i_snap_btime);
+ }
+ 
+ static ssize_t ceph_vxattrcb_cluster_fsid(struct ceph_inode_info *ci,
 -- 
 2.50.1
 
