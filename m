@@ -1,225 +1,169 @@
-Return-Path: <ceph-devel+bounces-4059-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4060-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5F7C5B47A
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Nov 2025 05:12:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43859C5B70D
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Nov 2025 06:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA22C3B1BF7
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Nov 2025 04:12:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC3004E80FF
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Nov 2025 05:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F8B281504;
-	Fri, 14 Nov 2025 04:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1D52D838E;
+	Fri, 14 Nov 2025 05:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WcdvIvc3";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="S6ehArPl"
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="SUp2liwD"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3981A27E1DC
-	for <ceph-devel@vger.kernel.org>; Fri, 14 Nov 2025 04:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A8B2D8385
+	for <ceph-devel@vger.kernel.org>; Fri, 14 Nov 2025 05:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763093555; cv=none; b=rdAjW6kHovZ+eV0BBZCIOZwi23iscikXlgkqZpKndvVBLmxV6NuTZcqWs36BeuFr5ENmYVFc33Io3LtN5hXg+QY843fTGV7/nl6hvrg+dspwEUwztSmc+M4MzcN4YkIf5ODqAwTacOkNZ7ksA1/lzYwsBapnZ2EC3F/qRnThY0s=
+	t=1763099920; cv=none; b=JL4HXvKwhaF/+UlXRUTcTgux2pcBujUJpNeGVwglfsy8Xn44ve3NjATP1VZRaWzV2/V3GWwnKAfuW/KR3sYeDaukeXBhJyl4eY7s75UARBpXm+PsIWEE8A0xUkDBvp0AuUtDNqE6YielPLJPZksUWEnl/zLBmYgK/E9WVu1R5Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763093555; c=relaxed/simple;
-	bh=vqxQ3dK7VdFS3PT/6Q6WjwlGkrU2MdtNuweZl3H6mBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=By4DkUr9Ha15vK/WDpL6Y6YOKnp34+CnDbJu6iiUsly4xVit1yRR4pthvp7oA8CEg/Tl8Ti6mVQrbLohzowH1iDU+oChpCu+h+mwvxNNVT8hwXZ7k/AtMW5yXqXxl7cBmBNpnbyvqHOYBast+gMgvb9CX/qofX5ldN0v8CjMOJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WcdvIvc3; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=S6ehArPl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ADMand11581022
-	for <ceph-devel@vger.kernel.org>; Fri, 14 Nov 2025 04:12:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=l9FUBbeUidxIV00pdQyQahKH
-	PpoxkuEk9fyNczKyhZ4=; b=WcdvIvc3sMDYJHBly1X7GlPj50GGKCEK4vrDj8k0
-	5eaZ80++Ws3b6M4a/w2eVgp5fBZPqpReXJ6xcZvCuGqlyHQVAUPNMJplXDtRkmjR
-	y6847o+zGxT2XJUEtVt8QOs1dNpy77MXiVZuOJgYMs0BamIgUtjw2hTVBYrDWjPI
-	ByZ746JdSL8Gv5MgaoTNMk2yzeUNW4jCf/D2j643Vd/vNt+46rBlvy+jz4Ihw0Z+
-	fTd/SLbn6SPCPWVriGZp93nSNSFJRad1vxT6ksE51c5WW0OqhiOxjWbi0pFY79Eh
-	201wVoknTjIeNpA4GWGoZTCf94s18YBclqS5YUrFYMV7Vg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4adr9frs54-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <ceph-devel@vger.kernel.org>; Fri, 14 Nov 2025 04:12:32 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-89eb8ee2a79so946003785a.2
-        for <ceph-devel@vger.kernel.org>; Thu, 13 Nov 2025 20:12:32 -0800 (PST)
+	s=arc-20240116; t=1763099920; c=relaxed/simple;
+	bh=RHXnTFY4Vjt79fDUxT3cRYXGuRmkpqXY8Q1+NN8qIIk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e+hhQN8AVzPKg/fw6ry54Eq8j8Zzlobaueja7wvbd94549XVaZKp8x5E/AxSOegqNiRC3Zvpc9Jz23Jpxz0PnvdbjmX3q7CPpFhfa25Kcuuj79X78gFJtsx6FEIIGL2CKeJLIJcHjKVk5q4KLGwYqoFEmdYBNvloO2JIosz/pcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=SUp2liwD; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-297d4a56f97so15836715ad.1
+        for <ceph-devel@vger.kernel.org>; Thu, 13 Nov 2025 21:58:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763093552; x=1763698352; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l9FUBbeUidxIV00pdQyQahKHPpoxkuEk9fyNczKyhZ4=;
-        b=S6ehArPlA6Y4Y2WhGL5tW8g9/P+SLUq8P/kEOUNHMBNtktCmPsFqnHMd7TRn04iPvO
-         3UXvPPUHTZFrNRaz15CaNWcEokgpflDA4lHpPu+L9wZx06AZC8GrhZtLXNVTJk+CMbdu
-         11zsB1uyN//YAxP5Y6B6mKG39c9o8KpIfLjHmkBiFb3K71khvkuwX4igh8z8to2voa3p
-         zeYb6yua1xQrJTcS/hZVKWsHoARpHWPg+pAKO80q7A1M9sFReG2WhdDHevHZdxs/91T0
-         ILNhpfgX4oj303aRnl5T51TBtUVEF1XALli3nQ25MOMx2STZunr5JokL0gQauX1zO4qz
-         pY5g==
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1763099917; x=1763704717; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fupJk9ycgxTR9K+qzkaB5UIJKdModxQ3EoXqNJbHRwk=;
+        b=SUp2liwDkCBhLBgCyXBL+v/ZZW9IwteFtvuO8Yk7uFlPp9DqODR9gfc9hvyYRkNqIc
+         PumGeNJCNskSl5xWXchGXmRr8NRDU01Gnq4RT2yenQMRZFj5dPub3kra36L0P7H90a1B
+         UpowwhnQHFX2xPC5JZAy1ciO6LUrjxpHbRh0a/ZGnR+0HzzKLDp+K1KAdTI6vjCENjEQ
+         1jU53sPR+usds0kEhLM2QGn4h19/FgzDjPeUQb/bLaDL96mT6v4HwnwarK71P4i1zs01
+         PNOdRSw9/Ys6xsOOg8qNEx+5vGTGobzGMfstI1KyBNLbdtB0/FylM8kAoAOm/+K6QRfi
+         6Urw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763093552; x=1763698352;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l9FUBbeUidxIV00pdQyQahKHPpoxkuEk9fyNczKyhZ4=;
-        b=uujjVee0cVRlnzGAwBsVIFf4Y7HHB/6TpIcIccBH4bMyQFW8rfHS/6kIyTlZdt+3IL
-         JeNbyFxHXoVVazLiqBfe4OjkMg5WX9c8GxfsYbhp3XulrUyJWKSVDcoy1DzZPB25TQ9w
-         ciY/XolVHdyv9lImPiO+P5LBxYFc0sOzVVcSkUaUANa1D1W29J84zs4Q9nsRnnghXUyO
-         7UEHXV7M63mmezpZ4s4NNki0i39zwgrGef7ktLDn8mHwkDZD2CoHzVcVoNocgo/cr0Sw
-         JkkT+dZuBk5DRC6/WxikDWekc/k1yplhGpjjYZ7BX4J2SpmoMasDIpSPRZo70belJed0
-         NNkg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+BS+B8u7+C5eywMcbMle4qENQihRWAb38vRc5gglRmaJlGlkwGKnddRZM13TvScD1lQIvMv6jX9OA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1j8eAN0j1SehIxzpkdCCXhQC6DEx7B5DU0GxnrGGN1BepoNJ6
-	mwfWY/v7QjgrU3hHJN4iB89t7eZbdk4ZgGYDmoB2nwkgwlMbApmQL8b0Li4/hHAuHlCC4vUk/A4
-	FPMHKIKoRIrgMGiMfuKyWmWfJhs2DelTly9EG1mrFr8KPRgA0/Mll2C1WtgpvijLd
-X-Gm-Gg: ASbGncus7TyjYDBZlCK2kGliDR+tYE/YMyqIODFkXoup4ECvIFBoyfrfXL37KQhnaTk
-	43qKGRVjpE9fg5VLbzILzwyyXJPtucsQ6B1Of9I82DnXZ9LQryftpElTy8Q4eO0CYHAfzS17cem
-	obcHVtbqaKxqsJdUInmYhvlrsWZjpkYXyAX79LmYKkY/7EVAyXmHSaLjtZmTFMO5gtlflHwD35f
-	rZK6l9YZPGGde5lYT2f5CVh3EQZ3FUk2KvidqBeYoOtzDvtVYc7gqa4McE5Pg6IUhIzi0o2V1tD
-	2aLbc8RitpZWhLH0BuPGJ0XPhnYqcfvxvlrEtJ/H2CvDf0cA/82Nd8AKfsZKObQEerySk4aM9tX
-	AWzpdfTBT9ygsaqsZX5hvCbJJhNSn34RVAbIVGuejVYaa8899y5z/Bxmy9JtLsJgJj3eYwEPwxs
-	F61D/Q2p5boNgz
-X-Received: by 2002:a05:620a:4628:b0:8b1:ed55:e4f1 with SMTP id af79cd13be357-8b2c3175d59mr235435185a.39.1763093551988;
-        Thu, 13 Nov 2025 20:12:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGRBRFxxiAD30mEJm55HBtKCBqJwVeb/nqEO1wa7PZ+U+vRFrL3SI4k/Rw4EJ92OxtkmKQ+nw==
-X-Received: by 2002:a05:620a:4628:b0:8b1:ed55:e4f1 with SMTP id af79cd13be357-8b2c3175d59mr235424485a.39.1763093551352;
-        Thu, 13 Nov 2025 20:12:31 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59580405a4esm784867e87.95.2025.11.13.20.12.30
+        d=1e100.net; s=20230601; t=1763099917; x=1763704717;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fupJk9ycgxTR9K+qzkaB5UIJKdModxQ3EoXqNJbHRwk=;
+        b=ujUkc0zPO1ZIGkKRjGeSaAz0qnE27/1MnWgIwQLGf21ADM7anqEP233ue1gy6nOb7p
+         YeGGglz4VrC7u2hEyHQVolWjoYpAVOh7oAgt9g0vnczDYiTYuyu1fjdBsPaXXrZgx+sD
+         5/GOXbxgytoxX9V+PmK2c+jBDX2Y00f4ncl3zVSYB+Zq/of9PXLRem85ctSHtgIG46W6
+         TVyAcrELMPc3C7DVw0Cwl+c5WH+4Vvc5J+qtiie7zjcfi83yKBdXl2XI/u/CYfH3Tcso
+         dUozmAvtB9WyxmIKMbgj7DqRrEdXk3qq8wkhuLCWaw0vsflC6GkIb+e9G/pYhJ5yNjlU
+         kr8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXYwvTf3tBBJXdfdCNO02sF0ABH54mTLUvXWzochNbueUfqyX5a/IqBNfmj44+n8+mLF6ZvJaXusYe5@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg7HIhe/2dY0sNqePgw9TqYWm5St3ko5HJC3iFy7TAFot5/ojk
+	DCr6HX2p07Y2jyQIfFiYqtbHdUkmBMdWC7FytRzYYFa3081TKMYaEbrqd47gstRaXXQ=
+X-Gm-Gg: ASbGncvTKcJt9LajYOzwatMj6bam8U6x6NDGmzKkQAzfxXiEG3nOyNKgT5unks0Hpgd
+	//S4nPvGwuaRHQO55eV64DiIdsMTWPd6892mapQGMuJDkRSUmfRv2qDBVjj7OZe7NqQ9zaoJdI/
+	N5lefiOjxMW2tHBiCza7iY5vdL5PJnIrrmv4B/OX+zCMtQiuOWYSQ7NJ9pozloquCdC8BlhfNhd
+	xdjV7/apVSdFgr0ZnU0bh1fkDct7IndXLn2XudxZtIpj0/RWZ8OCnkMYNG1PInpcaZCHhAFZbZP
+	e1CrorNRkuZcVzgJx9y1Llk/cQNkrjgkQiPTM1tw4EACJAo5bhj3EheOKmBIvsDTL3af2sfyDBK
+	vbwlTCDBtdft+ZmLY3+JbOyom1bzkFOlBXAAHszHwOCJzxM0zKT6rsdp/HZDXjI/Mw8O3m8rL8t
+	kPlXFdtaxo4gCBMPcUNzyjlUQf
+X-Google-Smtp-Source: AGHT+IFojfSCG/W0M3Jt5J4Jz8XjM+U4I16pRFtTj2FRmRxZFPiZbCx8UawP3/kCmEgwqKCvZRSjlA==
+X-Received: by 2002:a17:903:2f0e:b0:24c:965a:f94d with SMTP id d9443c01a7336-2986a741b6cmr18474075ad.46.1763099917503;
+        Thu, 13 Nov 2025 21:58:37 -0800 (PST)
+Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:22d2:323c:497d:adbd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2beb34sm43727825ad.76.2025.11.13.21.58.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 20:12:30 -0800 (PST)
-Date: Fri, 14 Nov 2025 06:12:28 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Corey Minyard <corey@minyard.net>,
-        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        "Dr. David Alan Gilbert" <linux@treblig.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
-        Vitaly Lifshits <vitaly.lifshits@intel.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Niklas Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Sagi Maimon <maimon.sagi@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Karan Tilak Kumar <kartilak@cisco.com>,
-        Hans Verkuil <hverkuil+cisco@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
-        Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        Max Kellermann <max.kellermann@ionos.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        intel-xe@lists.freedesktop.org, linux-mmc@vger.kernel.org,
-        netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        linux-pci@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
-        ceph-devel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rodolfo Giometti <giometti@enneenne.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Satish Kharat <satishkh@cisco.com>,
-        Sesidhar Baddela <sebaddel@cisco.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3 06/21] drm/msm: Switch to use %ptSp
-Message-ID: <ngzyqzrjg2msv6odahkirdipjizbpaecfscfgnic3su5fl6hs7@qgdb53svq64p>
-References: <20251113150217.3030010-1-andriy.shevchenko@linux.intel.com>
- <20251113150217.3030010-7-andriy.shevchenko@linux.intel.com>
+        Thu, 13 Nov 2025 21:58:36 -0800 (PST)
+From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+To: akpm@linux-foundation.org,
+	ebiggers@kernel.org,
+	tytso@mit.edu,
+	jaegeuk@kernel.org,
+	xiubli@redhat.com,
+	idryomov@gmail.com,
+	kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me
+Cc: visitorckw@gmail.com,
+	409411716@gms.tku.edu.tw,
+	home7438072@gmail.com,
+	andriy.shevchenko@intel.com,
+	david.laight.linux@gmail.com,
+	linux-nvme@lists.infradead.org,
+	linux-fscrypt@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/6]  lib/base64: add generic encoder/decoder, migrate users
+Date: Fri, 14 Nov 2025 13:58:29 +0800
+Message-Id: <20251114055829.87814-1-409411716@gms.tku.edu.tw>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113150217.3030010-7-andriy.shevchenko@linux.intel.com>
-X-Authority-Analysis: v=2.4 cv=SdD6t/Ru c=1 sm=1 tr=0 ts=6916ac30 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=QyXUC8HyAAAA:8 a=EUspDBNiAAAA:8 a=JNz3O4sEs4oywJvo4n4A:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-GUID: sFl6hG19tkMpDZU2A54tIb4wwAAk7oq1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE0MDAyOSBTYWx0ZWRfX+73onwzMbnCF
- Ra29hQ5j5bZ4chY+6os2IlLrXzkydpXCCT8/gXZJ1bBYJ1OqpwoyBRDEz2AL5oH+O+IpMRXHa3X
- wvX0H0kmJSV0zJ9P5HDAL28w9u91uVvyPVf7CahjwvMkCVtRkzCh9Lp6aatb5IjSjFchkMTK6hN
- qXhb6/UoIaQgUo5gc8OHeffYgQkOR+s5Ri6yDZELS50kXLhLDQUS49tvW38lSImX7b5HRh+qGEU
- JrJKBQ9jmt162/UfS6yH8gBIN/b6LqTUrR0EtH0lzEx9HqoVWoI2dNjZ3CATcypFxrzNkjSQoXW
- pEMbSwPFASzrfCwkC4CN4eu/x7KeK64DrLm48BIiHYQV5TKA3ldjGpnGY7kh8f9Nyg4wc8OJzxQ
- sje46NMqoZANObx+Fjsbst+Ph4YlbQ==
-X-Proofpoint-ORIG-GUID: sFl6hG19tkMpDZU2A54tIb4wwAAk7oq1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-13_07,2025-11-13_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 suspectscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- impostorscore=0 phishscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511140029
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 13, 2025 at 03:32:20PM +0100, Andy Shevchenko wrote:
-> Use %ptSp instead of open coded variants to print content of
-> struct timespec64 in human readable format.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/gpu/drm/msm/disp/msm_disp_snapshot_util.c | 3 +--
->  drivers/gpu/drm/msm/msm_gpu.c                     | 3 +--
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
+This series introduces a generic Base64 encoder/decoder to the kernel
+library, eliminating duplicated implementations and delivering significant
+performance improvements.
 
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+The Base64 API has been extended to support multiple variants (Standard,
+URL-safe, and IMAP) as defined in RFC 4648 and RFC 3501. The API now takes
+a variant parameter and an option to control padding. As part of this
+series, users are migrated to the new interface while preserving their
+specific formats: fscrypt now uses BASE64_URLSAFE, Ceph uses BASE64_IMAP,
+and NVMe is updated to BASE64_STD.
 
+On the encoder side, the implementation processes input in 3-byte blocks,
+mapping 24 bits directly to 4 output symbols. This avoids bit-by-bit
+streaming and reduces loop overhead, achieving about a 2.7x speedup compared
+to previous implementations.
+
+On the decoder side, replace strchr() lookups with per-variant reverse tables
+and process input in 4-character groups. Each group is mapped to numeric values
+and combined into 3 bytes. Padded and unpadded forms are validated explicitly,
+rejecting invalid '=' usage and enforcing tail rules. This improves throughput
+by ~43-52x.
+
+Thanks,
+Guan-Chun Wu
+
+Link: https://lore.kernel.org/lkml/20251029101725.541758-1-409411716@gms.tku.edu.tw/
+
+---
+
+v4 -> v5:
+  - lib/base64: Fixed initializer-overrides compiler error by replacing designated
+    initializer approach with macro-based constant expressions.
+
+---
+
+Guan-Chun Wu (4):
+  lib/base64: rework encode/decode for speed and stricter validation
+  lib: add KUnit tests for base64 encoding/decoding
+  fscrypt: replace local base64url helpers with lib/base64
+  ceph: replace local base64 helpers with lib/base64
+
+Kuan-Wei Chiu (2):
+  lib/base64: Add support for multiple variants
+  lib/base64: Optimize base64_decode() with reverse lookup tables
+
+ drivers/nvme/common/auth.c |   4 +-
+ fs/ceph/crypto.c           |  60 +-------
+ fs/ceph/crypto.h           |   6 +-
+ fs/ceph/dir.c              |   5 +-
+ fs/ceph/inode.c            |   2 +-
+ fs/crypto/fname.c          |  89 +----------
+ include/linux/base64.h     |  10 +-
+ lib/Kconfig.debug          |  19 ++-
+ lib/base64.c               | 188 +++++++++++++++++-------
+ lib/tests/Makefile         |   1 +
+ lib/tests/base64_kunit.c   | 294 +++++++++++++++++++++++++++++++++++++
+ 11 files changed, 472 insertions(+), 206 deletions(-)
+ create mode 100644 lib/tests/base64_kunit.c
 
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
