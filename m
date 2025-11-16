@@ -1,367 +1,317 @@
-Return-Path: <ceph-devel+bounces-4075-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4076-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44102C60ACF
-	for <lists+ceph-devel@lfdr.de>; Sat, 15 Nov 2025 21:28:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AED5C6127B
+	for <lists+ceph-devel@lfdr.de>; Sun, 16 Nov 2025 11:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E9954E1490
-	for <lists+ceph-devel@lfdr.de>; Sat, 15 Nov 2025 20:27:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6B7E2359284
+	for <lists+ceph-devel@lfdr.de>; Sun, 16 Nov 2025 10:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC9E30C622;
-	Sat, 15 Nov 2025 20:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FCD253950;
+	Sun, 16 Nov 2025 10:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="GxvVoKeu"
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="diGzonbL"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from alln-iport-2.cisco.com (alln-iport-2.cisco.com [173.37.142.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647A723EA95;
-	Sat, 15 Nov 2025 20:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=173.37.142.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763238456; cv=fail; b=Ik2MxM2hr3knHAKThLFiGSFFkKRTFz1K3kTHiz6HI2unNDfpQLbATqsX+2HQXkn46Q8kls567QpztT3YJI8DCATy8xpK9D+kTilYtHJ9Rkm0Sd0udebrJyxw9PBW9p7b9P1SeCT6U/VlH/6bEVLeMBcX3HZM9CjbQguxXQ+KlTA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763238456; c=relaxed/simple;
-	bh=0oTvO4Q6xXLw3PM9HZGWnEQ9SLM1QA+gVBIlLFZprVw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kmwU1n5giC0KoCfLc8tN/B6hME0BJzjMmucyAW5tbxEhoDqYV85xzjwtPZEIZbV9MKoiLKKZyZv3c1ypADE3SGQkRBFUVYV+oNNLVvqrVK/tmlmbF9+wsV/XTBn3zgInBBFy7WYDQhNNWL7jJJGzoYCwy/Ard2vnTQn8MQe1o+c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=GxvVoKeu; arc=fail smtp.client-ip=173.37.142.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC00224D6
+	for <ceph-devel@vger.kernel.org>; Sun, 16 Nov 2025 10:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763288938; cv=none; b=etFXCBC2iFIGk4krRpzwnbxNBRtycVRre5vSAg3v+GP+BYeU61Ye0gvjIHn2FJX9lfysZ+75H2BQm56J/Sba3JHZVADjI4u44CXyMlMeIX8y2mOClF+TGAo4e4fib9Q1T8eVF+w38MI3OqNG/6SOhRfNuPlevdWS7emD3LqIk5E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763288938; c=relaxed/simple;
+	bh=6f1VXJgPcTe2fjyzE9KBLwf9UmHUXkRuwQmfUQF2VpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdDDLn75xFSOvuL0tAz61Cv9mkhrDZVkk3t8BifNVFJ6RgBKAqTL9jHaEkOLM/JS6YAtRe/KgqTrcGiXXrG/JiWzJityf/RbpdFei/AgEJhEWzYbQ+98fE8oCqxfKO1TCk9TEFPjuCl2jqokQT0MBiccywPJtcEActQPGz8yKBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=diGzonbL; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2981f9ce15cso41408135ad.1
+        for <ceph-devel@vger.kernel.org>; Sun, 16 Nov 2025 02:28:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=2460; q=dns/txt;
-  s=iport01; t=1763238455; x=1764448055;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=MFw/Z1Sf8SjzDqIL5mUOFLjLDVfmbv7DCp/A06Y2PGI=;
-  b=GxvVoKeu8Jby3aLxQW8UECWhxZw9UYRbdKDZfK74LjZawVDhj5uUxgTB
-   TlIGLVBspSiPqfj+yAJLX/rSKr6ehaYEEQ/FZhp0waRkjbOYH21coqYzq
-   WUujx3EJ2YHGDCxLUStgyg5qXZLsveZ64rUXwFEpU0KQwvNvt9pKjBXfk
-   e01ts9DWw9AbRGP/RoW4b0LQsqFmr9JQz5hWK8QhyeyWOOQ48gLwLk9vh
-   hKj4wkrUnc6VbLyo7XcP/4VmSEVbKHJ4UATXMbnE3p3Jn1clp1bCJxR52
-   UTGlD5EhS0Ifgpoo0chdZgqr9E05WZEZfWqHzgS2h6s38CY+krisQeoN8
-   Q==;
-X-CSE-ConnectionGUID: sD2rEqQ1Sp+cZthrJHjh4Q==
-X-CSE-MsgGUID: rP3jq5c+SsyRIpW5K7KUBw==
-X-IPAS-Result: =?us-ascii?q?A0AuAAB44Rhp/4wQJK1aHAEBAQEBAQcBARIBAQQEAQFAJ?=
- =?us-ascii?q?YEXBwEBCwGBbVIHghtJiCADhE1fhliCIQOeGoF/DwEBAQ0CUQQBAYUHAoxaA?=
- =?us-ascii?q?iY0CQ4BAgQBAQEBAwIDAQEBAQEBAQEBAQELAQEFAQEBAgEHBYEOE4ZchloBA?=
- =?us-ascii?q?QEBAxIVUhACAQgOCi4xJQIEAQ0FCBqFVAMBAqI0AYFAAooreIEBM4EB4CaBS?=
- =?us-ascii?q?gGIUgGFbjuEPScbgg2BV4IwOD6ERYQTgi8EgiKBDoYnjEyGcVJ4HANZLAFVE?=
- =?us-ascii?q?xcLBwWBIBAzAyAKNC0CFA0QEg8EFgUtHXAMKBIQHxgTYFRAg0kQDAZoDwaBE?=
- =?us-ascii?q?hlJAgICBQIrFTqBaAUBHAYcEgIDAQICOlUNgXcCAgSCHH6BbxsPiTWBCQUoA?=
- =?us-ascii?q?wttPTcGDhsFBIE1BZQeUYIsAYEPgS4OUzCWegGwHwqEHKINF6prmQYiqHQCB?=
- =?us-ascii?q?AIEBQIQAQEGgWg8gVlwFYMiUhkPji0WkxsBtU54AjoCBwsBAQMJk2cBAQ?=
-IronPort-PHdr: A9a23:7JImNBcSk0XiaewH5fh0ROHIlGM/gIqcDmcuAtIPkblCdOGk55v9e
- RCZ7vR2h1iPVoLeuLpIiOvT5rjpQndIoY2Av3YLbIFWWlcbhN8XkQ0tDI/NCUDyIPPwKS1vN
- M9DT1RiuXq8NCBo
-IronPort-Data: A9a23:CwKP1q2tXzjBte847PbD5bhxkn2cJEfYwER7XKvMYLTBsI5bpzxTm
- jYeWT2BP/2JMDD1Ltx1bIS1oUgOuJbVnN9qGgM93Hw8FHgiRegpqji6wuYcGwvIc6UvmWo+t
- 512huHodZ5yFjmH4E/xbtANlFEkvYmQXL3wFeXYDS54QA5gWU8JhAlq8wIDqtYAbeORXUXU6
- Lsen+WFYAX4gmctbzpNg06+gEoHUMra6WtwUmMWPZinjHeG/1EJAZQWI72GLneQauF8Au6gS
- u/f+6qy92Xf8g1FIovNfmHTKxBirhb6ZGBiu1IOM0SQqkEqSh8ajs7XAMEhhXJ/0F1lqTzeJ
- OJl7vRcQS9xVkHFdX90vxNwS0mSNoUekFPLzOTWXcG7lyX7n3XQL/pGF21sJ6ABw79MGSJFx
- +AYMhItbBDfvrfjqF67YrEEasULJc3vOsYb/3pn1zycVa1gSpHYSKKM7thdtNsyrpkRRrCFO
- YxAN3w2MEyojx5nYj/7DLo9lf20h332cBVTqUmeouw85G27IAlZjuG2aoGOKoDULSlTtlyg/
- WDfom+6OQoLDv2H9memrVGRrPCayEsXX6pXTtVU7MVCi1CLxikfBQMbUXOlrvSjzE2zQdRSL
- woT4CVGhawz8lG7C9DnWli9u3usoBERQZxTHvc85QXLzbDbiy6dB24ZXntNb9cOqsA7X3op2
- 0WPktevAiZg2JWRSHSA5vKXoCm0NCw9M2APf2kHQBED7t2lp5s85jrLT9B+AOuwg9H0EBnuz
- D2Q6isznbMeiYgMzarT1VTGhS+8453MRSYr6QjNGGGo9AV0YMiifYPAwVza6+tQaZ6ST3Gfs
- 3Ue3cuT9uYDCdeKjiPlaOEMGqy5ou3eYWX0n1FiBd8i+i6r9nrleppfiBl6JUF0IoMfciToS
- FHctBkX55JJOnauK6htbOqZD8Us0LilCc7sXf2RbddUZJV1XBGI8TsoZkOK2W3p1k82nskXP
- 5qHfcuyJWgVBL4hzzesQeoZl7gxyUgDKXj7TJT/yVGjlLGZfnPQEexDO1qVZed/56SByOnIz
- +ti2wKx40w3eMX1YzLc9sgYKlViEJTxLcyeRxB/HgJbHjdbJQ==
-IronPort-HdrOrdr: A9a23:kTkg4aAIxVdsljHlHejjsseALOsnbusQ8zAXPh9KOH9om52j9/
- xGws576fatskduZJhBo7y90KnpewK7yXcH2/hhAV7EZniohILIFvAv0WKM+UybJ8STzJ846U
- 4kSdkANDSSNyk1sS+Z2njELz9I+rDum87Y55a6854ud3AXV0gK1XYBNu/vKDwMeOAwP+tAKH
- Pz3LshmxOQPV4sQoCQAH4DU+Lfp9vNuq7HTHc9bSIP2U2ltx/tzKT1PSS5834lPg+nx41MzU
- H11yjCoomzufCyzRHRk0XJ6Y5NpdfnwtxfQOSRl8k8MFzX+0aVTbUkf4fHkCE+oemp5lpvus
- LLuQ0cM8N67G6UVn2poCHqxxLr3F8VmjzfIB6j8DneSP7CNXYH4vl69MVkm9zimgwdVeRHoe
- d2NqSixsNq5F377XzADpPzJmFXfwKP0AkfeKgo/j1iuU90Us4KkWTZl3klS6soDWb07psqH/
- JpC9yZ7PFKcUmCZ3ScpWV3xsewN05DVStub3Jy8/B96QIm1ExR3g8d3ogSj30A/JUyR91N4P
- nFKL1hkPVLQtUNZaxwCe8dSY/vY1a9DC7kISaXOxDqBasHM3XCp9r+56g0/vijfNgNwIEpkJ
- rMXVtEvSo5el7oC8eJwJpXmyq9ClmVTHDo0IVT9pJ5srrzSP7iNjCCUkknl4+6r/AWEqTgKo
- CO0VJtcojexEfVaPJ0NlfFKutvwFElIbgohuo=
-X-Talos-CUID: 9a23:E45l6WESOm9f5KyLqmJ82BQON9kcK0bFj3ziP0+iK0ZrSOGsHAo=
-X-Talos-MUID: =?us-ascii?q?9a23=3A7cgdEAxQyAai52VsbiV+kgGciEeaqL6WU0IUzJ5?=
- =?us-ascii?q?FgNKVDw1oBGq+0xeKaJByfw=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-Received: from alln-l-core-03.cisco.com ([173.36.16.140])
-  by alln-iport-2.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 15 Nov 2025 20:27:25 +0000
-Received: from rcdn-opgw-4.cisco.com (rcdn-opgw-4.cisco.com [72.163.7.165])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by alln-l-core-03.cisco.com (Postfix) with ESMTPS id 0F07C18000403;
-	Sat, 15 Nov 2025 20:27:25 +0000 (GMT)
-X-CSE-ConnectionGUID: 9IGLtmi+SbWDArDZBSRfYQ==
-X-CSE-MsgGUID: OwvumJ/eRDCics6ueVBrMQ==
-Authentication-Results: rcdn-opgw-4.cisco.com; dkim=pass (signature verified) header.i=@cisco.com
-X-IronPort-AV: E=Sophos;i="6.19,307,1754956800"; 
-   d="scan'208";a="61701058"
-Received: from mail-dm5pr08cu00407.outbound.protection.outlook.com (HELO DM5PR08CU004.outbound.protection.outlook.com) ([40.93.13.103])
-  by rcdn-opgw-4.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 15 Nov 2025 20:27:23 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y/Zfi6W5LuTTMhUxXAydYPEJj3UhQ/r7u8BdXcIgbkAPXVDgR/f0IlAeGZ4ZbthcdIkoDOQyTtXRRMXX+0xQGGTlAn4kVUhcSjtcSsono/lh9PItyxzjlA5c8AvTJ75yG5gdnNyACHBSOkWBUCfQ4xma5G5OnNkAKaYcymBUnYa7hkvOhtt5GbI07swmSEGQF2J+6X4+BMq19WQ3fNOhUkFr5cq34QZSx70pee6VqP8x3MZvi9oGeoFf8eyqxsOSYU2fWL1Ka2ULZESAzihOOLjEb2W7vnJJYHk30FUp3H3Dd0+dd18SMk+IdkU7u1li8QZwnzgQA/orW6dXQNLlYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MFw/Z1Sf8SjzDqIL5mUOFLjLDVfmbv7DCp/A06Y2PGI=;
- b=ejqVQ290Ii4mWw5iKhsOXD8PBvwwHu8O7BnuT7/J6DKsLxVg0KfJzWz33QUM9JTsFUzE6PDEnzszsnM0pIdnOXc72br0NOy9MsyBDdYZqp46yDbHfUWtnjkw+FQU+s52nWUJhTon5oCWQVGbz+4NcjtTFjOyALWSqdYFY8RkKoavntXken2PlB4pIsNJnjNWVFAYP/l5rpVRD8EpU5o6oGDpOwwfPm4mMmacc9IopIJz2ymCEKxCCVK+/y5pmwaq9DfNUhm8dsb/LwWFvTRCeEzeoxpDdhC87EClZ+DS6dfNnEWkpJc8MqBbvJ3/RiqstVlUC5FCdNlNiJMSKyloCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com (2603:10b6:a03:42c::19)
- by DS4PPFE70B31BEF.namprd11.prod.outlook.com (2603:10b6:f:fc02::5a) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.19; Sat, 15 Nov
- 2025 20:27:20 +0000
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd]) by SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd%4]) with mapi id 15.20.9320.018; Sat, 15 Nov 2025
- 20:27:19 +0000
-From: "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Corey Minyard
-	<corey@minyard.net>, =?iso-8859-2?Q?Christian_K=F6nig?=
-	<christian.koenig@amd.com>, "Dr. David Alan Gilbert" <linux@treblig.org>,
-	Alex Deucher <alexander.deucher@amd.com>, Thomas Zimmermann
-	<tzimmermann@suse.de>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>, Matthew Brost
-	<matthew.brost@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Aleksandr
- Loktionov <aleksandr.loktionov@intel.com>, Vitaly Lifshits
-	<vitaly.lifshits@intel.com>, Manivannan Sadhasivam <mani@kernel.org>, Niklas
- Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>, Vadim Fedorenko
-	<vadim.fedorenko@linux.dev>, Sagi Maimon <maimon.sagi@gmail.com>, "Martin K.
- Petersen" <martin.petersen@oracle.com>, Hans Verkuil
-	<hverkuil+cisco@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, Steven
- Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>, Viacheslav
- Dubeyko <Slava.Dubeyko@ibm.com>, Max Kellermann <max.kellermann@ionos.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"openipmi-developer@lists.sourceforge.net"
-	<openipmi-developer@lists.sourceforge.net>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, "amd-gfx@lists.freedesktop.org"
-	<amd-gfx@lists.freedesktop.org>, "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>, "freedreno@lists.freedesktop.org"
-	<freedreno@lists.freedesktop.org>, "intel-xe@lists.freedesktop.org"
-	<intel-xe@lists.freedesktop.org>, "linux-mmc@vger.kernel.org"
-	<linux-mmc@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org"
-	<intel-wired-lan@lists.osuosl.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "linux-s390@vger.kernel.org"
-	<linux-s390@vger.kernel.org>, "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>, "linux-staging@lists.linux.dev"
-	<linux-staging@lists.linux.dev>, "ceph-devel@vger.kernel.org"
-	<ceph-devel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
-	<linux-trace-kernel@vger.kernel.org>
-CC: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
-	<senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Sumit Semwal
-	<sumit.semwal@linaro.org>, Gustavo Padovan <gustavo@padovan.org>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
-	<abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul
-	<sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, Konrad
- Dybcio <konradybcio@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?iso-8859-2?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Narsimhulu
- Musini (nmusini)" <nmusini@cisco.com>, Paolo Abeni <pabeni@redhat.com>, Tony
- Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>, =?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?=
-	<kwilczynski@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn
- Helgaas <bhelgaas@google.com>, Rodolfo Giometti <giometti@enneenne.com>,
-	Jonathan Lemon <jonathan.lemon@gmail.com>, Richard Cochran
-	<richardcochran@gmail.com>, Stefan Haberland <sth@linux.ibm.com>, Jan
- Hoeppner <hoeppner@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
-	<svens@linux.ibm.com>, "Satish Kharat (satishkh)" <satishkh@cisco.com>,
-	"Sesidhar Baddela (sebaddel)" <sebaddel@cisco.com>, "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Xiubo
- Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Masami Hiramatsu
-	<mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>, "Gian Carlo Boffa (gcboffa)"
-	<gcboffa@cisco.com>, "Arulprabhu Ponnusamy (arulponn)" <arulponn@cisco.com>
-Subject: RE: [PATCH v3 20/21] scsi: snic: Switch to use %ptSp
-Thread-Topic: [PATCH v3 20/21] scsi: snic: Switch to use %ptSp
-Thread-Index: AQHcVK6i2TuKalB1aEOcW1L+o6TUn7T0MoDA
-Date: Sat, 15 Nov 2025 20:27:19 +0000
-Message-ID:
- <SJ0PR11MB58960101609D15FB8F6FB5B2C3CBA@SJ0PR11MB5896.namprd11.prod.outlook.com>
-References: <20251113150217.3030010-1-andriy.shevchenko@linux.intel.com>
- <20251113150217.3030010-21-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20251113150217.3030010-21-andriy.shevchenko@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5896:EE_|DS4PPFE70B31BEF:EE_
-x-ms-office365-filtering-correlation-id: 06dc7afe-7be7-41d7-220d-08de24856052
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-8859-2?Q?UTyLHl4BJYTK4mtPS91Sw2Srl0NHvlfMZaTqLxu2rUWxwfXqFudlc+5TWZ?=
- =?iso-8859-2?Q?BJrEBNZocoITs1OavCRqzXqvbXtC3nyiTs+X6BNCP++7KlQ2g2MJnYpALp?=
- =?iso-8859-2?Q?Bn5YPtijrc89YM4uqb1zvNiGQUKCmcJm5aV9n2jDlaisDBGoiOEdehli0Z?=
- =?iso-8859-2?Q?AiBZgIYvmeuLyJ94TRvdhfcWNgAInVk2bzv3iJn+ETi2yjnYFqeJDEsP/c?=
- =?iso-8859-2?Q?52tSR8uLyZ/cTHCDYdEy2M4TMyDvk7xp0fRxtDf6gySeGMeb9hFUl3m94o?=
- =?iso-8859-2?Q?9QGxesrQwqKEd/FjIbfevU9AIIu/4425oQt60PEDl2KHxaaeh+AA/kE+If?=
- =?iso-8859-2?Q?cTIhv+ekBi5Kio8han64MSlNeDN+sR6xKhQ/jxgIlLI9yNDFUyww8nWAm5?=
- =?iso-8859-2?Q?SxG/facdPQxoPEpca86hn/+obDhPgWbR/ztj7tbF7ANig0cXm/9lKdnZoZ?=
- =?iso-8859-2?Q?e2S/yQsrsL8JID1eQiuiQr7psiOVeOBrtmr5hP9t6gIIVMZnZvIcwbi1Dc?=
- =?iso-8859-2?Q?pIvEJrA62KfIEsG0lGAYmYo4C0gZHqFgr7DWsaVfEAJWKIQEw+NVLL06fR?=
- =?iso-8859-2?Q?kxKmQM6BCA0FLcSlIScOrAAOBXrkQx8CDVbtdiiK6WgcSEAZeGneow5obu?=
- =?iso-8859-2?Q?DAj3Um0LuFxhd4vwv0VnU/9xHqXWAgIWM8XtzAwyS//bRDdCRnV1M1Ynt3?=
- =?iso-8859-2?Q?a5G+dYsTHrt3OFCJQcrYObQ6i3mZy/rMEXFoSyhPJXNNEdgWxwoB1HncUE?=
- =?iso-8859-2?Q?4rYNimG0/N/xCyPNM8ep24M113OR2BqbeCl3DNYllfbQxGN78FCOYN6ZIE?=
- =?iso-8859-2?Q?phsDl0tQWTOljwdp7051kUzoU0wbE9PpBzs61KFHlB25iEfK2WgEBoV82H?=
- =?iso-8859-2?Q?C3yaXZ0BCTPUNLjRuQmgvzHU5ng4f8VDQtXXPfR+oYzmwJKohYU9q+EL+t?=
- =?iso-8859-2?Q?p41Xg0+NxjykvmlvZM0im3m1zsEQ6O7xp9jzLSW3CSy7Ug4BD8U/f3loX6?=
- =?iso-8859-2?Q?m2dgZ7IV42D8gpPaSgZGxQfxdjuNZF06eztZWNwwtTbG2xJCCy5kJDjABj?=
- =?iso-8859-2?Q?kprDaZzeCplxAQW8xfkkmstWs5hIltTmdYlLszIG41MjqxWZJZpClawbb1?=
- =?iso-8859-2?Q?XipTfYbbjUUTJ5AY/cJ94Ocn6B1jSeJph/3BbItNRMvxRi6ONwCwbBDbP+?=
- =?iso-8859-2?Q?Le6I4IDVHcH5ofHexkpBJuMrroWBuSTjhDDNC3TqJdl72rmfZgLyVoS77N?=
- =?iso-8859-2?Q?yU/NIXbFlb8l9dK8q5jipLd1/FVk4Pp2P60jy+9m9cVnFbtvQjhXDypzeb?=
- =?iso-8859-2?Q?Ko1fH/QTTvV8pcNWJXq7fLf1O2d3JWe1yLLsUfK2TmQq0D5l5DpbB890yC?=
- =?iso-8859-2?Q?BVF/Ar5qTiLG7xggV8j4UXRb++gCvrDvk/yLsnEeOoqoE6pmrgwYAC6qZd?=
- =?iso-8859-2?Q?7sl4WiSn6wVEF9onXMgQmhjZwpqInrPFVmYPD5v5xlZBo9t8R0x2wBdi0r?=
- =?iso-8859-2?Q?1cJFwkDZ8sMDxKKKjLHjDI1tR9ldHAmzEmiKNR0GMuTz2ixBFx6wGgLXzl?=
- =?iso-8859-2?Q?wRoYHekrIzXtWBvjBDW4wBo0MryqgrcAtLVl4aPMAV4isfK9tw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5896.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?mKPbxCR50Zo/kBjFEIBIzbg6Es+ioxMMbEP7y4nJHK5XxBuKmBIhsyNe+c?=
- =?iso-8859-2?Q?P2PSImE1GXaPLwYEl2o0/N61ZqojPjfvrKsOv95iPU39dTSM2smMfyKa+b?=
- =?iso-8859-2?Q?yJ4MGTfyQcIrBV8ERN3vhUzyykJsgm9hEjRp0sYKTEOshqL4DV0ZfF0XIg?=
- =?iso-8859-2?Q?gSDYhrSwytejuBS2OhEKMlIRkHHQ7vytYCaFWfly2CZuaC6WJXN+qiqsDq?=
- =?iso-8859-2?Q?1wx+Flmo+eU+kxwC2S6ohnAeGzoxOeATpzP8czrMmvNgNv2SUtLjE6cpa6?=
- =?iso-8859-2?Q?CclM+6tyecZ4BTj7JPQNb+6McoBOVK2q7+LBl8VLvNUQ7Auam18+LneqCQ?=
- =?iso-8859-2?Q?OdOlDAEMcBPZg8du9cjYXV5ziDfXS8eYRmiGGpRe07zxj+E8FoJ6/CTVMd?=
- =?iso-8859-2?Q?7Kgi/HmvzryfBpo19AiuIOsdQYexfBhlJrLeDouh2L4yI08/Bbbl/kF8S5?=
- =?iso-8859-2?Q?+h6QuqJAMGwbkVFi3H1iqPsWXwLhY+gBMTbRuAnRl3CW/Yqzn1g39aa01o?=
- =?iso-8859-2?Q?cSQBDMI/SLuz65WdsanquiGJtbc/0CizuwL73kKQEb3Npn7di05o36xFWv?=
- =?iso-8859-2?Q?DEHcIldFhQXWwU2/gi5S2mXbMZmMCcyxEChQZkp0IE5lY0kODGyWfdDf2y?=
- =?iso-8859-2?Q?bETAGONsgtujjymUy1NAzor3kNZfB5tXwvpdVhrcAXo6LgPM0rFNGD6A58?=
- =?iso-8859-2?Q?6e/TskoSTgrkkg2uQDl2fzAYuGSIWLRUOariSlHuDDWemN2wBqBA0MUTPl?=
- =?iso-8859-2?Q?hgWCGKJIeDmhFv0/Y6bb+DT1H8rfdgxFfpEsh0+GSrBLTQhdDNi1t12f6f?=
- =?iso-8859-2?Q?XvROYBBSf7yzbEeHNW061lBKryfZqrvEHoMQuxPZKog/eOcdils30zwWnx?=
- =?iso-8859-2?Q?b/g6Qe2gspFfKmOdFOxepWKUsWsbnn8706go1E0uxXQTSvmXBcWwXBiYOd?=
- =?iso-8859-2?Q?XQcuKAqoZHHqw9Fb33/Qls/MseykH+NwDBNjX8o7TzR42pQKLf0HRYYGmb?=
- =?iso-8859-2?Q?0TLbowvsUzqn8Lnw42QWD5zzs9U80/mBCiHgHGcw1sFZXpgtC7b35d9BMt?=
- =?iso-8859-2?Q?zmA+oMzsghS3CdaIpJDV6n6mkI4QAlzbJ3RtlkXKbZ9eyBsA+YLQxaQq7p?=
- =?iso-8859-2?Q?HlVl87dlyRvwiXVa6gN4AxQQFclSPqONjcJ0ONO8DnDed4HSKwTNi5Ck1a?=
- =?iso-8859-2?Q?L2SYeW3kbJ41H7lF8WtreIUTJlevxAXf9H3833F5uA/caq+ev/Kf0FdDGK?=
- =?iso-8859-2?Q?yzS1iLutsB5PRhD1boh2gNU8RNC+6uPW1HLm0zHdUv6O4FqR3bbk/cLXOO?=
- =?iso-8859-2?Q?11lyG2zvkvia2pfWVROOpk8PgmvBHIHfCsIaDBWk9vXHFIgB+XyRPiaTTS?=
- =?iso-8859-2?Q?bsGblhc1scXXBJm6wDK24/nRbjFauqXawoxqAO16Jnavr6awCe+E0I5Ryf?=
- =?iso-8859-2?Q?nqUSFrJWfmemtxmMsGaUrdB9yWH/b6Zh2b4cYt5w+ekjkzVh5jn9WBJH9E?=
- =?iso-8859-2?Q?Dk9asRPl15WV6Ci7yTnuTI0CQdvVNtek4nLjE5XF2Jr3UX0Z/+U8K7i8QQ?=
- =?iso-8859-2?Q?yimx4UwBS+uDjiCMwzI1l50RwO5DpDjuoKLQabZf9rzmCxWZaarV19F+IU?=
- =?iso-8859-2?Q?RR+FiRm8NFYq8q/t4x9gOYsXV9u/TNMndx?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1763288934; x=1763893734; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JSW7JgNcs7DWh1nW7rtjeN1ASDGAXAC868BibcndNtw=;
+        b=diGzonbLldtgCia/IgRQUEFlniO7cVfe9Xb/6gboGJfTmwKLTtfrCxGPnkBbqzFTuB
+         CSbn5j2EnzzYYBcv8Y4a+5u1DXZy0kW2UDG96wlykweOjZSpeauvNJHBdz/DK+VFKcb8
+         N0kp/KBE44/jk4H4xTHx7erdKFcEpxZ1KyFXM73kTVvVw73O4vNm58C3hhxRLg0xIa3Z
+         TUbJwB/DT/zpQai5Aes4PcGkn6vw4HfA4jgkRiD5jS5UP2hxacC6me289rHjl2JzjNsP
+         EfS7VEiClvbuzvQi2gOopDSw+bXGqrSPSonCbwH+APzR5GP9umXIDb1od2E23WvchhgI
+         Cm9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763288934; x=1763893734;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JSW7JgNcs7DWh1nW7rtjeN1ASDGAXAC868BibcndNtw=;
+        b=Q1sMIIb6BIxyGOHZvQe6c59FxAMxXUu7TPCxmO+JxiuSLUs3NiN/nwkLtY8YthrtBD
+         xwzmyAmkDe3aXPm6AMBzIknakVrUXkLLLeoYNv7AL0O9mXXUHoKndwqUcj5QaYiBcJV0
+         gdHhHotINLXwr+ZRqlrSBrqMNn+s71i7HaOyY48rBIE355FkSYKv739TnCvGT0qT3cOf
+         ulTpReO4tfWEdBREaOUi+pYVPo2AaXcQHcPm7URlmLP8f4LV9W778QmlyIyZuz6LSBGK
+         RdHY3KUSB8GFXcAsvcpYMQ9obDBU6WT2goiNLccBefuJLGM/sa7tiDEk3JqDLYPbkyBX
+         v5gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiKl3teYWZ74lHdfFcR7Bnz3t+32lcCltVIRfkaD0D+O1j7SlFvyMhdbXIQBpz9g18iBRO16VGdnEw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyvA7crCIlHhkL3pqreWCs5Vm/pkn9g9Gdp+QbTbenF1eIX9Aq
+	fIz0Zn+fj/7sVQefH0/LTv2VJIA5flcYJak1KAFeaNIkUuYckad1So3y35mwlRPcZP4=
+X-Gm-Gg: ASbGncvB9OV9GQMt22X6aN7V9AQ2BLcQ74FknmvmbCu1Wap8xt121Hhkk4bFj013u7l
+	tPXOJBIhdlBf9Ya5r/YAzWCsJF7UI9IabkmGWn9Gadx7GJPiN4pSGhY0oOb2XFwn7rFUb6SIiKR
+	O/DlRpi5minprwfoGKPkGoyd4H8ZrdLgBey/wX30Bpg3WCUmlUL8H9dr27o15O4Ds/C/xouHmTs
+	Nwkt6rpQiYZDfSkk4QbtTrwc5x8jYY8LsmmZvQgQw3zzQsW68vRGW9Ol7Z45kxGo7pNaf5+eSil
+	xfqZDl/4GourjpoMLnqBi8aQHxGd4V6/7vi1DVAffsnnJmTx8vHZYuQHPlINPCtYy2cs3+7YxQM
+	g2QcMf33nfZggyyrU55mc0OmBYlrzIpqN4bXSyBAtSMKPLjoPeGiRK0pYkqO1e7Eqjgdz0vUVix
+	1Ci3BjYcfK7Y+XWabLNpyNgZNWeWdi3axe
+X-Google-Smtp-Source: AGHT+IHFG6QmWK1KpFn85ysEfm+psI5j9KN7/n/1T01x4vQCppnzXtL7aRATTWAaGCFS+DPVbWd8+Q==
+X-Received: by 2002:a17:903:1211:b0:28d:18d3:46cb with SMTP id d9443c01a7336-2986a6bf9a7mr103443295ad.20.1763288934185;
+        Sun, 16 Nov 2025 02:28:54 -0800 (PST)
+Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:22b3:6dbf:5b14:3737])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2c0fe8sm106790585ad.80.2025.11.16.02.28.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Nov 2025 02:28:53 -0800 (PST)
+Date: Sun, 16 Nov 2025 18:28:49 +0800
+From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: akpm@linux-foundation.org, andriy.shevchenko@intel.com, axboe@kernel.dk,
+	ceph-devel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de,
+	home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
+	kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com,
+	xiubli@redhat.com
+Subject: Re: [PATCH v5 3/6] lib/base64: rework encode/decode for speed and
+ stricter validation
+Message-ID: <aRmnYTHmfPi1lyix@wu-Pro-E500-G6-WS720T>
+References: <20251114055829.87814-1-409411716@gms.tku.edu.tw>
+ <20251114060132.89279-1-409411716@gms.tku.edu.tw>
+ <20251114091830.5325eed3@pumpkin>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cisco.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5896.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06dc7afe-7be7-41d7-220d-08de24856052
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2025 20:27:19.8090
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6sGSzNOwK5N2JX7LP+uBMy+DCipcCcM2IKRDSemuaKx2VgJ+Cpek7Aeyqj1K9YjSnc1FgC1NdcbLcIoAPUC6Og==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPFE70B31BEF
-X-Outbound-SMTP-Client: 72.163.7.165, rcdn-opgw-4.cisco.com
-X-Outbound-Node: alln-l-core-03.cisco.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251114091830.5325eed3@pumpkin>
 
-On Thursday, November 13, 2025 6:33 AM, Andy Shevchenko <andriy.shevchenko@=
-linux.intel.com> wrote:
->
-> Use %ptSp instead of open coded variants to print content of
-> struct timespec64 in human readable format.
->
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> drivers/scsi/snic/snic_debugfs.c | 10 ++++------
-> drivers/scsi/snic/snic_trc.c     |  5 ++---
-> 2 files changed, 6 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/scsi/snic/snic_debugfs.c b/drivers/scsi/snic/snic_de=
-bugfs.c
-> index 9dd975b36b5b..edf3e5ef28a6 100644
-> --- a/drivers/scsi/snic/snic_debugfs.c
-> +++ b/drivers/scsi/snic/snic_debugfs.c
-> @@ -282,8 +282,8 @@ snic_stats_show(struct seq_file *sfp, void *data)
-> jiffies_to_timespec64(stats->misc.last_ack_time, &last_ack_tms);
->
-> seq_printf(sfp,
-> -                "Last ISR Time               : %llu (%8llu.%09lu)\n"
-> -                "Last Ack Time               : %llu (%8llu.%09lu)\n"
-> +                "Last ISR Time               : %llu (%ptSp)\n"
-> +                "Last Ack Time               : %llu (%ptSp)\n"
-> "Ack ISRs                    : %llu\n"
-> "IO Cmpl ISRs                : %llu\n"
-> "Err Notify ISRs             : %llu\n"
-> @@ -298,10 +298,8 @@ snic_stats_show(struct seq_file *sfp, void *data)
-> "Queue Ramp Down             : %lld\n"
-> "Queue Last Queue Depth      : %lld\n"
-> "Target Not Ready            : %lld\n",
-> -                (u64) stats->misc.last_isr_time,
-> -                last_isr_tms.tv_sec, last_isr_tms.tv_nsec,
-> -                (u64)stats->misc.last_ack_time,
-> -                last_ack_tms.tv_sec, last_ack_tms.tv_nsec,
-> +                (u64) stats->misc.last_isr_time, &last_isr_tms,
-> +                (u64) stats->misc.last_ack_time, &last_ack_tms,
-> (u64) atomic64_read(&stats->misc.ack_isr_cnt),
-> (u64) atomic64_read(&stats->misc.cmpl_isr_cnt),
-> (u64) atomic64_read(&stats->misc.errnotify_isr_cnt),
-> diff --git a/drivers/scsi/snic/snic_trc.c b/drivers/scsi/snic/snic_trc.c
-> index c2e5ab7e976c..6bad1ea9a6a7 100644
-> --- a/drivers/scsi/snic/snic_trc.c
-> +++ b/drivers/scsi/snic/snic_trc.c
-> @@ -56,9 +56,8 @@ snic_fmt_trc_data(struct snic_trc_data *td, char *buf, =
-int buf_sz)
-> jiffies_to_timespec64(td->ts, &tmspec);
->
-> len +=3D snprintf(buf, buf_sz,
-> -                     "%llu.%09lu %-25s %3d %4x %16llx %16llx %16llx %16l=
-lx %16llx\n",
-> -                     tmspec.tv_sec,
-> -                     tmspec.tv_nsec,
-> +                     "%ptSp %-25s %3d %4x %16llx %16llx %16llx %16llx %1=
-6llx\n",
-> +                     &tmspec,
-> td->fn,
-> td->hno,
-> td->tag,
-> --
-> 2.50.1
->
->
+On Fri, Nov 14, 2025 at 09:18:30AM +0000, David Laight wrote:
+> On Fri, 14 Nov 2025 14:01:32 +0800
+> Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+> 
+> > The old base64 implementation relied on a bit-accumulator loop, which was
+> > slow for larger inputs and too permissive in validation. It would accept
+> > extra '=', missing '=', or even '=' appearing in the middle of the input,
+> > allowing malformed strings to pass. This patch reworks the internals to
+> > improve performance and enforce stricter validation.
+> > 
+> > Changes:
+> >  - Encoder:
+> >    * Process input in 3-byte blocks, mapping 24 bits into four 6-bit
+> >      symbols, avoiding bit-by-bit shifting and reducing loop iterations.
+> >    * Handle the final 1-2 leftover bytes explicitly and emit '=' only when
+> >      requested.
+> >  - Decoder:
+> >    * Based on the reverse lookup tables from the previous patch, decode
+> >      input in 4-character groups.
+> >    * Each group is looked up directly, converted into numeric values, and
+> >      combined into 3 output bytes.
+> >    * Explicitly handle padded and unpadded forms:
+> >       - With padding: input length must be a multiple of 4, and '=' is
+> >         allowed only in the last two positions. Reject stray or early '='.
+> >       - Without padding: validate tail lengths (2 or 3 chars) and require
+> >         unused low bits to be zero.
+> >    * Removed the bit-accumulator style loop to reduce loop iterations.
+> > 
+> > Performance (x86_64, Intel Core i7-10700 @ 2.90GHz, avg over 1000 runs,
+> > KUnit):
+> > 
+> > Encode:
+> >   64B   ~90ns   -> ~32ns   (~2.8x)
+> >   1KB  ~1332ns  -> ~510ns  (~2.6x)
+> > 
+> > Decode:
+> >   64B  ~1530ns  -> ~35ns   (~43.7x)
+> >   1KB ~27726ns  -> ~530ns  (~52.3x)
+> > 
+> > Co-developed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > Co-developed-by: Yu-Sheng Huang <home7438072@gmail.com>
+> > Signed-off-by: Yu-Sheng Huang <home7438072@gmail.com>
+> > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> 
+> Reviewed-by: David Laight <david.laight.linux@gmail.com>
+> 
+> But see minor nit below.
 
-Thanks for the change, Andy.
+Hi David,
 
-Acked-by: Karan Tilak Kumar <kartilak@cisco.com>
+Thanks for the review and for pointing this out.
 
-Regards,
-Karan
+Andrew, would it be possible for you to fold this small change 
+(removing the redundant casts) directly when updating the patch?
+If that’s not convenient, I can resend an updated version of the
+series instead. 
+
+Best regards,
+Guan-Chun
+
+> > ---
+> >  lib/base64.c | 109 ++++++++++++++++++++++++++++++++-------------------
+> >  1 file changed, 68 insertions(+), 41 deletions(-)
+> > 
+> > diff --git a/lib/base64.c b/lib/base64.c
+> > index 9d1074bb821c..1a6d8fe37eda 100644
+> > --- a/lib/base64.c
+> > +++ b/lib/base64.c
+> > @@ -79,28 +79,38 @@ static const s8 base64_rev_maps[][256] = {
+> >  int base64_encode(const u8 *src, int srclen, char *dst, bool padding, enum base64_variant variant)
+> >  {
+> >  	u32 ac = 0;
+> > -	int bits = 0;
+> > -	int i;
+> >  	char *cp = dst;
+> >  	const char *base64_table = base64_tables[variant];
+> >  
+> > -	for (i = 0; i < srclen; i++) {
+> > -		ac = (ac << 8) | src[i];
+> > -		bits += 8;
+> > -		do {
+> > -			bits -= 6;
+> > -			*cp++ = base64_table[(ac >> bits) & 0x3f];
+> > -		} while (bits >= 6);
+> > -	}
+> > -	if (bits) {
+> > -		*cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
+> > -		bits -= 6;
+> > +	while (srclen >= 3) {
+> > +		ac = (u32)src[0] << 16 | (u32)src[1] << 8 | (u32)src[2];
+> 
+> There is no need for the (u32) casts.
+> All char/short values are promoted to 'int' prior to any maths.
+> 
+> > +		*cp++ = base64_table[ac >> 18];
+> > +		*cp++ = base64_table[(ac >> 12) & 0x3f];
+> > +		*cp++ = base64_table[(ac >> 6) & 0x3f];
+> > +		*cp++ = base64_table[ac & 0x3f];
+> > +
+> > +		src += 3;
+> > +		srclen -= 3;
+> >  	}
+> > -	if (padding) {
+> > -		while (bits < 0) {
+> > +
+> > +	switch (srclen) {
+> > +	case 2:
+> > +		ac = (u32)src[0] << 16 | (u32)src[1] << 8;
+> > +		*cp++ = base64_table[ac >> 18];
+> > +		*cp++ = base64_table[(ac >> 12) & 0x3f];
+> > +		*cp++ = base64_table[(ac >> 6) & 0x3f];
+> > +		if (padding)
+> > +			*cp++ = '=';
+> > +		break;
+> > +	case 1:
+> > +		ac = (u32)src[0] << 16;
+> > +		*cp++ = base64_table[ac >> 18];
+> > +		*cp++ = base64_table[(ac >> 12) & 0x3f];
+> > +		if (padding) {
+> > +			*cp++ = '=';
+> >  			*cp++ = '=';
+> > -			bits += 2;
+> >  		}
+> > +		break;
+> >  	}
+> >  	return cp - dst;
+> >  }
+> > @@ -116,41 +126,58 @@ EXPORT_SYMBOL_GPL(base64_encode);
+> >   *
+> >   * Decodes a string using the selected Base64 variant.
+> >   *
+> > - * This implementation hasn't been optimized for performance.
+> > - *
+> >   * Return: the length of the resulting decoded binary data in bytes,
+> >   *	   or -1 if the string isn't a valid Base64 string.
+> >   */
+> >  int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base64_variant variant)
+> >  {
+> > -	u32 ac = 0;
+> > -	int bits = 0;
+> > -	int i;
+> >  	u8 *bp = dst;
+> > -	s8 ch;
+> > +	s8 input[4];
+> > +	s32 val;
+> > +	const u8 *s = (const u8 *)src;
+> > +	const s8 *base64_rev_tables = base64_rev_maps[variant];
+> >  
+> > -	for (i = 0; i < srclen; i++) {
+> > -		if (padding) {
+> > -			if (src[i] == '=') {
+> > -				ac = (ac << 6);
+> > -				bits += 6;
+> > -				if (bits >= 8)
+> > -					bits -= 8;
+> > -				continue;
+> > -			}
+> > -		}
+> > -		ch = base64_rev_maps[variant][(u8)src[i]];
+> > -		if (ch == -1)
+> > -			return -1;
+> > -		ac = (ac << 6) | ch;
+> > -		bits += 6;
+> > -		if (bits >= 8) {
+> > -			bits -= 8;
+> > -			*bp++ = (u8)(ac >> bits);
+> > +	while (srclen >= 4) {
+> > +		input[0] = base64_rev_tables[s[0]];
+> > +		input[1] = base64_rev_tables[s[1]];
+> > +		input[2] = base64_rev_tables[s[2]];
+> > +		input[3] = base64_rev_tables[s[3]];
+> > +
+> > +		val = input[0] << 18 | input[1] << 12 | input[2] << 6 | input[3];
+> > +
+> > +		if (unlikely(val < 0)) {
+> > +			if (!padding || srclen != 4 || s[3] != '=')
+> > +				return -1;
+> > +			padding = 0;
+> > +			srclen = s[2] == '=' ? 2 : 3;
+> > +			break;
+> >  		}
+> > +
+> > +		*bp++ = val >> 16;
+> > +		*bp++ = val >> 8;
+> > +		*bp++ = val;
+> > +
+> > +		s += 4;
+> > +		srclen -= 4;
+> >  	}
+> > -	if (ac & ((1 << bits) - 1))
+> > +
+> > +	if (likely(!srclen))
+> > +		return bp - dst;
+> > +	if (padding || srclen == 1)
+> >  		return -1;
+> > +
+> > +	val = (base64_rev_tables[s[0]] << 12) | (base64_rev_tables[s[1]] << 6);
+> > +	*bp++ = val >> 10;
+> > +
+> > +	if (srclen == 2) {
+> > +		if (val & 0x800003ff)
+> > +			return -1;
+> > +	} else {
+> > +		val |= base64_rev_tables[s[2]];
+> > +		if (val & 0x80000003)
+> > +			return -1;
+> > +		*bp++ = val >> 2;
+> > +	}
+> >  	return bp - dst;
+> >  }
+> >  EXPORT_SYMBOL_GPL(base64_decode);
+> 
 
