@@ -1,305 +1,193 @@
-Return-Path: <ceph-devel+bounces-4077-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4078-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C25AC6129C
-	for <lists+ceph-devel@lfdr.de>; Sun, 16 Nov 2025 11:37:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7887BC63B08
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Nov 2025 12:01:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C747A3A1CBA
-	for <lists+ceph-devel@lfdr.de>; Sun, 16 Nov 2025 10:37:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 99D91356D7E
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Nov 2025 11:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767C5286D55;
-	Sun, 16 Nov 2025 10:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8C5328B68;
+	Mon, 17 Nov 2025 11:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="0BUuM5Pn"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="id4994FU"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3BE2857FA
-	for <ceph-devel@vger.kernel.org>; Sun, 16 Nov 2025 10:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF04627CCEE
+	for <ceph-devel@vger.kernel.org>; Mon, 17 Nov 2025 11:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763289421; cv=none; b=eUGaj5sG95CQetCljQ5RUQRF5SqJcgbWcGKZ9rbqxcb38naZ0MDVgytDbWY3f1iC1ibOoyQj5po/xf1T8Rx8lsGtkjSUSm2KTikUvbxPqG54W/eJonkiSGwygMdH+/9rllJkcOGwbi/pbupD68hzhegb8Y6eAAk80wPl3pokN9M=
+	t=1763377278; cv=none; b=ntzKOMuJcTJcGDWjdcJ4KZK340F+41z2A+rE2s1BtZqx21o/3ojMfbv52WnLzGd1n9AWnVcATxWQkUtfKy3l/PGwC1vFIBRTAOwCBwtR3tsi06QGle6raCLfdVKiGBpl+6rY9fum7z7ZLbzH+3lUlf7XkVi1qijwOhUu0MP1WvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763289421; c=relaxed/simple;
-	bh=kiMW/IlmMt/llpJ0AhPrTQEfxQWr9GmclWgSQXm5Qj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEleiinnt1ztNrQMxfVDOfNggC4uZPHz25fqHsdoHK50Ha+kWbxyNJdCMf/Oi+loVuKT5njNOawThoOZU2TXUAGr5Y2RIhQFGEKHOhI0Jd9nlEcvU7G6hwkBzki1Dgci5fsAidu1J0k4Nbz9iolbW6FKH7jNq2OjwCy5bna2MDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=0BUuM5Pn; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7b852bb31d9so3779473b3a.0
-        for <ceph-devel@vger.kernel.org>; Sun, 16 Nov 2025 02:36:59 -0800 (PST)
+	s=arc-20240116; t=1763377278; c=relaxed/simple;
+	bh=7DAQpoB3R+EJpl7MbBOx5A+ZlzdqP6pGt/EDi4xzIlE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ju3DdHgK22ClPpSLYN/vHxlj/aXISZ65Z1TFYVbcL5e8krYwC6PBgG7MEJffNDwrY8kX19QaGZvv3VIx7fdsFajE2wdifzZNIuVw+DlStS9+AB3kqpoLwvgqM8UcGydESJm61QjTwxTE3KRO2L+Rg7Tpk9VM8u3SrBVAg4xAfZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=id4994FU; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6420c0cf4abso296392d50.1
+        for <ceph-devel@vger.kernel.org>; Mon, 17 Nov 2025 03:01:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1763289419; x=1763894219; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j2xccyQL0wjRPHWCif7a/agPdP0N/MqlaSpRLb12d9w=;
-        b=0BUuM5PncpIX4gC72ZeBeqGAoVm7WJWoHsc7iHU03TPriGYBKAi5KN+kdt8X96Aaom
-         U51fdxYMHFpgFsHS/oICqBiwHnsCt5IQ6ipcG2r7bQw848z+A4HwViqmq+a8kDApLX5V
-         rsTX+ceUU6uWaoxtowFDJ0BsfKmKhhOsVwB5YCiipkwMCatrxKoUBznXokuBrUlcdWWL
-         YEyWZXmDIy5/2r1iIAgRGr8u7HtXRcODi8B+xSPKq6izhnh+H2I+23gI7hQ6aw1Jwe1V
-         6ySC4MZS0LmjMmwTnu44iaLwlQDXjjf0/XMJFZbMz9S0LYCnh/qVUgjWrrnKwnfOA3Vd
-         2U1A==
+        d=linaro.org; s=google; t=1763377274; x=1763982074; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/RSfdrwfxNJQiZz80hQXf9twz6yOQXKrW5ZfA5HxaxE=;
+        b=id4994FUPu51IRxHSspL9L3GiejmCAA8gq+5m8V5Qy/ts2ASYoQqTsF8SrZu1qJCqD
+         GUQLU1kAdP494s0MaMxk3g+bRWbLLQ5BPI6XIxP0wC9S3V9humxsjMA8QeCi1B/LHm5w
+         AXkpQrcUklRFpcssfQSH+obec9yFZUY19vuPSsAFftk2+3eEeuw6/DJGcfvHxXox61cA
+         i/3/UzvFQ9JdBpOWPQhGbPX5FT90aWLV8Y+ch9DgbpdNXYBbMtOxJibX6lfYdgRopu1w
+         tz3NewpHxpPpKQS3POc517AagIYVuMrvQtXQ5yFz/1WKQ5Nws47JvpRs7mMY5pTSnsWK
+         jK+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763289419; x=1763894219;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j2xccyQL0wjRPHWCif7a/agPdP0N/MqlaSpRLb12d9w=;
-        b=V13BYSSDdRekU1zjqFPdiWbVSMiiPxPdzEBFEQzczVFpMXcEkDfVDrCUC+o4KmO/od
-         a+aUyPWWRKARp1GpQbytD02/6HgF+wKKRDdg8vWeJcVI3HzD11T+c6G/rxwcHvLG1W8J
-         +DGMPqnlemMMmpU4wqrM2hyQAYhqg39LdMyvFH0R/i4BpznXdupTkTRrgLv5T4eKeAx+
-         u4IyA1VGgXAk5/1P8ALCD380Tu3fy8D4hPKuQXloACbVN6OLTT8nw9eMgPqKg9AEkVie
-         bc0aYT0GNGP3Qfk1q0Ppda74HhFAEtvlZ1NOEFmShc8P1b1OS/cWeGP2XG9hMiPI0ThW
-         vNrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzbfyoI1DOyk3IkRmtEdVSh6KOpgiYB2ed1XJSmfZQDsf7EF8OFew5gBmAgwhHp/QXaoXJiPaQu5CQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YywIDbx/F7L39+K9hHfUetf9n//Of9T4t9RsBeUN02UORM74GZr
-	4rsJETWCFV15yA7q2RDiOV59ziE/M8+m57aGUssu44Gr1Tlieu8wqmrlfd49GJPDG6Y=
-X-Gm-Gg: ASbGncuAok5f8W0CCPhkGdy/m0V1DPqQ30Zj9ZqZuH65OWbJJ8P0o3pEqjJegJTY3Mv
-	NuZUP5v26iv8D1cURoN9vWcZ06awO0VT62neKFhD1Rh0KUlKN52kztt7ObZwrg3Gsjyu+ju4Hz0
-	Hdt8494TwXbFszYHm3HRpski34HQXSjyxUY4bBTiZc5USKeqbWVawDiGFw/Udqc6lEocH8Ev9aJ
-	1UAKPvW9tGWCsWauhfWXJgH3HY8iUaoTVFYZuL+xSf0Q2oN5V5+3NlJzUvG0CZniUsoBf33EV6N
-	zLE7ijlX4PFeyj6Hjj+s2xCFC2i2eFAlY/zFsqixLatk5vOgcBk27qCqr5Km9jiApx8TqsAnFtE
-	qAuhnm24I03ydwPz7KPywZqntNmEZEezW9201scdvvAvhTKDVrwU72BUWC6bHxytVQoJ0+r7zFC
-	N75oRH8aZ6nZNTR7MQs7bbw0Z5Rdsy45Zv
-X-Google-Smtp-Source: AGHT+IEnf43Ltm/bA4lzbDQv+6sO2UhNpxxLrJK2n5FBPc4EJRJYJDkn08A4bHCQNvaKnyZ/h6JUVw==
-X-Received: by 2002:a05:6a20:7d9d:b0:35c:e441:e6d2 with SMTP id adf61e73a8af0-35ce441e898mr7014829637.7.1763289418602;
-        Sun, 16 Nov 2025 02:36:58 -0800 (PST)
-Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:22b3:6dbf:5b14:3737])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bc36fa02c42sm9507887a12.16.2025.11.16.02.36.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Nov 2025 02:36:58 -0800 (PST)
-Date: Sun, 16 Nov 2025 18:36:50 +0800
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "david.laight.linux@gmail.com" <david.laight.linux@gmail.com>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"sagi@grimberg.me" <sagi@grimberg.me>,
-	"kbusch@kernel.org" <kbusch@kernel.org>,
-	"idryomov@gmail.com" <idryomov@gmail.com>,
-	"linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-	Xiubo Li <xiubli@redhat.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ebiggers@kernel.org" <ebiggers@kernel.org>,
-	"andriy.shevchenko@intel.com" <andriy.shevchenko@intel.com>,
-	"hch@lst.de" <hch@lst.de>,
-	"home7438072@gmail.com" <home7438072@gmail.com>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	"tytso@mit.edu" <tytso@mit.edu>,
-	"visitorckw@gmail.com" <visitorckw@gmail.com>,
-	"jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [PATCH v5 6/6] ceph: replace local base64 helpers with lib/base64
-Message-ID: <aRmpQmMtfZQ8f95s@wu-Pro-E500-G6-WS720T>
-References: <20251114055829.87814-1-409411716@gms.tku.edu.tw>
- <20251114060240.89965-1-409411716@gms.tku.edu.tw>
- <afb5eb0324087792e1217577af6a2b90be21b327.camel@ibm.com>
+        d=1e100.net; s=20230601; t=1763377274; x=1763982074;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/RSfdrwfxNJQiZz80hQXf9twz6yOQXKrW5ZfA5HxaxE=;
+        b=L8So5QXNczaqorrWamtK+0JCGLpOHJuh7OdGpIMaDqS+gWcgOdVNQP8SiD3vwQSgM2
+         0pSWGfIN04AHvh/1M59ceabwpoVCKvh0AdWD7T0IEtEFYiuFzWcR1cJdJCwsOboEISbI
+         od8+Jo2ok98COkeAHOK/3HjrD1dHdBmaWa89hMqZ9vp8iGhmJtkq1I78ksTwnagPt2hQ
+         g0FTvU0wspR5qum1pu2BimNmz4qf7ToSbLPfjPL2gcj5acmDmYclmC2f2n/at335wDra
+         c4y2pD8JcK600NNlqHF0AGxgoHXLtSTczWr0FnOXCVjYrYmO0p+4CgYbt4nlz4HKDG5V
+         dPcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhEph0P7W+2qnEJw7FcFP1XYoYs/C24ZppvcbD/8oyotEtYLPj5IMUb96FrmnDaPI/9AKI+o/aK+Oh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwydHQ86OkVF+Cwd/nlN5I3r+kwp4ZqD/BEMt29MZT9JJqe9BCK
+	icgCRe3pHDTRh+uYpAyYIv2ReYIxGC/+3OsxK+G1+TwFh28SJtCi7YDcRPE9c1Vd6y0pE/6UxO3
+	HI6TG66AXhxnDx+PU+QYcKd5jTZU60FYnGVCfIgz/HQ==
+X-Gm-Gg: ASbGncvojGEo7XkDsBLEcGyi4JMasCYCovZ+WT4TnTKsJ6Qq2NvBdo+7aW82pnjBkIY
+	SU7WRtcMt+zO2d8N38syzgnJqXWvxJxMdtvDyAzyVQqqqv53VEDxp95aEHxjC9qg5ZdERTbFscD
+	N5Ueev6SYkhqFhK3h/lhrrYhF736n/jpvSG7oBJCyABX5RkAWkfUmV8TccozbByAlqjYarVAjAV
+	4VKUHRlSD3AV5Mf0UGer4grriVK1U5V6jEuRkA0lJVprRmk6Y3ozpjVKKwVXtnYFLGX0fQ2Zjl0
+	AkKxNbY=
+X-Google-Smtp-Source: AGHT+IEjvegoUIWfi8UaBD0jEKwHtT+y2Cbu5UHhJ+VHUPJu6okR0AoxTFiIq+cxtmlIxdFEnLzs3e2dtieQR/hKIVs=
+X-Received: by 2002:a05:690e:d86:b0:642:84a:7ba4 with SMTP id
+ 956f58d0204a3-642084a7c6bmr1567493d50.85.1763377273901; Mon, 17 Nov 2025
+ 03:01:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <afb5eb0324087792e1217577af6a2b90be21b327.camel@ibm.com>
+References: <20251113150217.3030010-1-andriy.shevchenko@linux.intel.com> <20251113150217.3030010-14-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20251113150217.3030010-14-andriy.shevchenko@linux.intel.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 17 Nov 2025 12:00:38 +0100
+X-Gm-Features: AWmQ_bk2fwrMGKoLr3e8DW_NORum6cYwB-Ynf9Wgckyt3WUUk5QWFuYE7vXt0wM
+Message-ID: <CAPDyKFotmQyHzBim-8nib-KVvQaQgA_ELbgdC_Q4Y95-GrvRSw@mail.gmail.com>
+Subject: Re: [PATCH v3 13/21] mmc: mmc_test: Switch to use %ptSp
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Corey Minyard <corey@minyard.net>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Alex Deucher <alexander.deucher@amd.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>, Vitaly Lifshits <vitaly.lifshits@intel.com>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Niklas Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Sagi Maimon <maimon.sagi@gmail.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Karan Tilak Kumar <kartilak@cisco.com>, 
+	Hans Verkuil <hverkuil+cisco@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>, 
+	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Max Kellermann <max.kellermann@ionos.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, 
+	intel-wired-lan@lists.osuosl.org, linux-pci@vger.kernel.org, 
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-staging@lists.linux.dev, ceph-devel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Gustavo Padovan <gustavo@padovan.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Lucas De Marchi <lucas.demarchi@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Rodolfo Giometti <giometti@enneenne.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Stefan Haberland <sth@linux.ibm.com>, 
+	Jan Hoeppner <hoeppner@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 14, 2025 at 06:07:26PM +0000, Viacheslav Dubeyko wrote:
-> On Fri, 2025-11-14 at 14:02 +0800, Guan-Chun Wu wrote:
-> > Remove the ceph_base64_encode() and ceph_base64_decode() functions and
-> > replace their usage with the generic base64_encode() and base64_decode()
-> > helpers from lib/base64.
-> > 
-> > This eliminates the custom implementation in Ceph, reduces code
-> > duplication, and relies on the shared Base64 code in lib.
-> > The helpers preserve RFC 3501-compliant Base64 encoding without padding,
-> > so there are no functional changes.
-> > 
-> > This change also improves performance: encoding is about 2.7x faster and
-> > decoding achieves 43-52x speedups compared to the previous local
-> > implementation.
-> > 
-> > Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> > ---
-> >  fs/ceph/crypto.c | 60 ++++--------------------------------------------
-> >  fs/ceph/crypto.h |  6 +----
-> >  fs/ceph/dir.c    |  5 ++--
-> >  fs/ceph/inode.c  |  2 +-
-> >  4 files changed, 9 insertions(+), 64 deletions(-)
-> > 
-> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-> > index 7026e794813c..b6016dcffbb6 100644
-> > --- a/fs/ceph/crypto.c
-> > +++ b/fs/ceph/crypto.c
-> > @@ -15,59 +15,6 @@
-> >  #include "mds_client.h"
-> >  #include "crypto.h"
-> >  
-> > -/*
-> > - * The base64url encoding used by fscrypt includes the '_' character, which may
-> > - * cause problems in snapshot names (which can not start with '_').  Thus, we
-> > - * used the base64 encoding defined for IMAP mailbox names (RFC 3501) instead,
-> > - * which replaces '-' and '_' by '+' and ','.
-> > - */
-> > -static const char base64_table[65] =
-> > -	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
-> > -
-> > -int ceph_base64_encode(const u8 *src, int srclen, char *dst)
-> > -{
-> > -	u32 ac = 0;
-> > -	int bits = 0;
-> > -	int i;
-> > -	char *cp = dst;
-> > -
-> > -	for (i = 0; i < srclen; i++) {
-> > -		ac = (ac << 8) | src[i];
-> > -		bits += 8;
-> > -		do {
-> > -			bits -= 6;
-> > -			*cp++ = base64_table[(ac >> bits) & 0x3f];
-> > -		} while (bits >= 6);
-> > -	}
-> > -	if (bits)
-> > -		*cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
-> > -	return cp - dst;
-> > -}
-> > -
-> > -int ceph_base64_decode(const char *src, int srclen, u8 *dst)
-> > -{
-> > -	u32 ac = 0;
-> > -	int bits = 0;
-> > -	int i;
-> > -	u8 *bp = dst;
-> > -
-> > -	for (i = 0; i < srclen; i++) {
-> > -		const char *p = strchr(base64_table, src[i]);
-> > -
-> > -		if (p == NULL || src[i] == 0)
-> > -			return -1;
-> > -		ac = (ac << 6) | (p - base64_table);
-> > -		bits += 6;
-> > -		if (bits >= 8) {
-> > -			bits -= 8;
-> > -			*bp++ = (u8)(ac >> bits);
-> > -		}
-> > -	}
-> > -	if (ac & ((1 << bits) - 1))
-> > -		return -1;
-> > -	return bp - dst;
-> > -}
-> > -
-> >  static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
-> >  {
-> >  	struct ceph_inode_info *ci = ceph_inode(inode);
-> > @@ -318,7 +265,7 @@ int ceph_encode_encrypted_dname(struct inode *parent, char *buf, int elen)
-> >  	}
-> >  
-> >  	/* base64 encode the encrypted name */
-> > -	elen = ceph_base64_encode(cryptbuf, len, p);
-> > +	elen = base64_encode(cryptbuf, len, p, false, BASE64_IMAP);
-> >  	doutc(cl, "base64-encoded ciphertext name = %.*s\n", elen, p);
-> >  
-> >  	/* To understand the 240 limit, see CEPH_NOHASH_NAME_MAX comments */
-> > @@ -412,7 +359,8 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
-> >  			tname = &_tname;
-> >  		}
-> >  
-> > -		declen = ceph_base64_decode(name, name_len, tname->name);
-> > +		declen = base64_decode(name, name_len,
-> > +				       tname->name, false, BASE64_IMAP);
-> >  		if (declen <= 0) {
-> >  			ret = -EIO;
-> >  			goto out;
-> > @@ -426,7 +374,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
-> >  
-> >  	ret = fscrypt_fname_disk_to_usr(dir, 0, 0, &iname, oname);
-> >  	if (!ret && (dir != fname->dir)) {
-> > -		char tmp_buf[CEPH_BASE64_CHARS(NAME_MAX)];
-> > +		char tmp_buf[BASE64_CHARS(NAME_MAX)];
-> >  
-> >  		name_len = snprintf(tmp_buf, sizeof(tmp_buf), "_%.*s_%ld",
-> >  				    oname->len, oname->name, dir->i_ino);
-> > diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-> > index 23612b2e9837..b748e2060bc9 100644
-> > --- a/fs/ceph/crypto.h
-> > +++ b/fs/ceph/crypto.h
-> > @@ -8,6 +8,7 @@
-> >  
-> >  #include <crypto/sha2.h>
-> >  #include <linux/fscrypt.h>
-> > +#include <linux/base64.h>
-> >  
-> >  #define CEPH_FSCRYPT_BLOCK_SHIFT   12
-> >  #define CEPH_FSCRYPT_BLOCK_SIZE    (_AC(1, UL) << CEPH_FSCRYPT_BLOCK_SHIFT)
-> > @@ -89,11 +90,6 @@ static inline u32 ceph_fscrypt_auth_len(struct ceph_fscrypt_auth *fa)
-> >   */
-> >  #define CEPH_NOHASH_NAME_MAX (180 - SHA256_DIGEST_SIZE)
-> >  
-> > -#define CEPH_BASE64_CHARS(nbytes) DIV_ROUND_UP((nbytes) * 4, 3)
-> > -
-> > -int ceph_base64_encode(const u8 *src, int srclen, char *dst);
-> > -int ceph_base64_decode(const char *src, int srclen, u8 *dst);
-> > -
-> >  void ceph_fscrypt_set_ops(struct super_block *sb);
-> >  
-> >  void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc);
-> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > index d18c0eaef9b7..0fa7c7777242 100644
-> > --- a/fs/ceph/dir.c
-> > +++ b/fs/ceph/dir.c
-> > @@ -998,13 +998,14 @@ static int prep_encrypted_symlink_target(struct ceph_mds_request *req,
-> >  	if (err)
-> >  		goto out;
-> >  
-> > -	req->r_path2 = kmalloc(CEPH_BASE64_CHARS(osd_link.len) + 1, GFP_KERNEL);
-> > +	req->r_path2 = kmalloc(BASE64_CHARS(osd_link.len) + 1, GFP_KERNEL);
-> >  	if (!req->r_path2) {
-> >  		err = -ENOMEM;
-> >  		goto out;
-> >  	}
-> >  
-> > -	len = ceph_base64_encode(osd_link.name, osd_link.len, req->r_path2);
-> > +	len = base64_encode(osd_link.name, osd_link.len,
-> > +			    req->r_path2, false, BASE64_IMAP);
-> >  	req->r_path2[len] = '\0';
-> >  out:
-> >  	fscrypt_fname_free_buffer(&osd_link);
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index a6e260d9e420..b691343cb7f1 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -958,7 +958,7 @@ static int decode_encrypted_symlink(struct ceph_mds_client *mdsc,
-> >  	if (!sym)
-> >  		return -ENOMEM;
-> >  
-> > -	declen = ceph_base64_decode(encsym, enclen, sym);
-> > +	declen = base64_decode(encsym, enclen, sym, false, BASE64_IMAP);
-> >  	if (declen < 0) {
-> >  		pr_err_client(cl,
-> >  			"can't decode symlink (%d). Content: %.*s\n",
-> 
-> Looks good!
-> 
-> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> 
-> Have you run xfstests for this patchset?
+On Thu, 13 Nov 2025 at 16:03, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> Use %ptSp instead of open coded variants to print content of
+> struct timespec64 in human readable format.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Hi Slava,
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Thanks for the review.
+Kind regards
+Uffe
 
-I haven't run xfstests on this patchset yet.
-
-Best regards,
-Guan-Chun
-
-> 
-> Thanks,
-> Slava.
+> ---
+>  drivers/mmc/core/mmc_test.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+> index a74089df4547..01d1e62c2ce7 100644
+> --- a/drivers/mmc/core/mmc_test.c
+> +++ b/drivers/mmc/core/mmc_test.c
+> @@ -586,14 +586,11 @@ static void mmc_test_print_avg_rate(struct mmc_test_card *test, uint64_t bytes,
+>         rate = mmc_test_rate(tot, &ts);
+>         iops = mmc_test_rate(count * 100, &ts); /* I/O ops per sec x 100 */
+>
+> -       pr_info("%s: Transfer of %u x %u sectors (%u x %u%s KiB) took "
+> -                        "%llu.%09u seconds (%u kB/s, %u KiB/s, "
+> -                        "%u.%02u IOPS, sg_len %d)\n",
+> -                        mmc_hostname(test->card->host), count, sectors, count,
+> -                        sectors >> 1, (sectors & 1 ? ".5" : ""),
+> -                        (u64)ts.tv_sec, (u32)ts.tv_nsec,
+> -                        rate / 1000, rate / 1024, iops / 100, iops % 100,
+> -                        test->area.sg_len);
+> +       pr_info("%s: Transfer of %u x %u sectors (%u x %u%s KiB) took %ptSp seconds (%u kB/s, %u KiB/s, %u.%02u IOPS, sg_len %d)\n",
+> +               mmc_hostname(test->card->host), count, sectors, count,
+> +               sectors >> 1, (sectors & 1 ? ".5" : ""), &ts,
+> +               rate / 1000, rate / 1024, iops / 100, iops % 100,
+> +               test->area.sg_len);
+>
+>         mmc_test_save_transfer_result(test, count, sectors, ts, rate, iops);
+>  }
+> @@ -3074,10 +3071,9 @@ static int mtf_test_show(struct seq_file *sf, void *data)
+>                 seq_printf(sf, "Test %d: %d\n", gr->testcase + 1, gr->result);
+>
+>                 list_for_each_entry(tr, &gr->tr_lst, link) {
+> -                       seq_printf(sf, "%u %d %llu.%09u %u %u.%02u\n",
+> -                               tr->count, tr->sectors,
+> -                               (u64)tr->ts.tv_sec, (u32)tr->ts.tv_nsec,
+> -                               tr->rate, tr->iops / 100, tr->iops % 100);
+> +                       seq_printf(sf, "%u %d %ptSp %u %u.%02u\n",
+> +                                  tr->count, tr->sectors, &tr->ts, tr->rate,
+> +                                  tr->iops / 100, tr->iops % 100);
+>                 }
+>         }
+>
+> --
+> 2.50.1
+>
 
