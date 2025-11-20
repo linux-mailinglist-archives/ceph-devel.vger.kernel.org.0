@@ -1,515 +1,534 @@
-Return-Path: <ceph-devel+bounces-4097-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4098-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11389C716E6
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Nov 2025 00:17:16 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE885C7489C
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Nov 2025 15:26:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by tor.lore.kernel.org (Postfix) with ESMTPS id 99DEC29624
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Nov 2025 23:17:14 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTPS id 05AD930217
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Nov 2025 14:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042E72E7651;
-	Wed, 19 Nov 2025 23:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7454832FA27;
+	Thu, 20 Nov 2025 14:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AIimETk8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cDFRFQB2";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="HAT56BWu"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DFB285073;
-	Wed, 19 Nov 2025 23:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763594229; cv=fail; b=NnYupfZ2nvRWYlQzqjeQMdEaPbCZQhs5hHFA9Sf2s4pjUIXfyDdw/A7VWZIiGqjAWpejMZXbrQ29P4pkzyaKuFEQuqS7O/2JmRZYF55T93iUSsc6J2gVa8hsaO0hYgU4KrJ/vnBahibiv00hvKpOA974wyqhih2chxAJDT7kgk4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763594229; c=relaxed/simple;
-	bh=fNBbdslBfQd41AhcBP8xY8A6Q8DurFp6bZEtmzsVViY=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=NmXjmoXtc7Ns8taSfQtuXWt9b2Mhh+yDVfNFE++VsVOdKJ6OHCzv5PqSfSVUFzEt8wixhNwwcaWusL1hG7pZztbEPYfGz3K0Ej6njkbpeZRKwKm4t1RMUczQ8PBEaK2DOZMAa5BAn6dlD/J2sWgVdTowruO252gxt1W1L25rdqc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AIimETk8; arc=fail smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AJLkvID012668;
-	Wed, 19 Nov 2025 23:17:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=fNBbdslBfQd41AhcBP8xY8A6Q8DurFp6bZEtmzsVViY=; b=AIimETk8
-	wqj0bkNXOdQZfDenu5q+/VimnOYspkkWcwvwWgh/tQMetDwLZk1zXahym8WVW1Hb
-	U/tjbeZu5lrQeWDQzHhqxgEYuSWVy2Hkot9r/owrueJPHifLqutBuNW5dSJtCYZ6
-	XUK3B/j+NPw7aLSElOA7DrgkEEFy51guAKlSF3MMQH/nv6zMmJrEi0ywkM75zrNl
-	RcKW9dd1PPbzrRDz/gK1x97HuCnkNGT0upnjUGhFe8CAwhMX4B2uv6RyEm6jp070
-	sFmcNJ3xdhlgPar2NAKsbbH4aV6gFe+crBQYI9qLNzGDyJ2uAn7ne2AZXrw9JPsd
-	0+rOdoZ/bT3kug==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejgx29r3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Nov 2025 23:17:04 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AJNCdvA006988;
-	Wed, 19 Nov 2025 23:17:03 GMT
-Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazon11013050.outbound.protection.outlook.com [40.107.201.50])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aejgx29r1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Nov 2025 23:17:03 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QO1KDDzwD0QeWvHJZkhlJ6NjG9EAy2kFlCv8tXyWqvZTESx7ntriSBOnIte3Glpb79Y4qxg6cwZupgrYTV98txrL8e39nlGWLo7gtu5wykDibulMWsHNshsqXke1l5uR1xmYwlUWjZjDip/+cVNalFeCWRq6sQ+6+p1I6kEOAof2NxXZGWxAP9lg3jP1lyyJaUqP/QRkauBo9U8t2eAnmkvO9DBCfguk4YCaNgLd+GcoM1oiKsUV2R3+lCbJwrOeNrKVNNOiokTUoPHQVjoW8b83qoOhRmwZixawSCrCLvv0yQuMo37kz002cWPImGj1kYCYShk2qu8xJ8FNpr2i0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fNBbdslBfQd41AhcBP8xY8A6Q8DurFp6bZEtmzsVViY=;
- b=b1bw9jBXtGWdTOZ7eTt5sDy12BfFVNqrKpwMt8g2ne4IN5QKIkPLNDEEL/b+qrNOtymktC6qtGe00COQCQGwBGtLeFyvwrdGl0Nj0Mf+3urpEmd33WcSpgz6pm57IxYc3x3qgqdspTs8hdT/s6ktvk5Wm90MhjDFtakFlevB88vu+KY0+ULdP+aOniSiuj94i5simMr5t0VlAJOrwfRSnsli6/kBm9m35owNr9euCs/UZytLwwKXq51QKZonar0qaDVgLcgNejSLrSkbmAHn9WEvd2+2twYeZFsdcUjnJlNIzgkv66y5b6Lza70sAbOKNihiuhqrJQCJzUYwGWMJCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by PH0PR15MB4214.namprd15.prod.outlook.com (2603:10b6:510:21::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Wed, 19 Nov
- 2025 23:16:55 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9343.009; Wed, 19 Nov 2025
- 23:16:55 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: Gregory Farnum <gfarnum@redhat.com>
-CC: Viacheslav Dubeyko <vdubeyko@redhat.com>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        Patrick Donnelly
-	<pdonnell@redhat.com>,
-        Alex Markuze <amarkuze@redhat.com>,
-        Kotresh Hiremath
- Ravishankar <khiremat@redhat.com>,
-        "idryomov@gmail.com" <idryomov@gmail.com>,
-        Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>
-Thread-Topic: [EXTERNAL] Re: [PATCH] ceph: fix kernel crash in ceph_open()
-Thread-Index: AQHcWaV/RIaAnir5XkifXtXvNFHQibT6mqKAgAADQICAAAQCAA==
-Date: Wed, 19 Nov 2025 23:16:55 +0000
-Message-ID: <370dff22b63bae1296bf4a4c32a563ab3b4a1f34.camel@ibm.com>
-References: <20251119193745.595930-2-slava@dubeyko.com>
-	 <CAOi1vP-bjx9FsRq+PA1NQ8fx36xPTYMp0Li9WENmtLk=gh_Ydw@mail.gmail.com>
-	 <fe7bd125c74a2df575c6c1f2d83de13afe629a7d.camel@ibm.com>
-	 <CAJ4mKGZexNm--cKsT0sc0vmiAyWrA1a6FtmaGJ6WOsg8d_2R3w@mail.gmail.com>
-In-Reply-To:
- <CAJ4mKGZexNm--cKsT0sc0vmiAyWrA1a6FtmaGJ6WOsg8d_2R3w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|PH0PR15MB4214:EE_
-x-ms-office365-filtering-correlation-id: cba80be0-434a-440b-6acf-08de27c1baee
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|10070799003|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?OVQwbUFkK3NhRmxMcnFXMVRGc05XdTVMb0dzcUU1eWszM2NLN25uRHlXL0tE?=
- =?utf-8?B?SkxEMEtRMUpMeXVTM2dBQVRLeEV2RUZBeW0wdXE2STdvNEZuak01T2FaaWtF?=
- =?utf-8?B?VUpOc1BwVWFvQUVDbGk0ckF5MG1SSG5LTVR1VTNPSFI0aG5mUnpGYVUxaUND?=
- =?utf-8?B?RVZwelV6dlMrQVJkRGgwOG5aMTY2bXF4SVc5a1JYbGJHYXM1aER4aG1ZY0Jk?=
- =?utf-8?B?dndiSUwwZGhsVjhnSnEySFdJWktsbE1Hc0NkZ0VLa2pvcmlBWm9jL0tqY2F5?=
- =?utf-8?B?VVZaUWpUd2FFSDh2NENUcGNtZ2w5QUNWSkk5SDB6bzZKV0RXZ2xPVUpPdjhz?=
- =?utf-8?B?S01wYjhxYldGVGRtcnJrc050RHprZUgyRGEwUThZVEdMREJWRmhMelFkQXB0?=
- =?utf-8?B?QkErZTNlK3pWSVNjWEt4L2VqMi9NVm1QcW8zdGZvbFFjS3kwZVc1WThUSWQ5?=
- =?utf-8?B?ZjVKeUZDZ0FOVzBDeHhtTStoRzNYcjNiRjQ2UUl0U041ZHBVazd4cGprcWhX?=
- =?utf-8?B?T296WHpQNG5mbVU0VjRRSjJQVHFxa0RjRkE2eGp3SjAyNG1QQVNtaUNoWVVN?=
- =?utf-8?B?aEQyRmVDS1hrZ2FwSVdXSzZWcjgxQmpkaGN0RUZ0WFdNQTZRSE93SDJWSWYw?=
- =?utf-8?B?SnVFWnhZYmlxbEFRWE5Makg0bWZZdWpzanlQQ0ZQS0Z2SWVGam1hWmRvMFRG?=
- =?utf-8?B?NmdPNktReG5JeXRsa3FydWJrVUVaSzcxOU1Bb1NpVnNxUmh5aEFRMTVBeE9R?=
- =?utf-8?B?TWcyRUNhb3J1ZkgvWUxrYUVKeUZ6Vk1PU0VIU2FldU9NTmNoQkNSTGdNZFUv?=
- =?utf-8?B?TGhrY3pYQ04xOFpQVUJJMjhvZWdSZDIveFJqa1lrci8yVFBPNjFmUDdJTTMx?=
- =?utf-8?B?cTZjQUNRMDIwemFCYjF6bXBIaW9EKzJwc2oyTENqQ2tuZG1xSzFVUkxCR25u?=
- =?utf-8?B?b1pyS0tDa0VrQnlrZ1JpQXdpQ3Y3eC9aZjgvL0xLNEVhRXlFZ3ZJdExlWThN?=
- =?utf-8?B?eXRkRy82NUNSWXBycXR4TkZLbzZiWEVWb3JVSjdoLzdoSTZHZ1F2SjZXZlVs?=
- =?utf-8?B?TnVDTEgwZXY4YXNxakI4R3haT1JGL1BZVkRVOTc4ZElMc2pMYVRZRHNnTnVr?=
- =?utf-8?B?dkEyVEV5RWFvakFNT0VXTnB4YnVjQk01Q2lnKzJtOUdMUjMzcllCSHEyTk9T?=
- =?utf-8?B?cFNvMHhtYXhCS2M2Q3p3VHhia0xKUTFhZkdTeXNlRjhWKzVkQVgzMmNRSlZI?=
- =?utf-8?B?RTJRVG5ETHFtVDNqRnZBZThINEcxZHZEYnVXTEdTdjJKejVsajUyWWJ2V08v?=
- =?utf-8?B?QTRBV3VIT0o0ZENZTmMzcUtoaGhTMFNWcUdKbXdIa082b1UwQmMvb2FKTEh0?=
- =?utf-8?B?eE9XdG1IdjJHbC9CdmtIczhYelJuN3Z4RklCZWp2VTIxYWFQYTBjb0VuUjlh?=
- =?utf-8?B?Wks5YWZUTTdCTWdHZVhBT1Fzb1hqTCtRN00vYXZxR3I1QStrT01YYjlocUZz?=
- =?utf-8?B?R20zZFdwVnFLWmJTSkM5VGJQdXljNEl4UE95MUM3T3E0MHZCRDVFY01KajRs?=
- =?utf-8?B?VTN2KzFwaFpkQmxLYi8zdjd5Tk92a1FUTTUycWk4RXJMSDI4WDlCMkJabVpY?=
- =?utf-8?B?V3hGendVcEhPTzAwdFVuYlVNdWQ4RDhkYUJMRUxYQk9QcTlDR3FmY01xRGxD?=
- =?utf-8?B?YzRaRUtWQlJRTWFhWGRiMVNYbW9ocVRaMGZoSlNyVURiSlZHYjJyV0VjRFd0?=
- =?utf-8?B?cVB1b25KV1B0Y09QV25QeG5IVEorU05ESnBaZUdGMFlPd2tWemQ2dFQ4L1RV?=
- =?utf-8?B?MXB0MzN0b2w4M0NDbk9kQzkvakk3L0l6L2lxWmpqUHpLV1Z0bDJwcHVvcjZY?=
- =?utf-8?B?VUZIdmxRaEs0ODgya2hsblZTRXljeXVWdm02SUVGNDhPNHduTyt6ZGRXSWZr?=
- =?utf-8?B?K0J4UXdvWlNBV20wd0M5d3NTWm15UFJLeUdkLytSQko1UVpvYVNwVE9jMHVV?=
- =?utf-8?B?dENqRDdxSmdRPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(10070799003)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WU01eWVibUFnVStiUXJhNDVMVkM4TlFXNG5LZkFJZFlwTUk1SVB1bTdJdTBa?=
- =?utf-8?B?ZG1ZeWNrM1RzNUhiZmZNcllXQURVR0tBTGhJVGN2OUhoZzhHNldoeHRKVjZx?=
- =?utf-8?B?elg1Uy84RFN0MGR2OHpGSlZJZGVJODJLYlp2Z21KQ0djcDB5ZWgweGhJVTFN?=
- =?utf-8?B?RXZSbmlGdjdJZFp0bzJuM2xIdEQwWGZnenRrcm1jRFh2OFVVTjV1YmlYU3hl?=
- =?utf-8?B?QUN6cjBSbFRsU0ZDQU0venovaU9oeGkydWhoa1MwNjhDSUFXMytwOHI1V0RG?=
- =?utf-8?B?SElLRng1R3FOaXZvT0k3NU9rSW5vU1A3R2MxWUhyWEIrd1kxUVIwWmJ6Nzlh?=
- =?utf-8?B?VmdZUkthYm9idjZMbHBWSi8rWEQwVUVCSjE2WW9vc2xzTVBYRHFmZWJQZGt3?=
- =?utf-8?B?NFV1S0NGQXk3K2s3b29zdnkrR1diUVBOSk1tS0xRMEp5c1hqZEdPQnJGcU85?=
- =?utf-8?B?OTlBL1BZRVBrKzYyWG9UN2kxeTlQcFBKVHZsSkZmMTYwL2hORmszR2p0ZGhJ?=
- =?utf-8?B?U29ERnVQTndOWGtkNk1HRllhcUMxbXkrNVRDQzZ2Wk8xNGVsSVFBdW5Hajlw?=
- =?utf-8?B?U0JncmRyWHNTVDExUlY0N2VOdUlaNWY2YlNidG1GWjJiNjdhcEpsVWE1RFNy?=
- =?utf-8?B?RlBZbjBmSW1qR1dLWlNMdmJzTjJHOExzZWcwNHNkWkRzYUxubWxaNHVScDJV?=
- =?utf-8?B?eFJlR1FzTWM1RmV3NmtOcm9TdFBzZTRhQ1pib013cVRHTlpCQ2Q2bkdTQjNx?=
- =?utf-8?B?dUJNbW9tWVNRaUJmRE8zU2k0M1Q1eElrQmZEeVFIaWMzK3YxYVdqeTZPU0xG?=
- =?utf-8?B?WWJ1ZmJRbUZoTXJLQVpTTUNQRzQvVFAxbTBIN0NDREZvZkVpOE1lMGR4bHRU?=
- =?utf-8?B?bzlDbEZSMCtBblRKUVl6elJtdjN1MlBlbnVhVkxnWkl2dTJWaVMvcXIrU0g4?=
- =?utf-8?B?QzdwYUJkeDNNUUxVcHQxeWhuQXNQelA0WjBvaStCbGcwQnRFSW1aaFpnYXkv?=
- =?utf-8?B?WU45SGJFc1B0eEVKTmtnblhkWHFOZXNpZTdyUGVnakJSQWNYdUg1WVZWZ1ZR?=
- =?utf-8?B?UEorSWxVNE1VWGZ4Sjgzby82WjNLUldlaGg3YjRzS09BUXF1Z2NFakJjVHEw?=
- =?utf-8?B?RmpEU2tmbmluSldVU3gvUFpieVVSV0lXeGpRd2pNbndWQ0FOTVhRN0d5aTA3?=
- =?utf-8?B?dzRoNjlUVjhTemhMdm5PTzNaYXhsSlhwRloxcVl6eWNsRjQvd0dFekxaVXFW?=
- =?utf-8?B?K29NVlBIRWhQUTdDUlhXL1FXS3ZNeEhMSTdKaFZPTVhUYjVNZ0N4bjUxRll1?=
- =?utf-8?B?UXpSUUZucVZ4Qnlud0RlS01YcnFKbnNFT3daV0pFNW13UWtXTy96NkppU1J5?=
- =?utf-8?B?U2dEZDFhcHQyeU04bG1lK2E2Q2ZMVFljVVFFeEdlNmhjdm4wNDQ4bkVFYVhm?=
- =?utf-8?B?ZmVzK2tpaWxQUUg3UTVRUGRYZWFxVDk4WFpNdndKRFpNV2lmYmhPeXlUUmtI?=
- =?utf-8?B?SUh3a0tmNHM2Nmh5bW5HWGhZcVQyWEtmSzVXdnpNUnNudnAyem5lWlF3RXdY?=
- =?utf-8?B?MllFYjUyRUZxc0NOM3lySmRxQlp6VDIwaUwzcjZxSTlndk9Mb09BNk02NWlZ?=
- =?utf-8?B?RG9hakVGejM2RlE4TVc4MGZYbmFibXdBYlVSc2E5YkNwWTdoZU01dmgyOHlK?=
- =?utf-8?B?TTlHRWNCYmZ4ek1BTlJzZEE0dHFGNHZzaVdmVWlBZkN4OU9XbkF2NVF2SjVH?=
- =?utf-8?B?bjhWcCtJTVBOMUlDTnRwa2ZxRVRSSWxTVmJnMEMwR1ZPNHZBK1I3VFdmU2VN?=
- =?utf-8?B?SElDNGRqL0w2elBLaDdqaGx3OUZuUlJBbTgxeVVHdXNHRWZWSzd5N21qMXpN?=
- =?utf-8?B?TGFJY2RlZWh1bDNSQW8rQ0c1dDlwcDJ3bkl6a1p1cENwRjBERzRRUEdtaWNN?=
- =?utf-8?B?cmU3MHZxcEpVeUJMZ2I3S0xTSnlBR0hkbEhNSHJuZm1KSzNDSHQ3SCtWVnRV?=
- =?utf-8?B?U0VMMjN4UVIvMzlkMFVRM3NPemtEOURxb2Z6M0hWU1RsSTZTWXpOUHJ1SW41?=
- =?utf-8?B?U0MvOURZbzIvaE95S2NpTXMydUhsdis3MGVoYWwvWHdPcWNqYU40WVh3SnIz?=
- =?utf-8?B?VVB4N3ZLWHVzMlVUem9FRU5WczFIRklUSFl4U2lvcnJjME4yaDV5QkFSZkdl?=
- =?utf-8?Q?e4k+54N+1prr5N/uLfJkOWI=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C6FF3BE2046FE3479DEA46D86DD005D6@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0493A2FE045
+	for <ceph-devel@vger.kernel.org>; Thu, 20 Nov 2025 14:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763648479; cv=none; b=Kf6tQVi8IP9wU4wiKeV2CuTek6xaGpjmYXmawrEIgUfxs3aKpdyQZB7rS129ESL4nHT8Uj/p/sSOVUvnh22DmHNrwE4HOrqNsA/UaePd5VcwRg/8LHvdaamkYR8e7pxH+aAnkBn/Hdj+ayoYoaDeduIKEBZYRCo0yB8BgZCO9ho=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763648479; c=relaxed/simple;
+	bh=90bwdrSXnGV2AwpfXE41UB0u6TS8LAvPo4Iw+fEwR1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ENHBJFH/q8TVngu42c6pMj5O/o2kePmUH2tcTBi0BP0/2i5iMYBn94LFblP1wvj6QduByGvVMJ259jvkvORsNoHLYBGw1McfM5F8kOnrrJJ/ugh07AlNTlUtQHKPgLgVUsXORjbOuIv9b2aFLcNWIhqTPJrF2HQ3T9MktjvMEz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cDFRFQB2; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=HAT56BWu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763648475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0HC8LsMTSJRYHRNwi1nxukmbWM79j/db925ZKIbJYuY=;
+	b=cDFRFQB2yr+cUGfeuxhgK9rXcCbpLmT6+UZQZzn9B0R/YYhtxb3vgvzMTNJoPEqCjiMw1d
+	J1uul9uFP9bSMP3iA8wVHpQcNdh9klBw53Hyj2I5MRo2jB+XjXoPTWcJAWbnbcUzhlpm2Z
+	uIUcbhDxxgSbYV4vsEdW2/utHw/bC6A=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-226-lX1sK1KzMCSdqZT2QwNt3Q-1; Thu, 20 Nov 2025 09:21:13 -0500
+X-MC-Unique: lX1sK1KzMCSdqZT2QwNt3Q-1
+X-Mimecast-MFC-AGG-ID: lX1sK1KzMCSdqZT2QwNt3Q_1763648472
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-88236bcdfc4so29217716d6.1
+        for <ceph-devel@vger.kernel.org>; Thu, 20 Nov 2025 06:21:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1763648472; x=1764253272; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0HC8LsMTSJRYHRNwi1nxukmbWM79j/db925ZKIbJYuY=;
+        b=HAT56BWu52NVRwQJyCH0+Ffeis6gu/nmZdRjPbxr0O4TUmjXDrPMqrEUHocH8bJM4D
+         1dyQMyso+S9FqSgmXOg7TQ9oXOh7hLgO7+DQcXXutMXTdxmtcOieBh7F8oZepw5hEjF2
+         CGNGLOELlphHuNU60tICONo6F+fLpfaPTXtbECnLV01lSVhhWwK/8OSD0ouTiMf+hODe
+         pm7XwFBrSNPmdz+Ow/vl9q+I6w4n9okY3diIlD+T/1sa1qINMMgCoTHK76460hHDejXd
+         azoWo8jzAZClwdjZ6jzogpjkDyzJLMTDIVzF0fynyx1+dUtAs3/jk4pH6nvUqBa9V++9
+         2Cqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763648472; x=1764253272;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0HC8LsMTSJRYHRNwi1nxukmbWM79j/db925ZKIbJYuY=;
+        b=InLUd4RKA4UYg3bvtphvNsRdnZcix/o41C1jzWvIPASMbBng5JiKz2Pugs1B2bEibC
+         5UoWhuv0OTG50ynFKEZ8Y67sSFGrg4nKZ0K+/2Y47y3kHhmiu5eKgm7E3zVHD3rfqCzi
+         QesEVnNkuCFldUrSm4D6q64/X5IPLxdLhy/Dix7JpGRfRlFxg6VwvkZ8O9XHMY/y+0xr
+         OMLzrWSG4eG2AbWWG6NmXdFA2Rk6/+T7I8JyqlaxkDV9JuLcUdJhqWpnbiKDIVfQhRMV
+         EHSyEhHzLWUKpIDAtiHdQ0zwXVMAhj+jDgTNmZMmYvaE48StPUb3qwmYhaqkn2+ctXg2
+         rMUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVP+smg1CzLXoilKc9hoLT+CR+/xNyjAY3TrlqpeI7YzCcBF/y7BHh5l/tLPSOoaMtH+Vj1VdwtYWSK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx37YlGl76W6shFxcZbvqFoTZQRsR2qnrKXYyV4t8p24Na23sjw
+	gnu79kejUE7AA8TmQoD9A18BLnpwBzoUYCR9pBq12V++YeayaBh6mTme4wK3sMhPpxn+J+tXqpt
+	onYgkM9swwRDDfzJzeCHwh9K2ywmfeOZOxo8b8AMYstDnJeAh4anbGRFuAr/ryflcIa8UqmhMuI
+	ROZjb0wXePcvKFUBF0XuWaEbZT1scvea61USF8
+X-Gm-Gg: ASbGncuKTynNu4N+njFLBEPsYYiHUmcZ8o+nxo+REV4CdX/F8H6ijRFBiJyiOiUy2RE
+	0t3Z4t+HrGcFXyGqG47iyZXqc3x3OZUoVxKn5HUnoYSepimBlQUQ1FjH1MSx15sCpshST8Rz5FO
+	LTiDHX9vVf4YLOot/vJCvTUD1m2gh1FwHRGWgP+4D65JJUSZhFByo+QWTo3kPNofQKAI2lh5dor
+	5OCM0FNki6eHBfN3CpEiI0bsQ==
+X-Received: by 2002:a05:6214:4611:b0:880:53e3:3a2 with SMTP id 6a1803df08f44-8846dfc7b92mr43042206d6.11.1763648472362;
+        Thu, 20 Nov 2025 06:21:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGgtHcGMdGGzShiUCINa9C444bkPzixbinHxALJQ14MjZ/HD1sROCVgzEJnzEjTKkWogZbzjsyajFfQPw32DTQ=
+X-Received: by 2002:a05:6214:4611:b0:880:53e3:3a2 with SMTP id
+ 6a1803df08f44-8846dfc7b92mr43041706d6.11.1763648471896; Thu, 20 Nov 2025
+ 06:21:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cba80be0-434a-440b-6acf-08de27c1baee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2025 23:16:55.1398
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Xs90qUUtdc1XGqgzfTtr+l6S3vwnBsbSN050I5kWA/Wmyz8+eP+mT/f+chV1BTRXGFQgDKDBB8SfgsKGBmBfmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR15MB4214
-X-Proofpoint-GUID: BIpde0rkWNx2Xhe00DHJWPOWC33Ex66K
-X-Authority-Analysis: v=2.4 cv=YqwChoYX c=1 sm=1 tr=0 ts=691e4ff0 cx=c_pps
- a=/jEiNo7mPoItVXs2NspnyQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=P-IC7800AAAA:8 a=VnNF1IyMAAAA:8
- a=wCmvBT1CAAAA:8 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
- a=-AHQoWEkHC9oXHgjQTYA:9 a=PRpDppDLrCsA:10 a=QEXdDO2ut3YA:10
- a=d3PnA9EDa4IxuAV0gXij:22 a=6z96SAwNL0f8klobD5od:22
-X-Proofpoint-ORIG-GUID: 5xJIAf1yjB-Xjny9qJXFlFqlaiCi090y
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE1MDAzMiBTYWx0ZWRfX43IXbAc3WBQn
- JSmACwm2ObXMoecVmpnfKDbHkudbU6+r+2Tuo915+DGmQ+abrKCCRTQn0pZ2fY53xEllOfHg2HN
- egvhloWJCMXew5O4nRUs6Zu1BcVLgz+U8RLIx+doaOBpN0TefaPZ0KLJP2/gk2tnpVILkBE+Ddd
- 0X5/JmJk0ICrwP/37SPY2Fh7ZrlJcJ9sLk/V+57EwoN8VjKIb6E8FVm91f/WSQw5H4rnCRIntmK
- H2Y0jnC4pfZ9M5R3q49Siqqwud7x5MkVd+6XMkXm+UO5yvV31S1DPEUdTU2VVDRrYPfrzrOMc67
- vXb74o/r9X/hWhnvDSJbZIUsmKtGXDjSzdh1Z+Ceh+KWxMELnf8Ju7RdD5LdDjhIP8uHU42FQ7l
- E1AiOKm8R0h8SUdooONhEfmdv8YdKA==
-Subject: RE: [PATCH] ceph: fix kernel crash in ceph_open()
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-19_07,2025-11-18_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 malwarescore=0
- clxscore=1011 adultscore=0 bulkscore=0 phishscore=0 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511150032
+References: <20251119193745.595930-2-slava@dubeyko.com> <CAOi1vP-bjx9FsRq+PA1NQ8fx36xPTYMp0Li9WENmtLk=gh_Ydw@mail.gmail.com>
+ <fe7bd125c74a2df575c6c1f2d83de13afe629a7d.camel@ibm.com> <CAJ4mKGZexNm--cKsT0sc0vmiAyWrA1a6FtmaGJ6WOsg8d_2R3w@mail.gmail.com>
+ <370dff22b63bae1296bf4a4c32a563ab3b4a1f34.camel@ibm.com>
+In-Reply-To: <370dff22b63bae1296bf4a4c32a563ab3b4a1f34.camel@ibm.com>
+From: Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+Date: Thu, 20 Nov 2025 19:50:58 +0530
+X-Gm-Features: AWmQ_bkaTcEBCHAqvdduQ7msqq_0gjYiDvdJP-pV8yTlZL1pLrcSSunLs5DBw_Y
+Message-ID: <CAPgWtC58SL1=csiPa3fG7qR0sQCaUNaNDTwT1RdFTHD2BLFTZw@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix kernel crash in ceph_open()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: Gregory Farnum <gfarnum@redhat.com>, Viacheslav Dubeyko <vdubeyko@redhat.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Patrick Donnelly <pdonnell@redhat.com>, 
+	Alex Markuze <amarkuze@redhat.com>, "idryomov@gmail.com" <idryomov@gmail.com>, 
+	Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gV2VkLCAyMDI1LTExLTE5IGF0IDE1OjAyIC0wODAwLCBHcmVnb3J5IEZhcm51bSB3cm90ZTog
-DQo+IMKgDQo+IFRoYXQgZG9lc27igJl0IHNvdW5kIHJpZ2h0IOKAlCB0aGlzIGlzIGF1dGhlbnRp
-Y2F0aW9uIGNvZGUuIElmIHRoZSBhdXRob3JpemF0aW9uIGlzIHN1cHBsaWVkIGZvciBhIG5hbWVz
-cGFjZSBhbmQgd2UgYXJlIG1vdW50aW5nIHdpdGhvdXQgYSBuYW1lc3BhY2UgYXQgYWxsLCBpc27i
-gJl0IHRoYXQgYSBqYWlsYnJlYWs/IFNvIHRoZSBOVUxMIHBvaW50ZXIgc2hvdWxkIGJlIGFjY2Vw
-dGVkIGluIG9uZSBkaXJlY3Rpb24sIGJ1dCBkZW5pZWQgaW4gdGhlIG90aGVyPw0KDQpXaGF0IGlz
-IHlvdXIgcGFydGljdWxhciBzdWdnZXN0aW9uPyBJIGFtIHNpbXBseSBmaXhpbmcgdGhlIGtlcm5l
-bCBjcmFzaCBhZnRlcg0KdGhlIDIyYzczZDUyYTZkMCAoImNlcGg6IGZpeCBtdWx0aWZzIG1kcyBh
-dXRoIGNhcHMgaXNzdWUiKS4gV2UgZGlkbid0IGhhdmUgYW55DQpjaGVjayBiZWZvcmUuIERvIHlv
-dSBpbXBseSB0aGF0IDIyYzczZDUyYTZkMCAoImNlcGg6IGZpeCBtdWx0aWZzIG1kcyBhdXRoIGNh
-cHMNCmlzc3VlIikgZml4IGlzIGluY29ycmVjdCBhbmQgd2UgbmVlZCB0byByZXdvcmsgaXQgc29t
-ZWhvdz8NCg0KSWYgd2Ugd2lsbCBub3QgaGF2ZSBhbnkgZml4LCB0aGVuIDYuMTggcmVsZWFzZSB3
-aWxsIGhhdmUgYnJva2VuIENlcGhGUyBrZXJuZWwNCmNsaWVudC4NCg0KVGhhbmtzLA0KU2xhdmEu
-DQoNCj4gDQo+IE9uIFdlZCwgTm92IDE5LCAyMDI1IGF0IDI6NTTigK9QTSBWaWFjaGVzbGF2IER1
-YmV5a28gPFNsYXZhLkR1YmV5a29AaWJtLmNvbT4gd3JvdGU6DQo+ID4gT24gV2VkLCAyMDI1LTEx
-LTE5IGF0IDIzOjQwICswMTAwLCBJbHlhIERyeW9tb3Ygd3JvdGU6DQo+ID4gPiBPbiBXZWQsIE5v
-diAxOSwgMjAyNSBhdCA4OjM44oCvUE0gVmlhY2hlc2xhdiBEdWJleWtvIDxzbGF2YUBkdWJleWtv
-LmNvbT4gd3JvdGU6DQo+ID4gPiA+IA0KPiA+ID4gPiBGcm9tOiBWaWFjaGVzbGF2IER1YmV5a28g
-PFNsYXZhLkR1YmV5a29AaWJtLmNvbT4NCj4gPiA+ID4gDQo+ID4gPiA+IFRoZSBDZXBoRlMga2Vy
-bmVsIGNsaWVudCBoYXMgcmVncmVzc2lvbiBzdGFydGluZyBmcm9tIDYuMTgtcmMxLg0KPiA+ID4g
-PiANCj4gPiA+ID4gc3VkbyAuL2NoZWNrIC1nIHF1aWNrDQo+ID4gPiA+IEZTVFlQwqAgwqAgwqAg
-wqAgwqAtLSBjZXBoDQo+ID4gPiA+IFBMQVRGT1JNwqAgwqAgwqAgLS0gTGludXgveDg2XzY0IGNl
-cGgtMDAwNSA2LjE4LjAtcmM1KyAjNTIgU01QIFBSRUVNUFRfRFlOQU1JQyBGcmkNCj4gPiA+ID4g
-Tm92IDE0IDExOjI2OjE0IFBTVCAyMDI1DQo+ID4gPiA+IE1LRlNfT1BUSU9OU8KgIC0tIDE5Mi4x
-NjguMS4yMTM6MzMwMDovc2NyYXRjaA0KPiA+ID4gPiBNT1VOVF9PUFRJT05TIC0tIC1vIG5hbWU9
-YWRtaW4sbXNfbW9kZT1zZWN1cmUgMTkyLjE2OC4xLjIxMzozMzAwOi9zY3JhdGNoDQo+ID4gPiA+
-IC9tbnQvY2VwaGZzL3NjcmF0Y2gNCj4gPiA+ID4gDQo+ID4gPiA+IEtpbGxlZA0KPiA+ID4gPiAN
-Cj4gPiA+ID4gTm92IDE0IDExOjQ4OjEwIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTQuNzIzOTAy
-XSBsaWJjZXBoOiBtb24wDQo+ID4gPiA+ICgyKTE5Mi4xNjguMS4yMTM6MzMwMCBzZXNzaW9uIGVz
-dGFibGlzaGVkDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMCBjZXBoLTAwMDUga2VybmVsOiBbwqAg
-MTU0LjcyNzIyNV0gbGliY2VwaDogY2xpZW50MTY3NjE2DQo+ID4gPiA+IE5vdiAxNCAxMTo0ODox
-MSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjA4NzI2MF0gQlVHOiBrZXJuZWwgTlVMTCBwb2lu
-dGVyDQo+ID4gPiA+IGRlcmVmZXJlbmNlLCBhZGRyZXNzOiAwMDAwMDAwMDAwMDAwMDAwDQo+ID4g
-PiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjA4Nzc1Nl0gI1BG
-OiBzdXBlcnZpc29yIHJlYWQgYWNjZXNzIGluDQo+ID4gPiA+IGtlcm5lbCBtb2RlDQo+ID4gPiA+
-IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjA4ODA0M10gI1BGOiBl
-cnJvcl9jb2RlKDB4MDAwMCkgLSBub3QtDQo+ID4gPiA+IHByZXNlbnQgcGFnZQ0KPiA+ID4gPiBO
-b3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4wODgzMDJdIFBHRCAwIFA0
-RCAwDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjA4
-ODY4OF0gT29wczogT29wczogMDAwMCBbIzFdIFNNUCBLQVNBTg0KPiA+ID4gPiBOT1BUSQ0KPiA+
-ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4wOTAwODBdIENQ
-VTogNCBVSUQ6IDAgUElEOiAzNDUzIENvbW06DQo+ID4gPiA+IHhmc19pbyBOb3QgdGFpbnRlZCA2
-LjE4LjAtcmM1KyAjNTIgUFJFRU1QVCh2b2x1bnRhcnkpDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODox
-MSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjA5MTI0NV0gSGFyZHdhcmUgbmFtZTogUUVNVSBT
-dGFuZGFyZCBQQw0KPiA+ID4gPiAoaTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgMS4xNy4wLTUu
-ZmM0MiAwNC8wMS8yMDE0DQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVs
-OiBbwqAgMTU1LjA5MjEwM10gUklQOiAwMDEwOnN0cmNtcCsweDFjLzB4NDANCj4gPiA+ID4gTm92
-IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMDkyNDkzXSBDb2RlOiA5MCA5
-MCA5MCA5MCA5MCA5MCA5MCA5MA0KPiA+ID4gPiA5MCA5MCA5MCA5MCA5MCA5MCAzMSBjMCBlYiAx
-NCA2NiA2NiAyZSAwZiAxZiA4NCAwMCAwMCAwMCAwMCAwMCA5MCA0OCA4MyBjMCAwMSA4NA0KPiA+
-ID4gPiBkMiA3NCAxOSAwZiBiNiAxNCAwNyA8M2E+IDE0IDA2IDc0IGVmIDE5IGMwIDgzIGM4IDAx
-IDMxIGQyIDMxIGY2IDMxIGZmIGMzIGNjIGNjDQo+ID4gPiA+IGNjIGNjIDMxDQo+ID4gPiA+IE5v
-diAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjA5NDA1N10gUlNQOiAwMDE4
-OmZmZmY4ODgxNTM2ODc1YzANCj4gPiA+ID4gRUZMQUdTOiAwMDAxMDI0Ng0KPiA+ID4gPiBOb3Yg
-MTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4wOTQ1MjJdIFJBWDogMDAwMDAw
-MDAwMDAwMDAwMCBSQlg6DQo+ID4gPiA+IGZmZmY4ODgxMTYwMDMyMDAgUkNYOiAwMDAwMDAwMDAw
-MDAwMDAwDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1
-LjA5NTExNF0gUkRYOiAwMDAwMDAwMDAwMDAwMDYzIFJTSToNCj4gPiA+ID4gMDAwMDAwMDAwMDAw
-MDAwMCBSREk6IGZmZmY4ODgxMDEyNmM5MDANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgt
-MDAwNSBrZXJuZWw6IFvCoCAxNTUuMDk1NzE0XSBSQlA6IGZmZmY4ODgxNTM2ODc2YTggUjA4Og0K
-PiA+ID4gPiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMA0KPiA+ID4gPiBO
-b3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4wOTYyOTddIFIxMDogMDAw
-MDAwMDAwMDAwMDAwMCBSMTE6DQo+ID4gPiA+IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiBkZmZmZmMw
-MDAwMDAwMDAwDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAg
-MTU1LjA5Njg4OV0gUjEzOiBmZmZmODg4MTA2MWQwMDAwIFIxNDoNCj4gPiA+ID4gMDAwMDAwMDAw
-MDAwMDAwMCBSMTU6IDAwMDAwMDAwMDAwMDAwMDANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNl
-cGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMDk3NDkwXSBGUzrCoCAwMDAwNzRhODVjMDgyODQwKDAw
-MDApDQo+ID4gPiA+IEdTOmZmZmY4ODgyNDAxYTQwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAw
-MDAwMA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4w
-OTgxNDZdIENTOsKgIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDANCj4gPiA+ID4gQ1IwOiAwMDAwMDAw
-MDgwMDUwMDMzDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAg
-MTU1LjA5ODYzMF0gQ1IyOiAwMDAwMDAwMDAwMDAwMDAwIENSMzoNCj4gPiA+ID4gMDAwMDAwMDEx
-MGViZDAwMSBDUjQ6IDAwMDAwMDAwMDA3NzJlZjANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNl
-cGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMDk5MjE5XSBQS1JVOiA1NTU1NTU1NA0KPiA+ID4gPiBO
-b3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4wOTk0NzZdIENhbGwgVHJh
-Y2U6DQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjA5
-OTY4Nl3CoCA8VEFTSz4NCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6
-IFvCoCAxNTUuMDk5ODczXcKgID8NCj4gPiA+ID4gY2VwaF9tZHNfY2hlY2tfYWNjZXNzKzB4MzQ4
-LzB4MTc2MA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1
-NS4xMDAyNjddwqAgPw0KPiA+ID4gPiBfX2thc2FuX2NoZWNrX3dyaXRlKzB4MTQvMHgzMA0KPiA+
-ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMDA2NzFdwqAg
-PyBsb2NrcmVmX2dldCsweGIxLzB4MTcwDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAw
-MDUga2VybmVsOiBbwqAgMTU1LjEwMDk3OV3CoCA/DQo+ID4gPiA+IF9fcGZ4X19yYXdfc3Bpbl9s
-b2NrKzB4MTAvMHgxMA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDog
-W8KgIDE1NS4xMDEzNzJdwqAgY2VwaF9vcGVuKzB4MzIyLzB4ZWYwDQo+ID4gPiA+IE5vdiAxNCAx
-MTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEwMTY2OV3CoCA/IF9fcGZ4X2NlcGhf
-b3BlbisweDEwLzB4MTANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6
-IFvCoCAxNTUuMTAxOTk2XcKgID8NCj4gPiA+ID4gX19wZnhfYXBwYXJtb3JfZmlsZV9vcGVuKzB4
-MTAvMHgxMA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1
-NS4xMDI0MzRdwqAgPw0KPiA+ID4gPiBfX2NlcGhfY2Fwc19pc3N1ZWRfbWFza19tZXRyaWMrMHhk
-Ni8weDE4MA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1
-NS4xMDI5MTFdwqAgZG9fZGVudHJ5X29wZW4rMHg3YmYvMHgxMGUwDQo+ID4gPiA+IE5vdiAxNCAx
-MTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEwMzI0OV3CoCA/IF9fcGZ4X2NlcGhf
-b3BlbisweDEwLzB4MTANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6
-IFvCoCAxNTUuMTAzNTA4XcKgIHZmc19vcGVuKzB4NmQvMHg0NTANCj4gPiA+ID4gTm92IDE0IDEx
-OjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMTAzNjk3XcKgID8gbWF5X29wZW4rMHhl
-Yy8weDM3MA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1
-NS4xMDM4OTNdwqAgcGF0aF9vcGVuYXQrMHgyMDE3LzB4NTBhMA0KPiA+ID4gPiBOb3YgMTQgMTE6
-NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMDQxMTBdwqAgPyBfX3BmeF9wYXRoX29w
-ZW5hdCsweDEwLzB4MTANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6
-IFvCoCAxNTUuMTA0MzQ1XcKgID8NCj4gPiA+ID4gX19wZnhfc3RhY2tfdHJhY2Vfc2F2ZSsweDEw
-LzB4MTANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUu
-MTA0NTk5XcKgID8NCj4gPiA+ID4gc3RhY2tfZGVwb3Rfc2F2ZV9mbGFncysweDI4LzB4OGYwDQo+
-ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEwNDg2NV3C
-oCA/IHN0YWNrX2RlcG90X3NhdmUrMHhlLzB4MjANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNl
-cGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMTA1MDYzXcKgIGRvX2ZpbHBfb3BlbisweDFiNC8weDQ1
-MA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMDUy
-NTNdwqAgPw0KPiA+ID4gPiBfX3BmeF9fcmF3X3NwaW5fbG9ja19pcnFzYXZlKzB4MTAvMHgxMA0K
-PiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMDU1Mzhd
-wqAgPyBfX3BmeF9kb19maWxwX29wZW4rMHgxMC8weDEwDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODox
-MSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEwNTc0OF3CoCA/IF9fbGlua19vYmplY3QrMHgx
-M2QvMHgyYjANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAx
-NTUuMTA1OTQ5XcKgID8NCj4gPiA+ID4gX19wZnhfX3Jhd19zcGluX2xvY2srMHgxMC8weDEwDQo+
-ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEwNjE2OV3C
-oCA/DQo+ID4gPiA+IF9fY2hlY2tfb2JqZWN0X3NpemUrMHg0NTMvMHg2MDANCj4gPiA+ID4gTm92
-IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMTA2NDI4XcKgID8gX3Jhd19z
-cGluX3VubG9jaysweGUvMHg0MA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtl
-cm5lbDogW8KgIDE1NS4xMDY2MzVdwqAgZG9fc3lzX29wZW5hdDIrMHhlNi8weDE4MA0KPiA+ID4g
-PiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMDY4MjddwqAgPw0K
-PiA+ID4gPiBfX3BmeF9kb19zeXNfb3BlbmF0MisweDEwLzB4MTANCj4gPiA+ID4gTm92IDE0IDEx
-OjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMTA3MDUyXcKgIF9feDY0X3N5c19vcGVu
-YXQrMHgxMDgvMHgyNDANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6
-IFvCoCAxNTUuMTA3MjU4XcKgID8NCj4gPiA+ID4gX19wZnhfX194NjRfc3lzX29wZW5hdCsweDEw
-LzB4MTANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUu
-MTA3NTI5XcKgID8NCj4gPiA+ID4gX19wZnhfX19oYW5kbGVfbW1fZmF1bHQrMHgxMC8weDEwDQo+
-ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEwNzc4M13C
-oCB4NjRfc3lzX2NhbGwrMHgxMzRmLzB4MjM1MA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2Vw
-aC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMDgwMDddwqAgZG9fc3lzY2FsbF82NCsweDgyLzB4ZDUw
-DQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEwODIw
-MV3CoCA/DQo+ID4gPiA+IGZwcmVnc19hc3NlcnRfc3RhdGVfY29uc2lzdGVudCsweDVjLzB4MTAw
-DQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEwODQ2
-N13CoCA/IGRvX3N5c2NhbGxfNjQrMHhiYS8weGQ1MA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEg
-Y2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMDg2MjZdwqAgPyBfX2thc2FuX2NoZWNrX3JlYWQr
-MHgxMS8weDIwDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAg
-MTU1LjEwODgwMV3CoCA/DQo+ID4gPiA+IGNvdW50X21lbWNnX2V2ZW50cysweDI1Yi8weDQwMA0K
-PiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMDkwMTNd
-wqAgPyBoYW5kbGVfbW1fZmF1bHQrMHgzOGIvMHg2YTANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjEx
-IGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMTA5MjE2XcKgID8gX19rYXNhbl9jaGVja19yZWFk
-KzB4MTEvMHgyMA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8Kg
-IDE1NS4xMDk0NTddwqAgPw0KPiA+ID4gPiBmcHJlZ3NfYXNzZXJ0X3N0YXRlX2NvbnNpc3RlbnQr
-MHg1Yy8weDEwMA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8Kg
-IDE1NS4xMDk3MjRdwqAgPw0KPiA+ID4gPiBpcnFlbnRyeV9leGl0X3RvX3VzZXJfbW9kZSsweDJl
-LzB4MmEwDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1
-LjEwOTk5MV3CoCA/IGlycWVudHJ5X2V4aXQrMHg0My8weDUwDQo+ID4gPiA+IE5vdiAxNCAxMTo0
-ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjExMDE4MF3CoCA/IGV4Y19wYWdlX2ZhdWx0
-KzB4OTUvMHgxMDANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvC
-oCAxNTUuMTEwMzg5XQ0KPiA+ID4gPiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg3
-Ni8weDdlDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1
-LjExMDYzOF0gUklQOiAwMDMzOjB4NzRhODViZjE0NWFiDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODox
-MSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjExMDgyMV0gQ29kZTogMjUgMDAgMDAgNDEgMDAg
-M2QgMDAgMDANCj4gPiA+ID4gNDEgMDAgNzQgNGIgNjQgOGIgMDQgMjUgMTggMDAgMDAgMDAgODUg
-YzAgNzUgNjcgNDQgODkgZTIgNDggODkgZWUgYmYgOWMgZmYgZmYgZmYNCj4gPiA+ID4gYjggMDEg
-MDEgMDAgMDAgMGYgMDUgPDQ4PiAzZCAwMCBmMCBmZiBmZiAwZiA4NyA5MSAwMCAwMCAwMCA0OCA4
-YiA1NCAyNCAyOCA2NCA0OA0KPiA+ID4gPiAyYiAxNCAyNQ0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6
-MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMTE3MjRdIFJTUDogMDAyYjowMDAwN2ZmYzc3
-ZDMxNmQwDQo+ID4gPiA+IEVGTEFHUzogMDAwMDAyNDYgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAx
-MDENCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMTEy
-MDgwXSBSQVg6IGZmZmZmZmZmZmZmZmZmZGEgUkJYOg0KPiA+ID4gPiAwMDAwMDAwMDAwMDAwMDAy
-IFJDWDogMDAwMDc0YTg1YmYxNDVhYg0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1
-IGtlcm5lbDogW8KgIDE1NS4xMTI0NDJdIFJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6DQo+ID4g
-PiA+IDAwMDA3ZmZjNzdkMzI3ODkgUkRJOiAwMDAwMDAwMGZmZmZmZjljDQo+ID4gPiA+IE5vdiAx
-NCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjExMjc5MF0gUkJQOiAwMDAwN2Zm
-Yzc3ZDMyNzg5IFIwODoNCj4gPiA+ID4gMDAwMDdmZmM3N2QzMTk4MCBSMDk6IDAwMDAwMDAwMDAw
-MDAwMDANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUu
-MTEzMTI1XSBSMTA6IDAwMDAwMDAwMDAwMDAwMDAgUjExOg0KPiA+ID4gPiAwMDAwMDAwMDAwMDAw
-MjQ2IFIxMjogMDAwMDAwMDAwMDAwMDAwMA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0w
-MDA1IGtlcm5lbDogW8KgIDE1NS4xMTM1MDJdIFIxMzogMDAwMDAwMDBmZmZmZmZmZiBSMTQ6DQo+
-ID4gPiA+IDAwMDAwMDAwMDAwMDAxODAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxDQo+ID4gPiA+IE5v
-diAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjExMzgzOF3CoCA8L1RBU0s+
-DQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjExMzk1
-N10gTW9kdWxlcyBsaW5rZWQgaW46DQo+ID4gPiA+IGludGVsX3JhcGxfbXNyIGludGVsX3JhcGxf
-Y29tbW9uIGludGVsX3VuY29yZV9mcmVxdWVuY3lfY29tbW9uIGludGVsX3BtY19jb3JlDQo+ID4g
-PiA+IHBtdF90ZWxlbWV0cnkgcG10X2Rpc2NvdmVyeSBwbXRfY2xhc3MgaW50ZWxfcG1jX3NzcmFt
-X3RlbGVtZXRyeSBpbnRlbF92c2VjDQo+ID4gPiA+IGt2bV9pbnRlbCBrdm0gam95ZGV2IGlycWJ5
-cGFzcyBwb2x5dmFsX2NsbXVsbmkgZ2hhc2hfY2xtdWxuaV9pbnRlbCBhZXNuaV9pbnRlbA0KPiA+
-ID4gPiByYXBsIGZsb3BweSBpbnB1dF9sZWRzIHBzbW91c2UgaTJjX3BpaXg0IHZnYTE2ZmIgbWFj
-X2hpZCBpMmNfc21idXMgdmdhc3RhdGUNCj4gPiA+ID4gc2VyaW9fcmF3IGJvY2hzIHFlbXVfZndf
-Y2ZnIHBhdGFfYWNwaSBzY2hfZnFfY29kZWwgcmJkIG1zciBwYXJwb3J0X3BjIHBwZGV2IGxwDQo+
-ID4gPiA+IHBhcnBvcnQgZWZpX3BzdG9yZQ0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0w
-MDA1IGtlcm5lbDogW8KgIDE1NS4xMTYzMzldIENSMjogMDAwMDAwMDAwMDAwMDAwMA0KPiA+ID4g
-PiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMTY1NzRdIC0tLVsg
-ZW5kIHRyYWNlIDAwMDAwMDAwMDAwMDAwMDANCj4gPiA+ID4gXS0tLQ0KPiA+ID4gPiBOb3YgMTQg
-MTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMTY4MjZdIFJJUDogMDAxMDpzdHJj
-bXArMHgxYy8weDQwDQo+ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBb
-wqAgMTU1LjExNzA1OF0gQ29kZTogOTAgOTAgOTAgOTAgOTAgOTAgOTAgOTANCj4gPiA+ID4gOTAg
-OTAgOTAgOTAgOTAgOTAgMzEgYzAgZWIgMTQgNjYgNjYgMmUgMGYgMWYgODQgMDAgMDAgMDAgMDAg
-MDAgOTAgNDggODMgYzAgMDEgODQNCj4gPiA+ID4gZDIgNzQgMTkgMGYgYjYgMTQgMDcgPDNhPiAx
-NCAwNiA3NCBlZiAxOSBjMCA4MyBjOCAwMSAzMSBkMiAzMSBmNiAzMSBmZiBjMyBjYyBjYw0KPiA+
-ID4gPiBjYyBjYyAzMQ0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEgY2VwaC0wMDA1IGtlcm5lbDog
-W8KgIDE1NS4xMTgwNzBdIFJTUDogMDAxODpmZmZmODg4MTUzNjg3NWMwDQo+ID4gPiA+IEVGTEFH
-UzogMDAwMTAyNDYNCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6IFvC
-oCAxNTUuMTE4MzYyXSBSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJYOg0KPiA+ID4gPiBmZmZmODg4
-MTE2MDAzMjAwIFJDWDogMDAwMDAwMDAwMDAwMDAwMA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6MTEg
-Y2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMTg3NDhdIFJEWDogMDAwMDAwMDAwMDAwMDA2MyBS
-U0k6DQo+ID4gPiA+IDAwMDAwMDAwMDAwMDAwMDAgUkRJOiBmZmZmODg4MTAxMjZjOTAwDQo+ID4g
-PiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjExOTExNl0gUkJQ
-OiBmZmZmODg4MTUzNjg3NmE4IFIwODoNCj4gPiA+ID4gMDAwMDAwMDAwMDAwMDAwMCBSMDk6IDAw
-MDAwMDAwMDAwMDAwMDANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNlcGgtMDAwNSBrZXJuZWw6
-IFvCoCAxNTUuMTE5NDkyXSBSMTA6IDAwMDAwMDAwMDAwMDAwMDAgUjExOg0KPiA+ID4gPiAwMDAw
-MDAwMDAwMDAwMDAwIFIxMjogZGZmZmZjMDAwMDAwMDAwMA0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6
-MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMTk4NjVdIFIxMzogZmZmZjg4ODEwNjFkMDAw
-MCBSMTQ6DQo+ID4gPiA+IDAwMDAwMDAwMDAwMDAwMDAgUjE1OiAwMDAwMDAwMDAwMDAwMDAwDQo+
-ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEyMDI0Ml0g
-RlM6wqAgMDAwMDc0YTg1YzA4Mjg0MCgwMDAwKQ0KPiA+ID4gPiBHUzpmZmZmODg4MjQwMWE0MDAw
-KDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCj4gPiA+ID4gTm92IDE0IDExOjQ4OjExIGNl
-cGgtMDAwNSBrZXJuZWw6IFvCoCAxNTUuMTIwNzA0XSBDUzrCoCAwMDEwIERTOiAwMDAwIEVTOiAw
-MDAwDQo+ID4gPiA+IENSMDogMDAwMDAwMDA4MDA1MDAzMw0KPiA+ID4gPiBOb3YgMTQgMTE6NDg6
-MTEgY2VwaC0wMDA1IGtlcm5lbDogW8KgIDE1NS4xMjEwMDhdIENSMjogMDAwMDAwMDAwMDAwMDAw
-MCBDUjM6DQo+ID4gPiA+IDAwMDAwMDAxMTBlYmQwMDEgQ1I0OiAwMDAwMDAwMDAwNzcyZWYwDQo+
-ID4gPiA+IE5vdiAxNCAxMTo0ODoxMSBjZXBoLTAwMDUga2VybmVsOiBbwqAgMTU1LjEyMTQwOV0g
-UEtSVTogNTU1NTU1NTQNCj4gPiA+ID4gDQo+ID4gPiA+IFdlIGhhdmUgaXNzdWUgaGVyZSBbMV0g
-aWYgZnNfbmFtZSA9PSBOVUxMOg0KPiA+ID4gPiANCj4gPiA+ID4gY29uc3QgY2hhciBmc19uYW1l
-ID0gbWRzYy0+ZnNjLT5tb3VudF9vcHRpb25zLT5tZHNfbmFtZXNwYWNlOw0KPiA+ID4gPiDCoCDC
-oCDCoC4uLg0KPiA+ID4gPiDCoCDCoCDCoGlmIChhdXRoLT5tYXRjaC5mc19uYW1lICYmIHN0cmNt
-cChhdXRoLT5tYXRjaC5mc19uYW1lLCBmc19uYW1lKSkgew0KPiA+ID4gPiDCoCDCoCDCoCDCoCDC
-oCDCoCDCoC8gZnNuYW1lIG1pc21hdGNoLCB0cnkgbmV4dCBvbmUgKi8NCj4gPiA+ID4gwqAgwqAg
-wqAgwqAgwqAgwqAgwqByZXR1cm4gMDsNCj4gPiA+ID4gwqAgwqAgwqB9DQo+ID4gPiA+IA0KPiA+
-ID4gPiBUaGUgcGF0Y2ggZml4ZXMgdGhlIGlzc3VlIGJ5IGludHJvZHVjaW5nIGlzX2ZzbmFtZV9t
-aXNtYXRjaCgpIG1ldGhvZA0KPiA+ID4gPiB0aGF0IGNoZWNrcyBhdXRoLT5tYXRjaC5mc19uYW1l
-IGFuZCBmc19uYW1lIHBvaW50ZXJzIHZhbGlkaXR5LCBhbmQNCj4gPiA+ID4gY29tcGFyZXMgdGhl
-IGZpbGUgc3lzdGVtIG5hbWVzLg0KPiA+ID4gPiANCj4gPiA+ID4gWzFdIGh0dHBzOi8vZWxpeGly
-LmJvb3RsaW4uY29tL2xpbnV4L3Y2LjE4LXJjNC9zb3VyY2UvZnMvY2VwaC9tZHNfY2xpZW50LmMj
-TDU2NjbCoCANCj4gPiA+ID4gDQo+ID4gPiA+IEZpeGVzOiAyMmM3M2Q1MmE2ZDAgKCJjZXBoOiBm
-aXggbXVsdGlmcyBtZHMgYXV0aCBjYXBzIGlzc3VlIikNCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTog
-VmlhY2hlc2xhdiBEdWJleWtvIDxTbGF2YS5EdWJleWtvQGlibS5jb20+DQo+ID4gPiA+IGNjOiBL
-b3RyZXNoIEhpcmVtYXRoIFJhdmlzaGFua2FyIDxraGlyZW1hdEByZWRoYXQuY29tPg0KPiA+ID4g
-PiBjYzogQWxleCBNYXJrdXplIDxhbWFya3V6ZUByZWRoYXQuY29tPg0KPiA+ID4gPiBjYzogSWx5
-YSBEcnlvbW92IDxpZHJ5b21vdkBnbWFpbC5jb20+DQo+ID4gPiA+IGNjOiBDZXBoIERldmVsb3Bt
-ZW50IDxjZXBoLWRldmVsQHZnZXIua2VybmVsLm9yZz4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+IMKg
-IGZzL2NlcGgvbWRzX2NsaWVudC5jIHwgMjAgKysrKysrKysrKysrKysrKystLS0NCj4gPiA+ID4g
-wqAgMSBmaWxlIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ID4g
-PiA+IA0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZnMvY2VwaC9tZHNfY2xpZW50LmMgYi9mcy9jZXBo
-L21kc19jbGllbnQuYw0KPiA+ID4gPiBpbmRleCAxNzQwMDQ3YWVmMGYuLjE5Yzc1ZTIwNjMwMCAx
-MDA2NDQNCj4gPiA+ID4gLS0tIGEvZnMvY2VwaC9tZHNfY2xpZW50LmMNCj4gPiA+ID4gKysrIGIv
-ZnMvY2VwaC9tZHNfY2xpZW50LmMNCj4gPiA+ID4gQEAgLTU2NDcsNiArNTY0NywyMiBAQCB2b2lk
-IHNlbmRfZmx1c2hfbWRsb2coc3RydWN0IGNlcGhfbWRzX3Nlc3Npb24gKnMpDQo+ID4gPiA+IMKg
-IMKgIMKgIMKgIMKgbXV0ZXhfdW5sb2NrKCZzLT5zX211dGV4KTsNCj4gPiA+ID4gwqAgfQ0KPiA+
-ID4gPiANCj4gPiA+ID4gK3N0YXRpYyBpbmxpbmUNCj4gPiA+ID4gK2Jvb2wgaXNfZnNuYW1lX21p
-c21hdGNoKHN0cnVjdCBjZXBoX2NsaWVudCAqY2wsDQo+ID4gPiA+ICvCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoGNvbnN0IGNoYXIgKmZzX25hbWUxLCBjb25zdCBjaGFyICpmc19u
-YW1lMikNCj4gPiA+ID4gK3sNCj4gPiA+ID4gK8KgIMKgIMKgIMKgaWYgKCFmc19uYW1lMSB8fCAh
-ZnNfbmFtZTIpDQo+ID4gPiA+ICvCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHJldHVybiBmYWxzZTsN
-Cj4gPiA+IA0KPiA+ID4gSGkgU2xhdmEsDQo+ID4gPiANCj4gPiA+IEl0IGxvb2tzIGxpa2UgdGhp
-cyB3b3VsZCBkZWNsYXJlIGEgbWF0Y2ggKHJldHVybiBmYWxzZSBmb3IgIm1pc21hdGNoIikNCj4g
-PiA+IGluIGNhc2UgY2VwaF9tZHNfY2FwX2F1dGggaXMgZGVmaW5lZCB0byByZXF1aXJlIGEgcGFy
-dGljdWxhciBmc19uYW1lIGJ1dA0KPiA+ID4gbm8gbWRzX25hbWVzcGFjZSB3YXMgcGFzc2VkIG9u
-IG1vdW50LsKgIElzIHRoYXQgdGhlIGRlc2lyZWQgYmVoYXZpb3I/DQo+ID4gPiANCj4gPiANCj4g
-PiBIaSBJbHlhLA0KPiA+IA0KPiA+IEJlZm9yZSAyMmM3M2Q1MmE2ZDAgKCJjZXBoOiBmaXggbXVs
-dGlmcyBtZHMgYXV0aCBjYXBzIGlzc3VlIiksIHdlIGhhZCBubyBzdWNoDQo+ID4gY2hlY2sgaW4g
-dGhlIGxvZ2ljIG9mIGNlcGhfbWRzX2F1dGhfbWF0Y2goKS4gU28sIGlmIGF1dGgtPm1hdGNoLmZz
-X25hbWUgb3INCj4gPiBmc19uYW1lIGlzIE5VTEwsIHRoZW4gd2UgY2Fubm90IHNheSB0aGF0IHRo
-ZXkgbWF0Y2ggb3Igbm90LiBJdCBtZWFucyB0aGF0IHdlDQo+ID4gbmVlZCB0byBjb250aW51ZSBs
-b2dpYywgdGhpcyBpcyB3aHkgaXNfZnNuYW1lX21pc21hdGNoKCkgcmV0dXJucyBmYWxzZS4NCj4g
-PiBPdGhlcndpc2UsIGlmIHdlIHN0b3AgbG9naWMgYnkgcmV0dXJuaW5nIHRydWUsIHRoZW4gd2Ug
-aGF2ZSBidW5jaCBvZiB4ZnN0ZXN0cw0KPiA+IGZhaWx1cmVzLg0KPiA+IA0KPiA+IFRoYW5rcywN
-Cj4gPiBTbGF2YS4NCj4gPiANCj4gPiA+ID4gKw0KPiA+ID4gPiArwqAgwqAgwqAgwqBkb3V0Yyhj
-bCwgImZzbmFtZSBjaGVjayBmc19uYW1lMT0lcyBmc19uYW1lMj0lc1xuIiwNCj4gPiA+ID4gK8Kg
-IMKgIMKgIMKgIMKgIMKgIMKgZnNfbmFtZTEsIGZzX25hbWUyKTsNCj4gPiA+ID4gKw0KPiA+ID4g
-PiArwqAgwqAgwqAgwqBpZiAoc3RyY21wKGZzX25hbWUxLCBmc19uYW1lMikpDQo+ID4gPiA+ICvC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoHJldHVybiB0cnVlOw0KPiA+ID4gPiArDQo+ID4gPiA+ICvC
-oCDCoCDCoCDCoHJldHVybiBmYWxzZTsNCj4gPiA+ID4gK30NCj4gPiA+ID4gKw0KPiA+ID4gPiDC
-oCBzdGF0aWMgaW50IGNlcGhfbWRzX2F1dGhfbWF0Y2goc3RydWN0IGNlcGhfbWRzX2NsaWVudCAq
-bWRzYywNCj4gPiA+ID4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgc3RydWN0IGNlcGhfbWRzX2NhcF9hdXRoICphdXRoLA0KPiA+ID4gPiDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBjb25zdCBzdHJ1Y3QgY3JlZCAq
-Y3JlZCwNCj4gPiA+ID4gQEAgLTU2NjEsOSArNTY3Nyw3IEBAIHN0YXRpYyBpbnQgY2VwaF9tZHNf
-YXV0aF9tYXRjaChzdHJ1Y3QgY2VwaF9tZHNfY2xpZW50ICptZHNjLA0KPiA+ID4gPiDCoCDCoCDC
-oCDCoCDCoHUzMiBnaWQsIHRsZW4sIGxlbjsNCj4gPiA+ID4gwqAgwqAgwqAgwqAgwqBpbnQgaSwg
-ajsNCj4gPiA+ID4gDQo+ID4gPiA+IC3CoCDCoCDCoCDCoGRvdXRjKGNsLCAiZnNuYW1lIGNoZWNr
-IGZzX25hbWU9JXPCoCBtYXRjaC5mc19uYW1lPSVzXG4iLA0KPiA+ID4gPiAtwqAgwqAgwqAgwqAg
-wqAgwqAgwqBmc19uYW1lLCBhdXRoLT5tYXRjaC5mc19uYW1lID8gYXV0aC0+bWF0Y2guZnNfbmFt
-ZSA6ICIiKTsNCj4gPiA+ID4gLcKgIMKgIMKgIMKgaWYgKGF1dGgtPm1hdGNoLmZzX25hbWUgJiYg
-c3RyY21wKGF1dGgtPm1hdGNoLmZzX25hbWUsIGZzX25hbWUpKSB7DQo+ID4gPiA+ICvCoCDCoCDC
-oCDCoGlmIChpc19mc25hbWVfbWlzbWF0Y2goY2wsIGF1dGgtPm1hdGNoLmZzX25hbWUsIGZzX25h
-bWUpKSB7DQo+ID4gPiA+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLyogZnNuYW1lIG1pc21h
-dGNoLCB0cnkgbmV4dCBvbmUgKi8NCj4gPiA+ID4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBy
-ZXR1cm4gMDsNCj4gPiA+ID4gwqAgwqAgwqAgwqAgwqB9DQo+ID4gPiA+IC0tDQo+ID4gPiA+IDIu
-NTEuMQ0KPiA+ID4gPiANCj4gPiANCg0KLS0gDQpWaWFjaGVzbGF2IER1YmV5a28gPFNsYXZhLkR1
-YmV5a29AaWJtLmNvbT4NCg==
+Hi All,
+
+I think the patch is necessary and fixes the crash. There is no harm
+in taking this patch as it behaves like an old kernel with this
+particular scenario.
+
+When does the issue happen:
+   - The issue happens only when the old mount syntax is used where
+passing the file system name is optional in which case, it chooses the
+default mds namespace but doesn't get filled in the
+mdsc->fsc->mount_options->mds_namespace.
+   - Along with the above, the mount user should be non admin.
+Does it break the earlier fix ?
+   - Not fully!!! Though the open does succeed, the subsequent
+operation like write would get EPERM. I am not exactly able to
+recollect but this was discussed before writing the fix 22c73d52a6d0
+("ceph: fix multifs mds auth caps issue"), it's guarded by another
+check before actual operation like write.
+
+I think there are a couple of options to fix this cleanly.
+ 1. Use the default fsname when
+mdsc->fsc->mount_options->mds_namespace is NULL during comparison.
+ 2. Mandate passing the fsname with old syntax ?
+
+
+Thanks,
+Kotresh H R
+
+
+
+On Thu, Nov 20, 2025 at 4:47=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> On Wed, 2025-11-19 at 15:02 -0800, Gregory Farnum wrote:
+> >
+> > That doesn=E2=80=99t sound right =E2=80=94 this is authentication code.=
+ If the authorization is supplied for a namespace and we are mounting witho=
+ut a namespace at all, isn=E2=80=99t that a jailbreak? So the NULL pointer =
+should be accepted in one direction, but denied in the other?
+>
+> What is your particular suggestion? I am simply fixing the kernel crash a=
+fter
+> the 22c73d52a6d0 ("ceph: fix multifs mds auth caps issue"). We didn't hav=
+e any
+> check before. Do you imply that 22c73d52a6d0 ("ceph: fix multifs mds auth=
+ caps
+> issue") fix is incorrect and we need to rework it somehow?
+>
+> If we will not have any fix, then 6.18 release will have broken CephFS ke=
+rnel
+> client.
+>
+> Thanks,
+> Slava.
+>
+> >
+> > On Wed, Nov 19, 2025 at 2:54=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubey=
+ko@ibm.com> wrote:
+> > > On Wed, 2025-11-19 at 23:40 +0100, Ilya Dryomov wrote:
+> > > > On Wed, Nov 19, 2025 at 8:38=E2=80=AFPM Viacheslav Dubeyko <slava@d=
+ubeyko.com> wrote:
+> > > > >
+> > > > > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > > > >
+> > > > > The CephFS kernel client has regression starting from 6.18-rc1.
+> > > > >
+> > > > > sudo ./check -g quick
+> > > > > FSTYP         -- ceph
+> > > > > PLATFORM      -- Linux/x86_64 ceph-0005 6.18.0-rc5+ #52 SMP PREEM=
+PT_DYNAMIC Fri
+> > > > > Nov 14 11:26:14 PST 2025
+> > > > > MKFS_OPTIONS  -- 192.168.1.213:3300:/scratch
+> > > > > MOUNT_OPTIONS -- -o name=3Dadmin,ms_mode=3Dsecure 192.168.1.213:3=
+300:/scratch
+> > > > > /mnt/cephfs/scratch
+> > > > >
+> > > > > Killed
+> > > > >
+> > > > > Nov 14 11:48:10 ceph-0005 kernel: [  154.723902] libceph: mon0
+> > > > > (2)192.168.1.213:3300 session established
+> > > > > Nov 14 11:48:10 ceph-0005 kernel: [  154.727225] libceph: client1=
+67616
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.087260] BUG: kernel NULL=
+ pointer
+> > > > > dereference, address: 0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.087756] #PF: supervisor =
+read access in
+> > > > > kernel mode
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.088043] #PF: error_code(=
+0x0000) - not-
+> > > > > present page
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.088302] PGD 0 P4D 0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.088688] Oops: Oops: 0000=
+ [#1] SMP KASAN
+> > > > > NOPTI
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.090080] CPU: 4 UID: 0 PI=
+D: 3453 Comm:
+> > > > > xfs_io Not tainted 6.18.0-rc5+ #52 PREEMPT(voluntary)
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.091245] Hardware name: Q=
+EMU Standard PC
+> > > > > (i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.092103] RIP: 0010:strcmp=
++0x1c/0x40
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.092493] Code: 90 90 90 9=
+0 90 90 90 90
+> > > > > 90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90=
+ 48 83 c0 01 84
+> > > > > d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 =
+31 ff c3 cc cc
+> > > > > cc cc 31
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.094057] RSP: 0018:ffff88=
+81536875c0
+> > > > > EFLAGS: 00010246
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.094522] RAX: 00000000000=
+00000 RBX:
+> > > > > ffff888116003200 RCX: 0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.095114] RDX: 00000000000=
+00063 RSI:
+> > > > > 0000000000000000 RDI: ffff88810126c900
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.095714] RBP: ffff8881536=
+876a8 R08:
+> > > > > 0000000000000000 R09: 0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.096297] R10: 00000000000=
+00000 R11:
+> > > > > 0000000000000000 R12: dffffc0000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.096889] R13: ffff8881061=
+d0000 R14:
+> > > > > 0000000000000000 R15: 0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.097490] FS:  000074a85c0=
+82840(0000)
+> > > > > GS:ffff8882401a4000(0000) knlGS:0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.098146] CS:  0010 DS: 00=
+00 ES: 0000
+> > > > > CR0: 0000000080050033
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.098630] CR2: 00000000000=
+00000 CR3:
+> > > > > 0000000110ebd001 CR4: 0000000000772ef0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.099219] PKRU: 55555554
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.099476] Call Trace:
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.099686]  <TASK>
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.099873]  ?
+> > > > > ceph_mds_check_access+0x348/0x1760
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.100267]  ?
+> > > > > __kasan_check_write+0x14/0x30
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.100671]  ? lockref_get+0=
+xb1/0x170
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.100979]  ?
+> > > > > __pfx__raw_spin_lock+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.101372]  ceph_open+0x322=
+/0xef0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.101669]  ? __pfx_ceph_op=
+en+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.101996]  ?
+> > > > > __pfx_apparmor_file_open+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.102434]  ?
+> > > > > __ceph_caps_issued_mask_metric+0xd6/0x180
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.102911]  do_dentry_open+=
+0x7bf/0x10e0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.103249]  ? __pfx_ceph_op=
+en+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.103508]  vfs_open+0x6d/0=
+x450
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.103697]  ? may_open+0xec=
+/0x370
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.103893]  path_openat+0x2=
+017/0x50a0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.104110]  ? __pfx_path_op=
+enat+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.104345]  ?
+> > > > > __pfx_stack_trace_save+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.104599]  ?
+> > > > > stack_depot_save_flags+0x28/0x8f0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.104865]  ? stack_depot_s=
+ave+0xe/0x20
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105063]  do_filp_open+0x=
+1b4/0x450
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105253]  ?
+> > > > > __pfx__raw_spin_lock_irqsave+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105538]  ? __pfx_do_filp=
+_open+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105748]  ? __link_object=
++0x13d/0x2b0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.105949]  ?
+> > > > > __pfx__raw_spin_lock+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.106169]  ?
+> > > > > __check_object_size+0x453/0x600
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.106428]  ? _raw_spin_unl=
+ock+0xe/0x40
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.106635]  do_sys_openat2+=
+0xe6/0x180
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.106827]  ?
+> > > > > __pfx_do_sys_openat2+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.107052]  __x64_sys_opena=
+t+0x108/0x240
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.107258]  ?
+> > > > > __pfx___x64_sys_openat+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.107529]  ?
+> > > > > __pfx___handle_mm_fault+0x10/0x10
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.107783]  x64_sys_call+0x=
+134f/0x2350
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108007]  do_syscall_64+0=
+x82/0xd50
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108201]  ?
+> > > > > fpregs_assert_state_consistent+0x5c/0x100
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108467]  ? do_syscall_64=
++0xba/0xd50
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108626]  ? __kasan_check=
+_read+0x11/0x20
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.108801]  ?
+> > > > > count_memcg_events+0x25b/0x400
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109013]  ? handle_mm_fau=
+lt+0x38b/0x6a0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109216]  ? __kasan_check=
+_read+0x11/0x20
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109457]  ?
+> > > > > fpregs_assert_state_consistent+0x5c/0x100
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109724]  ?
+> > > > > irqentry_exit_to_user_mode+0x2e/0x2a0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.109991]  ? irqentry_exit=
++0x43/0x50
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.110180]  ? exc_page_faul=
+t+0x95/0x100
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.110389]
+> > > > > entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.110638] RIP: 0033:0x74a8=
+5bf145ab
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.110821] Code: 25 00 00 4=
+1 00 3d 00 00
+> > > > > 41 00 74 4b 64 8b 04 25 18 00 00 00 85 c0 75 67 44 89 e2 48 89 ee=
+ bf 9c ff ff ff
+> > > > > b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b =
+54 24 28 64 48
+> > > > > 2b 14 25
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.111724] RSP: 002b:00007f=
+fc77d316d0
+> > > > > EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.112080] RAX: fffffffffff=
+fffda RBX:
+> > > > > 0000000000000002 RCX: 000074a85bf145ab
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.112442] RDX: 00000000000=
+00000 RSI:
+> > > > > 00007ffc77d32789 RDI: 00000000ffffff9c
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.112790] RBP: 00007ffc77d=
+32789 R08:
+> > > > > 00007ffc77d31980 R09: 0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.113125] R10: 00000000000=
+00000 R11:
+> > > > > 0000000000000246 R12: 0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.113502] R13: 00000000fff=
+fffff R14:
+> > > > > 0000000000000180 R15: 0000000000000001
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.113838]  </TASK>
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.113957] Modules linked i=
+n:
+> > > > > intel_rapl_msr intel_rapl_common intel_uncore_frequency_common in=
+tel_pmc_core
+> > > > > pmt_telemetry pmt_discovery pmt_class intel_pmc_ssram_telemetry i=
+ntel_vsec
+> > > > > kvm_intel kvm joydev irqbypass polyval_clmulni ghash_clmulni_inte=
+l aesni_intel
+> > > > > rapl floppy input_leds psmouse i2c_piix4 vga16fb mac_hid i2c_smbu=
+s vgastate
+> > > > > serio_raw bochs qemu_fw_cfg pata_acpi sch_fq_codel rbd msr parpor=
+t_pc ppdev lp
+> > > > > parport efi_pstore
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.116339] CR2: 00000000000=
+00000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.116574] ---[ end trace 0=
+000000000000000
+> > > > > ]---
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.116826] RIP: 0010:strcmp=
++0x1c/0x40
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.117058] Code: 90 90 90 9=
+0 90 90 90 90
+> > > > > 90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90=
+ 48 83 c0 01 84
+> > > > > d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 =
+31 ff c3 cc cc
+> > > > > cc cc 31
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.118070] RSP: 0018:ffff88=
+81536875c0
+> > > > > EFLAGS: 00010246
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.118362] RAX: 00000000000=
+00000 RBX:
+> > > > > ffff888116003200 RCX: 0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.118748] RDX: 00000000000=
+00063 RSI:
+> > > > > 0000000000000000 RDI: ffff88810126c900
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.119116] RBP: ffff8881536=
+876a8 R08:
+> > > > > 0000000000000000 R09: 0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.119492] R10: 00000000000=
+00000 R11:
+> > > > > 0000000000000000 R12: dffffc0000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.119865] R13: ffff8881061=
+d0000 R14:
+> > > > > 0000000000000000 R15: 0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.120242] FS:  000074a85c0=
+82840(0000)
+> > > > > GS:ffff8882401a4000(0000) knlGS:0000000000000000
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.120704] CS:  0010 DS: 00=
+00 ES: 0000
+> > > > > CR0: 0000000080050033
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.121008] CR2: 00000000000=
+00000 CR3:
+> > > > > 0000000110ebd001 CR4: 0000000000772ef0
+> > > > > Nov 14 11:48:11 ceph-0005 kernel: [  155.121409] PKRU: 55555554
+> > > > >
+> > > > > We have issue here [1] if fs_name =3D=3D NULL:
+> > > > >
+> > > > > const char fs_name =3D mdsc->fsc->mount_options->mds_namespace;
+> > > > >      ...
+> > > > >      if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_na=
+me)) {
+> > > > >              / fsname mismatch, try next one */
+> > > > >              return 0;
+> > > > >      }
+> > > > >
+> > > > > The patch fixes the issue by introducing is_fsname_mismatch() met=
+hod
+> > > > > that checks auth->match.fs_name and fs_name pointers validity, an=
+d
+> > > > > compares the file system names.
+> > > > >
+> > > > > [1] https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/ceph/mds=
+_client.c#L5666
+> > > > >
+> > > > > Fixes: 22c73d52a6d0 ("ceph: fix multifs mds auth caps issue")
+> > > > > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > > > > cc: Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+> > > > > cc: Alex Markuze <amarkuze@redhat.com>
+> > > > > cc: Ilya Dryomov <idryomov@gmail.com>
+> > > > > cc: Ceph Development <ceph-devel@vger.kernel.org>
+> > > > > ---
+> > > > >   fs/ceph/mds_client.c | 20 +++++++++++++++++---
+> > > > >   1 file changed, 17 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > > > > index 1740047aef0f..19c75e206300 100644
+> > > > > --- a/fs/ceph/mds_client.c
+> > > > > +++ b/fs/ceph/mds_client.c
+> > > > > @@ -5647,6 +5647,22 @@ void send_flush_mdlog(struct ceph_mds_sess=
+ion *s)
+> > > > >          mutex_unlock(&s->s_mutex);
+> > > > >   }
+> > > > >
+> > > > > +static inline
+> > > > > +bool is_fsname_mismatch(struct ceph_client *cl,
+> > > > > +                       const char *fs_name1, const char *fs_name=
+2)
+> > > > > +{
+> > > > > +       if (!fs_name1 || !fs_name2)
+> > > > > +               return false;
+> > > >
+> > > > Hi Slava,
+> > > >
+> > > > It looks like this would declare a match (return false for "mismatc=
+h")
+> > > > in case ceph_mds_cap_auth is defined to require a particular fs_nam=
+e but
+> > > > no mds_namespace was passed on mount.  Is that the desired behavior=
+?
+> > > >
+> > >
+> > > Hi Ilya,
+> > >
+> > > Before 22c73d52a6d0 ("ceph: fix multifs mds auth caps issue"), we had=
+ no such
+> > > check in the logic of ceph_mds_auth_match(). So, if auth->match.fs_na=
+me or
+> > > fs_name is NULL, then we cannot say that they match or not. It means =
+that we
+> > > need to continue logic, this is why is_fsname_mismatch() returns fals=
+e.
+> > > Otherwise, if we stop logic by returning true, then we have bunch of =
+xfstests
+> > > failures.
+> > >
+> > > Thanks,
+> > > Slava.
+> > >
+> > > > > +
+> > > > > +       doutc(cl, "fsname check fs_name1=3D%s fs_name2=3D%s\n",
+> > > > > +             fs_name1, fs_name2);
+> > > > > +
+> > > > > +       if (strcmp(fs_name1, fs_name2))
+> > > > > +               return true;
+> > > > > +
+> > > > > +       return false;
+> > > > > +}
+> > > > > +
+> > > > >   static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
+> > > > >                                 struct ceph_mds_cap_auth *auth,
+> > > > >                                 const struct cred *cred,
+> > > > > @@ -5661,9 +5677,7 @@ static int ceph_mds_auth_match(struct ceph_=
+mds_client *mdsc,
+> > > > >          u32 gid, tlen, len;
+> > > > >          int i, j;
+> > > > >
+> > > > > -       doutc(cl, "fsname check fs_name=3D%s  match.fs_name=3D%s\=
+n",
+> > > > > -             fs_name, auth->match.fs_name ? auth->match.fs_name =
+: "");
+> > > > > -       if (auth->match.fs_name && strcmp(auth->match.fs_name, fs=
+_name)) {
+> > > > > +       if (is_fsname_mismatch(cl, auth->match.fs_name, fs_name))=
+ {
+> > > > >                  /* fsname mismatch, try next one */
+> > > > >                  return 0;
+> > > > >          }
+> > > > > --
+> > > > > 2.51.1
+> > > > >
+> > >
+>
+> --
+> Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+
 
