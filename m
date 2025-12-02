@@ -1,348 +1,1028 @@
-Return-Path: <ceph-devel+bounces-4132-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4133-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D76C9997E
-	for <lists+ceph-devel@lfdr.de>; Tue, 02 Dec 2025 00:28:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8FC1C9B2ED
+	for <lists+ceph-devel@lfdr.de>; Tue, 02 Dec 2025 11:36:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044CC3A3FDC
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Dec 2025 23:28:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BAB554E454E
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Dec 2025 10:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CDF293C4E;
-	Mon,  1 Dec 2025 23:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5484301714;
+	Tue,  2 Dec 2025 10:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ULzZc1j6"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KMw/aTgX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f+vJAaBi";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KMw/aTgX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f+vJAaBi"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7209425F988;
-	Mon,  1 Dec 2025 23:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764631688; cv=fail; b=RPBNi6EMm+SyHP1xmG99NhgMCb+7Sg89umJVRkCKZN+0wKOIup4C6MU2prkawCJk6UBepTh2xB5Cl07rOv3fokv2YsEyLqlFQWBtYM3p8kZF9AedZlMR8UqMBTZZPYMAH14hgCOtv/wd05Wy4T48/qdaJK9jMRtkyT7GNlaCqXM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764631688; c=relaxed/simple;
-	bh=YbUldkQbvFGYn1x7SCWiHQXRL7fliYO4DcjqYL1UAkQ=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=mNYGAulclREVz0njgELyKO6rMPfjkeZBx2xdTUo1sM+x6X8Gz2B9J5AvZj3rV1iSTZ8+LtBc+wRexB73Tcr5dgdiHSCBCQHNgugCswrAyUx9NICfCR5DHqZNZWD/R+xCM6cuQLwr8oh4SpMqeXxAm9yhPZFrEnyFoL2HwQ6VWUQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ULzZc1j6; arc=fail smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5B1MNWYt005729;
-	Mon, 1 Dec 2025 23:28:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=YbUldkQbvFGYn1x7SCWiHQXRL7fliYO4DcjqYL1UAkQ=; b=ULzZc1j6
-	d6VDjnIqZKgBBZ59UoqW7CtFybwfuWDTB03P9tKf9ML8BAXoNPX29n+ARCR5b9iv
-	GMdbf6v3twlacpMgt3k0KH6xJ0g9i3PmDxs+R5t46lNbZfRhO2zSinyiJXmiUVG1
-	eXM8ciN3qBf7XZaw637vHS5705lA5Ba3Ypwq242KPWSYcE+2wLubnJIoBO1MeYHp
-	HX9/13LtF3h3jNbtLFqE7hPT0Oeh6e+LmM+MpW6OdhNH+SKWwqvyvca0Ds/SQG3W
-	aXv3CgqU6VHX+5WYmb4/p0pgWsmZuMGNz7A+iQCrvI3+J4eCcbNY5efREEI/+93U
-	Jxn8h1O/T2V+4g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aqrbg223g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Dec 2025 23:28:01 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5B1NS1FR020062;
-	Mon, 1 Dec 2025 23:28:01 GMT
-Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazon11013061.outbound.protection.outlook.com [40.93.201.61])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aqrbg223e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Dec 2025 23:28:01 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hwqUmNiL0CSOP7ky2ZnJ50k22IL05F8/TNfLe5vm8elk9VSHAyjtLQ94r1ydAo3ldlZvZxmm1q8vpRzV6hQdNRE5gOxuPSc6sDrfhvfvyDORWC8JYB5RjzKgXChy5IQZ4K8OHXPlAG7Db3HEF57iSHKcfcBBEoZEowcNp9Blysk2DNaqDXnVE/mKBTvRQNg2CivlYF2pbMFRnTN+v1sAAhbChx60vvOsQLEfS1+bFp0XOLLbUNDaVVgZwwETW+RU+NiRx8YnnswrXVYzGOHm+dtcZWmlbW2kwGzq4RUWSKjo5OANsuTSVDlQgdIagr9Rd/1JoxECa3V4tZiCsH6z+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YbUldkQbvFGYn1x7SCWiHQXRL7fliYO4DcjqYL1UAkQ=;
- b=xHEVKeKCVTJDwFlLoDS5XDYYFgCHuG6FATYLTjopqpIYELGUktCnVvbzX8AIFOXy61/dLqDm5yACOjDmMaCEpzRTJfQ3aZCpKIv9bgggCfonGuvR4W0hzESGMMuJqzQK9G8OyC/JyfxA0crCnJJvPFyEnMFHq5KG0Mbr/yBsP1T0oNQofQyew15XaSVx/bvOjq/ZOjQSPb99u+Hqt1n1D8QteH27hqFMNCE/f4jvINz7jgVlbwv86Cor4WNpGZFr/t7h+DLoOYMVyJAjzuQD4OFPnqojH7rYPbJc9aaAC2+Kl9+azrn73l7bMHNLfrtajveBiZi1l17H0gUAtmunLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by CH3PR15MB5989.namprd15.prod.outlook.com (2603:10b6:610:165::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Mon, 1 Dec
- 2025 23:27:58 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9366.012; Mon, 1 Dec 2025
- 23:27:58 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: Alex Markuze <amarkuze@redhat.com>,
-        "ceph-devel@vger.kernel.org"
-	<ceph-devel@vger.kernel.org>
-CC: Viacheslav Dubeyko <vdubeyko@redhat.com>,
-        "idryomov@gmail.com"
-	<idryomov@gmail.com>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>
-Thread-Topic: [EXTERNAL] [PATCH 2/3] ceph: parse subvolume_id from InodeStat
- v9 and store in inode
-Thread-Index: AQHcX6RV7p4M68pFQ0i9cP+uI2hUcrUNdPeA
-Date: Mon, 1 Dec 2025 23:27:57 +0000
-Message-ID: <97f3dd22baa3487f94f2966b2ddceb92ea7b2edc.camel@ibm.com>
-References: <20251127134620.2035796-1-amarkuze@redhat.com>
-	 <20251127134620.2035796-3-amarkuze@redhat.com>
-In-Reply-To: <20251127134620.2035796-3-amarkuze@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|CH3PR15MB5989:EE_
-x-ms-office365-filtering-correlation-id: 343d9a73-b97f-4569-eeb2-08de31314306
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|10070799003|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?QlVMdmdtRlBWdmxuR0dJajc1cm1CY2g2enh3TjlWVVBqOUhIMHJpckNmdDdr?=
- =?utf-8?B?OXdrM2RDMkRLYXZtMnBkU2NMSkZtdGZ6N1RmQW16MDIxUVM3bGMrQnRsZ0No?=
- =?utf-8?B?WExCZDBlMTR6dys2VE41K2lCamxmQVVxRjFNRnF3Wk5OalRmWFNJelNMbTgr?=
- =?utf-8?B?SXpjb2E1ZnlXa1VWaGxDbXZIVEZoWXY2MUdzTkJqb2J6WG5CQk1ZNVVCUmtL?=
- =?utf-8?B?cVN0SEtFWW1CaE9lbTcweVdnQXRiZXRncUxucjU4RTAvZGkzZ3hzdU02emtF?=
- =?utf-8?B?b3FwL2lTUC91MFgyQnVYUTNYU0w1VlJrK1l6M0RiTnRDc1RZQzhML1BGcGYz?=
- =?utf-8?B?NXJhN29VZ016Q0JzWWkyWVQvUXpsSzZHanBaMHlaZnV5dXJ4cG5kN3cvWTMv?=
- =?utf-8?B?YTh2R3ZuUXFva29lZEhJbzZ5L0RuZGpsOTkvSWFCMFhqSEt5MUd0WURmUnJy?=
- =?utf-8?B?V1UvckpZemRSU2RBajRCTjFMSU9YbDRjWEhlVWxxWFBSck4zSE80dEpETEQy?=
- =?utf-8?B?OGFycTZVVVpBWFlVYkhPWVNNd1piQXZ2RjlOcitQM09Tb2RUUThVZXovOHh1?=
- =?utf-8?B?T0lnQTZaQXd6YW1wUGZCM1BYcWlDOUp3VEJDTHJiYW8zcDc4TEtGZ1BOd3oz?=
- =?utf-8?B?bEJEY3dUMnliaHViNEk5dlBIcEc2S3d5N2ZobmdkNS9KejVoM3puK3dqWVE4?=
- =?utf-8?B?VFRyUnhxSnJ5TXFpNzlQWnlGbGJ0cnIwY1k5OFNoRFFMdHZRQVFRRW9vd2JN?=
- =?utf-8?B?ZXhBdjNvOEtmb3FCY0NCd2ZVVjFBOEdua213RkFMR1hxTDVEQmVxM1NYOTcy?=
- =?utf-8?B?OGhSM2FZM3Q0TkIwNW1aanZpQUF0WktLbitQcHNEUTVXN3VJWXQrUnRJRTdF?=
- =?utf-8?B?MFloclZ2ZVpPQXVtU3N1MlFDSG4zamFDcnNOOUZMbnIrMW5FQitVK2U3cnda?=
- =?utf-8?B?V3dBSTNhM0pTVnNZTTcxb1grajlSNmRwR3BLMDdjcXdHMnJqT2RMM1MzTVVp?=
- =?utf-8?B?YS9kVmp5ZzRPNFN6ZjMzODh0K2dzaWFYMklRY1VJcFRpYitRSGoxVlRpL245?=
- =?utf-8?B?WHlvSG8wNldaSkVGbXdyK3JCWmlQeTlpZjJhYXU5ekFQcytXWkoya1U5Y1JB?=
- =?utf-8?B?cXFlRlR2VERXVmt1QngvemZLaWFLVHc0amVOWmgrb09tMTlrWk52dlVEL0FY?=
- =?utf-8?B?NzZKV3BOeXJPeXdZOUs5ZStrdkgwdlpWRDV5MXV5NmphSlpHR0JrSkpmczlK?=
- =?utf-8?B?TFJUMVBhMU1uRW5jejFrd0FwUnZjRzkzdWloZGNVdGNYcVlObFUzWlUyVEg0?=
- =?utf-8?B?eDAvaUsvQ1lPejBqK3JidVRidk9YSUNOUnM5a2k3UEs1UE13bFF2OHpFMlhK?=
- =?utf-8?B?WU8xdDZ6bHRyLzhuQVdUeCtTd0lOVU4yLzRwWmMvUWZ5NkkzTjdJV2o3V1li?=
- =?utf-8?B?UkUwQlIvL2djbldvQTVFWlpIOVlmNlRHbWJIWjkvSUhsTG5Wb0IyNVZ4enRZ?=
- =?utf-8?B?R1dpQ1RJemEycUhHRitDbHBJL3M4VkF0WHZobDdRVTY1Qm9HTmlHcTdMdW5w?=
- =?utf-8?B?eW1LZEVhbVJPMld2T1psdGplWnZmdFBYSVlBOFczenJzWWdBeVhuYUg2Z1BQ?=
- =?utf-8?B?bXR4NzhzWjREZU05aWlFTWZWRVNVWXVQT3pJdFU2S2RJV0p6TFpYZ0UzaFQ1?=
- =?utf-8?B?RDB4MFJmRmxJMUFFMzdINkFQclBmZDUzTnYxUGhNdzJnNnhIN1BhQVpnR3Yr?=
- =?utf-8?B?MW01NlExdXhVbzZaVWEzbFZNWGQrWVB4aEIydEJjTkpjWm9nMVlvNVZ0dnAx?=
- =?utf-8?B?eGFoWDF5VzdUU3IrZERNUVpxTk9BdWdqWEswWDYrbEY2cFlLeldORlVRS3B4?=
- =?utf-8?B?NUxHVS9KSDAya3VHOG90d01oVGhYNlcrZ3hKT3E0Y0lkQmIzckpadjg4SGR2?=
- =?utf-8?B?dGMxNXFZWmJYN2pHd0crL3V4bmtWRFFXK1dNRHB5bUlHeUszNk5JUGtTVUtC?=
- =?utf-8?B?UWFjaldaQTR3Q0oyMmhKQm9nOEd5dHRaczBRcm5RcXZ3WVFMVTByWmJSUTN0?=
- =?utf-8?Q?YOxuLD?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?dysxU3NrdW9ESDBzT0JHMUpIeXNEbzVrZzQvbFh0TVdUd0p6Znl0a0ZTTW4w?=
- =?utf-8?B?cHB1eTY4YWVQdUNUbExHQzliMkJWTWduVTRqQ3ZadW1qVkw4bzRoRW90T3Iw?=
- =?utf-8?B?RExaeDRrelpKWituK0E3M2VIanZEaHFGZTFXUUpmRms0SHBrT1pKSm1oZHJM?=
- =?utf-8?B?Ylo0NUlXQ2FrcHpMZXBVK2N1YXplRE1RdHIvNkxEWWsyLzdQZFMyTVRHZnJI?=
- =?utf-8?B?ZjhyTVRwM1JqTG1Yc1BRUGd3d2VuV04yTkJDRFlyOVQxU0xlUE15dmZyZHd5?=
- =?utf-8?B?Nk1QNkRhMmpucDNTRklVU1lLTzF5SUxETm13dWp1bExwVjk2dGx6akpVTFB2?=
- =?utf-8?B?SHh0a2xKcjdMWEVOZzVaRm9Yd3hDbXVsd2FWVWFoZllsWEEwRHBOeEhmYWx2?=
- =?utf-8?B?YjBEcVNXb0NwYUhDdVhTU04zd1NXaVBrV1R0UGRyT1JPVkl5WklsK2I3RDZk?=
- =?utf-8?B?NlE4c3BLRmR2UGVhOVZ3MUlVUTdBSGlZNVpxSWh2a0tCR0NtMFVERXJ6aHMr?=
- =?utf-8?B?Z0p0aVFMeTNwMFRiL3dZdFNvbDRrUEFyTENyckcycjVxQTRlOWdnZGRXT25u?=
- =?utf-8?B?dUZwNnp1NkFFNDc3VXBzYzByR1ZxbGJNNHVGVU15WUVybmVER1AzNEpOR2Iz?=
- =?utf-8?B?ZjRJYiszTDVIdC93UW41N1dlanhPdEQxSnRRd2l1dVhuQWFuS3NoZXJxODRr?=
- =?utf-8?B?QkZiZUloaWxyT3JVQmZxd2M0TXEzTE1mUnliS1lGYy9CRkh1OVQ2ZnlIcUlw?=
- =?utf-8?B?VUs1V0s2MHc3MDlGT01Qb0JqUDRmbEZ6d0draklycHFLSXNzejhrWllMQStZ?=
- =?utf-8?B?YzV5QUV3L1Y5V0hvVUF2b3FvUWh4OVZvVUdzcEFId3dNUXgyZGFrdHJjU0dJ?=
- =?utf-8?B?ZXNhaCs1NWdKMFdyT09DazE2NDJVODNXckE0VkVLcS9pSVBjbWxOMFdMaDh4?=
- =?utf-8?B?UDNzYU8zak82WWQ5a01Ud3FTUkExcHV4UERxK3ExZkdhei8rY0ptRkE3RFlM?=
- =?utf-8?B?UkpnZHZnSWErbmJxbnRhYi9ZM3MyMFJnRFA2WDd5czFUd1VLRlRlakhTVmsy?=
- =?utf-8?B?R2U3SDhqOXhORXJVV1NTNVNPQXFmM0grVi93UE5YQlMvdWhTOENqUFJwYjY2?=
- =?utf-8?B?MnhTM2tRYWhqMFp0TXpEMzNlWmpha2tsUDVMVDZtSTRUdlFSQUdBWS9LRG96?=
- =?utf-8?B?b1RKMU95WlEveTBnUDZtU0pwVDQvU0FHMnV0eFRQQjJQNEd0eHlvSjhSamk5?=
- =?utf-8?B?YjZ5QjcrRXhKSlRJRVc3Tml5NDhGVEpIV0tNem1PTDY1VERLTTdNK1JabVJv?=
- =?utf-8?B?YlJsZnVreE80V1pFNzN5SEtzZXYrNkgrSUtmems1bWNFVUZMa3ptQ0JLeTJs?=
- =?utf-8?B?VHo3UzMvc3hsV0lxcDFIMnVIUC9sVkNDRitPbk1Zb1haWmE3L2p5dnBUS1I5?=
- =?utf-8?B?ckJaK1c5WFAyN2FlTXlaVnQ3d21lM3FoMHA5bmtsd1FlV2dnaE9qcHN4T1Fq?=
- =?utf-8?B?R0pYa2xvanE2WENlRFB4WURST1FEaTBCYWZtWFNZZXc3bXlVYUR4alpCSHht?=
- =?utf-8?B?N3lFYUpWeXh5b0dwVE5kVUV5cGd1WCtIdmV1YlFCQnBuVFJUWVBwRXBQNWNJ?=
- =?utf-8?B?ZlVFdDRndEhDTFpLczZvYU9sVTNtejZuRHZJaDRDelcxWmxsaVM2a1ZtN2NB?=
- =?utf-8?B?RDM1WjY5MzBsRmNLSzA0Q1lKdFd4eVIzMEdmcnFpYmZsemlTMHdPVHlPakhw?=
- =?utf-8?B?cjhpOUZXVWEzZEY3ZW41OXZabWlFOUo5c0FseWJxVHViNkx2enZxVWhkMS9D?=
- =?utf-8?B?Q2pjRUhtS3BqMFFoZ1hQNG5Qbi82cjdvYjIzZ25RTTVtK1hwQzZFNlBuMVJs?=
- =?utf-8?B?eVljZFE2b0xCaTIrcnZWcmlvQzZWcFlnRWZ3b0Y5SjNWN1BGR3FIVGc5WW9I?=
- =?utf-8?B?Q2JoSzF4cVRRQUN5TVladlVYTXJ5d0UybEtVeE55Um9LeEMwS0Yyc0x4M1kw?=
- =?utf-8?B?eWZnTUhqaExvMVZoem5HNVJkaWszeWtoNTQ1RVEzZlNTdW9FV2hOVTBqSFJj?=
- =?utf-8?B?TzVYK01HRG5kbFEwSzZtc3djYVVDdVR6VzZic3JmbW1CdlFXVXh3aGthY2Vy?=
- =?utf-8?B?U0dxQ3VaNG9EYUZ6QW10dUdVSWo2cW84akhjQUgzN0V0VXNTTGdPdjZHYmJ4?=
- =?utf-8?Q?c+uk+bVgd8Oe5kbkIdiBHhY=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6AB5FB12A50527418FF80FDEC14B5902@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4609730F953
+	for <ceph-devel@vger.kernel.org>; Tue,  2 Dec 2025 10:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764671697; cv=none; b=a+ZkvApuQjIQoO0j1qsd8y2/12ZYo+ImsaVe19Fya2xlNdhAI58/uBAeSKbH1Bz9rHHf0cDWa5ZMq/S7syAjQgFOeSTDmnv3iGzvqTORcKtBU28CyRHdYZYgTsnmtaEEO3hiWx4zEqVvMyXelyMsH32DhPWg2uFhglX0nrk7bUE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764671697; c=relaxed/simple;
+	bh=DjnGDowzE5Vu/eMo9HEGsWKahsGMzszzgLOJiW58T1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tO4n3P+4udNoXcegFh42556xBcfChFE3PaQYlHNt8Q+dUYOD7ZIhep9WlvFf0qw6JosU/SJh2CYe7OrsYWdnfb/33D4K5YrYHUXaxafGIInF2VzBYFc4kEaU6MN7o7JQ9N+I0MhnyWoF+RoX6W6sRus4bY5Yecxm0l5mJ8fVjrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KMw/aTgX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f+vJAaBi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KMw/aTgX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f+vJAaBi; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4CD8E33762;
+	Tue,  2 Dec 2025 10:34:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1764671686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PYmHZmVilXlfiQGtFVqw9TIbdkMC8EOv/CJoVyWnuVY=;
+	b=KMw/aTgX4odCGMdTnFsR7ZitV1O/FhrEhKEMddG4p3o/I0Exjxr94PLwRHGHeIubkrHbS8
+	pUCiNL0nvsurLfyLPMMCNY2JBKiyIDe/wQ6QQ671ucQPZEE7UhM6ojAIfDsA7g4pxy5Nrl
+	Uqeq1SfHGuY6nKwNuLpfLT++U1LB9Z0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1764671686;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PYmHZmVilXlfiQGtFVqw9TIbdkMC8EOv/CJoVyWnuVY=;
+	b=f+vJAaBimVG6OVyf+oPhNA35ZWqtttX81c6CJ5o769Ty9iuSCInJqIBeqD1HKCddbnmGHi
+	Y2yP4StF/9paSACQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1764671686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PYmHZmVilXlfiQGtFVqw9TIbdkMC8EOv/CJoVyWnuVY=;
+	b=KMw/aTgX4odCGMdTnFsR7ZitV1O/FhrEhKEMddG4p3o/I0Exjxr94PLwRHGHeIubkrHbS8
+	pUCiNL0nvsurLfyLPMMCNY2JBKiyIDe/wQ6QQ671ucQPZEE7UhM6ojAIfDsA7g4pxy5Nrl
+	Uqeq1SfHGuY6nKwNuLpfLT++U1LB9Z0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1764671686;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PYmHZmVilXlfiQGtFVqw9TIbdkMC8EOv/CJoVyWnuVY=;
+	b=f+vJAaBimVG6OVyf+oPhNA35ZWqtttX81c6CJ5o769Ty9iuSCInJqIBeqD1HKCddbnmGHi
+	Y2yP4StF/9paSACQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 332D73EA63;
+	Tue,  2 Dec 2025 10:34:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xGR6DMbALmlYHwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 02 Dec 2025 10:34:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D1ECFA09DA; Tue,  2 Dec 2025 11:34:45 +0100 (CET)
+Date: Tue, 2 Dec 2025 11:34:45 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Eric Van Hensbergen <ericvh@kernel.org>, 
+	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Christian Schoenebeck <linux_oss@crudebyte.com>, David Sterba <dsterba@suse.com>, 
+	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
+	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>, Chris Mason <clm@fb.com>, Xiubo Li <xiubli@redhat.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, 
+	Tyler Hicks <code@tyhicks.com>, Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, 
+	Yuezhang Mo <yuezhang.mo@sony.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Andreas Gruenbacher <agruenba@redhat.com>, Viacheslav Dubeyko <slava@dubeyko.com>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+	David Woodhouse <dwmw2@infradead.org>, Dave Kleikamp <shaggy@kernel.org>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Bob Copeland <me@bobcopeland.com>, 
+	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Bharath SM <bharathsm@microsoft.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Hans de Goede <hansg@kernel.org>, Carlos Maiolino <cem@kernel.org>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, David Hildenbrand <david@kernel.org>, 
+	NeilBrown <neilb@ownmail.net>, linux-kernel@vger.kernel.org, v9fs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev, linux-um@lists.infradead.org, 
+	linux-mm@kvack.org, linux-mtd@lists.infradead.org, 
+	jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
+	linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-xfs@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, NeilBrown <neil@brown.name>
+Subject: Re: [PATCH RESEND v3] vfs: remove the excl argument from the
+ ->create() inode_operation
+Message-ID: <emc244mwqv2o4a522e6mfwe4q5xmf43oexippa4sy7fcphnol7@oeaonoplef2f>
+References: <20251201-create-excl-v3-1-8933a444b046@kernel.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 343d9a73-b97f-4569-eeb2-08de31314306
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Dec 2025 23:27:58.0313
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YTUG6e21xLSXsFFSF6fb9mpY9iIcGB7nby78II6rCG/j/YR+qlChmx3oZdBer0q9zwnwmLqZ2JC2QOIDcSVolA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR15MB5989
-X-Proofpoint-ORIG-GUID: zzSniC-i1pT5FChaNadSguGSQ8L3RnwD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI5MDAxNiBTYWx0ZWRfXxH2SnWEdNHr0
- bU5iVPWzu3ZD3qLp7iiDCU86J/WTj/u6i0y2P0Znnv3A9hc6fehJO3GdV3PAq1K0fvjyTyq32sF
- Y30uz/TJpENmB413zhI1gXBePlSJee0i4yEsKIxmYEXmy02z/8XuDbrG4Cj4apPx9UL35woNZ4T
- fl2lk60gXjHBmqtqX6wMtiOwnKAYR6nLR2qQefgXCWL5qkaOII2j7nWDCXwB5DckRhlOlQSj/L9
- jDorkiRzPNEiQC79/sra7EEOOysQrA8MZu0+x67ZXd4clfCAScH9mwcjLjzBLTF/YEPD5p9dQnn
- kzDZ84fUMwNf3UQ0E1KXkOa0LMxmoGcr9e2MlfK5NvxLVZuNst+gbRCHVDsUevQu9qkb7+d2+8i
- xWbT9HDoQ97Idx5o3HZlrhXhy4Eldg==
-X-Authority-Analysis: v=2.4 cv=UO7Q3Sfy c=1 sm=1 tr=0 ts=692e2481 cx=c_pps
- a=fvoc8Rb8ruZSznP819E46A==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=20KFwNOVAAAA:8
- a=rxiNKpY3CPn0s67FIDEA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: SURSduuTGbgFVYaC2Rk4tnjXRoHN78av
-Subject: Re:  [PATCH 2/3] ceph: parse subvolume_id from InodeStat v9 and store
- in inode
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-28_08,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 phishscore=0 clxscore=1015 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511290016
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251201-create-excl-v3-1-8933a444b046@kernel.org>
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[ownmail.net];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,ionkov.net,codewreck.org,crudebyte.com,suse.com,redhat.com,auristor.com,gmail.com,fb.com,cs.cmu.edu,tyhicks.com,ozlabs.org,samsung.com,sony.com,mit.edu,dilger.ca,mail.parknet.co.jp,szeredi.hu,dubeyko.com,physik.fu-berlin.de,vivo.com,nod.at,cambridgegreys.com,sipsolutions.net,artax.karlin.mff.cuni.cz,linux.dev,suse.de,infradead.org,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,bobcopeland.com,omnibond.com,samba.org,manguebit.org,microsoft.com,talpey.com,huawei.com,google.com,linux-foundation.org,lwn.net,ownmail.net,vger.kernel.org,lists.linux.dev,lists.infradead.org,coda.cs.cmu.edu,lists.sourceforge.net,kvack.org,lists.orangefs.org,lists.samba.org,brown.name];
+	R_RATELIMIT(0.00)[to_ip_from(RLy3pjxfey5uh47grqbhqso5mm)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[99];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[codewreck.org:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,brown.name:email]
 
-T24gVGh1LCAyMDI1LTExLTI3IGF0IDEzOjQ2ICswMDAwLCBBbGV4IE1hcmt1emUgd3JvdGU6DQo+
-IEFkZCBzdXBwb3J0IGZvciBwYXJzaW5nIHRoZSBzdWJ2b2x1bWVfaWQgZmllbGQgZnJvbSBJbm9k
-ZVN0YXQgdjkgYW5kDQo+IHN0b3JpbmcgaXQgaW4gdGhlIGlub2RlIGZvciBsYXRlciB1c2UgYnkg
-c3Vidm9sdW1lIG1ldHJpY3MgdHJhY2tpbmcuDQo+IA0KPiBUaGUgc3Vidm9sdW1lX2lkIGlkZW50
-aWZpZXMgd2hpY2ggQ2VwaEZTIHN1YnZvbHVtZSBhbiBpbm9kZSBiZWxvbmdzIHRvLA0KPiBlbmFi
-bGluZyBwZXItc3Vidm9sdW1lIEkvTyBtZXRyaWNzIGNvbGxlY3Rpb24gYW5kIHJlcG9ydGluZy4N
-Cj4gDQo+IFRoaXMgcGF0Y2g6DQo+IC0gQWRkcyBzdWJ2b2x1bWVfaWQgZmllbGQgdG8gc3RydWN0
-IGNlcGhfbWRzX3JlcGx5X2luZm9faW4NCj4gLSBBZGRzIGlfc3Vidm9sdW1lX2lkIGZpZWxkIHRv
-IHN0cnVjdCBjZXBoX2lub2RlX2luZm8NCj4gLSBQYXJzZXMgc3Vidm9sdW1lX2lkIGZyb20gdjkg
-SW5vZGVTdGF0IGluIHBhcnNlX3JlcGx5X2luZm9faW4oKQ0KPiAtIEFkZHMgY2VwaF9pbm9kZV9z
-ZXRfc3Vidm9sdW1lKCkgaGVscGVyIHRvIHByb3BhZ2F0ZSB0aGUgSUQgdG8gaW5vZGVzDQo+IC0g
-SW5pdGlhbGl6ZXMgaV9zdWJ2b2x1bWVfaWQgaW4gaW5vZGUgYWxsb2NhdGlvbiBhbmQgY2xlYXJz
-IG9uIGRlc3Ryb3kNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFsZXggTWFya3V6ZSA8YW1hcmt1emVA
-cmVkaGF0LmNvbT4NCj4gLS0tDQo+ICBmcy9jZXBoL2lub2RlLmMgICAgICB8IDE5ICsrKysrKysr
-KysrKysrKysrKysNCj4gIGZzL2NlcGgvbWRzX2NsaWVudC5jIHwgIDcgKysrKysrKw0KPiAgZnMv
-Y2VwaC9tZHNfY2xpZW50LmggfCAgMSArDQo+ICBmcy9jZXBoL3N1cGVyLmggICAgICB8ICAyICsr
-DQo+ICA0IGZpbGVzIGNoYW5nZWQsIDI5IGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQg
-YS9mcy9jZXBoL2lub2RlLmMgYi9mcy9jZXBoL2lub2RlLmMNCj4gaW5kZXggYTZlMjYwZDllNDIw
-Li5jM2ZiNGRhYzQ2OTIgMTAwNjQ0DQo+IC0tLSBhL2ZzL2NlcGgvaW5vZGUuYw0KPiArKysgYi9m
-cy9jZXBoL2lub2RlLmMNCj4gQEAgLTYzOCw2ICs2MzgsNyBAQCBzdHJ1Y3QgaW5vZGUgKmNlcGhf
-YWxsb2NfaW5vZGUoc3RydWN0IHN1cGVyX2Jsb2NrICpzYikNCj4gIA0KPiAgCWNpLT5pX21heF9i
-eXRlcyA9IDA7DQo+ICAJY2ktPmlfbWF4X2ZpbGVzID0gMDsNCj4gKwljaS0+aV9zdWJ2b2x1bWVf
-aWQgPSAwOw0KDQpTbywgd2hpY2ggbnVtYmVyIHN0YXJ0cyB0byBpZGVudGlmeSBzdWJ2b2x1bWUg
-SUQ/IElzIDAgdmFsaWQgaWRlbnRpZmljYXRpb24NCm51bWJlcj8NCg0KSWYgMCBpcyB2YWxpZCBp
-ZGVudGlmaWNhdGlvbiBudW1iZXIsIHRoZW4gSSBhc3N1bWUgd2UgbmVlZCB0byBhc3NpZ24gc29t
-ZSBvdGhlcg0KbnVtYmVyIGJlY2F1c2Ugd2UgZG9uJ3Qga25vdyB0aGUgc3Vidm9sdW1lIElEIHll
-dC4gV2hhdCdzIGFib3V0IFU2NF9NQVgsIGZvcg0KZXhhbXBsZSwgb3Igc29tZSBvdGhlciBjb25z
-dGFudCByZXByZXNlbnRpbmcgdGhlIGludmFsaWQgdmFsdWU/DQoNCj4gIA0KPiAgCW1lbXNldCgm
-Y2ktPmlfZGlyX2xheW91dCwgMCwgc2l6ZW9mKGNpLT5pX2Rpcl9sYXlvdXQpKTsNCj4gIAltZW1z
-ZXQoJmNpLT5pX2NhY2hlZF9sYXlvdXQsIDAsIHNpemVvZihjaS0+aV9jYWNoZWRfbGF5b3V0KSk7
-DQo+IEBAIC03NDIsNiArNzQzLDggQEAgdm9pZCBjZXBoX2V2aWN0X2lub2RlKHN0cnVjdCBpbm9k
-ZSAqaW5vZGUpDQo+ICANCj4gIAlwZXJjcHVfY291bnRlcl9kZWMoJm1kc2MtPm1ldHJpYy50b3Rh
-bF9pbm9kZXMpOw0KPiAgDQo+ICsJY2ktPmlfc3Vidm9sdW1lX2lkID0gMDsNCg0KRGl0dG8uDQoN
-Cj4gKw0KPiAgCW5ldGZzX3dhaXRfZm9yX291dHN0YW5kaW5nX2lvKGlub2RlKTsNCj4gIAl0cnVu
-Y2F0ZV9pbm9kZV9wYWdlc19maW5hbCgmaW5vZGUtPmlfZGF0YSk7DQo+ICAJaWYgKGlub2RlLT5p
-X3N0YXRlICYgSV9QSU5OSU5HX05FVEZTX1dCKQ0KPiBAQCAtODczLDYgKzg3NiwxOCBAQCBpbnQg
-Y2VwaF9maWxsX2ZpbGVfc2l6ZShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBpbnQgaXNzdWVkLA0KPiAg
-CXJldHVybiBxdWV1ZV90cnVuYzsNCj4gIH0NCj4gIA0KPiArdm9pZCBjZXBoX2lub2RlX3NldF9z
-dWJ2b2x1bWUoc3RydWN0IGlub2RlICppbm9kZSwgdTY0IHN1YnZvbHVtZV9pZCkNCj4gK3sNCj4g
-KwlzdHJ1Y3QgY2VwaF9pbm9kZV9pbmZvICpjaTsNCj4gKw0KPiArCWlmICghaW5vZGUgfHwgIXN1
-YnZvbHVtZV9pZCkNCg0KQXJlIHlvdSBzdXJlIHRoYXQgMCBpcyBpbnZhbGlkIElEIGZvciBzdWJ2
-b2x1bWVfaWQ/IFdoYXQgYWJvdXQgdG8gaW50cm9kdWNlIHNvbWUNCm5hbWVkIGNvbnN0YW50IGFu
-ZCB0byBjb21wYXJlIGl0IHdpdGggc3Vidm9sdW1lX2lkIGhlcmU/IEZvciBleGFtcGxlLCB3ZSBj
-YW4NCmludHJvZHVjZSBDRVBIX0lOVkFMSURfU1VCVk9MVU1FX0lELg0KDQppZiAoIWlub2RlIHx8
-IHN1YnZvbHVtZV9pZCA9PSBDRVBIX0lOVkFMSURfU1VCVk9MVU1FX0lEKQ0KDQo+ICsJCXJldHVy
-bjsNCj4gKw0KPiArCWNpID0gY2VwaF9pbm9kZShpbm9kZSk7DQo+ICsJaWYgKFJFQURfT05DRShj
-aS0+aV9zdWJ2b2x1bWVfaWQpICE9IHN1YnZvbHVtZV9pZCkNCj4gKwkJV1JJVEVfT05DRShjaS0+
-aV9zdWJ2b2x1bWVfaWQsIHN1YnZvbHVtZV9pZCk7DQoNClNob3VsZCB0aGUgY2VwaF9pbm9kZV9z
-ZXRfc3Vidm9sdW1lKCkgb3BlcmF0aW9uIGJlIHByb3RlY3RlZCBieSBpX2NlcGhfbG9jaz8NCg0K
-SWYgY2ktPmlfc3Vidm9sdW1lX2lkIGlzIGFscmVhZHkgY29ycmVjdCB2YWx1ZSwgdGhlbiBob3cg
-Y29ycmVjdCBpcyByZXNldCBvZg0KdGhpcyB2YWx1ZT8gSSBhbSBhZnJhaWQgdGhhdCB3ZSBjb3Vs
-ZCBoYXZlIHBvdGVudGlhbCBidWdzIGhlcmUuIE1heWJlLCB3ZSBzaG91bGQNCmhhdmUgbWV0aG9k
-cyBvZiBzZXRfc3Vidm9sdW1lX2lkKCkvZGVsZXRlX3N1YnZvbHVtZV9pZCgpPw0KDQpIb3cgbG9v
-a3MgbGlrZSB0aGUgaW50ZXJmYWNlIG9mIHNldHRpbmcgYW5kIHJlc2V0dGluZyB0aGUgc3Vidm9s
-dW1lX2lkPw0KDQo+ICt9DQo+ICsNCj4gIHZvaWQgY2VwaF9maWxsX2ZpbGVfdGltZShzdHJ1Y3Qg
-aW5vZGUgKmlub2RlLCBpbnQgaXNzdWVkLA0KPiAgCQkJIHU2NCB0aW1lX3dhcnBfc2VxLCBzdHJ1
-Y3QgdGltZXNwZWM2NCAqY3RpbWUsDQo+ICAJCQkgc3RydWN0IHRpbWVzcGVjNjQgKm10aW1lLCBz
-dHJ1Y3QgdGltZXNwZWM2NCAqYXRpbWUpDQo+IEBAIC0xMDg3LDYgKzExMDIsNyBAQCBpbnQgY2Vw
-aF9maWxsX2lub2RlKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBwYWdlICpsb2NrZWRfcGFn
-ZSwNCj4gIAluZXdfaXNzdWVkID0gfmlzc3VlZCAmIGluZm9fY2FwczsNCj4gIA0KPiAgCV9fY2Vw
-aF91cGRhdGVfcXVvdGEoY2ksIGlpbmZvLT5tYXhfYnl0ZXMsIGlpbmZvLT5tYXhfZmlsZXMpOw0K
-PiArCWNlcGhfaW5vZGVfc2V0X3N1YnZvbHVtZShpbm9kZSwgaWluZm8tPnN1YnZvbHVtZV9pZCk7
-DQo+ICANCj4gICNpZmRlZiBDT05GSUdfRlNfRU5DUllQVElPTg0KPiAgCWlmIChpaW5mby0+ZnNj
-cnlwdF9hdXRoX2xlbiAmJg0KPiBAQCAtMTU5NCw2ICsxNjEwLDggQEAgaW50IGNlcGhfZmlsbF90
-cmFjZShzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLCBzdHJ1Y3QgY2VwaF9tZHNfcmVxdWVzdCAqcmVx
-KQ0KPiAgCQkJZ290byBkb25lOw0KPiAgCQl9DQo+ICAJCWlmIChwYXJlbnRfZGlyKSB7DQo+ICsJ
-CQljZXBoX2lub2RlX3NldF9zdWJ2b2x1bWUocGFyZW50X2RpciwNCj4gKwkJCQkJCSByaW5mby0+
-ZGlyaS5zdWJ2b2x1bWVfaWQpOw0KPiAgCQkJZXJyID0gY2VwaF9maWxsX2lub2RlKHBhcmVudF9k
-aXIsIE5VTEwsICZyaW5mby0+ZGlyaSwNCj4gIAkJCQkJICAgICAgcmluZm8tPmRpcmZyYWcsIHNl
-c3Npb24sIC0xLA0KPiAgCQkJCQkgICAgICAmcmVxLT5yX2NhcHNfcmVzZXJ2YXRpb24pOw0KPiBA
-QCAtMTY4Miw2ICsxNzAwLDcgQEAgaW50IGNlcGhfZmlsbF90cmFjZShzdHJ1Y3Qgc3VwZXJfYmxv
-Y2sgKnNiLCBzdHJ1Y3QgY2VwaF9tZHNfcmVxdWVzdCAqcmVxKQ0KPiAgCQlCVUdfT04oIXJlcS0+
-cl90YXJnZXRfaW5vZGUpOw0KPiAgDQo+ICAJCWluID0gcmVxLT5yX3RhcmdldF9pbm9kZTsNCj4g
-KwkJY2VwaF9pbm9kZV9zZXRfc3Vidm9sdW1lKGluLCByaW5mby0+dGFyZ2V0aS5zdWJ2b2x1bWVf
-aWQpOw0KPiAgCQllcnIgPSBjZXBoX2ZpbGxfaW5vZGUoaW4sIHJlcS0+cl9sb2NrZWRfcGFnZSwg
-JnJpbmZvLT50YXJnZXRpLA0KPiAgCQkJCU5VTEwsIHNlc3Npb24sDQo+ICAJCQkJKCF0ZXN0X2Jp
-dChDRVBIX01EU19SX0FCT1JURUQsICZyZXEtPnJfcmVxX2ZsYWdzKSAmJg0KPiBkaWZmIC0tZ2l0
-IGEvZnMvY2VwaC9tZHNfY2xpZW50LmMgYi9mcy9jZXBoL21kc19jbGllbnQuYw0KPiBpbmRleCAz
-MjU2MWZjNzAxZTUuLjZmNjYwOTdmNzQwYiAxMDA2NDQNCj4gLS0tIGEvZnMvY2VwaC9tZHNfY2xp
-ZW50LmMNCj4gKysrIGIvZnMvY2VwaC9tZHNfY2xpZW50LmMNCj4gQEAgLTEwNSw2ICsxMDUsOCBA
-QCBzdGF0aWMgaW50IHBhcnNlX3JlcGx5X2luZm9faW4odm9pZCAqKnAsIHZvaWQgKmVuZCwNCj4g
-IAlpbnQgZXJyID0gMDsNCj4gIAl1OCBzdHJ1Y3RfdiA9IDA7DQo+ICANCj4gKwlpbmZvLT5zdWJ2
-b2x1bWVfaWQgPSAwOw0KDQpTaG91bGQgd2UgaGF2ZSBtZXRob2QgZm9yIHN0cnVjdCBjZXBoX21k
-c19yZXBseV9pbmZvX2luIGxpa2V3aXNlIGZvciBzdHJ1Y3QNCmNlcGhfaW5vZGVfaW5mbz8NCg0K
-PiArDQo+ICAJaWYgKGZlYXR1cmVzID09ICh1NjQpLTEpIHsNCj4gIAkJdTMyIHN0cnVjdF9sZW47
-DQo+ICAJCXU4IHN0cnVjdF9jb21wYXQ7DQo+IEBAIC0yNDMsNiArMjQ1LDEwIEBAIHN0YXRpYyBp
-bnQgcGFyc2VfcmVwbHlfaW5mb19pbih2b2lkICoqcCwgdm9pZCAqZW5kLA0KPiAgCQkJY2VwaF9k
-ZWNvZGVfc2tpcF9uKHAsIGVuZCwgdjhfc3RydWN0X2xlbiwgYmFkKTsNCj4gIAkJfQ0KPiAgDQo+
-ICsJCS8qIHN0cnVjdF92IDkgYWRkZWQgc3Vidm9sdW1lX2lkICovDQo+ICsJCWlmIChzdHJ1Y3Rf
-diA+PSA5KQ0KPiArCQkJY2VwaF9kZWNvZGVfNjRfc2FmZShwLCBlbmQsIGluZm8tPnN1YnZvbHVt
-ZV9pZCwgYmFkKTsNCg0KQXMgZmFyIGFzIEkgcmVtZW1iZXIgZnJvbSBwcmV2aW91cyBwYXRjaCB3
-ZSBoYWQgdmVyc2lvbiA4IGFuZCB3ZSBkb24ndCBzdXBwb3J0DQppdC4gRG8gd2UgbWVhbiB0aGUg
-dmVyc2lvbiA5IG9mIGFub3RoZXIgcHJvdG9jb2wgaGVyZT8NCg0KVGhhbmtzLA0KU2xhdmEuDQoN
-Cj4gKw0KPiAgCQkqcCA9IGVuZDsNCj4gIAl9IGVsc2Ugew0KPiAgCQkvKiBsZWdhY3kgKHVudmVy
-c2lvbmVkKSBzdHJ1Y3QgKi8NCj4gQEAgLTM5NjIsNiArMzk2OCw3IEBAIHN0YXRpYyB2b2lkIGhh
-bmRsZV9yZXBseShzdHJ1Y3QgY2VwaF9tZHNfc2Vzc2lvbiAqc2Vzc2lvbiwgc3RydWN0IGNlcGhf
-bXNnICptc2cpDQo+ICAJCQlnb3RvIG91dF9lcnI7DQo+ICAJCX0NCj4gIAkJcmVxLT5yX3Rhcmdl
-dF9pbm9kZSA9IGluOw0KPiArCQljZXBoX2lub2RlX3NldF9zdWJ2b2x1bWUoaW4sIHJpbmZvLT50
-YXJnZXRpLnN1YnZvbHVtZV9pZCk7DQo+ICAJfQ0KPiAgDQo+ICAJbXV0ZXhfbG9jaygmc2Vzc2lv
-bi0+c19tdXRleCk7DQo+IGRpZmYgLS1naXQgYS9mcy9jZXBoL21kc19jbGllbnQuaCBiL2ZzL2Nl
-cGgvbWRzX2NsaWVudC5oDQo+IGluZGV4IDA0MjhhNWVhZjI4Yy4uYmQzNjkwYmFhNjVjIDEwMDY0
-NA0KPiAtLS0gYS9mcy9jZXBoL21kc19jbGllbnQuaA0KPiArKysgYi9mcy9jZXBoL21kc19jbGll
-bnQuaA0KPiBAQCAtMTE4LDYgKzExOCw3IEBAIHN0cnVjdCBjZXBoX21kc19yZXBseV9pbmZvX2lu
-IHsNCj4gIAl1MzIgZnNjcnlwdF9maWxlX2xlbjsNCj4gIAl1NjQgcnNuYXBzOw0KPiAgCXU2NCBj
-aGFuZ2VfYXR0cjsNCj4gKwl1NjQgc3Vidm9sdW1lX2lkOw0KPiAgfTsNCj4gIA0KPiAgc3RydWN0
-IGNlcGhfbWRzX3JlcGx5X2Rpcl9lbnRyeSB7DQo+IGRpZmYgLS1naXQgYS9mcy9jZXBoL3N1cGVy
-LmggYi9mcy9jZXBoL3N1cGVyLmgNCj4gaW5kZXggYTFmNzgxYzQ2YjQxLi42OTA2OWM5MjA2ODMg
-MTAwNjQ0DQo+IC0tLSBhL2ZzL2NlcGgvc3VwZXIuaA0KPiArKysgYi9mcy9jZXBoL3N1cGVyLmgN
-Cj4gQEAgLTM4NSw2ICszODUsNyBAQCBzdHJ1Y3QgY2VwaF9pbm9kZV9pbmZvIHsNCj4gIA0KPiAg
-CS8qIHF1b3RhcyAqLw0KPiAgCXU2NCBpX21heF9ieXRlcywgaV9tYXhfZmlsZXM7DQo+ICsJdTY0
-IGlfc3Vidm9sdW1lX2lkOw0KPiAgDQo+ICAJczMyIGlfZGlyX3BpbjsNCj4gIA0KPiBAQCAtMTA1
-Nyw2ICsxMDU4LDcgQEAgZXh0ZXJuIHN0cnVjdCBpbm9kZSAqY2VwaF9nZXRfaW5vZGUoc3RydWN0
-IHN1cGVyX2Jsb2NrICpzYiwNCj4gIGV4dGVybiBzdHJ1Y3QgaW5vZGUgKmNlcGhfZ2V0X3NuYXBk
-aXIoc3RydWN0IGlub2RlICpwYXJlbnQpOw0KPiAgZXh0ZXJuIGludCBjZXBoX2ZpbGxfZmlsZV9z
-aXplKHN0cnVjdCBpbm9kZSAqaW5vZGUsIGludCBpc3N1ZWQsDQo+ICAJCQkgICAgICAgdTMyIHRy
-dW5jYXRlX3NlcSwgdTY0IHRydW5jYXRlX3NpemUsIHU2NCBzaXplKTsNCj4gK2V4dGVybiB2b2lk
-IGNlcGhfaW5vZGVfc2V0X3N1YnZvbHVtZShzdHJ1Y3QgaW5vZGUgKmlub2RlLCB1NjQgc3Vidm9s
-dW1lX2lkKTsNCj4gIGV4dGVybiB2b2lkIGNlcGhfZmlsbF9maWxlX3RpbWUoc3RydWN0IGlub2Rl
-ICppbm9kZSwgaW50IGlzc3VlZCwNCj4gIAkJCQl1NjQgdGltZV93YXJwX3NlcSwgc3RydWN0IHRp
-bWVzcGVjNjQgKmN0aW1lLA0KPiAgCQkJCXN0cnVjdCB0aW1lc3BlYzY0ICptdGltZSwNCg==
+On Mon 01-12-25 08:11:42, Jeff Layton wrote:
+> With three exceptions, ->create() methods provided by filesystems ignore
+> the "excl" flag.  Those exception are NFS, GFS2 and vboxsf which all also
+> provide ->atomic_open.
+> 
+> Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
+> the "excl" argument to the ->create() inode_operation is always set to
+> true in vfs_create(). The ->create() call in lookup_open() sets it
+> according to the O_EXCL open flag, but is never called if the filesystem
+> provides ->atomic_open().
+> 
+> The excl flag is therefore always either ignored or true.  Remove it,
+> and change NFS, GFS2 and vboxsf to act as if it were always true.
+> 
+> Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
+> Reviewed-by: NeilBrown <neil@brown.name>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> I sent this a couple of weeks ago and never got a response from
+> Christian, Al or Jan. This seems like it should be a no-brainer cleanup,
+> and I think the Documentation/ updates will be helpful, so I'm guessing
+> it just slipped through the cracks.
+> 
+> A little late at this point for v6.19, so consider for v7.0 ?
+
+Yeah, sorry for that. The patch looks good to me so feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> Changes in v3:
+> - fix use of excl in vboxsf_dir_mkfile()
+> - fix tab prefixes in Documentation/filesystems/vfs.rst
+> - Link to v2: https://lore.kernel.org/r/20251107-create-excl-v2-1-f678165d7f3f@kernel.org
+> 
+> Changes in v2:
+> - better describe why the argument isn't needed in the changelog
+> - updates do Documentation/
+> - Link to v1: https://lore.kernel.org/r/20251105-create-excl-v1-1-a4cce035cc55@kernel.org
+> ---
+>  Documentation/filesystems/porting.rst | 12 ++++++++++++
+>  Documentation/filesystems/vfs.rst     | 13 ++++++++++---
+>  fs/9p/vfs_inode.c                     |  2 +-
+>  fs/9p/vfs_inode_dotl.c                |  2 +-
+>  fs/affs/affs.h                        |  2 +-
+>  fs/affs/namei.c                       |  2 +-
+>  fs/afs/dir.c                          |  4 ++--
+>  fs/bad_inode.c                        |  2 +-
+>  fs/bfs/dir.c                          |  2 +-
+>  fs/btrfs/inode.c                      |  2 +-
+>  fs/ceph/dir.c                         |  2 +-
+>  fs/coda/dir.c                         |  2 +-
+>  fs/ecryptfs/inode.c                   |  2 +-
+>  fs/efivarfs/inode.c                   |  2 +-
+>  fs/exfat/namei.c                      |  2 +-
+>  fs/ext2/namei.c                       |  2 +-
+>  fs/ext4/namei.c                       |  2 +-
+>  fs/f2fs/namei.c                       |  2 +-
+>  fs/fat/namei_msdos.c                  |  2 +-
+>  fs/fat/namei_vfat.c                   |  2 +-
+>  fs/fuse/dir.c                         |  2 +-
+>  fs/gfs2/inode.c                       |  5 ++---
+>  fs/hfs/dir.c                          |  2 +-
+>  fs/hfsplus/dir.c                      |  2 +-
+>  fs/hostfs/hostfs_kern.c               |  2 +-
+>  fs/hpfs/namei.c                       |  2 +-
+>  fs/hugetlbfs/inode.c                  |  2 +-
+>  fs/jffs2/dir.c                        |  4 ++--
+>  fs/jfs/namei.c                        |  2 +-
+>  fs/minix/namei.c                      |  2 +-
+>  fs/namei.c                            |  4 ++--
+>  fs/nfs/dir.c                          |  4 ++--
+>  fs/nfs/internal.h                     |  2 +-
+>  fs/nilfs2/namei.c                     |  2 +-
+>  fs/ntfs3/namei.c                      |  2 +-
+>  fs/ocfs2/dlmfs/dlmfs.c                |  3 +--
+>  fs/ocfs2/namei.c                      |  3 +--
+>  fs/omfs/dir.c                         |  2 +-
+>  fs/orangefs/namei.c                   |  3 +--
+>  fs/overlayfs/dir.c                    |  2 +-
+>  fs/ramfs/inode.c                      |  2 +-
+>  fs/smb/client/cifsfs.h                |  2 +-
+>  fs/smb/client/dir.c                   |  2 +-
+>  fs/ubifs/dir.c                        |  2 +-
+>  fs/udf/namei.c                        |  2 +-
+>  fs/ufs/namei.c                        |  3 +--
+>  fs/vboxsf/dir.c                       |  4 ++--
+>  fs/xfs/xfs_iops.c                     |  3 +--
+>  include/linux/fs.h                    |  4 ++--
+>  ipc/mqueue.c                          |  2 +-
+>  mm/shmem.c                            |  2 +-
+>  51 files changed, 78 insertions(+), 65 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+> index d33429294252b244e344432e4ef8f5fe07d68f2f..6e6ae5a7a387520968f3c7426acfe44196d60bbe 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1322,3 +1322,15 @@ When vfs_mkdir() returns an error, and so both dputs() the original
+>  dentry and doesn't provide a replacement, it also unlocks the parent.
+>  Consequently the return value from vfs_mkdir() can be passed to
+>  end_creating() and the parent will be unlocked precisely when necessary.
+> +
+> +---
+> +
+> +**mandatory**
+> +
+> +The ->create() operation has dropped the bool "excl" argument. This operation
+> +should now always provide O_EXCL semantics (i.e. fail with -EEXIST if the file
+> +exists). If the filesystem needs to handle the case where another entity could
+> +create the file on the backing store after a negative lookup or revalidate
+> +(e.g. it's a network filesystem and another client could create the file after
+> +a negative lookup), then it will require ->atomic_open() in addition to
+> +->create().
+> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> index 4f13b01e42eb5e2ad9d60cbbce7e47d09ad831e6..0752ed2b6475ab2b42482fde6dff870110a33eac 100644
+> --- a/Documentation/filesystems/vfs.rst
+> +++ b/Documentation/filesystems/vfs.rst
+> @@ -467,7 +467,7 @@ As of kernel 2.6.22, the following members are defined:
+>  .. code-block:: c
+>  
+>  	struct inode_operations {
+> -		int (*create) (struct mnt_idmap *, struct inode *,struct dentry *, umode_t, bool);
+> +		int (*create) (struct mnt_idmap *, struct inode *,struct dentry *, umode_t);
+>  		struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);
+>  		int (*link) (struct dentry *,struct inode *,struct dentry *);
+>  		int (*unlink) (struct inode *,struct dentry *);
+> @@ -505,7 +505,10 @@ otherwise noted.
+>  	if you want to support regular files.  The dentry you get should
+>  	not have an inode (i.e. it should be a negative dentry).  Here
+>  	you will probably call d_instantiate() with the dentry and the
+> -	newly created inode
+> +	newly created inode. This operation should always provide O_EXCL
+> +	semantics (i.e. it should fail with -EEXIST if the file exists).
+> +	If the filesystem needs to mediate non-exclusive creation,
+> +	then the filesystem must also provide an ->atomic_open() operation.
+>  
+>  ``lookup``
+>  	called when the VFS needs to look up an inode in a parent
+> @@ -654,7 +657,11 @@ otherwise noted.
+>  	handled by f_op->open().  If the file was created, FMODE_CREATED
+>  	flag should be set in file->f_mode.  In case of O_EXCL the
+>  	method must only succeed if the file didn't exist and hence
+> -	FMODE_CREATED shall always be set on success.
+> +	FMODE_CREATED shall always be set on success. This method is
+> +	usually needed on filesystems where the dentry to be created could
+> +	unexpectedly become positive after the kernel has looked it up or
+> +	revalidated it. (e.g. another host racing in and creating the file
+> +	on an NFS server).
+>  
+>  ``tmpfile``
+>  	called in the end of O_TMPFILE open().  Optional, equivalent to
+> diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+> index 8666c9c622584f018ba314954a871e2eb8f35edf..fe4f76cb0db1a5f8f71a90aa619861088f8dfabc 100644
+> --- a/fs/9p/vfs_inode.c
+> +++ b/fs/9p/vfs_inode.c
+> @@ -643,7 +643,7 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
+>  
+>  static int
+>  v9fs_vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		struct dentry *dentry, umode_t mode, bool excl)
+> +		struct dentry *dentry, umode_t mode)
+>  {
+>  	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(dir);
+>  	u32 perm = unixmode2p9mode(v9ses, mode);
+> diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+> index 1661a25f277256075790ed49c3a55fbe93bc986e..565fa8096a0b5e4bd161596f39e306b93dba4b6e 100644
+> --- a/fs/9p/vfs_inode_dotl.c
+> +++ b/fs/9p/vfs_inode_dotl.c
+> @@ -218,7 +218,7 @@ int v9fs_open_to_dotl_flags(int flags)
+>   */
+>  static int
+>  v9fs_vfs_create_dotl(struct mnt_idmap *idmap, struct inode *dir,
+> -		     struct dentry *dentry, umode_t omode, bool excl)
+> +		     struct dentry *dentry, umode_t omode)
+>  {
+>  	return v9fs_vfs_mknod_dotl(idmap, dir, dentry, omode, 0);
+>  }
+> diff --git a/fs/affs/affs.h b/fs/affs/affs.h
+> index ac4e9a02910b72d63c8ec5291347b54518e67f4b..665be23c42cfa206dc0a2c9ffa119b7c3c747389 100644
+> --- a/fs/affs/affs.h
+> +++ b/fs/affs/affs.h
+> @@ -167,7 +167,7 @@ extern int	affs_hash_name(struct super_block *sb, const u8 *name, unsigned int l
+>  extern struct dentry *affs_lookup(struct inode *dir, struct dentry *dentry, unsigned int);
+>  extern int	affs_unlink(struct inode *dir, struct dentry *dentry);
+>  extern int	affs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, bool);
+> +			struct dentry *dentry, umode_t mode);
+>  extern struct dentry *affs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  			struct dentry *dentry, umode_t mode);
+>  extern int	affs_rmdir(struct inode *dir, struct dentry *dentry);
+> diff --git a/fs/affs/namei.c b/fs/affs/namei.c
+> index f883be50db122d3b09f0ae4d24618bd49b55186b..5591e1b5a2f68fc7600115e241f01f81d3aac010 100644
+> --- a/fs/affs/namei.c
+> +++ b/fs/affs/namei.c
+> @@ -243,7 +243,7 @@ affs_unlink(struct inode *dir, struct dentry *dentry)
+>  
+>  int
+>  affs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -	    struct dentry *dentry, umode_t mode, bool excl)
+> +	    struct dentry *dentry, umode_t mode)
+>  {
+>  	struct super_block *sb = dir->i_sb;
+>  	struct inode	*inode;
+> diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+> index f4e9e12373ac10b0230a9a6d6b7e1cb465f470d5..04702fe4e3d9befbb2176859be7c7ac7fd9623a1 100644
+> --- a/fs/afs/dir.c
+> +++ b/fs/afs/dir.c
+> @@ -32,7 +32,7 @@ static bool afs_lookup_one_filldir(struct dir_context *ctx, const char *name, in
+>  static bool afs_lookup_filldir(struct dir_context *ctx, const char *name, int nlen,
+>  			      loff_t fpos, u64 ino, unsigned dtype);
+>  static int afs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		      struct dentry *dentry, umode_t mode, bool excl);
+> +		      struct dentry *dentry, umode_t mode);
+>  static struct dentry *afs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  				struct dentry *dentry, umode_t mode);
+>  static int afs_rmdir(struct inode *dir, struct dentry *dentry);
+> @@ -1637,7 +1637,7 @@ static const struct afs_operation_ops afs_create_operation = {
+>   * create a regular file on an AFS filesystem
+>   */
+>  static int afs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		      struct dentry *dentry, umode_t mode, bool excl)
+> +		      struct dentry *dentry, umode_t mode)
+>  {
+>  	struct afs_operation *op;
+>  	struct afs_vnode *dvnode = AFS_FS_I(dir);
+> diff --git a/fs/bad_inode.c b/fs/bad_inode.c
+> index 0ef9bcb744dd620bf47caa024d97a1316ff7bc89..5701361cf98155a61cb75a4ec602e8fc615eb3ae 100644
+> --- a/fs/bad_inode.c
+> +++ b/fs/bad_inode.c
+> @@ -29,7 +29,7 @@ static const struct file_operations bad_file_ops =
+>  
+>  static int bad_inode_create(struct mnt_idmap *idmap,
+>  			    struct inode *dir, struct dentry *dentry,
+> -			    umode_t mode, bool excl)
+> +			    umode_t mode)
+>  {
+>  	return -EIO;
+>  }
+> diff --git a/fs/bfs/dir.c b/fs/bfs/dir.c
+> index c375e22c4c0c15ba27307d266adfe3f093b90ab8..6beb8605c523cc2c7250d7b1a61508e103f0f3fd 100644
+> --- a/fs/bfs/dir.c
+> +++ b/fs/bfs/dir.c
+> @@ -76,7 +76,7 @@ const struct file_operations bfs_dir_operations = {
+>  };
+>  
+>  static int bfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		      struct dentry *dentry, umode_t mode, bool excl)
+> +		      struct dentry *dentry, umode_t mode)
+>  {
+>  	int err;
+>  	struct inode *inode;
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 9c6ca87b3d567bcd591eb65c1b786d264cb672e8..5f452e587109a64531077d70930221fb43616651 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -6825,7 +6825,7 @@ static int btrfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+>  }
+>  
+>  static int btrfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, bool excl)
+> +			struct dentry *dentry, umode_t mode)
+>  {
+>  	struct inode *inode;
+>  
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index d18c0eaef9b7e7be7eb517c701d6c4af08fd78ac..308903dc0780dbed2382228005d0221f185c61ee 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -976,7 +976,7 @@ static int ceph_mknod(struct mnt_idmap *idmap, struct inode *dir,
+>  }
+>  
+>  static int ceph_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *dentry, umode_t mode, bool excl)
+> +		       struct dentry *dentry, umode_t mode)
+>  {
+>  	return ceph_mknod(idmap, dir, dentry, mode, 0);
+>  }
+> diff --git a/fs/coda/dir.c b/fs/coda/dir.c
+> index ca99900172657d80a479b2eb27f50effdf834995..554e7fd44e5df1aae6da2c41a492a02ae9e0d616 100644
+> --- a/fs/coda/dir.c
+> +++ b/fs/coda/dir.c
+> @@ -134,7 +134,7 @@ static inline void coda_dir_drop_nlink(struct inode *dir)
+>  
+>  /* creation routines: create, mknod, mkdir, link, symlink */
+>  static int coda_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *de, umode_t mode, bool excl)
+> +		       struct dentry *de, umode_t mode)
+>  {
+>  	int error;
+>  	const char *name=de->d_name.name;
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index 3978248247dc2197b4441957a331c9711a6190bb..96197e6c7656ecc92355a7a2e9c9a8f693c303fe 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -268,7 +268,7 @@ int ecryptfs_initialize_file(struct dentry *ecryptfs_dentry,
+>  static int
+>  ecryptfs_create(struct mnt_idmap *idmap,
+>  		struct inode *directory_inode, struct dentry *ecryptfs_dentry,
+> -		umode_t mode, bool excl)
+> +		umode_t mode)
+>  {
+>  	struct inode *ecryptfs_inode;
+>  	int rc;
+> diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
+> index 2891614abf8d554f563319187b6d54c2bc006a91..043b3e3a4f0adefe27855f8156b946c1dc4bd184 100644
+> --- a/fs/efivarfs/inode.c
+> +++ b/fs/efivarfs/inode.c
+> @@ -75,7 +75,7 @@ static bool efivarfs_valid_name(const char *str, int len)
+>  }
+>  
+>  static int efivarfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			   struct dentry *dentry, umode_t mode, bool excl)
+> +			   struct dentry *dentry, umode_t mode)
+>  {
+>  	struct inode *inode = NULL;
+>  	struct efivar_entry *var;
+> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+> index 745dce29ddb532f7f4ca6d9aad5ddc8943aab4b5..083602c1fed0a78cf1c587783b62bc4552125a81 100644
+> --- a/fs/exfat/namei.c
+> +++ b/fs/exfat/namei.c
+> @@ -543,7 +543,7 @@ static int exfat_add_entry(struct inode *inode, const char *path,
+>  }
+>  
+>  static int exfat_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, bool excl)
+> +			struct dentry *dentry, umode_t mode)
+>  {
+>  	struct super_block *sb = dir->i_sb;
+>  	struct inode *inode;
+> diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+> index bde617a66cecd4a2bf12a713a2297bb4fee45916..edea7784ad39acd4afffc7f5ae6e50a20c04999d 100644
+> --- a/fs/ext2/namei.c
+> +++ b/fs/ext2/namei.c
+> @@ -101,7 +101,7 @@ struct dentry *ext2_get_parent(struct dentry *child)
+>   */
+>  static int ext2_create (struct mnt_idmap * idmap,
+>  			struct inode * dir, struct dentry * dentry,
+> -			umode_t mode, bool excl)
+> +			umode_t mode)
+>  {
+>  	struct inode *inode;
+>  	int err;
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index 2cd36f59c9e363124ee949f742adccd88447295a..a1e77390a7ce300db02db9af90e45d69efabfea5 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -2806,7 +2806,7 @@ static int ext4_add_nondir(handle_t *handle,
+>   * with d_instantiate().
+>   */
+>  static int ext4_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *dentry, umode_t mode, bool excl)
+> +		       struct dentry *dentry, umode_t mode)
+>  {
+>  	handle_t *handle;
+>  	struct inode *inode;
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index af40282a6948e5b7b9001ca5964993064417fd0a..5f99950529da22812085f4a8c3962b7d7821740c 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -351,7 +351,7 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
+>  }
+>  
+>  static int f2fs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *dentry, umode_t mode, bool excl)
+> +		       struct dentry *dentry, umode_t mode)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+>  	struct inode *inode;
+> diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
+> index 0b920ee40a7f9fe3c57af5d939d3efedf001a3d9..905ffa9e5b99f1507734d99b7c16dcad21d7b5b5 100644
+> --- a/fs/fat/namei_msdos.c
+> +++ b/fs/fat/namei_msdos.c
+> @@ -262,7 +262,7 @@ static int msdos_add_entry(struct inode *dir, const unsigned char *name,
+>  
+>  /***** Create a file */
+>  static int msdos_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, bool excl)
+> +			struct dentry *dentry, umode_t mode)
+>  {
+>  	struct super_block *sb = dir->i_sb;
+>  	struct inode *inode = NULL;
+> diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+> index 5dbc4cbb8fce3d9b891cbc597f876c2c7b8d6aa0..8396b1ec4ec582fcdfadbcb12b04694ef0b8c5fc 100644
+> --- a/fs/fat/namei_vfat.c
+> +++ b/fs/fat/namei_vfat.c
+> @@ -754,7 +754,7 @@ static struct dentry *vfat_lookup(struct inode *dir, struct dentry *dentry,
+>  }
+>  
+>  static int vfat_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *dentry, umode_t mode, bool excl)
+> +		       struct dentry *dentry, umode_t mode)
+>  {
+>  	struct super_block *sb = dir->i_sb;
+>  	struct inode *inode;
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 87a63ae93a456f27cf61d7fdc590dc140b2fbfc1..ca46859e99b198417acaa194a7ed5f24a241f385 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -889,7 +889,7 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
+>  }
+>  
+>  static int fuse_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *entry, umode_t mode, bool excl)
+> +		       struct dentry *entry, umode_t mode)
+>  {
+>  	return fuse_mknod(idmap, dir, entry, mode, 0);
+>  }
+> diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+> index 890c87e3e3658be95f8eb5ac169b1a6e96c5abc1..7132a268bba049b6947f52aa1d10bd481feb7bab 100644
+> --- a/fs/gfs2/inode.c
+> +++ b/fs/gfs2/inode.c
+> @@ -942,15 +942,14 @@ static int gfs2_create_inode(struct inode *dir, struct dentry *dentry,
+>   * @dir: The directory in which to create the file
+>   * @dentry: The dentry of the new file
+>   * @mode: The mode of the new file
+> - * @excl: Force fail if inode exists
+>   *
+>   * Returns: errno
+>   */
+>  
+>  static int gfs2_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *dentry, umode_t mode, bool excl)
+> +		       struct dentry *dentry, umode_t mode)
+>  {
+> -	return gfs2_create_inode(dir, dentry, NULL, S_IFREG | mode, 0, NULL, 0, excl);
+> +	return gfs2_create_inode(dir, dentry, NULL, S_IFREG | mode, 0, NULL, 0, 1);
+>  }
+>  
+>  /**
+> diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+> index 86a6b317b474a95f283f6a0908582efadde80892..c585942aa985686ca428d2d17f4401aa845a0eb8 100644
+> --- a/fs/hfs/dir.c
+> +++ b/fs/hfs/dir.c
+> @@ -190,7 +190,7 @@ static int hfs_dir_release(struct inode *inode, struct file *file)
+>   * the directory and the name (and its length) of the new file.
+>   */
+>  static int hfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		      struct dentry *dentry, umode_t mode, bool excl)
+> +		      struct dentry *dentry, umode_t mode)
+>  {
+>  	struct inode *inode;
+>  	int res;
+> diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+> index 1b3e27a0d5e038b559bd19b37d769078b2996d1b..c5ea04e078340a91b992095e189e978a3345f03c 100644
+> --- a/fs/hfsplus/dir.c
+> +++ b/fs/hfsplus/dir.c
+> @@ -518,7 +518,7 @@ static int hfsplus_mknod(struct mnt_idmap *idmap, struct inode *dir,
+>  }
+>  
+>  static int hfsplus_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			  struct dentry *dentry, umode_t mode, bool excl)
+> +			  struct dentry *dentry, umode_t mode)
+>  {
+>  	return hfsplus_mknod(&nop_mnt_idmap, dir, dentry, mode, 0);
+>  }
+> diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+> index 51d26aa2b93e0955134cfb901619b513a64427ed..f62590281f9f27343a104f879bb43670026de2d5 100644
+> --- a/fs/hostfs/hostfs_kern.c
+> +++ b/fs/hostfs/hostfs_kern.c
+> @@ -593,7 +593,7 @@ static struct inode *hostfs_iget(struct super_block *sb, char *name)
+>  }
+>  
+>  static int hostfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			 struct dentry *dentry, umode_t mode, bool excl)
+> +			 struct dentry *dentry, umode_t mode)
+>  {
+>  	struct inode *inode;
+>  	char *name;
+> diff --git a/fs/hpfs/namei.c b/fs/hpfs/namei.c
+> index 353e13a615f56664638f08a3408f90a727f5458b..809113d8248d50c0eaa57047b6c4bd87b9a5c6be 100644
+> --- a/fs/hpfs/namei.c
+> +++ b/fs/hpfs/namei.c
+> @@ -129,7 +129,7 @@ static struct dentry *hpfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  }
+>  
+>  static int hpfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *dentry, umode_t mode, bool excl)
+> +		       struct dentry *dentry, umode_t mode)
+>  {
+>  	const unsigned char *name = dentry->d_name.name;
+>  	unsigned len = dentry->d_name.len;
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index f42548ee9083c6bf4b20f9a75e069e5f69fdfc3a..0ebac5c318017edeab79d1d311796926a440bf6e 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -992,7 +992,7 @@ static struct dentry *hugetlbfs_mkdir(struct mnt_idmap *idmap, struct inode *dir
+>  
+>  static int hugetlbfs_create(struct mnt_idmap *idmap,
+>  			    struct inode *dir, struct dentry *dentry,
+> -			    umode_t mode, bool excl)
+> +			    umode_t mode)
+>  {
+>  	return hugetlbfs_mknod(idmap, dir, dentry, mode | S_IFREG, 0);
+>  }
+> diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
+> index dd91f725ded69ccb3a240aafd72a4b552f21bcd9..e77c84e43621a8c53e9852843f18cc3514315650 100644
+> --- a/fs/jffs2/dir.c
+> +++ b/fs/jffs2/dir.c
+> @@ -25,7 +25,7 @@
+>  static int jffs2_readdir (struct file *, struct dir_context *);
+>  
+>  static int jffs2_create (struct mnt_idmap *, struct inode *,
+> -		         struct dentry *, umode_t, bool);
+> +			 struct dentry *, umode_t);
+>  static struct dentry *jffs2_lookup (struct inode *,struct dentry *,
+>  				    unsigned int);
+>  static int jffs2_link (struct dentry *,struct inode *,struct dentry *);
+> @@ -161,7 +161,7 @@ static int jffs2_readdir(struct file *file, struct dir_context *ctx)
+>  
+>  
+>  static int jffs2_create(struct mnt_idmap *idmap, struct inode *dir_i,
+> -			struct dentry *dentry, umode_t mode, bool excl)
+> +			struct dentry *dentry, umode_t mode)
+>  {
+>  	struct jffs2_raw_inode *ri;
+>  	struct jffs2_inode_info *f, *dir_f;
+> diff --git a/fs/jfs/namei.c b/fs/jfs/namei.c
+> index 65a218eba8faf9508f5727515b812f6de2661618..48111f8d3efe40becadd857c56c84ed09de867ef 100644
+> --- a/fs/jfs/namei.c
+> +++ b/fs/jfs/namei.c
+> @@ -60,7 +60,7 @@ static inline void free_ea_wmap(struct inode *inode)
+>   *
+>   */
+>  static int jfs_create(struct mnt_idmap *idmap, struct inode *dip,
+> -		      struct dentry *dentry, umode_t mode, bool excl)
+> +		      struct dentry *dentry, umode_t mode)
+>  {
+>  	int rc = 0;
+>  	tid_t tid;		/* transaction id */
+> diff --git a/fs/minix/namei.c b/fs/minix/namei.c
+> index 263e4ba8b1c822c388070a9ed3e123f272fcbe61..79e591bdfdc10de9719ae107e71daca28305b7f9 100644
+> --- a/fs/minix/namei.c
+> +++ b/fs/minix/namei.c
+> @@ -64,7 +64,7 @@ static int minix_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+>  }
+>  
+>  static int minix_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, bool excl)
+> +			struct dentry *dentry, umode_t mode)
+>  {
+>  	return minix_mknod(&nop_mnt_idmap, dir, dentry, mode, 0);
+>  }
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 2c83f894f2764c4c40b3790a9dddd4fde5066d53..9439beabfef6e5d6bc08665284d155aba2deab48 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -4129,7 +4129,7 @@ int vfs_create(struct mnt_idmap *idmap, struct dentry *dentry, umode_t mode,
+>  	error = try_break_deleg(dir, di);
+>  	if (error)
+>  		return error;
+> -	error = dir->i_op->create(idmap, dir, dentry, mode, true);
+> +	error = dir->i_op->create(idmap, dir, dentry, mode);
+>  	if (!error)
+>  		fsnotify_create(dir, dentry);
+>  	return error;
+> @@ -4438,7 +4438,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+>  		}
+>  
+>  		error = dir_inode->i_op->create(idmap, dir_inode, dentry,
+> -						mode, open_flag & O_EXCL);
+> +						mode);
+>  		if (error)
+>  			goto out_dput;
+>  	}
+> diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+> index ea9f6ca8f30fa250425921b403d67d05fcf13b61..d7f072ca0a77056bd851ad3bbc981883dc3bf08b 100644
+> --- a/fs/nfs/dir.c
+> +++ b/fs/nfs/dir.c
+> @@ -2378,9 +2378,9 @@ static int nfs_do_create(struct inode *dir, struct dentry *dentry,
+>  }
+>  
+>  int nfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -	       struct dentry *dentry, umode_t mode, bool excl)
+> +	       struct dentry *dentry, umode_t mode)
+>  {
+> -	return nfs_do_create(dir, dentry, mode, excl ? O_EXCL : 0);
+> +	return nfs_do_create(dir, dentry, mode, O_EXCL);
+>  }
+>  EXPORT_SYMBOL_GPL(nfs_create);
+>  
+> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+> index 2ecd38e1d17a8053a9134702588d57efc35f49e9..b122c4f34f7b53c5102a8b5138efe269af433c81 100644
+> --- a/fs/nfs/internal.h
+> +++ b/fs/nfs/internal.h
+> @@ -398,7 +398,7 @@ extern unsigned long nfs_access_cache_scan(struct shrinker *shrink,
+>  struct dentry *nfs_lookup(struct inode *, struct dentry *, unsigned int);
+>  void nfs_d_prune_case_insensitive_aliases(struct inode *inode);
+>  int nfs_create(struct mnt_idmap *, struct inode *, struct dentry *,
+> -	       umode_t, bool);
+> +	       umode_t);
+>  struct dentry *nfs_mkdir(struct mnt_idmap *, struct inode *, struct dentry *,
+>  			 umode_t);
+>  int nfs_rmdir(struct inode *, struct dentry *);
+> diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
+> index 40f4b1a28705b6e0eb8f0978cf3ac18b43aa1331..31d1d466c03048aaaab23f64c3f413c095939770 100644
+> --- a/fs/nilfs2/namei.c
+> +++ b/fs/nilfs2/namei.c
+> @@ -86,7 +86,7 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+>   * with d_instantiate().
+>   */
+>  static int nilfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, bool excl)
+> +			struct dentry *dentry, umode_t mode)
+>  {
+>  	struct inode *inode;
+>  	struct nilfs_transaction_info ti;
+> diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+> index 82c8ae56beee6d79046dd6c8f02ff0f35e9a1ad3..49fe635b550d3f51f81138649b47c9c831a73e3b 100644
+> --- a/fs/ntfs3/namei.c
+> +++ b/fs/ntfs3/namei.c
+> @@ -105,7 +105,7 @@ static struct dentry *ntfs_lookup(struct inode *dir, struct dentry *dentry,
+>   * ntfs_create - inode_operations::create
+>   */
+>  static int ntfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *dentry, umode_t mode, bool excl)
+> +		       struct dentry *dentry, umode_t mode)
+>  {
+>  	return ntfs_create_inode(idmap, dir, dentry, NULL, S_IFREG | mode, 0,
+>  				 NULL, 0, NULL);
+> diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
+> index cccaa1d6fbbac13ebcaf14a9183277890708e643..bd4b2269598b49c6f88dd8d201e246ee5ed855a6 100644
+> --- a/fs/ocfs2/dlmfs/dlmfs.c
+> +++ b/fs/ocfs2/dlmfs/dlmfs.c
+> @@ -454,8 +454,7 @@ static struct dentry *dlmfs_mkdir(struct mnt_idmap * idmap,
+>  static int dlmfs_create(struct mnt_idmap *idmap,
+>  			struct inode *dir,
+>  			struct dentry *dentry,
+> -			umode_t mode,
+> -			bool excl)
+> +			umode_t mode)
+>  {
+>  	int status = 0;
+>  	struct inode *inode;
+> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+> index c90b254da75eb5b90d2af5e37d41e781efe8b836..7443f468f45657cf68779a02e4edf4e38fb70f59 100644
+> --- a/fs/ocfs2/namei.c
+> +++ b/fs/ocfs2/namei.c
+> @@ -666,8 +666,7 @@ static struct dentry *ocfs2_mkdir(struct mnt_idmap *idmap,
+>  static int ocfs2_create(struct mnt_idmap *idmap,
+>  			struct inode *dir,
+>  			struct dentry *dentry,
+> -			umode_t mode,
+> -			bool excl)
+> +			umode_t mode)
+>  {
+>  	int ret;
+>  
+> diff --git a/fs/omfs/dir.c b/fs/omfs/dir.c
+> index 2ed541fccf331d796805dd1594fbf05c1f7f3b9a..a09a98f7e30bc66deca60725f9462d081b5e4784 100644
+> --- a/fs/omfs/dir.c
+> +++ b/fs/omfs/dir.c
+> @@ -286,7 +286,7 @@ static struct dentry *omfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  }
+>  
+>  static int omfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		       struct dentry *dentry, umode_t mode, bool excl)
+> +		       struct dentry *dentry, umode_t mode)
+>  {
+>  	return omfs_add_node(dir, dentry, mode | S_IFREG);
+>  }
+> diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
+> index bec5475de094dada6bb29eaf8520a875880f3bab..0ebaa7f000f26f1c1ecffd22cfe4272f20a783ed 100644
+> --- a/fs/orangefs/namei.c
+> +++ b/fs/orangefs/namei.c
+> @@ -18,8 +18,7 @@
+>  static int orangefs_create(struct mnt_idmap *idmap,
+>  			struct inode *dir,
+>  			struct dentry *dentry,
+> -			umode_t mode,
+> -			bool exclusive)
+> +			umode_t mode)
+>  {
+>  	struct orangefs_inode_s *parent = ORANGEFS_I(dir);
+>  	struct orangefs_kernel_op_s *new_op;
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index 06b860b9ded6b25ed9762a46f7e26e98e97a8dea..2dfb269a18a89095d56d33d11ca9b7a831832b6d 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -713,7 +713,7 @@ static int ovl_create_object(struct dentry *dentry, int mode, dev_t rdev,
+>  }
+>  
+>  static int ovl_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		      struct dentry *dentry, umode_t mode, bool excl)
+> +		      struct dentry *dentry, umode_t mode)
+>  {
+>  	return ovl_create_object(dentry, (mode & 07777) | S_IFREG, 0, NULL);
+>  }
+> diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+> index 41f9995da7cab0d11395cb40a98fb4936d52597f..b6502aaa4fb44d27c939da9fae4449af7edd28d4 100644
+> --- a/fs/ramfs/inode.c
+> +++ b/fs/ramfs/inode.c
+> @@ -129,7 +129,7 @@ static struct dentry *ramfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  }
+>  
+>  static int ramfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, bool excl)
+> +			struct dentry *dentry, umode_t mode)
+>  {
+>  	return ramfs_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFREG, 0);
+>  }
+> diff --git a/fs/smb/client/cifsfs.h b/fs/smb/client/cifsfs.h
+> index e9534258d1efd0bb34f36bf2c725c64d0a8ca8f4..294c66cea2eca3344e09cd77619761e9cb79a807 100644
+> --- a/fs/smb/client/cifsfs.h
+> +++ b/fs/smb/client/cifsfs.h
+> @@ -50,7 +50,7 @@ extern void cifs_sb_deactive(struct super_block *sb);
+>  extern const struct inode_operations cifs_dir_inode_ops;
+>  extern struct inode *cifs_root_iget(struct super_block *);
+>  extern int cifs_create(struct mnt_idmap *, struct inode *,
+> -		       struct dentry *, umode_t, bool excl);
+> +		       struct dentry *, umode_t);
+>  extern int cifs_atomic_open(struct inode *, struct dentry *,
+>  			    struct file *, unsigned, umode_t);
+>  extern struct dentry *cifs_lookup(struct inode *, struct dentry *,
+> diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
+> index da5597dbf5b9f140c6801158ac2357fa911c52ab..b00bc214db9f0e9533f481f41ac99ac8937610ac 100644
+> --- a/fs/smb/client/dir.c
+> +++ b/fs/smb/client/dir.c
+> @@ -566,7 +566,7 @@ cifs_atomic_open(struct inode *inode, struct dentry *direntry,
+>  }
+>  
+>  int cifs_create(struct mnt_idmap *idmap, struct inode *inode,
+> -		struct dentry *direntry, umode_t mode, bool excl)
+> +		struct dentry *direntry, umode_t mode)
+>  {
+>  	int rc;
+>  	unsigned int xid = get_xid();
+> diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+> index 3c3d3ad4fa6cb719e9ec08fa2164c55371c017c1..4840a6f7974e254eba4ca249357e968764e326e0 100644
+> --- a/fs/ubifs/dir.c
+> +++ b/fs/ubifs/dir.c
+> @@ -303,7 +303,7 @@ static int ubifs_prepare_create(struct inode *dir, struct dentry *dentry,
+>  }
+>  
+>  static int ubifs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, bool excl)
+> +			struct dentry *dentry, umode_t mode)
+>  {
+>  	struct inode *inode;
+>  	struct ubifs_info *c = dir->i_sb->s_fs_info;
+> diff --git a/fs/udf/namei.c b/fs/udf/namei.c
+> index 5f2e9a892bffa9579143cedf71d80efa7ad6e9fb..f83b5564cbc4c68c02c07bb3ab2109bfabdc799d 100644
+> --- a/fs/udf/namei.c
+> +++ b/fs/udf/namei.c
+> @@ -371,7 +371,7 @@ static int udf_add_nondir(struct dentry *dentry, struct inode *inode)
+>  }
+>  
+>  static int udf_create(struct mnt_idmap *idmap, struct inode *dir,
+> -		      struct dentry *dentry, umode_t mode, bool excl)
+> +		      struct dentry *dentry, umode_t mode)
+>  {
+>  	struct inode *inode = udf_new_inode(dir, mode);
+>  
+> diff --git a/fs/ufs/namei.c b/fs/ufs/namei.c
+> index 5b3c85c9324298f4ff6aa3d4feeb962ce5ede539..5012e056200aca671364d34a7faf647e6747e1d2 100644
+> --- a/fs/ufs/namei.c
+> +++ b/fs/ufs/namei.c
+> @@ -70,8 +70,7 @@ static struct dentry *ufs_lookup(struct inode * dir, struct dentry *dentry, unsi
+>   * with d_instantiate(). 
+>   */
+>  static int ufs_create (struct mnt_idmap * idmap,
+> -		struct inode * dir, struct dentry * dentry, umode_t mode,
+> -		bool excl)
+> +		struct inode * dir, struct dentry * dentry, umode_t mode)
+>  {
+>  	struct inode *inode;
+>  
+> diff --git a/fs/vboxsf/dir.c b/fs/vboxsf/dir.c
+> index 42bedc4ec7af7709c564a7174805d185ce86f854..330dade582d081e965c0e365bd2f96ae31d92ccc 100644
+> --- a/fs/vboxsf/dir.c
+> +++ b/fs/vboxsf/dir.c
+> @@ -298,9 +298,9 @@ static int vboxsf_dir_create(struct inode *parent, struct dentry *dentry,
+>  
+>  static int vboxsf_dir_mkfile(struct mnt_idmap *idmap,
+>  			     struct inode *parent, struct dentry *dentry,
+> -			     umode_t mode, bool excl)
+> +			     umode_t mode)
+>  {
+> -	return vboxsf_dir_create(parent, dentry, mode, false, excl, NULL);
+> +	return vboxsf_dir_create(parent, dentry, mode, false, true, NULL);
+>  }
+>  
+>  static struct dentry *vboxsf_dir_mkdir(struct mnt_idmap *idmap,
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index ad94fbf55014c637ab93d38bf4569c6a75b0236e..b39c44285863596a98e5cb73686ea5fc17382392 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -293,8 +293,7 @@ xfs_vn_create(
+>  	struct mnt_idmap	*idmap,
+>  	struct inode		*dir,
+>  	struct dentry		*dentry,
+> -	umode_t			mode,
+> -	bool			flags)
+> +	umode_t			mode)
+>  {
+>  	return xfs_generic_create(idmap, dir, dentry, mode, 0, NULL);
+>  }
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index ce25feb06727db58f7ddae2c578856311a3fb0ee..47039f3cc6125b70787cc3ec992917e56fb7560c 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1991,8 +1991,8 @@ struct inode_operations {
+>  
+>  	int (*readlink) (struct dentry *, char __user *,int);
+>  
+> -	int (*create) (struct mnt_idmap *, struct inode *,struct dentry *,
+> -		       umode_t, bool);
+> +	int (*create) (struct mnt_idmap *, struct inode *, struct dentry *,
+> +		       umode_t);
+>  	int (*link) (struct dentry *,struct inode *,struct dentry *);
+>  	int (*unlink) (struct inode *,struct dentry *);
+>  	int (*symlink) (struct mnt_idmap *, struct inode *,struct dentry *,
+> diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+> index c118ca2c377a7ba4deab2da49fbb1aab3a3057af..54c91e401d2d172099ebb6e3bf9b9c8ff396607d 100644
+> --- a/ipc/mqueue.c
+> +++ b/ipc/mqueue.c
+> @@ -610,7 +610,7 @@ static int mqueue_create_attr(struct dentry *dentry, umode_t mode, void *arg)
+>  }
+>  
+>  static int mqueue_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			 struct dentry *dentry, umode_t mode, bool excl)
+> +			 struct dentry *dentry, umode_t mode)
+>  {
+>  	return mqueue_create_attr(dentry, mode, NULL);
+>  }
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 899303d8c9aa39463b96ba1168d3dd125d9e8a7b..e714ee1daf4474b7fc9827b93197edbf9db5554b 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -3914,7 +3914,7 @@ static struct dentry *shmem_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  }
+>  
+>  static int shmem_create(struct mnt_idmap *idmap, struct inode *dir,
+> -			struct dentry *dentry, umode_t mode, bool excl)
+> +			struct dentry *dentry, umode_t mode)
+>  {
+>  	return shmem_mknod(idmap, dir, dentry, mode | S_IFREG, 0);
+>  }
+> 
+> ---
+> base-commit: d6ea5537c1a66a54d34f50d51ad201b1a2319ccf
+> change-id: 20251105-create-excl-2b366d9bf3bb
+> 
+> Best regards,
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
