@@ -1,295 +1,240 @@
-Return-Path: <ceph-devel+bounces-4154-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4155-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC381CA1AC5
-	for <lists+ceph-devel@lfdr.de>; Wed, 03 Dec 2025 22:25:13 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45788CA1DFC
+	for <lists+ceph-devel@lfdr.de>; Wed, 03 Dec 2025 23:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 52985301DBAF
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Dec 2025 21:23:18 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 37C75300761C
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Dec 2025 22:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0B02C0283;
-	Wed,  3 Dec 2025 21:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBB92D9EE5;
+	Wed,  3 Dec 2025 22:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZcrI4Y2f";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="cKlyBPHO"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hbzub/Ct"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302A0258EDA
-	for <ceph-devel@vger.kernel.org>; Wed,  3 Dec 2025 21:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764796995; cv=none; b=AmulBwHUQfwcNxC1RspECfPE6B9O5WV0E0xyMB4HHo5dzqfVagqrmkKE78mPi9gpufhlbI6uZEtN9IUsXJTj/n5A+KqB65iVstIdTfh72zHMYFbeU77HXA6egD34dtyJVX07bVwFPyfhb0zLhMbBPVkTK/BvB4114oQF5nljvhU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764796995; c=relaxed/simple;
-	bh=PG/WNrudOdrF8wwMeRpn6H2LRLkwhzZDwEfVAg32SwU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AKtvWnuSjwKOruXazn6ZX8Rg9Gg9APQBUdN3bh+mEDDbx0g0VkZh6fnZxXxBsVAxKFFO65o5CyPid0bVBPIKKpKLdKXba4ZHdX5pWA8Cw1rot+HHGjmqcL3vuK2sr47fgZMVwV0QkvWaqJkGeDxv+CpAsJ/IMdizwjeAwD9UUtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZcrI4Y2f; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=cKlyBPHO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764796993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v/l/KTu/HnV7nNudrLpofZvlkgentj2/IKmTB3+sXvY=;
-	b=ZcrI4Y2f6upE/h6H/bm9aZMpUhn8/MO8gLF1X4rwpf/7L5qbzMQwtKmbmsz8EZv/zGuoLU
-	2hqaLVudnlLkfT14vLr54NW0GFbVJdNOZOlrwDdjnYjAZrpmm0u4UhQ29XuVtovQwKa3iI
-	4ILs9+AN17lkQYMavmyGSDuo9Vimt0w=
-Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
- [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-639-9ijbyLMxPPqTSVnVM59PvQ-1; Wed, 03 Dec 2025 16:23:11 -0500
-X-MC-Unique: 9ijbyLMxPPqTSVnVM59PvQ-1
-X-Mimecast-MFC-AGG-ID: 9ijbyLMxPPqTSVnVM59PvQ_1764796991
-Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-5dbd47fb70cso1980495137.1
-        for <ceph-devel@vger.kernel.org>; Wed, 03 Dec 2025 13:23:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764796991; x=1765401791; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v/l/KTu/HnV7nNudrLpofZvlkgentj2/IKmTB3+sXvY=;
-        b=cKlyBPHOvjCgJUwvMp6zOl9dxoJPEkA5CaYQURWw3RVKggPFVqw8GCmYh81NgqPef/
-         8iNAJBEyU6k+vMbzComA9VdLqIdjVE65Quukr6V0iG/Jqstui/jet8G4P9j9kUGWElht
-         0ZhSA1eYRJgVPQN5+B0IXGfT0p1WFNUytnG2KtP4WvWdyUlTiAfu99t2VpG48wRtT4su
-         pIj2yC00Ni7UiwSTeBX7W9WSbqFm9n9/jxKG/FfsWA8jadMzepXJJp60oTIWkYp8HkuR
-         Tg77CfgVmOphuZj/ajMYT63PDyN+f4o/676aHOQjkiObSTc5PZcAVi13f190KHZBZq5I
-         ACEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764796991; x=1765401791;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=v/l/KTu/HnV7nNudrLpofZvlkgentj2/IKmTB3+sXvY=;
-        b=TuQUcvhPho/BKRO2OKvqMWHq8nFmNbWva7lF1j2feYI1KdLCnkPiR9MIn1NHZF/ure
-         4VKohbeWruw1PzC3Mz6SVXjVkvndtCBDUGPJIecBJRakGi7KoOjvp39OxxPRLVdapK1y
-         S2kJod1foKVYdt7vHtss7lXHs1UODi1qBm+aKvkBHafLST5VmiaY860AsSjIHXpoM7UM
-         tkB9aIVveknsBxG8f/hntQ9ZNQzvBQPlmvXLcx1xfswRK9HYxxMTMPZBCHSdyvnPVwvp
-         0jLRfzTf5Z5pVYXJZm0yPkX856SqHtA4wEocuoFNv09zo6IWET+Wb81kPDcKlAkP1wSh
-         LB/A==
-X-Gm-Message-State: AOJu0YxtJvoEzq9zWJ/5TIABM5NYT318ZEr3rrRFHvVWjSp3uq+g7Hcq
-	ZLDJPWunWzB/eEWj5xHUkQRoW9mBqwMbAK+J9hWb2Eo3KaitHOD9wtfv2A6xmLrvHsxmyY+vh8f
-	HIqPzMxPKrU7Jk9TtQdnpt10YNE1lNWj1gz2/Txh5OVvOH75AUykoXcgNOVz7EuxaYIrcI1xjW+
-	MhkbYzGnlYfImJtYY97sGO2xaGAJXC9NKKRYLuBQ==
-X-Gm-Gg: ASbGncuKDHPRjsp9h5aP3bKQnm4DssOKB+QRtlRECfkk0tx6w4OrlzJQEHPEZnrVcBG
-	/ukfVUHiFYxj5HErn+ps8hiojVeWM4bTh7ZgCB/CKIYbUeFXeJj6+Zt/EQ/YzdFhE5HQ6XXrK9r
-	R8KjGbLL5RNEEV2de6iSm9IgKtqaqAMiBfrbT8bYbwHq4tvUy2yuVX1aiqHoGZi9FKKpMvklJRF
-	L7edTrsOOLM
-X-Received: by 2002:a05:6102:4a8b:b0:5dd:8953:4c39 with SMTP id ada2fe7eead31-5e4f63d5fd7mr637573137.4.1764796991055;
-        Wed, 03 Dec 2025 13:23:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFeBH452075dZUyazl8eYT/UzyJ9yFkDbi8VNlxJEcSHSUk7OAj+mWrx0XSlN/lf/ntUkq2fmdnoyADdV50/oQ=
-X-Received: by 2002:a05:6102:4a8b:b0:5dd:8953:4c39 with SMTP id
- ada2fe7eead31-5e4f63d5fd7mr637567137.4.1764796990653; Wed, 03 Dec 2025
- 13:23:10 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34051F3B85;
+	Wed,  3 Dec 2025 22:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764802499; cv=fail; b=VNodGcaTXPUgrjPNtJZD3n0s715Nm4yMpb8xv/v0gzO/pNveV8NTJDSouFng07L82SEWoeqKaPvRtW6PGemO8uSAJAxIW8N8DZa6nPeBXOzQgmKBTJoMhDgkhH4TLpjBiGsbAEPA2EhO+wnLTRE6GYwNfc+HnROB9EeEZ1dgzvA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764802499; c=relaxed/simple;
+	bh=9HTuIYe6dv4h6iMZflBzcv6EstIUzXl69KDJb/pmVf0=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=ZBuGBxgN9jt/XSuJegbZHxY8LB/QXVX9guJlJwX/rNDbTlXK7FEFhcB+RPxem1aFwIDKwlnUrxi+X3BGmjKrJA9dp0prk6PwxQE95TX/XISSVWt2nfJpAmA5wlPe05rNd5CFNZfjYd4Pfzl99iXh/wL8YSDdkeJa7mgFGZEkTK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hbzub/Ct; arc=fail smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5B3FqQFc013225;
+	Wed, 3 Dec 2025 22:54:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=9HTuIYe6dv4h6iMZflBzcv6EstIUzXl69KDJb/pmVf0=; b=hbzub/Ct
+	3jquKttV1fZPC0CbjaAuK9dO+JgxmFgfpvHgTepWOjO6wVTLGg4ne2t1l3Q4YA8Y
+	Z4VNQ2bngPbJpasA9pCgc7K8CX2VpS/hlQiChXWZFWipjclZp+goOHzBe5zpE5hX
+	UyiII9QRQwzZuCAiaolMidobp6KKgTlLnggHGfySOhjVmUeOXLxZFbZpN0cOK9Wf
+	qgBuHg7OHIJEXWCDmSvEMSMOejR0j3259rrSzpg10NfCZa86rM+UbqSFKoblg8JX
+	UgKCCrhrzQQws2jrT6zwhWm0OdTt8/WWR3JbBgGHs9FyxCyW/i2IaK5ZvbHCZEuN
+	7pdguZcztBc9YQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aqrj9wdrs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Dec 2025 22:54:54 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5B3Mr6DK011880;
+	Wed, 3 Dec 2025 22:54:54 GMT
+Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010043.outbound.protection.outlook.com [40.93.198.43])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aqrj9wdrm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Dec 2025 22:54:54 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ymVqd/XJ9og1IVfcoTMzYizM5W9YxdLAT1RM9k9rBdSlmCu3b4XWq+iI7aPfgmzh0TF/8hB/SY8xA/kaZ3Jpd/vz5EQpuQTt4ehmfNZsWDERJfsyJZRGCKD0SvRmD50wp0nOqnAqrTu9mX+1RNhwldDjWAGeYFS069JmPxCF0FEcR5Jef//t9Ul3vWhveyEYdOaYaUtYZAiaYQE+1wF40wDAj/wVfIXpkXBP7ScOT/UmdIuZfmTAowKhZtUloTAWxIYMZP/UwtXUvmMkHGyh+qVH0U9kWD7+Q2RXurmWAhbNhTj/7NNONZIT13IpnDRmToYnjs6ZrH/Fn+xZ+3wBPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9HTuIYe6dv4h6iMZflBzcv6EstIUzXl69KDJb/pmVf0=;
+ b=iSx5r5c8JXTj89QVH//AVc3XI/xVPiuc5g97eC/3O3OqkpJ+7y1idOASACRqAx/zDYSvZi1yN5Q0SslFPicfCb0CAdZ1c4MU+1mhAkx5qAU3CUIMSF89fkRTmcgvCuhlrNZ8juBjCzmfkp5c8j3EURHMdW1pw5ssil4I2CBZfc/t9Q+BuapxitUTSBqM4f/DvU9WvINzZnuY3EkSsIMAoCH4tbxfHxv/5r0Nl5/OjeDOLBk02HxgkSOyOujKK8Lrgvs/IRmbIHLa4mLIfvPmh0u2aaJSQiCU95JFgNw6S7/pxDDY0ArWIgI21BaN/uDXf86ySn/O7oA7dQzUHxvfRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
+ by MW3PR15MB3898.namprd15.prod.outlook.com (2603:10b6:303:43::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.9; Wed, 3 Dec
+ 2025 22:54:51 +0000
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9388.003; Wed, 3 Dec 2025
+ 22:54:51 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: Alex Markuze <amarkuze@redhat.com>
+CC: Viacheslav Dubeyko <vdubeyko@redhat.com>,
+        "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>,
+        "idryomov@gmail.com" <idryomov@gmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Thread-Topic: [EXTERNAL] Re: [PATCH v3 4/4] ceph: adding
+ CEPH_SUBVOLUME_ID_NONE
+Thread-Index: AQHcZJsMNCX0POS6GUieDyf6NSM/g7UQhnIA
+Date: Wed, 3 Dec 2025 22:54:51 +0000
+Message-ID: <7720f7ee8f8e8289c8e5346c2b129de2592e2d64.camel@ibm.com>
+References: <20251203154625.2779153-1-amarkuze@redhat.com>
+	 <20251203154625.2779153-5-amarkuze@redhat.com>
+	 <361062ac3b2caf3262b319003c7b4aa2cf0f6a6e.camel@ibm.com>
+	 <CAO8a2SjQDC2qaVV6_jsQbzOtUUdxStx2jEMYkG3VVkSCPbiH_Q@mail.gmail.com>
+In-Reply-To:
+ <CAO8a2SjQDC2qaVV6_jsQbzOtUUdxStx2jEMYkG3VVkSCPbiH_Q@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|MW3PR15MB3898:EE_
+x-ms-office365-filtering-correlation-id: 92e8ea63-309a-45df-98af-08de32bef7bf
+x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|366016|10070799003|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dTZxOXZLTDNYckhkbUVoTGtOUkI0NnErYW5SMW00MW1scUovYTdYcitFVjFR?=
+ =?utf-8?B?VEtlR1k4TUVzQzVUUUxQWWt3Wml2TjBhSHRlbDV5WThBNEdmUjlaaE0xUVhp?=
+ =?utf-8?B?dDRMSGxtRXc3V1psRFZrb1p3blUrYjFPUE4raVJETVczcjNkd2pQeU1BVmdw?=
+ =?utf-8?B?akRaYnlacCtRUEJkckNnL0JOVWJRUFhrVGdOSXJpakNLYzZEbHhIRmdnajNS?=
+ =?utf-8?B?dms2YVVYak8zTzhZNWR0YnhOemFpUkJGWktUZ2R6OE9rck9HNzJxeFZ4RE9p?=
+ =?utf-8?B?Y25Qc3huZ1lEY0UyYlVRcWhtLzB0aXJIazFnVTQ0N3M3aG11WE5qY1dzdXJH?=
+ =?utf-8?B?dWhPb0I5Y2ZiK3BMSTQ1b2k5N0RQODhFUjRDellZYWxjNXlwM3ZCUjZCSlNF?=
+ =?utf-8?B?eG1nbG9GMzVITjcwNFJuY1ZrU1JZblNHTGg4L2xFTEtESGphaG5wSzlpQ2gv?=
+ =?utf-8?B?QzZTZGhXMUhEVnlUZDJ1OUxMbjlhKzhLRVRlNFdLRVhQNFNucmU4aUR6UzV1?=
+ =?utf-8?B?T1c0RlQ5OUV5Q01ZSEVsTm5ILzA3TGx4WXFFb3pZNVh1dlVnQnhlYVdLVjRN?=
+ =?utf-8?B?ZGI5eWd0ZFh5ZGhWWDRHREVzUGxjZ01hSndsVkpSZzkvN0VZU0g5aTBFRitW?=
+ =?utf-8?B?ZXBKc0RQTHdpS3JNT1pma0FFN1duN0hnVWdkSFFhS3VNSFJRN0hMd2hXcGM2?=
+ =?utf-8?B?blNVaVgxNFAxTUJFQWxRWEJUNEVPZG11cGJ0a3JRRS9NdVlzQW03d05XbTJH?=
+ =?utf-8?B?Y2ZBT0V3ZDNxUDhiUmFPU3g3ckRHZE56K1lyZXF2VFdmdHdYQUZGYmhibWs3?=
+ =?utf-8?B?U1cxRWlJUEdPL3hqT1BoVFRpV2VQdHZ6TVFCN3YvRlB3UWtlTnBHMzBBajkz?=
+ =?utf-8?B?cGp0MmNBeUx1SGdBWlIrUi9rSnlneW1QWTU0VWZiSTRlYjMxRHZHaForWmI5?=
+ =?utf-8?B?V1lDMWd2WmRGL0ZyZFd3MWp0bW8vK0p0RVRXTjZ6bmJ1YWQ0OE9RWHo0TGVF?=
+ =?utf-8?B?SjVIWm5Hb04zL0NGSDFrQWlyM3Z5VE9QRjg5WkJYRDhmZ3NTeE9qR0g3U20x?=
+ =?utf-8?B?L2dFRG9EbVVaOHJaS2dwaFJpSWJpNlpidjF0T0x2WmJMdVFBMm9BeUcwL1FL?=
+ =?utf-8?B?ZmpaQng3N3ZCZU9UdU5EZ0NWYmtZellYYXBPd1JDSE5pLzErWmIyS3FMeVBa?=
+ =?utf-8?B?UXB4RWU1N0dSRWhkNkdDM0N5VFk5Kzd0alJQamViRmF0RGMzMmJRNkl0UnhM?=
+ =?utf-8?B?bzkyMjBEMzNkdXVldVUxb0pBRS9yR05NWjZNTUtXTXpGMEV2YTRtbXJXcHVL?=
+ =?utf-8?B?T0FzbVN2a1c3eDdsalZuTDFPOHFBQ2lLYnQ2d24zanNoRGJxYzhPeGxzQ3BE?=
+ =?utf-8?B?VUFQcE5wNmgxTndlb1AvTWZOL2dtcUgxWjZrY3ZEbWlxYWNzSnlrRHA1MTEz?=
+ =?utf-8?B?WjlTbGIvVm5va1dKck0rdGVaZ1pRZTY1NkFuRlBBTlRzZkZ5ZmZJVnlFdlM1?=
+ =?utf-8?B?b2QwbE9TdFpod0hvb1dWcmRxNy8vdSttL3pXMmppdEpnMjUrSXpJRXQ2WnVF?=
+ =?utf-8?B?TDlnMVRPZUZ3WWJ5WEdVakRxMjM2aTlzZnpYeDlmZGc1eWh4Wi9PR29uSG9a?=
+ =?utf-8?B?eWo5aWJPbmhJS3ZqNlhSM0pNVTFLTkdpeE11SzNFUUsvbi9xQ05SY3JERDBZ?=
+ =?utf-8?B?OTc5OGNxais5Zyswb1NhK1lPMWRNL3FSQkVSNlh6eGNmbFBoMTRqZ2I4TzBC?=
+ =?utf-8?B?NTRHNm11Y3VLVDZ3YVNJUnJscHozcVhQUUNLUk54QmtPSlVDYmNaQkd5MU5l?=
+ =?utf-8?B?Y1dsd3lyYWFJbkJoRUVnZE1zQ1ZIRzBvSVcxY1R0WUxqVlFSSThHSWVKTitw?=
+ =?utf-8?B?a25CcVllaUVjVjQ5U3U4NC9jd05sWEYxV3FOZitwc09KNHNjRGxzVzV2Mkk5?=
+ =?utf-8?B?Q2JpSzNpcnJ4a3RpSTNXQlJUSWNyQ2lReDF1OHhkUjA2TGpFK2pVR3pZUkc3?=
+ =?utf-8?B?aVFxZE9YMUhxSTdhaWlYWWJyV0xUaGJhbmh6dlpLTVo3NWhnN09RU1BjNWY2?=
+ =?utf-8?Q?hnNMia?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(10070799003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?cDdjRmNkR2JSUzljRW5HYVhNU3N6Q3FlVjR4TTlpQ2g1TVBmNTBta3ZJQUZs?=
+ =?utf-8?B?RG9zRTBic2dMc0JyaStQWS8vUFNiMDNtRkIzbUlIR29SQXM3RzVGa0dhcnp2?=
+ =?utf-8?B?NGZlNHpjUkZCQTFHS3VScTIreTRMQTV4bXNRSXpCTHROMExGUVBkcmFkalRD?=
+ =?utf-8?B?ZHhJSys5TEorWnhtcWNPcnRJaENER0NHOGlzK3BIRnh0ZjFvbHY0RWV3SEJ3?=
+ =?utf-8?B?bDdHMzFKb3NlMjBGRFV1S3lvUmdSQU0vbEt2MDI3bFRiU0dHNEJrNEZyMDRj?=
+ =?utf-8?B?eWFESGZDUkljdmdteDJ2YVZveTBNNW5KUkhNOGJDbjNYd0hCUHBVZVZDNDd4?=
+ =?utf-8?B?YjdlSTJMNXFLRXpyMmRxYU1GWjNGc1FJUTJCMk8yT0xvSmx6V2xyaFFaQUY4?=
+ =?utf-8?B?Z1k2Qk5GRUpOY2tMMURKRzNTRkYvSGNLaUVKY2xzNWpyRGZDeHhDRTVhSEpB?=
+ =?utf-8?B?eXpjMFk4YWs3Y0dWR3dPcllwUVZlM081SGwybmZuNlkxWjNwOUdNbEk5UXdQ?=
+ =?utf-8?B?K1dZemMzNXFoeitYUWpRR3VEZmFvOVVGL2NqNEpaMUtYMzVMdEp6aUlhMVd5?=
+ =?utf-8?B?RFZzOGVEclBDdTJFYU1FaDhWWHZncTYxWEN5K2dKeGJEWU1GOGd3VEJTamNw?=
+ =?utf-8?B?MFI5cEkwdnJFV0hndjZWdDMxTTU3ekRhc2FubVNIYlBBbEk4QjBMa2VKdmZU?=
+ =?utf-8?B?RkJUL2lzQ05OejUwenh6cUtpc1h6Um5Kam5HMmNNdFY5Unk3S0lEdklTMzJq?=
+ =?utf-8?B?Rlo3U3laVlhESXY1OEQzNmpMOUkxNVUrbjk4VmNMZ1J0S2NBT1RNcHV5MjFL?=
+ =?utf-8?B?Um5XZjhqVGZZbGNoUmxvSi9BUUtRNW02ZnRqWklZSENzR3BLWW1qc1oxUm94?=
+ =?utf-8?B?c0ZHcHR6c1lENDc0aHBYeTU0OE0yamI3V21CSGlvOXlJeW9nbnZHcitDTEdX?=
+ =?utf-8?B?TWVjZ0xPVVRVTXROVkFmaEliaEE1c3RoQlNBUlB0a1JFaE8yWWdsTVkzRUFz?=
+ =?utf-8?B?T1JiVS9ZYUZ1N2RMQVAwb3pJOGVKM3RjNU41bnM4Q2FBSlljeG5hcmMwSXNH?=
+ =?utf-8?B?ZkxRczBsYzFpMVhDd1pkSWwxU04yV2t4TXRNVkloV3U4eGxWQmNFZm56a1g4?=
+ =?utf-8?B?VnBQODVldFF4Slg2Y0dsejBycXdBNitTNXo1MkgwZFNFbDRjNW9NSjhiblpw?=
+ =?utf-8?B?cmRPcFJyTmo3c2M4ZGVnTDNmUHl2WEc2V0k1S0w4dXdRQTdBaGpSeHM1WDZD?=
+ =?utf-8?B?MjNXVWUwL1Rmbnh0Ri9OTTRKT25XcEsxQkFUWm1XMlFZY1hxQ2c5K1JjaDRo?=
+ =?utf-8?B?ZS84enlkb2N0bmxHdW9hbjRtTGt5bzRJMkl4Y3ZFTkZlY2FYd1pvZE5od1ZE?=
+ =?utf-8?B?eFora3ByK213bHdBVWZTU3ZNU00vVFNLLy8wRlkwNktQbThWcW1xbzZOdWl3?=
+ =?utf-8?B?cHAvb3loSnI5OTZhNjdjRlpBQVh3R0pGYjdxbVpmV21PVFg0dnY4STlHK1J2?=
+ =?utf-8?B?WUc1VkJPdHVJNHowRjYvck5zVVRYSnZQVjErY0daYnJnUnpLTFJBWFpCOUxj?=
+ =?utf-8?B?Y3hOTnZsbnVhNHM5MXg5YnMxRkQzbjNtbnJpYTJ4aVpMYWNwOHJ1cXliZWN2?=
+ =?utf-8?B?QUE5a0wrSFhEWEVkTTd2TEc5YVB4bWR4Q2FLR3M1bmhqVzc2S0pJdmRYK3V6?=
+ =?utf-8?B?OEF6L0NFb0RPSWtJQnQrK3ArRHA4RU9jUWpLeTc4bmVtZnYyakx5MUs2MEds?=
+ =?utf-8?B?dUdqYWZoVGhSWnExZDcrRlhqbm01ZDdqWlgvTnlRb1NEQ1BMYnVJS2lZVGxp?=
+ =?utf-8?B?MFhxLzZwTm40eXJxNExuaDBMa0xBQTNzb0dlU0JiQ1lwa0JRZmg2OUtiM2cy?=
+ =?utf-8?B?MzRZNWtEbVpndHhsa2Zvd1ZUcUNhY2kzWmdZMXQ2bjRELzJDWm1QQUJVN2pI?=
+ =?utf-8?B?a0NnbDNCRmo3cjdiRVdFYStKQmZJZ3ZHeTByM0w0VFQzT21tVWVVb3hQYTht?=
+ =?utf-8?B?NkxtSnJBSGNXL0RkTXRUQkNxRDRzYlFJdlo1QjliM3MwRFRkSzRoanVNRnZ2?=
+ =?utf-8?B?dC8yb3B2VUozRU5zQi9qYXpGY0V6azRUQWY3NXlHakxPYnhGNzlLaXZHZlpG?=
+ =?utf-8?B?bjBSRHFwR1hMT0JVbVZEZU5NSXJabW1oSXdseTh3REM2bkxPaUNSOThsRnFO?=
+ =?utf-8?Q?PHHf9i22N3/C9YAYtc08zfA=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <804FDE8D3C90D74D9A8A82C3486A48A1@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203154625.2779153-1-amarkuze@redhat.com> <20251203154625.2779153-5-amarkuze@redhat.com>
- <361062ac3b2caf3262b319003c7b4aa2cf0f6a6e.camel@ibm.com>
-In-Reply-To: <361062ac3b2caf3262b319003c7b4aa2cf0f6a6e.camel@ibm.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 3 Dec 2025 23:22:59 +0200
-X-Gm-Features: AWmQ_bntUST6lQV6ekOD5FmQyjPGwyiG3cHq-BuY0wG_aLL8kU_f90L9smxQwbg
-Message-ID: <CAO8a2SjQDC2qaVV6_jsQbzOtUUdxStx2jEMYkG3VVkSCPbiH_Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] ceph: adding CEPH_SUBVOLUME_ID_NONE
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Viacheslav Dubeyko <vdubeyko@redhat.com>, 
-	"idryomov@gmail.com" <idryomov@gmail.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92e8ea63-309a-45df-98af-08de32bef7bf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2025 22:54:51.3778
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Qv8ST8RllWPkprWgJ4Bd64tPk3L82unDqawNQWRgW9T2TMaI0igcTfmf8CD6iJbsjnjWyJIA4GPiZY56pw9dIQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB3898
+X-Proofpoint-GUID: AjPgR8RDHyQiuim2lDwR10Ds4cyQESbE
+X-Proofpoint-ORIG-GUID: UE1FyfnQhLQJA1LNlXsr4euBEIYO-7BA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI5MDAyMCBTYWx0ZWRfX1nSndFZy3xvN
+ 4nG9eBG5gQrYXvk9hSBDJ215k0CL4Kac7VNqOLfe4phqmawwUUyBALlo3kUV/0BTYQtZuY6zJdk
+ XLqtfZ+51CQWragF/yoTiuTR70yDlhIOugBPe3ICdoeP1X1RR9wOMCCyT0HwoQQ9siVlpVTDJOD
+ T8DJtE5hxb5BrNCN15v9O8d7ZuPMNQXbbfzegG8qgfrB8cy+pft4gtpYfv0OVYjB4cPROQ4NEef
+ 4oXWKws1jq7qrsnHQeuF0zh9ohBiPudu5ZhDQLk25724Cw8YmyqTjyQlNvGUhGsFTI43Kocdux2
+ oLAWUyIYKjisCUoYB0ro6CHzQVQaj1EYme8uA0Q7N9ujxyVL+zahTLFFweM8mw/TcUNVhzcER9z
+ DEuYF7bRYwMN4NtPmCwsSZIScmchZA==
+X-Authority-Analysis: v=2.4 cv=dYGNHHXe c=1 sm=1 tr=0 ts=6930bfbe cx=c_pps
+ a=CcIcsZDwO3wB2ho3dvPJ0Q==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=dW1y_S8sXPSIccB1464A:9
+ a=QEXdDO2ut3YA:10
+Subject: RE: [PATCH v3 4/4] ceph: adding CEPH_SUBVOLUME_ID_NONE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-03_03,2025-12-03_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 suspectscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511290020
 
-The latest ceph code supports subvolume metrics.
-The test is simple:
-1. Deploy a ceph cluster
-2. Create and mount a subvolume
-3. run some I/O
-4. I used debugfs to see that subvolume metrics were collected on the
-client side and checked for subvolume metrics being reported on the
-mds.
-
-Nothing more to it.
-
-On Wed, Dec 3, 2025 at 10:15=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
->
-> On Wed, 2025-12-03 at 15:46 +0000, Alex Markuze wrote:
-> > 1. Introduce CEPH_SUBVOLUME_ID_NONE constant (value 0) to make the
-> >    unknown/unset state explicit and self-documenting.
-> >
-> > 2. Add WARN_ON_ONCE if attempting to change an already-set subvolume_id=
-.
-> >    An inode's subvolume membership is immutable - once created in a
-> >    subvolume, it stays there. Attempting to change it indicates a bug.
-> > ---
-> >  fs/ceph/inode.c             | 32 +++++++++++++++++++++++++-------
-> >  fs/ceph/mds_client.c        |  5 +----
-> >  fs/ceph/subvolume_metrics.c |  7 ++++---
-> >  fs/ceph/super.h             | 10 +++++++++-
-> >  4 files changed, 39 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index 835049004047..257b3e27b741 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -638,7 +638,7 @@ struct inode *ceph_alloc_inode(struct super_block *=
-sb)
-> >
-> >       ci->i_max_bytes =3D 0;
-> >       ci->i_max_files =3D 0;
-> > -     ci->i_subvolume_id =3D 0;
-> > +     ci->i_subvolume_id =3D CEPH_SUBVOLUME_ID_NONE;
->
-> I was expected to see the code of this patch in the second and third ones=
-. And
-> it looks really confusing. Why have you introduced another one patch?
->
-> So, how I can test this patchset? I assume that xfstests run will be not =
-enough.
-> Do we have special test environment or test-cases for this?
->
-> Thanks,
-> Slava.
->
-> >
-> >       memset(&ci->i_dir_layout, 0, sizeof(ci->i_dir_layout));
-> >       memset(&ci->i_cached_layout, 0, sizeof(ci->i_cached_layout));
-> > @@ -743,7 +743,7 @@ void ceph_evict_inode(struct inode *inode)
-> >
-> >       percpu_counter_dec(&mdsc->metric.total_inodes);
-> >
-> > -     ci->i_subvolume_id =3D 0;
-> > +     ci->i_subvolume_id =3D CEPH_SUBVOLUME_ID_NONE;
-> >
-> >       netfs_wait_for_outstanding_io(inode);
-> >       truncate_inode_pages_final(&inode->i_data);
-> > @@ -877,19 +877,37 @@ int ceph_fill_file_size(struct inode *inode, int =
-issued,
-> >  }
-> >
-> >  /*
-> > - * Set the subvolume ID for an inode. Following the FUSE client conven=
-tion,
-> > - * 0 means unknown/unset (MDS only sends non-zero IDs for subvolume in=
-odes).
-> > + * Set the subvolume ID for an inode.
-> > + *
-> > + * The subvolume_id identifies which CephFS subvolume this inode belon=
-gs to.
-> > + * CEPH_SUBVOLUME_ID_NONE (0) means unknown/unset - the MDS only sends
-> > + * non-zero IDs for inodes within subvolumes.
-> > + *
-> > + * An inode's subvolume membership is immutable - once an inode is cre=
-ated
-> > + * in a subvolume, it stays there. Therefore, if we already have a val=
-id
-> > + * (non-zero) subvolume_id and receive a different one, that indicates=
- a bug.
-> >   */
-> >  void ceph_inode_set_subvolume(struct inode *inode, u64 subvolume_id)
-> >  {
-> >       struct ceph_inode_info *ci;
-> > +     u64 old;
-> >
-> > -     if (!inode || !subvolume_id)
-> > +     if (!inode || subvolume_id =3D=3D CEPH_SUBVOLUME_ID_NONE)
-> >               return;
-> >
-> >       ci =3D ceph_inode(inode);
-> > -     if (READ_ONCE(ci->i_subvolume_id) !=3D subvolume_id)
-> > -             WRITE_ONCE(ci->i_subvolume_id, subvolume_id);
-> > +     old =3D READ_ONCE(ci->i_subvolume_id);
-> > +
-> > +     if (old =3D=3D subvolume_id)
-> > +             return;
-> > +
-> > +     if (old !=3D CEPH_SUBVOLUME_ID_NONE) {
-> > +             /* subvolume_id should not change once set */
-> > +             WARN_ON_ONCE(1);
-> > +             return;
-> > +     }
-> > +
-> > +     WRITE_ONCE(ci->i_subvolume_id, subvolume_id);
-> >  }
-> >
-> >  void ceph_fill_file_time(struct inode *inode, int issued,
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index 2b831f48c844..f2a17e11fcef 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -122,10 +122,7 @@ static int parse_reply_info_in(void **p, void *end=
-,
-> >       u32 struct_len =3D 0;
-> >       struct ceph_client *cl =3D mdsc ? mdsc->fsc->client : NULL;
-> >
-> > -     info->subvolume_id =3D 0;
-> > -     doutc(cl, "subv_metric parse start features=3D0x%llx\n", features=
-);
-> > -
-> > -     info->subvolume_id =3D 0;
-> > +     info->subvolume_id =3D CEPH_SUBVOLUME_ID_NONE;
-> >
-> >       if (features =3D=3D (u64)-1) {
-> >               ceph_decode_8_safe(p, end, struct_v, bad);
-> > diff --git a/fs/ceph/subvolume_metrics.c b/fs/ceph/subvolume_metrics.c
-> > index 111f6754e609..37cbed5b52c3 100644
-> > --- a/fs/ceph/subvolume_metrics.c
-> > +++ b/fs/ceph/subvolume_metrics.c
-> > @@ -136,8 +136,9 @@ void ceph_subvolume_metrics_record(struct ceph_subv=
-olume_metrics_tracker *tracke
-> >       struct ceph_subvol_metric_rb_entry *entry, *new_entry =3D NULL;
-> >       bool retry =3D false;
-> >
-> > -     /* 0 means unknown/unset subvolume (matches FUSE client conventio=
-n) */
-> > -     if (!READ_ONCE(tracker->enabled) || !subvol_id || !size || !laten=
-cy_us)
-> > +     /* CEPH_SUBVOLUME_ID_NONE (0) means unknown/unset subvolume */
-> > +     if (!READ_ONCE(tracker->enabled) ||
-> > +         subvol_id =3D=3D CEPH_SUBVOLUME_ID_NONE || !size || !latency_=
-us)
-> >               return;
-> >
-> >       do {
-> > @@ -403,7 +404,7 @@ void ceph_subvolume_metrics_record_io(struct ceph_m=
-ds_client *mdsc,
-> >       }
-> >
-> >       subvol_id =3D READ_ONCE(ci->i_subvolume_id);
-> > -     if (!subvol_id) {
-> > +     if (subvol_id =3D=3D CEPH_SUBVOLUME_ID_NONE) {
-> >               atomic64_inc(&tracker->record_no_subvol);
-> >               return;
-> >       }
-> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > index a03c373efd52..731df0fcbcc8 100644
-> > --- a/fs/ceph/super.h
-> > +++ b/fs/ceph/super.h
-> > @@ -386,7 +386,15 @@ struct ceph_inode_info {
-> >
-> >       /* quotas */
-> >       u64 i_max_bytes, i_max_files;
-> > -     u64 i_subvolume_id;     /* 0 =3D unknown/unset, matches FUSE clie=
-nt */
-> > +
-> > +     /*
-> > +      * Subvolume ID this inode belongs to. CEPH_SUBVOLUME_ID_NONE (0)
-> > +      * means unknown/unset, matching the FUSE client convention.
-> > +      * Once set to a valid (non-zero) value, it should not change
-> > +      * during the inode's lifetime.
-> > +      */
-> > +#define CEPH_SUBVOLUME_ID_NONE 0
-> > +     u64 i_subvolume_id;
-> >
-> >       s32 i_dir_pin;
-> >
-
+T24gV2VkLCAyMDI1LTEyLTAzIGF0IDIzOjIyICswMjAwLCBBbGV4IE1hcmt1emUgd3JvdGU6DQo+
+IFRoZSBsYXRlc3QgY2VwaCBjb2RlIHN1cHBvcnRzIHN1YnZvbHVtZSBtZXRyaWNzLg0KPiBUaGUg
+dGVzdCBpcyBzaW1wbGU6DQo+IDEuIERlcGxveSBhIGNlcGggY2x1c3Rlcg0KPiAyLiBDcmVhdGUg
+YW5kIG1vdW50IGEgc3Vidm9sdW1lDQo+IDMuIHJ1biBzb21lIEkvTw0KPiA0LiBJIHVzZWQgZGVi
+dWdmcyB0byBzZWUgdGhhdCBzdWJ2b2x1bWUgbWV0cmljcyB3ZXJlIGNvbGxlY3RlZCBvbiB0aGUN
+Cj4gY2xpZW50IHNpZGUgYW5kIGNoZWNrZWQgZm9yIHN1YnZvbHVtZSBtZXRyaWNzIGJlaW5nIHJl
+cG9ydGVkIG9uIHRoZQ0KPiBtZHMuDQo+IA0KPiBOb3RoaW5nIG1vcmUgdG8gaXQuDQo+IA0KDQpT
+bywgaWYgaXQgaXMgc2ltcGxlLCB0aGVuIHdoYXQncyBhYm91dCBvZiBhZGRpbmcgYW5vdGhlciBD
+ZXBoJ3MgdGVzdCBpbnRvDQp4ZnN0ZXN0cyBzdWl0ZT8gTWF5YmUsIHlvdSBjYW4gY29uc2lkZXIg
+dW5pdC10ZXN0IHRvby4gSSd2ZSBhbHJlYWR5IGludHJvZHVjZWQNCmluaXRpYWwgcGF0Y2ggd2l0
+aCBLdW5pdC1iYXNlZCB1bml0LXRlc3QuIFdlIHNob3VsZCBoYXZlIHNvbWUgdGVzdC1jYXNlIHRo
+YXQNCmFueW9uZSBjYW4gcnVuIGFuZCB0ZXN0IHRoaXMgY29kZS4NCg0KVGhhbmtzLA0KU2xhdmEu
+DQoNCg==
 
