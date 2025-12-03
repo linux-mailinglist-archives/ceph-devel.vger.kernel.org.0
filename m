@@ -1,191 +1,206 @@
-Return-Path: <ceph-devel+bounces-4144-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4145-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA58C9EB0C
-	for <lists+ceph-devel@lfdr.de>; Wed, 03 Dec 2025 11:19:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6B83A8F53
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Dec 2025 10:19:17 +0000 (UTC)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E63C9FBA5
+	for <lists+ceph-devel@lfdr.de>; Wed, 03 Dec 2025 16:56:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
+	by sea.lore.kernel.org (Postfix) with ESMTP id F1308302CF6F
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Dec 2025 15:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966D92E974D;
-	Wed,  3 Dec 2025 10:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A378A312810;
+	Wed,  3 Dec 2025 15:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sia1MYIL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ivFOiGfr";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QxDA+QCj"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119562DE707;
-	Wed,  3 Dec 2025 10:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26C6311C0C
+	for <ceph-devel@vger.kernel.org>; Wed,  3 Dec 2025 15:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764757151; cv=none; b=l1y/iSY3P6bBKvJmq7rfGniKBLZ/N+ITjeHc/tYquDWUGvNErSeQ+Nx1uktYZhMQwK9KJaKYAVzIDIwpFWKsOCDR5OQt2vxS1pXHKllevKb46ByutDXSV7CIX1ds0M4LfkzWbsbeKqWsSV42pR80nsIwvB1HEA7q5/RDEwFV3CY=
+	t=1764776795; cv=none; b=ZnidLCTAEXpcBqTjhmMxAgaEnvt8lcv6R2iE12pZpmpvluFUYdGczLyXJw+7XAl4bHtFh2Q4BIH5MRjRJRIKlNa/6p1nbzeiyIY7GZVjky3hKsBR4pfmzn4aaswEi4VtwAPulYVHj3SUmTOnYahkrmUQt3shu20Hd8RiILGl4uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764757151; c=relaxed/simple;
-	bh=1ALGFmGlgOHY6f+bdLdgKebsX+au1yQ5dTRhimTaFoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MzVrCaPOfJSbHnu5034+sN/igCQpAT0+eqawrc2CmK2pAHRA2QjXw7hUydE514Q7CmplIfKVrvREVZ5mESHganvctY0wvUSStpd4q0tj2K2UR/RW+qDVmiF3IJKZIDMao2imUe8JmnRcJWDHCn1/lUgf8DoAhemIKTQ1oTsaR84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sia1MYIL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25361C113D0;
-	Wed,  3 Dec 2025 10:18:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764757150;
-	bh=1ALGFmGlgOHY6f+bdLdgKebsX+au1yQ5dTRhimTaFoA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Sia1MYILwN3OHyU8vJVbFzEbPmh+E9Rkdc13NmENJiNAQwujMzrx7aLJDYQwnRJH2
-	 icv0Cs7+2DiJlUtJrJ3jFjsxz5e5SC+H4b4cDPm/4/s+aTZepyO4AvrHMcRjPs8po7
-	 P0lAluHlqilBXk1Sh/B/XN0TZMdipTL7EolZ0FehsZ8XGO0/aidHMHK8ayQiiiT5TA
-	 U6OOgYna9Ec2DgYD68Hcv9/StfMLZVIApf1YAZumWdYivMJy+S1b4NF19fKc5R60wD
-	 vv/cJLS0nI7ttPeXB8OyKOFM1iSYjxfn/4avfs6o2Xu7czGUpIFQziUIbMv79dw+WM
-	 YExRE41C2xh0g==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	NeilBrown <neilb@ownmail.net>,
-	linux-kernel@vger.kernel.org,
-	v9fs@lists.linux.dev,
+	s=arc-20240116; t=1764776795; c=relaxed/simple;
+	bh=bj2EwI61n9F2t+9IZTIICRBO44EJkPlt8/0ivYbXTho=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TDiETOVKAPbgVBMMdbluT3O5kwU/Hz27axKgiEIVpTUjbSr87+TNzVbrX818Ho8N5aj2QOwKNKfvH5TQeDKMg6tm8nWmfcmZDK9oHlE51yyB81ieEWnhk8ejDwyGEg9rdjro+cXEOi0xgubofc7YY1XpvxVP1v2rcxgH1rL2Ow4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ivFOiGfr; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QxDA+QCj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764776791;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0iQO31qcw4QjDG40PDHPDzMgTgEG3pxt6R/E9VpcD+I=;
+	b=ivFOiGfr4zAIiR2N1R9T2OsEtjSsk9OfQl+1X5OlNqFTNk2LE7Cykl0tBcxglNxzXytxbp
+	1+Eta1L4blTZMc24r9itqnIXNKQkDy2UbwRDNSpJ/rgdcTkGPhS5UkjMwSavsWxOcuQunj
+	qDjVada0LcAf+6aHbDrNaAtkLxjqlpo=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-258-7z9eq0_dOcC3UlHcrdXPyw-1; Wed, 03 Dec 2025 10:46:30 -0500
+X-MC-Unique: 7z9eq0_dOcC3UlHcrdXPyw-1
+X-Mimecast-MFC-AGG-ID: 7z9eq0_dOcC3UlHcrdXPyw_1764776789
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-640b06fa998so6092523a12.2
+        for <ceph-devel@vger.kernel.org>; Wed, 03 Dec 2025 07:46:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1764776789; x=1765381589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0iQO31qcw4QjDG40PDHPDzMgTgEG3pxt6R/E9VpcD+I=;
+        b=QxDA+QCjvdXsR2lfKz9jpfEyk9vYhS2/2SsvDwS4K+HLYmWInMGTv2pH1ZuzcUS6J9
+         +17flZVqmVDpk5LMqvSCIbgYyZajrC2GURco9I4f1OkURtc/GuHC+2gkGzruuqtg7n0g
+         E/LxtIgWpFT0voCi3pms5WPjJJIJ+RVi6XTXcNaJqseJKnp8F8BCF8v7mDiQRuwRCmjl
+         L6hNmPMXGgMMQDSOru8zbxyJz6uXL5iqZ1Q/rcArnqSn3AaCkmKM9sHG905MF3l5LC52
+         mYqdK9VwE/c+fPwaeZaHSNCZ8R4DusWOJMp8KB6HdGSSuOdleLcGzsqlcET7yvlsg22A
+         wv/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764776789; x=1765381589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0iQO31qcw4QjDG40PDHPDzMgTgEG3pxt6R/E9VpcD+I=;
+        b=ROBjtctdZb3v1WjRvH4GsZhJCxNHG2fh23WCbnMfrHY80CHhob9JaPuPtzDIvHo2yz
+         KYPPcXLEn12L428epFotCGSS1cZBQLw/NkNaJPRPDDV7tgQl5DIG6Pu+AwsUl5114Gt2
+         oEH0V8TP0lUgMyX5cMDvUeFPuq31dWbnUvY1abasRVh3P2lZmxP1+nT6VvBk7IIpeT3X
+         JOhwdtUK5dwfa27IyPXK0c1NMvfNfitnNJ0RA8O+GYOE771IlfkAFoQDgeJDEHSLL7M9
+         vhpoN+hSrDjtBxxIdfnA2c/e4KEly8RaCUSW6fNBnaHbQANKXew6xiLnA/2u/yRgY3pD
+         gaKg==
+X-Gm-Message-State: AOJu0Yxhf3bD6Q2el/hDJuKKXT+bRWTCkIXPNoCF4dyhHwxTRDvl3Z78
+	QMq0gyk0HvHhJCUoQIe6ZyV2VyBErC8K3CrdOXUiYWeg8KGRMLJy/tFLPodTALyOEMOr9hEh+6V
+	5vp5+iS3qYsaT2RbIQC0cics4zcCSyuHMNStaiM+yMzzH7/QLXmNW6jwDAff7AFNVPW9Ldd2rEf
+	b+mnDkpg6l8tFaBwCNDwPj9FcWwi+vS8qYd+8qc2hOu7e6bklt6hf0
+X-Gm-Gg: ASbGncuu/x/Dr5AA6BB51NIzJma5rdBOLSWrJYb30fdVSUF1QjVf9D+wP1/uB+qKV3m
+	zRY8vV5vUWu2RnGjM2VcaFZh5c2Vne37RS6MkwnNi7om1iQYLHYN/+bmv73Z/gOdSUsohLl1UEL
+	A45QjxlhwT7/tWtUQOK2nltZDZJ1GKvoVUBJ8+Qu68XfAIyIugq+dVvdMiNz3P7KZZBZLMaTlWi
+	zLyaV11+yPcQVpLwoW49eQXz0AMLYZUAbSO2m+aeORtZDLxc4yPjDrrytRmy1sRtxUeYRrHVNG0
+	Px6QvnmeL0t+FhUM6F5UfW7LvccUXzxx5q68/TAzPubEZsActE4/aLjy3y6aytmekeRt6GrsZRc
+	S3fSnZNmx+x3kg+QFhUUcGG076i89uZ4s2x9gxLLmicU=
+X-Received: by 2002:a05:6402:440a:b0:640:6512:b9f with SMTP id 4fb4d7f45d1cf-6479c4ac547mr2708119a12.28.1764776788909;
+        Wed, 03 Dec 2025 07:46:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGMSQLz8/Ubp/hYcJgzQ5VVZewzvGKT01GpbwIIoYF/hCaDdY3/w0FT9wYq464vlfi31yebjg==
+X-Received: by 2002:a05:6402:440a:b0:640:6512:b9f with SMTP id 4fb4d7f45d1cf-6479c4ac547mr2708081a12.28.1764776788483;
+        Wed, 03 Dec 2025 07:46:28 -0800 (PST)
+Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-647510519efsm18529786a12.29.2025.12.03.07.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Dec 2025 07:46:28 -0800 (PST)
+From: Alex Markuze <amarkuze@redhat.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
 	linux-fsdevel@vger.kernel.org,
-	linux-afs@lists.infradead.org,
-	linux-btrfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	codalist@coda.cs.cmu.edu,
-	ecryptfs@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	gfs2@lists.linux.dev,
-	linux-um@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-mtd@lists.infradead.org,
-	jfs-discussion@lists.sourceforge.net,
-	linux-nfs@vger.kernel.org,
-	linux-nilfs@vger.kernel.org,
-	ntfs3@lists.linux.dev,
-	ocfs2-devel@lists.linux.dev,
-	linux-karma-devel@lists.sourceforge.net,
-	devel@lists.orangefs.org,
-	linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-xfs@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	NeilBrown <neil@brown.name>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-	Chris Mason <clm@fb.com>,
-	Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Jan Harkes <jaharkes@cs.cmu.edu>,
-	coda@cs.cmu.edu,
-	Tyler Hicks <code@tyhicks.com>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <yuezhang.mo@sony.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Bob Copeland <me@bobcopeland.com>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Hildenbrand <david@kernel.org>
-Subject: Re: [PATCH RESEND v3] vfs: remove the excl argument from the ->create() inode_operation
-Date: Wed,  3 Dec 2025 11:18:32 +0100
-Message-ID: <20251203-sechzehn-lethargisch-cd739d4ff49a@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251201-create-excl-v3-1-8933a444b046@kernel.org>
-References: <20251201-create-excl-v3-1-8933a444b046@kernel.org>
+	amarkuze@redhat.com,
+	vdubeyko@redhat.com
+Subject: [PATCH v3 0/4] ceph: add subvolume metrics reporting support
+Date: Wed,  3 Dec 2025 15:46:21 +0000
+Message-Id: <20251203154625.2779153-1-amarkuze@redhat.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1370; i=brauner@kernel.org; h=from:subject:message-id; bh=1ALGFmGlgOHY6f+bdLdgKebsX+au1yQ5dTRhimTaFoA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQa8NXdfyOWEe7C1j7j3H39MtmOfckhfYU3uPbO3GJ5W X9idSdfRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwER6JjEyXElxiNLjXsTcG/zF veHQZtE3X3LuXMnZx/2vIaPja/5RBYb/9Vo7JnHefOS2MX2Dr5zm5id7fnmJz3GXVk7n4Wu5Kpf KBAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 01 Dec 2025 08:11:42 -0500, Jeff Layton wrote:
-> With three exceptions, ->create() methods provided by filesystems ignore
-> the "excl" flag.  Those exception are NFS, GFS2 and vboxsf which all also
-> provide ->atomic_open.
-> 
-> Since ce8644fcadc5 ("lookup_open(): expand the call of vfs_create()"),
-> the "excl" argument to the ->create() inode_operation is always set to
-> true in vfs_create(). The ->create() call in lookup_open() sets it
-> according to the O_EXCL open flag, but is never called if the filesystem
-> provides ->atomic_open().
-> 
-> [...]
+This patch series adds support for per-subvolume I/O metrics collection
+and reporting to the MDS. This enables administrators to monitor I/O
+patterns at the subvolume granularity, which is useful for multi-tenant
+CephFS deployments where different subvolumes may be allocated to
+different users or applications.
 
-Applied to the vfs-6.20.mkdir branch of the vfs/vfs.git tree.
-Patches in the vfs-6.20.mkdir branch should appear in linux-next soon.
+The implementation requires protocol changes to receive the subvolume_id
+from the MDS (InodeStat v9), and introduces a new metrics type
+(CLIENT_METRIC_TYPE_SUBVOLUME_METRICS) for reporting aggregated I/O
+statistics back to the MDS.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Patch 1 adds forward-compatible handling for InodeStat v8. The MDS v8
+encoding added a versioned optmetadata field containing optional inode
+metadata such as charmap (for case-insensitive/case-preserving file
+systems). The kernel client does not currently support case-insensitive
+lookups, so this field is skipped rather than parsed. This ensures
+forward compatibility with newer MDS servers without requiring the
+full case-insensitivity feature implementation.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Patch 2 adds support for parsing the subvolume_id field from InodeStat
+v9 and storing it in the inode structure for later use.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Patch 3 adds the complete subvolume metrics infrastructure:
+- CEPHFS_FEATURE_SUBVOLUME_METRICS feature flag for MDS negotiation
+- Red-black tree based metrics tracker for efficient per-subvolume
+  aggregation with kmem_cache for entry allocations
+- Wire format encoding matching the MDS C++ AggregatedIOMetrics struct
+- Integration with the existing CLIENT_METRICS message
+- Recording of I/O operations from file read/write and writeback paths
+- Debugfs interfaces for monitoring
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.20.mkdir
+Metrics tracked per subvolume include:
+- Read/write operation counts
+- Read/write byte counts
+- Read/write latency sums (for average calculation)
 
-[1/1] vfs: remove the excl argument from the ->create() inode_operation
-      https://git.kernel.org/vfs/vfs/c/7d91315b4335
+The metrics are periodically sent to the MDS as part of the existing
+metrics reporting infrastructure when the MDS advertises support for
+the SUBVOLUME_METRICS feature.
+
+Debugfs additions in Patch 3:
+- metrics/subvolumes: displays last sent and pending subvolume metrics
+- metrics/metric_features: displays MDS session feature negotiation
+  status, showing which metric-related features are enabled (including
+  METRIC_COLLECT and SUBVOLUME_METRICS)
+
+Patch 4 introduces CEPH_SUBVOLUME_ID_NONE constant and enforces
+subvolume_id immutability. Following the FUSE client convention,
+0 means unknown/unset. Once an inode has a valid (non-zero) subvolume_id,
+it should not change during the inode's lifetime.
+
+Changes since v2:
+- Add CEPH_SUBVOLUME_ID_NONE constant (value 0) for unknown/unset state
+- Add WARN_ON_ONCE if attempting to change already-set subvolume_id
+- Add documentation for struct ceph_session_feature_desc ('bit' field)
+- Change pr_err() to pr_info() for "metrics disabled" message
+- Use pr_warn_ratelimited() instead of manual __ratelimit()
+- Add documentation comments to ceph_subvol_metric_snapshot and
+  ceph_subvolume_metrics_tracker structs
+- Use kmemdup_array() instead of kmemdup() for overflow checking
+- Add comments explaining ret > 0 checks for read metrics (EOF handling)
+- Use kmem_cache for struct ceph_subvol_metric_rb_entry allocations
+- Add comment explaining seq_file error handling in dump function
+
+Changes since v1:
+- Fixed unused variable warnings (v8_struct_v, v8_struct_compat) by
+  using ceph_decode_skip_8() instead of ceph_decode_8_safe()
+- Added detailed comment explaining InodeStat encoding versions v1-v9
+- Clarified that "optmetadata" is the actual field name in MDS C++ code
+- Aligned subvolume_id handling with FUSE client convention (0 = unknown)
+
+Alex Markuze (4):
+  ceph: handle InodeStat v8 versioned field in reply parsing
+  ceph: parse subvolume_id from InodeStat v9 and store in inode
+  ceph: add subvolume metrics collection and reporting
+  ceph: adding CEPH_SUBVOLUME_ID_NONE
+
+ fs/ceph/Makefile            |   2 +-
+ fs/ceph/addr.c              |  10 +
+ fs/ceph/debugfs.c           | 159 +++++++++++++
+ fs/ceph/file.c              |  68 +++++-
+ fs/ceph/inode.c             |  41 ++++
+ fs/ceph/mds_client.c        |  94 ++++++--
+ fs/ceph/mds_client.h        |  14 +-
+ fs/ceph/metric.c            | 173 ++++++++++++++-
+ fs/ceph/metric.h            |  27 ++-
+ fs/ceph/subvolume_metrics.c | 432 ++++++++++++++++++++++++++++++++++++
+ fs/ceph/subvolume_metrics.h |  97 ++++++++
+ fs/ceph/super.c             |   8 +
+ fs/ceph/super.h             |  11 +
+ 13 files changed, 1108 insertions(+), 28 deletions(-)
+ create mode 100644 fs/ceph/subvolume_metrics.c
+ create mode 100644 fs/ceph/subvolume_metrics.h
+
+-- 
+2.34.1
+
 
