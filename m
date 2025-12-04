@@ -1,89 +1,143 @@
-Return-Path: <ceph-devel+bounces-4156-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4157-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66456CA279D
-	for <lists+ceph-devel@lfdr.de>; Thu, 04 Dec 2025 07:13:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F5FCA2C6A
+	for <lists+ceph-devel@lfdr.de>; Thu, 04 Dec 2025 09:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D89B5304C2BE
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Dec 2025 06:13:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D17E8301FC3B
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Dec 2025 08:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E7C281504;
-	Thu,  4 Dec 2025 06:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB583090EB;
+	Thu,  4 Dec 2025 08:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HqAKruEJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UnJ0Hzva";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aC7uI14V"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E35F513
-	for <ceph-devel@vger.kernel.org>; Thu,  4 Dec 2025 06:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DD123D7E6
+	for <ceph-devel@vger.kernel.org>; Thu,  4 Dec 2025 08:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764828832; cv=none; b=k9mvXf0p791bHs4vnVZ++GimzzxC+EvJGydGuRlz/mjYWgX8+r+JHp9DRP1fCzjl57ZAyU9Yb+fEAJZcNcmNgeLsXX4Z3YRDNzrEejwXOQUTWfdLYMIlNpvBvY74bH8zA2Oj9WDPthUi+pG1nCqBfDA92O/8OYpFE7vLs4Pe7nk=
+	t=1764836310; cv=none; b=Pe/Fl4c8ArNBVDNZEQMWsMnbH//xeQcjKkjW6005fFH8v4BDR0/gDvA6qlWFEUt2E+7j83P0kPcmpDmi2T985UIuLtxZqXcXnI9wtEuwO4wbATjcrcyjmnEHRucci6GVJT3cM4rXdbFXnhbRYIIgWg6FKaPOwWAHFyaYIUZ2yGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764828832; c=relaxed/simple;
-	bh=4iWM+RalKFlnsFGGE0HlLOqVYnKGyTMxfBEzI4y7R5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YVjAz6IfpzyNbb2oNhOL9extr2m91TjZxw5mP97NK0uvaelhFfbCLzV8uzAYy/DkAHDCcC17GDcjy5/4zoUN4/iXQoai2ZNKPoNwLzHKMWJkLLcargyaZebtP+23ZIbp5+1lR3rJ2F7JCrGVSnWEhmZsjTdjGJ7Tekut4SFkB/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HqAKruEJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F70C113D0;
-	Thu,  4 Dec 2025 06:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764828831;
-	bh=4iWM+RalKFlnsFGGE0HlLOqVYnKGyTMxfBEzI4y7R5g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=HqAKruEJDImR03niZGXyWN/WSd5VwI7lQZF5d0JGxixWdL4UkrpqD8fg0G4m3duZU
-	 RLSaI5mSccHI7bo+qi0wA8YgaVYHhCS7WEk3pw9TXngAXYra0ru/qtCUxGBeJ6NmuY
-	 icnn3WwZSYeCR1x8iA7VW+10nBNsWBWTAZYIvrkM27XaM/aUfJlNr0JwOYVb28Gcbt
-	 vXhYoCkgcTzdXPc7ikJA2FdxVtiroUhggAWepEaup9OnZAjY2hR/y3zYWxxN54f9Rr
-	 A3i5oUNm5rQTKTiIF/C/6hlVtfCMtBS1EihF/YmzhxO+4m6Q4j3z1ExfZCdDz7oP8z
-	 MPZJjG1LGn+aA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	ceph-devel@vger.kernel.org
-Cc: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] ceph: stop selecting CRYPTO and CRYPTO_AES
-Date: Wed,  3 Dec 2025 22:11:18 -0800
-Message-ID: <20251204061118.498220-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.52.0
+	s=arc-20240116; t=1764836310; c=relaxed/simple;
+	bh=l3n8b//bGBWl/a+YQkuZUxtyHjsFRNdEWLqd85Nfjd0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aElDxUnKguwsvXqD94ZXqJH9Z6XsKrNdSeyyjXxPqSDZx4g+0uy0alLkPn27bORzVEGsDRWFnATDQpTOk/aU31nR4IcvrkcbyBHs+pe5iccMrDHtrGfBPwh1X13oxbZVextJ3oTP1lntfLZzhkMMx0jjtoUKvC9U7BagihdX58I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UnJ0Hzva; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aC7uI14V; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764836307;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l3n8b//bGBWl/a+YQkuZUxtyHjsFRNdEWLqd85Nfjd0=;
+	b=UnJ0HzvaJpKdV5Qe94zsreEyGMujVN44MgMpyGZ1bFDdMP2XKFMVAC25E14XLXJ8plouEh
+	QL+vet7QoStao0HjSV1Ff+wSml+Hq/ZZnrQpnl/SzzgBwPNItyN8Aq07qLczhpQ4bTO8GJ
+	EIxjBG8hLDsxHHadfZhq9sRo8l4tZhg=
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
+ [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-G7D962tiOw2Snlw_bE7UJg-1; Thu, 04 Dec 2025 03:18:26 -0500
+X-MC-Unique: G7D962tiOw2Snlw_bE7UJg-1
+X-Mimecast-MFC-AGG-ID: G7D962tiOw2Snlw_bE7UJg_1764836306
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-5de93ca44d9so349511137.3
+        for <ceph-devel@vger.kernel.org>; Thu, 04 Dec 2025 00:18:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1764836306; x=1765441106; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l3n8b//bGBWl/a+YQkuZUxtyHjsFRNdEWLqd85Nfjd0=;
+        b=aC7uI14VPynjx+4kfd/SyuFi0Y0yoqUMhblCtkbcIdtI0JW6wuoPfVVHTku3f5bFD2
+         142wa+2RYdSCGNTNf/X48huRHTYpJHbX38/fhzHntDO3F7cTGqze3jGwDqwjR+jObASW
+         B6pljJlc3l/2gyb8iKLimP6Vka/yOlN/X97a8ktjgpOZazWrzNkPTjvKciaqOJQUlLhF
+         h0OHihSomMMqdQujXw8JVoCL5mPfocbG1WBwN36TOYyzz2GbdEVO++xtubMR1u6r1riL
+         iix9AvdbBwmqraHNVX/alf+Y2Kp8NGO1wixVRw5dEGwb4GFn78XgzS0RnziwMNVPW98u
+         PmPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764836306; x=1765441106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=l3n8b//bGBWl/a+YQkuZUxtyHjsFRNdEWLqd85Nfjd0=;
+        b=OKZQ64YTEh5W5P3OWplwGH7ysaQCbt4aMXoGL1xpyI3ngBodzoJ1PqFY6fzE+deUim
+         LbbwHO+NSTBfNo1vMSUp6ZnAgrvZ5+fSwOdXwTeDuYbope1+Gs4FwM5rRL5RQne0y1tG
+         FsFitUrjju1kKaLOXgUIr1ojcREBXs1zC8dJq7L0muVAS2h1HCWpAIbeFiPQ+z4OY2cl
+         ouTf5nOL29bcT4qutJuVhtZQvbKIv6kl5FixYcfdDtElDJPQ+QCZl09UYiVBokV4qT1S
+         q33+hPOgWGG6Jlao5Qy2n3wME0retTVen3+8jEcji2Fn2zbINFRxLLPsjFwAmQ55bBY3
+         TieQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmH5VVYnzbE8o+LfrThKLYoyD7DtWzhT1lptwqY5XSxTXxg4HMH73w9K3P/aA2Bh1GEiE++MN/v8p0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA6B2InYYCak7TSIAivKFlHiBE2OpKMuWJNeLJE/C66tNckMP2
+	c1SNRT8ib/HiO1UMzhmDXW3Zv7iQ3qidfNvY6GgkfreDpx1RkHGCnkuvO6JOuQqHMvBEqllkuL5
+	111P2y6uzgZUU2bdFzGUb/f5l/saxujaLT0fxSLVGSlhkfcRqpZNr4d9niO3Sca1TNI8buJomgh
+	P0fojY4tdsbS20qJdx5e9oKw8V2kXcKAl7ZyE+Sw==
+X-Gm-Gg: ASbGncu3TLFgIu8E8oxA96PuSOiEGCptARNei2UOZx3MV54HxE2XKxmcULmtiUwdovI
+	HIDTXnb3IU/4f3pmqXE6PntsGc/So2PxIOj58f8Stpoq9nAGq3rczTcMCAmPtuCN7g6IG4OGt1W
+	8xaBxkYQOkgP4VyuIq18zc9UnbxRd3+a48V+JNu40NCsJBmsZSLmtLeFaQFwHuAdsgDNPQ6Frln
+	rWEKFff3SvR
+X-Received: by 2002:a05:6102:3f49:b0:5dd:b5a2:b590 with SMTP id ada2fe7eead31-5e48e25d2admr1639477137.16.1764836305821;
+        Thu, 04 Dec 2025 00:18:25 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH9259AlA8bpjd7xviHx6Xvbs8Ow4hKJv3lNZaP8woqjVu9DiigswlUGZerpm1NmcWbqdDUoIamKQtZgGmKFUI=
+X-Received: by 2002:a05:6102:3f49:b0:5dd:b5a2:b590 with SMTP id
+ ada2fe7eead31-5e48e25d2admr1639471137.16.1764836305408; Thu, 04 Dec 2025
+ 00:18:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251203154625.2779153-1-amarkuze@redhat.com> <20251203154625.2779153-5-amarkuze@redhat.com>
+ <361062ac3b2caf3262b319003c7b4aa2cf0f6a6e.camel@ibm.com> <CAO8a2SjQDC2qaVV6_jsQbzOtUUdxStx2jEMYkG3VVkSCPbiH_Q@mail.gmail.com>
+ <7720f7ee8f8e8289c8e5346c2b129de2592e2d64.camel@ibm.com>
+In-Reply-To: <7720f7ee8f8e8289c8e5346c2b129de2592e2d64.camel@ibm.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Thu, 4 Dec 2025 10:18:14 +0200
+X-Gm-Features: AWmQ_bnzTJj_cVx7c8ckoJqlRdYNd6wKsmg7j7g1VnYIuuD5402gvwGbKwcYplU
+Message-ID: <CAO8a2SjN0BQqHJme-8WwMP2PKeR_QvKHYrNr96H4ymLTDC8EZw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] ceph: adding CEPH_SUBVOLUME_ID_NONE
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: Viacheslav Dubeyko <vdubeyko@redhat.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-None of the CEPH_FS code directly requires CRYPTO or CRYPTO_AES.  These
-options do get selected indirectly anyway via CEPH_LIB, which does need
-them, but there is no need for CEPH_FS to select them too.
+There is no separate test needed. The client only differs in that the
+mount path is for a subvolume.
+Regardless its outside the scope of this patchset
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- fs/ceph/Kconfig | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
-index 3e7def3d31c1..01a3e9a3a4fe 100644
---- a/fs/ceph/Kconfig
-+++ b/fs/ceph/Kconfig
-@@ -2,12 +2,10 @@
- config CEPH_FS
- 	tristate "Ceph distributed file system"
- 	depends on INET
- 	select CEPH_LIB
- 	select CRC32
--	select CRYPTO_AES
--	select CRYPTO
- 	select NETFS_SUPPORT
- 	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
- 	default n
- 	help
- 	  Choose Y or M here to include support for mounting the
-
-base-commit: b2c27842ba853508b0da00187a7508eb3a96c8f7
--- 
-2.52.0
+On Thu, Dec 4, 2025 at 12:55=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> On Wed, 2025-12-03 at 23:22 +0200, Alex Markuze wrote:
+> > The latest ceph code supports subvolume metrics.
+> > The test is simple:
+> > 1. Deploy a ceph cluster
+> > 2. Create and mount a subvolume
+> > 3. run some I/O
+> > 4. I used debugfs to see that subvolume metrics were collected on the
+> > client side and checked for subvolume metrics being reported on the
+> > mds.
+> >
+> > Nothing more to it.
+> >
+>
+> So, if it is simple, then what's about of adding another Ceph's test into
+> xfstests suite? Maybe, you can consider unit-test too. I've already intro=
+duced
+> initial patch with Kunit-based unit-test. We should have some test-case t=
+hat
+> anyone can run and test this code.
+>
+> Thanks,
+> Slava.
+>
 
 
