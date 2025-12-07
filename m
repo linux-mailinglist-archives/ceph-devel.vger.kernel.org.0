@@ -1,132 +1,113 @@
-Return-Path: <ceph-devel+bounces-4165-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4166-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4388CCAB810
-	for <lists+ceph-devel@lfdr.de>; Sun, 07 Dec 2025 18:04:04 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEFDECAB826
+	for <lists+ceph-devel@lfdr.de>; Sun, 07 Dec 2025 18:07:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 6AACE300091A
-	for <lists+ceph-devel@lfdr.de>; Sun,  7 Dec 2025 17:03:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3938B300B932
+	for <lists+ceph-devel@lfdr.de>; Sun,  7 Dec 2025 17:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9E41E0E14;
-	Sun,  7 Dec 2025 17:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49461277007;
+	Sun,  7 Dec 2025 17:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZ20i9Hn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="diLIA0JZ"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBA11E4AB
-	for <ceph-devel@vger.kernel.org>; Sun,  7 Dec 2025 17:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D9F2AD2B
+	for <ceph-devel@vger.kernel.org>; Sun,  7 Dec 2025 17:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765127032; cv=none; b=G4XgfMgQtKFGLBmRdTQOjpPzXFAwk9fprh+2UyOC3IQ5YxRpfdf7DUgxsBLJRD41/IVoeZxUhtary+dXxffhl7UnOKSNag1Z5iBK4Ov6agjEFlbbrQn3KfdXQUUzo+RByfbTOxlHvdXRyy3yWyRwF0VWpfFiv8HlzolLoer9/3g=
+	t=1765127274; cv=none; b=TdsP/+nm/O07TeFXqrFV+pa/cU4eZWo/lmuvmnsTdH4Ua0UihUXGbvFLrqxSkkZXOwxeXGnKvxgi1xVnQMWUmFdOOGOu35n9H7YP9Er/Z+t4a0S1CdJNlrJVdiVtqZxGZE1hwPqGmH7hYD4tk5cef2z6BSgxYVU9OqKWmHeWCgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765127032; c=relaxed/simple;
-	bh=aQzEIku8JROiflhaigqe1aRWbUy/k3+NLNX2vfeNg9Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VKTzGIlCoMmVgAzPlJFpdboew13w9n+BGMDDpI1+knzVGbB8t6/mJ7wYNOTZ0Ng+rHG8ZiU6ofi6oJ+TNZVTkIG6woxgu0sBvPhtz3o1xNVvyB5HKL7yKZLHZdf71oy+TnV9BnKKZk3ru42wHARSxkWkGH/JRjBLx+c14zZIy2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZ20i9Hn; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1765127274; c=relaxed/simple;
+	bh=W6618hwRlV0oIHS4kEO9H2fCUujYuG8wj7M9jXXcDHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MW2zZ7aj5Q5VqlddC6wxj62hIqh506PL60TmNogaTq50dXEt8TGGs+dHZUOzvWSMeSPzqndMAFTv+hH50QeJSR5qaPXP3eLz6yriAwGF/4vJsibSWrIwilx+uLuNLs5unhAzcmUpSYVX0OqgTXaQnRJfKu6bFeR8Up0l/V5do2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=diLIA0JZ; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2984dfae043so37306815ad.0
-        for <ceph-devel@vger.kernel.org>; Sun, 07 Dec 2025 09:03:51 -0800 (PST)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so5850996a12.1
+        for <ceph-devel@vger.kernel.org>; Sun, 07 Dec 2025 09:07:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765127031; x=1765731831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oAbPbCNzWQWt8AavbFn8WrJJj79RyGuVnTywYHA2ubU=;
-        b=ZZ20i9Hnz3usATJaHw2YSxSk1DXl/eFvD/kgoNvOiLBVy/PfQh0YwZvoTQGvDBjJjI
-         ChQXeElcxdsiWkC3HOBKb3B0BuAs/FIo1TxoVD3pod3pzunyBO0KYk4xfq8lETbbKbqF
-         MBFYvK3tC8emcWHXehHZ9o1HQHaT5Ymrxa5wfTCuWqA9qSi9bTdLcVgHc+GhQag3KQmy
-         /gSpz+amdvb6eRJA3r7UqvKkmv0smT/UlpcxoVHxM1sdpxc/pzeV9oYCFcJUXykf0EFD
-         lPkuUkShImwNLdsBNSsmXkhuT4qH65JCBFhbET4UQejoVhkZ1WMkycNJMvmz15qx91BP
-         X14A==
+        d=gmail.com; s=20230601; t=1765127269; x=1765732069; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JRbQyXkhtYelBntjwwYgW2DnVjXNNgrMbw0oxlz8gRY=;
+        b=diLIA0JZpkOFyTgaKazRXYoI9DrVbHkka3kbY0i0kYrNb7kv2Cxh/jhHA7WCkvbfYh
+         qieKATGin9eqv2wW3I0ZoJb8lpVhp4VKgH1IBSS/RDG3b7jEiLMyhJtsZK7Ekp9NjmoS
+         myIMaIsrqkiLg6ORrcBvJVTWZpt76rybjB2r2T8P+r1FX8qadYU/9nMBM7un7dPLJF+M
+         P286J0BxbznqJjfurhXZ7jqOQX8nAS2/jMdcISlXkF9RNWDaXE/puKVVMVNUZ+9kVzhX
+         S98CXPrYul+N+xowFtesRg+SzJY2GkBYuIbcBoa0KOT5HjWf1MoeL5OGpH6OPyIcpv/h
+         L2dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765127031; x=1765731831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=oAbPbCNzWQWt8AavbFn8WrJJj79RyGuVnTywYHA2ubU=;
-        b=EXhklroprhDdv6Wob0/noU/wzf99sfkWe5Rfv1x5OTOWIU8zkyD9GosxztR52SJsiW
-         BYfZ5jHwUkhf9onbVjBeTSx0pOKQJdvjeuPXwW/gqcDFDVgoHLBwb7p0VDzanTX7VJcX
-         /quRdIshNFiJxExBo2KXnmNGwfzQCapJsC3VzJbQCpuQWlEtOyJGX5RKJScDACdxyory
-         kZ8FjEEyeJKxz/PA0mfq1eU+PIn9Kcqni0MuszPQ+JxJMOJqRbQQ6KPN7B00H7NwoIrP
-         Drm6XgYufBH4mra6+sOAbVt1h4f7zm5PQm5FIMVoNyAPXsB5rt349fsx5UmtEfTXmw/u
-         KUvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUe/SIG3GdgkgLnrIVuqayulwmt1ZaU3DWcSOY7KSG7A7EyD7WGA3oTBa1GI9i6i6mkmfVnAuoPcxRe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Dl++Djp4hpOgDbSB7ItLZ6RJLEHx7o+n/m8Sw9b2W78n66he
-	e9c5G7VPvLydOmpaF1jl7wkN4Am/8sZQ5H7gcWxLqOoPTZFtDHYnNM4VEFDrrGG40moRg+1d9v5
-	Oqj6AAtcMGGGL1/3EXcsOTFxaOn6fz0qRjrzs
-X-Gm-Gg: ASbGncsUUb1LgkGcWsw8FdjogdwJ7+lRbyjjIIYkKFiL39jSvNFuSHbKSc/MZa7TR0P
-	2sVVI0eZyC1OGRBDgQoIFilQam9fZIZbwZKVH/aA9WNiAOSt2IpyA0WlKubVYmoYwQf0NswgbQX
-	+bbfnLbfQEEYXmWKfElIckqciO/cZi4OXNjPytV8LyK/S8h6iqBhWfnf+IKdfT30z6VNFqRSJZi
-	4+ZgpSea9VIi8d/JgTW5h5Oa8d6a9kpZ792UXupYgCdnyhzozeKTf8zAGSRpwHn0P2VkaU=
-X-Google-Smtp-Source: AGHT+IFXmSUSOxFWtes+XsJX1igQjezrc2rRItPqNnD7SuK+QiO1hFoZnlPML1sFe1vLDbxIys4B9Eb4/5sN+7iczGs=
-X-Received: by 2002:a05:7022:4387:b0:119:e56b:91e6 with SMTP id
- a92af1059eb24-11e0329e52cmr3944312c88.23.1765127030704; Sun, 07 Dec 2025
- 09:03:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765127269; x=1765732069;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JRbQyXkhtYelBntjwwYgW2DnVjXNNgrMbw0oxlz8gRY=;
+        b=e3VO/xTDTe3fUkJwVw2zq000Gm4ecBeZzKGPn+OhnEbZVNRdir9CxK2xc1IYkdKypq
+         GWodwCcYIVQZnw6BSHkKYDd7lCizhS97YBL2PwQpxOskXNkN7u1SM9eDbpSmPIy1s9Sz
+         nJyNeAu/4g4eiPWxTAngqBftaUKIgAu+h6hUKSKZKZ/CjjuqDYOQPdDEfMSAFs9cqcL3
+         oWa6Qi1KRlMcnyNeS3YztXOUytW5J1jGY+qQzi+adwV86YmB/VNG9bwl28ySF/lX3rTs
+         cbioZbjwZjjmhTn4Xks6UJxmuAAMM0F/S0hbyKlIlNB6k5HfvXoWbKNsp4/k8vLoDnFF
+         biTg==
+X-Gm-Message-State: AOJu0YxDFFzUAzSbyeSnlR2ITxwjscnYIiJWITq9R4TX0RQmbQc08m45
+	66+jOp8S07ReSwT4UcSmqS94u6naQjH+JI3NEuMri33Xsa5k6vrFyVjZHado3g==
+X-Gm-Gg: ASbGncvWFCxHG5ajji6nXluucjppVOJd2ty5DSbqNgqyDeYamCVXB4g0+5Oo8STL31V
+	2m3NoP8WFSNgdg6AMZh4X81LCI2gSFL5uxRp/lyMx/i36SbiFgtLR3l746vprcy9O/emCpiLBVG
+	GGpWvBMrYy1is4UzqLl4a6woAlXxOS+qiojN1JhQz0yC9kIM6CpxQfHm/vJX5reLZA1o0AvjUaw
+	FydjtuLl0TFgjFoswosW9PKM0qfjz5h0MV4RDpWdWEMZvp3z2lmdpqzfqpBlDTLpthi9fWmBKwr
+	mYLxQ4gqrehj2uqs2An5eR+u6B1ZRmRxcWUrEC7Gw/imU753nTc2ai0jPuTvGW3Sihc2bCcnKmQ
+	MGWrszz8S3uIagu8vGt2N06D5RMGsSRHXEUMU5PivCSeTLGZBch0tCrBahlBlg7u5wgzPleqXY8
+	BJcv9G7RBWqNnbXATNyrollg0TyZhUIKBJnurdBcmvtWK+6hzKSPCyUw==
+X-Google-Smtp-Source: AGHT+IELIQ+kGUpv/vsiEfbQk5xMCsIoper+nA5zBfurJATeyCRV7Lbu1yQlTO2kjpVjDj3/e3RsCA==
+X-Received: by 2002:a17:907:7e85:b0:b70:be84:5186 with SMTP id a640c23a62f3a-b7a2479da6cmr545913266b.44.1765127268546;
+        Sun, 07 Dec 2025 09:07:48 -0800 (PST)
+Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f44597e6sm890409866b.12.2025.12.07.09.07.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Dec 2025 09:07:47 -0800 (PST)
+From: Ilya Dryomov <idryomov@gmail.com>
+To: ceph-devel@vger.kernel.org
+Cc: Dongsheng Yang <dongsheng.yang@linux.dev>
+Subject: [PATCH] rbd: stop selecting CRC32, CRYPTO, and CRYPTO_AES
+Date: Sun,  7 Dec 2025 18:07:29 +0100
+Message-ID: <20251207170730.3055857-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251205065104.103210-1-ebiggers@kernel.org>
-In-Reply-To: <20251205065104.103210-1-ebiggers@kernel.org>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Sun, 7 Dec 2025 18:03:39 +0100
-X-Gm-Features: AQt7F2p601O81HYqf6W-Rr0kxT37MDUFRgfpaApkUB-ekArcQnJmAag3KA-uT0k
-Message-ID: <CAOi1vP8rauWK_S+CH64jZ=+ksoZKCT29DiEkYRQK6xLpTJYHTA@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: stop selecting CRC32, CRYPTO, and CRYPTO_AES
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 5, 2025 at 7:53=E2=80=AFAM Eric Biggers <ebiggers@kernel.org> w=
-rote:
->
-> None of the CEPH_FS code directly requires CRC32, CRYPTO, or CRYPTO_AES.
-> These options do get selected indirectly anyway via CEPH_LIB, which does
-> need them, but there is no need for CEPH_FS to select them too.
->
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->
-> v2: also remove CRC32
->
->  fs/ceph/Kconfig | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
-> index 3e7def3d31c1..3d64a316ca31 100644
-> --- a/fs/ceph/Kconfig
-> +++ b/fs/ceph/Kconfig
-> @@ -1,13 +1,10 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  config CEPH_FS
->         tristate "Ceph distributed file system"
->         depends on INET
->         select CEPH_LIB
-> -       select CRC32
-> -       select CRYPTO_AES
-> -       select CRYPTO
->         select NETFS_SUPPORT
->         select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
->         default n
->         help
->           Choose Y or M here to include support for mounting the
->
-> base-commit: bc04acf4aeca588496124a6cf54bfce3db327039
-> --
-> 2.52.0
->
+None of the RBD code directly requires CRC32, CRYPTO, or CRYPTO_AES.
+These options are needed by CEPH_LIB code and they are selected there
+directly.
 
-Applied.
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ drivers/block/Kconfig | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thanks,
+diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
+index 77d694448990..858320b6ebb7 100644
+--- a/drivers/block/Kconfig
++++ b/drivers/block/Kconfig
+@@ -316,9 +316,6 @@ config BLK_DEV_RBD
+ 	tristate "Rados block device (RBD)"
+ 	depends on INET && BLOCK
+ 	select CEPH_LIB
+-	select CRC32
+-	select CRYPTO_AES
+-	select CRYPTO
+ 	help
+ 	  Say Y here if you want include the Rados block device, which stripes
+ 	  a block device over objects stored in the Ceph distributed object
+-- 
+2.49.0
 
-                Ilya
 
