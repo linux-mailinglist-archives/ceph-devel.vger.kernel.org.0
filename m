@@ -1,174 +1,190 @@
-Return-Path: <ceph-devel+bounces-4169-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4170-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C34CB2698
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 Dec 2025 09:30:58 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EABDCB30F0
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 Dec 2025 14:43:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 6C021302CCA7
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 Dec 2025 08:30:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A24843053911
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 Dec 2025 13:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F0F26CE1A;
-	Wed, 10 Dec 2025 08:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CD230EF75;
+	Wed, 10 Dec 2025 13:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b="owIIe9My"
+	dkim=pass (2048-bit key) header.d=haak.id.au header.i=@haak.id.au header.b="XRnABThV"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-router1.rz.tu-ilmenau.de (mail-router1.rz.tu-ilmenau.de [141.24.179.34])
+Received: from mail.haak.id.au (mail.haak.id.au [172.105.183.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9322FFFAC
-	for <ceph-devel@vger.kernel.org>; Wed, 10 Dec 2025 08:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.24.179.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EB02DC77A;
+	Wed, 10 Dec 2025 13:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.183.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765355451; cv=none; b=j7utQaNcAjk7nWJGEpr0hp6CsclkfKyIaRR9q5dV+kMwKORRQuz0EzpGJMHtPknw4KOHjBW49gHUKk6PYn3UoIZqi6beEfqWWV8EH6YVtqzo10Z8CCC0szyWuDKp+hOwB89jYMyGV+u5eBXO4wV4G/+Q34ngkUtvv6UPc9YWnuQ=
+	t=1765374213; cv=none; b=E4kZRp6+XgyNTRW2KSvtjXsLCEp3AwV9Xn7EvDpFUeRy4paoajjGYbSMa7wQoL4lNDFVvJgCDmcqbf8mf/n7DVXKKuzPSLp5vgjkyExwfPXuzuY4WTVI/1ikj50My0jOXkXT99SDOtGpd/T3+BDRkAv9MifgOZdiRCYS5tVue6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765355451; c=relaxed/simple;
-	bh=ar+nbUYWZQsvPHecdMwKiwThjyy7RJAZjHdvCCQxpS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sTXQWEnCKI6+b6RnPfjYx/LZDhvtrZubY9+VS0TPKj5Wj7Nzqxq7N0gmRpwzE5PE9K4RFpwI/4JMfRTKFF3cpI4UBsSl8ysxA1fODkTpybdhIP1+wvDmbPIDY1vp1SAdwAeC4nm3Hr3QUc/7WQ5GeIYAGLpyJf13Iu2DphzFk8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de; spf=pass smtp.mailfrom=tu-ilmenau.de; dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b=owIIe9My; arc=none smtp.client-ip=141.24.179.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-ilmenau.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-ilmenau.de;
- i=@tu-ilmenau.de; q=dns/txt; s=tuil-dkim-1; t=1765355365; h=message-id
- : date : mime-version : subject : to : cc : references : from :
- in-reply-to : content-type : content-transfer-encoding : from;
- bh=ar+nbUYWZQsvPHecdMwKiwThjyy7RJAZjHdvCCQxpS0=;
- b=owIIe9MyYwgJKVTD5cw1KKsh6S1uaqJmbd3vEL8z2t205VJVH70tysSWat8H55bAlSu6t
- PMmSN9eeqmsjReaENUV/k7V/xYEZW8jUfUR9TX46VQY5gyDN9yUY2L4MjDa3aDKUhvuWvX9
- yWL5sH3BvRCSGg9roI5tpfL2T+8Nwl33j0vCieU/rgwViM/X/k/aUPN5o3woHOex9v877lb
- 6fiQkxn0tlwBp7/GzRwkXCmyUnvwnnr756iFmFn49EjXyNrozOnyQoAkgMIuYVf5iOpoGhT
- ga7C61shqxGAYQizkQuDeGeXq/dhTK4tvJt4I/Hxr4m/5DpUZobEGixvxzcg==
-Received: from mail-front1.rz.tu-ilmenau.de (mail-front1.rz.tu-ilmenau.de [141.24.179.32])
-	by mail-router1.rz.tu-ilmenau.de (Postfix) with ESMTPS id 53236600E5;
-	Wed, 10 Dec 2025 09:29:25 +0100 (CET)
-Received: from [141.24.212.106] (unknown [141.24.212.106])
-	by mail-front1.rz.tu-ilmenau.de (Postfix) with ESMTPSA id 1064D5FC9C;
-	Wed, 10 Dec 2025 09:29:25 +0100 (CET)
-Message-ID: <52cefbfb-97bc-4a83-939d-1a832205df10@tu-ilmenau.de>
-Date: Wed, 10 Dec 2025 09:29:25 +0100
+	s=arc-20240116; t=1765374213; c=relaxed/simple;
+	bh=vbIJ79++239f65+5uhoikdJTPHTEYBJa19HsvUJ+OnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t159XRP2U1ydVu8lYWhzeOnf6qRBg7FUYUfey8L1D2mmBbjccn7EW4juPYcNhrcxqstpA8V2oqfrsImD2TASRQnsnEVcBWfpPFQHt1BMZ8ZVzeUnWkFOut7hy3Np/h3PmXhYUFwlmSAhYNMpVDEgSoZGHdO4XuOR+/kAyWEIhaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=haak.id.au; spf=pass smtp.mailfrom=haak.id.au; dkim=pass (2048-bit key) header.d=haak.id.au header.i=@haak.id.au header.b=XRnABThV; arc=none smtp.client-ip=172.105.183.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=haak.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=haak.id.au
+Received: from xps15mal (180-150-104-78.b49668.bne.static.aussiebb.net [180.150.104.78])
+	by mail.haak.id.au (Postfix) with ESMTPSA id BF9E08337B;
+	Wed, 10 Dec 2025 23:43:21 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=haak.id.au; s=202002;
+	t=1765374201; bh=vbIJ79++239f65+5uhoikdJTPHTEYBJa19HsvUJ+OnQ=;
+	h=Date:From:To:Subject:From;
+	b=XRnABThVx+UyGFi49rlYBNZZc4lMF5MmkFiqKrorzROqSgYKKKxOCKCh6QEN3t4qS
+	 NznAnPk6uqT0M4UTQM0zaPZDfSaW6pa7g0Nap9bYHLpU+DciqyiHE2UH243ZHY8Lgm
+	 axLWa930++Y2DyXGTy8k3RQ+5MEE+MYIP1B0tU4Nh/iF/vlefHep2J2na4S/2IAPc9
+	 g+jYiPiP5DSBNrYlQzM3QyegSy/O405eVJArcwM5Zipqui/1JS3msrfIbMUb1yhlo0
+	 letOflN0a0fursH3pHQDh6SnyeIofX9TEPz9vXy3Q6GOJTTm84skZ32CJ5sU/mmI7W
+	 3EXCofFis4c/A==
+Date: Wed, 10 Dec 2025 23:43:18 +1000
+From: Mal Haak <malcolm@haak.id.au>
+To: "David Wang" <00107082@163.com>
+Cc: linux-kernel@vger.kernel.org, surenb@google.com, xiubli@redhat.com,
+ idryomov@gmail.com, ceph-devel@vger.kernel.org
+Subject: Re: Possible memory leak in 6.17.7
+Message-ID: <20251210234318.5d8c2d68@xps15mal>
+In-Reply-To: <17469653.4a75.19b01691299.Coremail.00107082@163.com>
+References: <20251110182008.71e0858b@xps15mal>
+	<20251208110829.11840-1-00107082@163.com>
+	<20251209090831.13c7a639@xps15mal>
+	<17469653.4a75.19b01691299.Coremail.00107082@163.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bug report] rbd unmap hangs after pausing and unpausing I/O
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
-References: <36681e9d-fde6-4c5d-bf35-db9d85865900@tu-ilmenau.de>
- <CAOi1vP_8MXfbM=dncfNXvPXvUO2dXr-9rj1YVEMYPLjj-Ox4ng@mail.gmail.com>
-Content-Language: en-US
-From: Raphael Zimmer <raphael.zimmer@tu-ilmenau.de>
-Autocrypt: addr=raphael.zimmer@tu-ilmenau.de; keydata=
- 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
-In-Reply-To: <CAOi1vP_8MXfbM=dncfNXvPXvUO2dXr-9rj1YVEMYPLjj-Ox4ng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 9 Dec 2025 12:40:21 +0800 (CST)
+"David Wang" <00107082@163.com> wrote:
 
+> At 2025-12-09 07:08:31, "Mal Haak" <malcolm@haak.id.au> wrote:
+> >On Mon,  8 Dec 2025 19:08:29 +0800
+> >David Wang <00107082@163.com> wrote:
+> >  
+> >> On Mon, 10 Nov 2025 18:20:08 +1000
+> >> Mal Haak <malcolm@haak.id.au> wrote:  
+> >> > Hello,
+> >> > 
+> >> > I have found a memory leak in 6.17.7 but I am unsure how to
+> >> > track it down effectively.
+> >> > 
+> >> >     
+> >> 
+> >> I think the `memory allocation profiling` feature can help.
+> >> https://docs.kernel.org/mm/allocation-profiling.html
+> >> 
+> >> You would need to build a kernel with 
+> >> CONFIG_MEM_ALLOC_PROFILING=y
+> >> CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y
+> >> 
+> >> And check /proc/allocinfo for the suspicious allocations which take
+> >> more memory than expected.
+> >> 
+> >> (I once caught a nvidia driver memory leak.)
+> >> 
+> >> 
+> >> FYI
+> >> David
+> >>   
+> >
+> >Thank you for your suggestion. I have some results.
+> >
+> >Ran the rsync workload for about 9 hours. It started to look like it
+> >was happening.
+> ># smem -pw
+> >Area                           Used      Cache   Noncache 
+> >firmware/hardware             0.00%      0.00%      0.00% 
+> >kernel image                  0.00%      0.00%      0.00% 
+> >kernel dynamic memory        80.46%     65.80%     14.66% 
+> >userspace memory              0.35%      0.16%      0.19% 
+> >free memory                  19.19%     19.19%      0.00% 
+> ># sort -g /proc/allocinfo|tail|numfmt --to=iec
+> >         22M     5609 mm/memory.c:1190 func:folio_prealloc 
+> >         23M     1932 fs/xfs/xfs_buf.c:226 [xfs]
+> >func:xfs_buf_alloc_backing_mem 
+> >         24M    24135 fs/xfs/xfs_icache.c:97 [xfs]
+> > func:xfs_inode_alloc 27M     6693 mm/memory.c:1192
+> > func:folio_prealloc 58M    14784 mm/page_ext.c:271
+> > func:alloc_page_ext 258M      129 mm/khugepaged.c:1069
+> > func:alloc_charge_folio 430M   770788 lib/xarray.c:378
+> > func:xas_alloc 545M    36444 mm/slub.c:3059 func:alloc_slab_page 
+> >        9.8G  2563617 mm/readahead.c:189 func:ractl_alloc_folio 
+> >         20G  5164004 mm/filemap.c:2012 func:__filemap_get_folio 
+> >
+> >
+> >So I stopped the workload and dropped caches to confirm.
+> >
+> ># echo 3 > /proc/sys/vm/drop_caches
+> ># smem -pw
+> >Area                           Used      Cache   Noncache 
+> >firmware/hardware             0.00%      0.00%      0.00% 
+> >kernel image                  0.00%      0.00%      0.00% 
+> >kernel dynamic memory        33.45%      0.09%     33.36% 
+> >userspace memory              0.36%      0.16%      0.19% 
+> >free memory                  66.20%     66.20%      0.00% 
+> ># sort -g /proc/allocinfo|tail|numfmt --to=iec
+> >         12M     2987 mm/execmem.c:41 func:execmem_vmalloc 
+> >         12M        3 kernel/dma/pool.c:96 func:atomic_pool_expand 
+> >         13M      751 mm/slub.c:3061 func:alloc_slab_page 
+> >         16M        8 mm/khugepaged.c:1069 func:alloc_charge_folio 
+> >         18M     4355 mm/memory.c:1190 func:folio_prealloc 
+> >         24M     6119 mm/memory.c:1192 func:folio_prealloc 
+> >         58M    14784 mm/page_ext.c:271 func:alloc_page_ext 
+> >         61M    15448 mm/readahead.c:189 func:ractl_alloc_folio 
+> >         79M     6726 mm/slub.c:3059 func:alloc_slab_page 
+> >         11G  2674488 mm/filemap.c:2012 func:__filemap_get_folio
+> >
+> >So if I'm reading this correctly something is causing folios collect
+> >and not be able to be freed?  
+> 
+> CC cephfs, maybe someone could have an easy reading out of those
+> folio usage
+> 
+> 
+> >
+> >Also it's clear that some of the folio's are counting as cache and
+> >some aren't. 
+> >
+> >Like I said 6.17 and 6.18 both have the issue. 6.12 does not. I'm now
+> >going to manually walk through previous kernel releases and find
+> >where it first starts happening purely because I'm having issues
+> >building earlier kernels due to rust stuff and other python
+> >incompatibilities making doing a git-bisect a bit fun.
+> >
+> >I'll do it the packages way until I get closer, then solve the build
+> >issues. 
+> >
+> >Thanks,
+> >Mal
+> >  
+Thanks David.
 
-On 23.09.25 20:33, Ilya Dryomov wrote:
-> On Tue, Sep 23, 2025 at 12:38 PM Raphael Zimmer
-> <raphael.zimmer@tu-ilmenau.de> wrote:
->>
->> Hello,
->>
->> I encountered an error with the kernel Ceph client (specifically using
->> an RBD device) when pausing I/O on the cluster by setting and unsetting
->> pauserd and pausewr flags. An error was seen with two different setups,
->> which I believe is due to the same problem.
-> 
-> Hi Raphael,
-> 
-> What is your use case for applying pauserd and pausewr?  I'm curious
-> because it's not something that I have seen used in normal operation
-> and most Ceph users probably aren't even aware of these flags.
-> 
->>
->> 1) When pausing and later unpausing I/O on the cluster, everything seems
->> to work as expected until trying to unmap an RBD device from the kernel.
->> In this case, the rbd unmap command hangs and also can't be killed. To
->> get back to a normally working state, a system reboot is needed. This
->> behavior was observed on different systems (Debian 12 and 13) and could
->> also be reproduced with an installation of the mainline kernel (v6.17-rc6).
->>
->> Steps to reproduce:
->> - Connect kernel client to RBD device (rbd map)
->> - Pause I/O on cluster (ceph osd pause)
->> - Wait some time (3 minutes should be enough)
->> - Unpause I/O on cluster
->> - Try to unmap RBD device on client
->>
->>
->> 2) When using an application that internally uses the kernel Ceph client
->> code, I observed the following behavior:
->>
->> Pausing I/O leads to a watch error after some time (same as with failing
->> OSDs or e.g. when pool quota is reached). In rbd_watch_errcb
->> (drivers/block/rbd.c), the watch_dwork gets scheduled, which leads to a
->> call of rbd_reregister_watch -> __rbd_register_watch -> ceph_osdc_watch
->> (net/ceph/osd_client.c) -> linger_reg_commit_wait ->
->> wait_for_completion_killable. At this point, it waits without any
->> timeout for the completion. The normal behavior is to wait until the
->> causing condition is resolved and then return. With pausing and
->> unpausing I/O, wait_for_completion_killable does not return even after
->> unpausing because no call to complete or complete_all happens. I would
->> guess that on unpausing some call is missing so that committing the
->> linger request never completes.
->>
->>   From what I am seeing, it seems like this missing completion in the
->> second case is also the cause of the hanging rbd unmap with the
->> unmodified kernel.
-> 
-> You are pretty close ;)  The completion is indeed missing, but it's
-> more of a side effect than the root cause.  The root cause is that the
-> watch request doesn't get resubmitted on paused -> unpaused transitions
-> like it happens on e.g. full -> no-longer-full transitions -- the logic
-> around forming need_resend_linger list isn't quite right.  I'll try to
-> put together a fix in the coming days.
-> 
-> Thanks,
-> 
->                  Ilya
+I've contacted the ceph developers as well. 
 
-Hi Ilya,
-I haven't heard anything about this issue for quite a while. Have you 
-made any progress with the fix you wanted to put together by now? Or can 
-you estimate when a fix will be ready?
+There was a suggestion it was due to the change from, to quote:
+folio.free() to folio.put() or something like this.
 
-Best regards,
-Raphael
+The change happened around 6.14/6.15
+
+I've found an easier reproducer. 
+
+There has been a suggestion that perhaps the ceph team might not fix
+this as "you can just reboot before the machine becomes unstable" and
+"Nobody else has encountered this bug"
+
+I'll leave that to other people to make a call on but I'd assume the
+lack of reports is due to the fact that most stable distros are still
+on a a far too early kernel and/or are using the fuse driver with k8s.
+
+Anyway, thanks for your assistance.
 
 
