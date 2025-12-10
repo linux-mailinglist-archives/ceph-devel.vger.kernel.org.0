@@ -1,136 +1,174 @@
-Return-Path: <ceph-devel+bounces-4168-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4169-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F20CAEE64
-	for <lists+ceph-devel@lfdr.de>; Tue, 09 Dec 2025 05:40:57 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C34CB2698
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 Dec 2025 09:30:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C1A1330204BC
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Dec 2025 04:40:55 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 6C021302CCA7
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 Dec 2025 08:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B86F2D3A70;
-	Tue,  9 Dec 2025 04:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F0F26CE1A;
+	Wed, 10 Dec 2025 08:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KFSZsLwt"
+	dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b="owIIe9My"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+Received: from mail-router1.rz.tu-ilmenau.de (mail-router1.rz.tu-ilmenau.de [141.24.179.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D68E277818;
-	Tue,  9 Dec 2025 04:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9322FFFAC
+	for <ceph-devel@vger.kernel.org>; Wed, 10 Dec 2025 08:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.24.179.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765255254; cv=none; b=j83xVfGknpdBRjAtLN/0WY8lmwazqBpn1IN8ACqDn7/Gdir8t3HhkX207KCR9tsIRWMo1eZQjfUBS2E1OW9ZZmUoBDdAN0lmau1JO4Cdy6Zf1VXXx4edWfhheE40Z+aQWsrcrCXbSDDspmPWUGXq1b/4ycAkYAAjgkNF9Cffcmo=
+	t=1765355451; cv=none; b=j7utQaNcAjk7nWJGEpr0hp6CsclkfKyIaRR9q5dV+kMwKORRQuz0EzpGJMHtPknw4KOHjBW49gHUKk6PYn3UoIZqi6beEfqWWV8EH6YVtqzo10Z8CCC0szyWuDKp+hOwB89jYMyGV+u5eBXO4wV4G/+Q34ngkUtvv6UPc9YWnuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765255254; c=relaxed/simple;
-	bh=b/lyRAfMAhaznejR+3YOxto/1WRFoywG4m0D6+y0xfM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=B92I5hQweJG8DDT+qT1J2na1YpztJsaKTKeZ2QNOba5ohyga/kwz89OaYU1BabA2Y8RlIq4c34IwdWcq8YnJEaz8i1BB2rrcY3+hdgJ3O7b5I4PryC0/C2oFFMllo7NZolCFF92t/d1BTNeUk0b4IujfRYGqrdp9Bls/XUMgb7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KFSZsLwt; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=b/lyRAfMAhaznejR+3YOxto/1WRFoywG4m0D6+y0xfM=; b=K
-	FSZsLwtXn9EqCBD2IFAAVeWcrT6LQgHmVNOpNf/FubOlMPJvfi5RO9H8WAKt4+VE
-	7eGsOwD201zHWIvcPkFKJgKn0irJSmByVA08zsEfDm4+lE2k6Jpu5+Ok2FclZMNG
-	5XNBJR7nrAebmEUAo9Cy+jS5OhKkrwKRUzymlOGotQ=
-Received: from 00107082$163.com ( [111.35.191.189] ) by
- ajax-webmail-wmsvr-40-136 (Coremail) ; Tue, 9 Dec 2025 12:40:21 +0800 (CST)
-Date: Tue, 9 Dec 2025 12:40:21 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Mal Haak" <malcolm@haak.id.au>
-Cc: linux-kernel@vger.kernel.org, surenb@google.com, xiubli@redhat.com,
-	idryomov@gmail.com, ceph-devel@vger.kernel.org
-Subject: Re: Possible memory leak in 6.17.7
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20251209090831.13c7a639@xps15mal>
-References: <20251110182008.71e0858b@xps15mal>
- <20251208110829.11840-1-00107082@163.com>
- <20251209090831.13c7a639@xps15mal>
-X-NTES-SC: AL_Qu2dB/6eukop5ymYZ+kZnEYQheY4XMKyuPkg1YJXOp80sSbyyxwQWFpAB3rx8fmtKTqrkjOvUSZf2/Z/QbZUbr5ujdSov4nFh4MsVxh95GCy
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1765355451; c=relaxed/simple;
+	bh=ar+nbUYWZQsvPHecdMwKiwThjyy7RJAZjHdvCCQxpS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sTXQWEnCKI6+b6RnPfjYx/LZDhvtrZubY9+VS0TPKj5Wj7Nzqxq7N0gmRpwzE5PE9K4RFpwI/4JMfRTKFF3cpI4UBsSl8ysxA1fODkTpybdhIP1+wvDmbPIDY1vp1SAdwAeC4nm3Hr3QUc/7WQ5GeIYAGLpyJf13Iu2DphzFk8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de; spf=pass smtp.mailfrom=tu-ilmenau.de; dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b=owIIe9My; arc=none smtp.client-ip=141.24.179.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-ilmenau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-ilmenau.de;
+ i=@tu-ilmenau.de; q=dns/txt; s=tuil-dkim-1; t=1765355365; h=message-id
+ : date : mime-version : subject : to : cc : references : from :
+ in-reply-to : content-type : content-transfer-encoding : from;
+ bh=ar+nbUYWZQsvPHecdMwKiwThjyy7RJAZjHdvCCQxpS0=;
+ b=owIIe9MyYwgJKVTD5cw1KKsh6S1uaqJmbd3vEL8z2t205VJVH70tysSWat8H55bAlSu6t
+ PMmSN9eeqmsjReaENUV/k7V/xYEZW8jUfUR9TX46VQY5gyDN9yUY2L4MjDa3aDKUhvuWvX9
+ yWL5sH3BvRCSGg9roI5tpfL2T+8Nwl33j0vCieU/rgwViM/X/k/aUPN5o3woHOex9v877lb
+ 6fiQkxn0tlwBp7/GzRwkXCmyUnvwnnr756iFmFn49EjXyNrozOnyQoAkgMIuYVf5iOpoGhT
+ ga7C61shqxGAYQizkQuDeGeXq/dhTK4tvJt4I/Hxr4m/5DpUZobEGixvxzcg==
+Received: from mail-front1.rz.tu-ilmenau.de (mail-front1.rz.tu-ilmenau.de [141.24.179.32])
+	by mail-router1.rz.tu-ilmenau.de (Postfix) with ESMTPS id 53236600E5;
+	Wed, 10 Dec 2025 09:29:25 +0100 (CET)
+Received: from [141.24.212.106] (unknown [141.24.212.106])
+	by mail-front1.rz.tu-ilmenau.de (Postfix) with ESMTPSA id 1064D5FC9C;
+	Wed, 10 Dec 2025 09:29:25 +0100 (CET)
+Message-ID: <52cefbfb-97bc-4a83-939d-1a832205df10@tu-ilmenau.de>
+Date: Wed, 10 Dec 2025 09:29:25 +0100
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <17469653.4a75.19b01691299.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:iCgvCgCnc3A2qDdpNec0AA--.1358W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbCxhZfCmk3qDb9hQAA39
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bug report] rbd unmap hangs after pausing and unpausing I/O
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
+References: <36681e9d-fde6-4c5d-bf35-db9d85865900@tu-ilmenau.de>
+ <CAOi1vP_8MXfbM=dncfNXvPXvUO2dXr-9rj1YVEMYPLjj-Ox4ng@mail.gmail.com>
+Content-Language: en-US
+From: Raphael Zimmer <raphael.zimmer@tu-ilmenau.de>
+Autocrypt: addr=raphael.zimmer@tu-ilmenau.de; keydata=
+ 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
+In-Reply-To: <CAOi1vP_8MXfbM=dncfNXvPXvUO2dXr-9rj1YVEMYPLjj-Ox4ng@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-CkF0IDIwMjUtMTItMDkgMDc6MDg6MzEsICJNYWwgSGFhayIgPG1hbGNvbG1AaGFhay5pZC5hdT4g
-d3JvdGU6Cj5PbiBNb24sICA4IERlYyAyMDI1IDE5OjA4OjI5ICswODAwCj5EYXZpZCBXYW5nIDww
-MDEwNzA4MkAxNjMuY29tPiB3cm90ZToKPgo+PiBPbiBNb24sIDEwIE5vdiAyMDI1IDE4OjIwOjA4
-ICsxMDAwCj4+IE1hbCBIYWFrIDxtYWxjb2xtQGhhYWsuaWQuYXU+IHdyb3RlOgo+PiA+IEhlbGxv
-LAo+PiA+IAo+PiA+IEkgaGF2ZSBmb3VuZCBhIG1lbW9yeSBsZWFrIGluIDYuMTcuNyBidXQgSSBh
-bSB1bnN1cmUgaG93IHRvIHRyYWNrIGl0Cj4+ID4gZG93biBlZmZlY3RpdmVseS4KPj4gPiAKPj4g
-PiAgIAo+PiAKPj4gSSB0aGluayB0aGUgYG1lbW9yeSBhbGxvY2F0aW9uIHByb2ZpbGluZ2AgZmVh
-dHVyZSBjYW4gaGVscC4KPj4gaHR0cHM6Ly9kb2NzLmtlcm5lbC5vcmcvbW0vYWxsb2NhdGlvbi1w
-cm9maWxpbmcuaHRtbAo+PiAKPj4gWW91IHdvdWxkIG5lZWQgdG8gYnVpbGQgYSBrZXJuZWwgd2l0
-aCAKPj4gQ09ORklHX01FTV9BTExPQ19QUk9GSUxJTkc9eQo+PiBDT05GSUdfTUVNX0FMTE9DX1BS
-T0ZJTElOR19FTkFCTEVEX0JZX0RFRkFVTFQ9eQo+PiAKPj4gQW5kIGNoZWNrIC9wcm9jL2FsbG9j
-aW5mbyBmb3IgdGhlIHN1c3BpY2lvdXMgYWxsb2NhdGlvbnMgd2hpY2ggdGFrZQo+PiBtb3JlIG1l
-bW9yeSB0aGFuIGV4cGVjdGVkLgo+PiAKPj4gKEkgb25jZSBjYXVnaHQgYSBudmlkaWEgZHJpdmVy
-IG1lbW9yeSBsZWFrLikKPj4gCj4+IAo+PiBGWUkKPj4gRGF2aWQKPj4gCj4KPlRoYW5rIHlvdSBm
-b3IgeW91ciBzdWdnZXN0aW9uLiBJIGhhdmUgc29tZSByZXN1bHRzLgo+Cj5SYW4gdGhlIHJzeW5j
-IHdvcmtsb2FkIGZvciBhYm91dCA5IGhvdXJzLiBJdCBzdGFydGVkIHRvIGxvb2sgbGlrZSBpdAo+
-d2FzIGhhcHBlbmluZy4KPiMgc21lbSAtcHcKPkFyZWEgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBVc2VkICAgICAgQ2FjaGUgICBOb25jYWNoZSAKPmZpcm13YXJlL2hhcmR3YXJlICAgICAgICAg
-ICAgIDAuMDAlICAgICAgMC4wMCUgICAgICAwLjAwJSAKPmtlcm5lbCBpbWFnZSAgICAgICAgICAg
-ICAgICAgIDAuMDAlICAgICAgMC4wMCUgICAgICAwLjAwJSAKPmtlcm5lbCBkeW5hbWljIG1lbW9y
-eSAgICAgICAgODAuNDYlICAgICA2NS44MCUgICAgIDE0LjY2JSAKPnVzZXJzcGFjZSBtZW1vcnkg
-ICAgICAgICAgICAgIDAuMzUlICAgICAgMC4xNiUgICAgICAwLjE5JSAKPmZyZWUgbWVtb3J5ICAg
-ICAgICAgICAgICAgICAgMTkuMTklICAgICAxOS4xOSUgICAgICAwLjAwJSAKPiMgc29ydCAtZyAv
-cHJvYy9hbGxvY2luZm98dGFpbHxudW1mbXQgLS10bz1pZWMKPiAgICAgICAgIDIyTSAgICAgNTYw
-OSBtbS9tZW1vcnkuYzoxMTkwIGZ1bmM6Zm9saW9fcHJlYWxsb2MgCj4gICAgICAgICAyM00gICAg
-IDE5MzIgZnMveGZzL3hmc19idWYuYzoyMjYgW3hmc10KPmZ1bmM6eGZzX2J1Zl9hbGxvY19iYWNr
-aW5nX21lbSAKPiAgICAgICAgIDI0TSAgICAyNDEzNSBmcy94ZnMveGZzX2ljYWNoZS5jOjk3IFt4
-ZnNdIGZ1bmM6eGZzX2lub2RlX2FsbG9jIAo+ICAgICAgICAgMjdNICAgICA2NjkzIG1tL21lbW9y
-eS5jOjExOTIgZnVuYzpmb2xpb19wcmVhbGxvYyAKPiAgICAgICAgIDU4TSAgICAxNDc4NCBtbS9w
-YWdlX2V4dC5jOjI3MSBmdW5jOmFsbG9jX3BhZ2VfZXh0IAo+ICAgICAgICAyNThNICAgICAgMTI5
-IG1tL2todWdlcGFnZWQuYzoxMDY5IGZ1bmM6YWxsb2NfY2hhcmdlX2ZvbGlvIAo+ICAgICAgICA0
-MzBNICAgNzcwNzg4IGxpYi94YXJyYXkuYzozNzggZnVuYzp4YXNfYWxsb2MgCj4gICAgICAgIDU0
-NU0gICAgMzY0NDQgbW0vc2x1Yi5jOjMwNTkgZnVuYzphbGxvY19zbGFiX3BhZ2UgCj4gICAgICAg
-IDkuOEcgIDI1NjM2MTcgbW0vcmVhZGFoZWFkLmM6MTg5IGZ1bmM6cmFjdGxfYWxsb2NfZm9saW8g
-Cj4gICAgICAgICAyMEcgIDUxNjQwMDQgbW0vZmlsZW1hcC5jOjIwMTIgZnVuYzpfX2ZpbGVtYXBf
-Z2V0X2ZvbGlvIAo+Cj4KPlNvIEkgc3RvcHBlZCB0aGUgd29ya2xvYWQgYW5kIGRyb3BwZWQgY2Fj
-aGVzIHRvIGNvbmZpcm0uCj4KPiMgZWNobyAzID4gL3Byb2Mvc3lzL3ZtL2Ryb3BfY2FjaGVzCj4j
-IHNtZW0gLXB3Cj5BcmVhICAgICAgICAgICAgICAgICAgICAgICAgICAgVXNlZCAgICAgIENhY2hl
-ICAgTm9uY2FjaGUgCj5maXJtd2FyZS9oYXJkd2FyZSAgICAgICAgICAgICAwLjAwJSAgICAgIDAu
-MDAlICAgICAgMC4wMCUgCj5rZXJuZWwgaW1hZ2UgICAgICAgICAgICAgICAgICAwLjAwJSAgICAg
-IDAuMDAlICAgICAgMC4wMCUgCj5rZXJuZWwgZHluYW1pYyBtZW1vcnkgICAgICAgIDMzLjQ1JSAg
-ICAgIDAuMDklICAgICAzMy4zNiUgCj51c2Vyc3BhY2UgbWVtb3J5ICAgICAgICAgICAgICAwLjM2
-JSAgICAgIDAuMTYlICAgICAgMC4xOSUgCj5mcmVlIG1lbW9yeSAgICAgICAgICAgICAgICAgIDY2
-LjIwJSAgICAgNjYuMjAlICAgICAgMC4wMCUgCj4jIHNvcnQgLWcgL3Byb2MvYWxsb2NpbmZvfHRh
-aWx8bnVtZm10IC0tdG89aWVjCj4gICAgICAgICAxMk0gICAgIDI5ODcgbW0vZXhlY21lbS5jOjQx
-IGZ1bmM6ZXhlY21lbV92bWFsbG9jIAo+ICAgICAgICAgMTJNICAgICAgICAzIGtlcm5lbC9kbWEv
-cG9vbC5jOjk2IGZ1bmM6YXRvbWljX3Bvb2xfZXhwYW5kIAo+ICAgICAgICAgMTNNICAgICAgNzUx
-IG1tL3NsdWIuYzozMDYxIGZ1bmM6YWxsb2Nfc2xhYl9wYWdlIAo+ICAgICAgICAgMTZNICAgICAg
-ICA4IG1tL2todWdlcGFnZWQuYzoxMDY5IGZ1bmM6YWxsb2NfY2hhcmdlX2ZvbGlvIAo+ICAgICAg
-ICAgMThNICAgICA0MzU1IG1tL21lbW9yeS5jOjExOTAgZnVuYzpmb2xpb19wcmVhbGxvYyAKPiAg
-ICAgICAgIDI0TSAgICAgNjExOSBtbS9tZW1vcnkuYzoxMTkyIGZ1bmM6Zm9saW9fcHJlYWxsb2Mg
-Cj4gICAgICAgICA1OE0gICAgMTQ3ODQgbW0vcGFnZV9leHQuYzoyNzEgZnVuYzphbGxvY19wYWdl
-X2V4dCAKPiAgICAgICAgIDYxTSAgICAxNTQ0OCBtbS9yZWFkYWhlYWQuYzoxODkgZnVuYzpyYWN0
-bF9hbGxvY19mb2xpbyAKPiAgICAgICAgIDc5TSAgICAgNjcyNiBtbS9zbHViLmM6MzA1OSBmdW5j
-OmFsbG9jX3NsYWJfcGFnZSAKPiAgICAgICAgIDExRyAgMjY3NDQ4OCBtbS9maWxlbWFwLmM6MjAx
-MiBmdW5jOl9fZmlsZW1hcF9nZXRfZm9saW8KPgo+U28gaWYgSSdtIHJlYWRpbmcgdGhpcyBjb3Jy
-ZWN0bHkgc29tZXRoaW5nIGlzIGNhdXNpbmcgZm9saW9zIGNvbGxlY3QKPmFuZCBub3QgYmUgYWJs
-ZSB0byBiZSBmcmVlZD8KCkNDIGNlcGhmcywgbWF5YmUgc29tZW9uZSBjb3VsZCBoYXZlIGFuIGVh
-c3kgcmVhZGluZyBvdXQgb2YgdGhvc2UgZm9saW8gdXNhZ2UKCgo+Cj5BbHNvIGl0J3MgY2xlYXIg
-dGhhdCBzb21lIG9mIHRoZSBmb2xpbydzIGFyZSBjb3VudGluZyBhcyBjYWNoZSBhbmQgc29tZQo+
-YXJlbid0LiAKPgo+TGlrZSBJIHNhaWQgNi4xNyBhbmQgNi4xOCBib3RoIGhhdmUgdGhlIGlzc3Vl
-LiA2LjEyIGRvZXMgbm90LiBJJ20gbm93Cj5nb2luZyB0byBtYW51YWxseSB3YWxrIHRocm91Z2gg
-cHJldmlvdXMga2VybmVsIHJlbGVhc2VzIGFuZCBmaW5kCj53aGVyZSBpdCBmaXJzdCBzdGFydHMg
-aGFwcGVuaW5nIHB1cmVseSBiZWNhdXNlIEknbSBoYXZpbmcgaXNzdWVzCj5idWlsZGluZyBlYXJs
-aWVyIGtlcm5lbHMgZHVlIHRvIHJ1c3Qgc3R1ZmYgYW5kIG90aGVyIHB5dGhvbgo+aW5jb21wYXRp
-YmlsaXRpZXMgbWFraW5nIGRvaW5nIGEgZ2l0LWJpc2VjdCBhIGJpdCBmdW4uCj4KPkknbGwgZG8g
-aXQgdGhlIHBhY2thZ2VzIHdheSB1bnRpbCBJIGdldCBjbG9zZXIsIHRoZW4gc29sdmUgdGhlIGJ1
-aWxkCj5pc3N1ZXMuIAo+Cj5UaGFua3MsCj5NYWwKPgo=
+
+
+On 23.09.25 20:33, Ilya Dryomov wrote:
+> On Tue, Sep 23, 2025 at 12:38 PM Raphael Zimmer
+> <raphael.zimmer@tu-ilmenau.de> wrote:
+>>
+>> Hello,
+>>
+>> I encountered an error with the kernel Ceph client (specifically using
+>> an RBD device) when pausing I/O on the cluster by setting and unsetting
+>> pauserd and pausewr flags. An error was seen with two different setups,
+>> which I believe is due to the same problem.
+> 
+> Hi Raphael,
+> 
+> What is your use case for applying pauserd and pausewr?  I'm curious
+> because it's not something that I have seen used in normal operation
+> and most Ceph users probably aren't even aware of these flags.
+> 
+>>
+>> 1) When pausing and later unpausing I/O on the cluster, everything seems
+>> to work as expected until trying to unmap an RBD device from the kernel.
+>> In this case, the rbd unmap command hangs and also can't be killed. To
+>> get back to a normally working state, a system reboot is needed. This
+>> behavior was observed on different systems (Debian 12 and 13) and could
+>> also be reproduced with an installation of the mainline kernel (v6.17-rc6).
+>>
+>> Steps to reproduce:
+>> - Connect kernel client to RBD device (rbd map)
+>> - Pause I/O on cluster (ceph osd pause)
+>> - Wait some time (3 minutes should be enough)
+>> - Unpause I/O on cluster
+>> - Try to unmap RBD device on client
+>>
+>>
+>> 2) When using an application that internally uses the kernel Ceph client
+>> code, I observed the following behavior:
+>>
+>> Pausing I/O leads to a watch error after some time (same as with failing
+>> OSDs or e.g. when pool quota is reached). In rbd_watch_errcb
+>> (drivers/block/rbd.c), the watch_dwork gets scheduled, which leads to a
+>> call of rbd_reregister_watch -> __rbd_register_watch -> ceph_osdc_watch
+>> (net/ceph/osd_client.c) -> linger_reg_commit_wait ->
+>> wait_for_completion_killable. At this point, it waits without any
+>> timeout for the completion. The normal behavior is to wait until the
+>> causing condition is resolved and then return. With pausing and
+>> unpausing I/O, wait_for_completion_killable does not return even after
+>> unpausing because no call to complete or complete_all happens. I would
+>> guess that on unpausing some call is missing so that committing the
+>> linger request never completes.
+>>
+>>   From what I am seeing, it seems like this missing completion in the
+>> second case is also the cause of the hanging rbd unmap with the
+>> unmodified kernel.
+> 
+> You are pretty close ;)  The completion is indeed missing, but it's
+> more of a side effect than the root cause.  The root cause is that the
+> watch request doesn't get resubmitted on paused -> unpaused transitions
+> like it happens on e.g. full -> no-longer-full transitions -- the logic
+> around forming need_resend_linger list isn't quite right.  I'll try to
+> put together a fix in the coming days.
+> 
+> Thanks,
+> 
+>                  Ilya
+
+Hi Ilya,
+I haven't heard anything about this issue for quite a while. Have you 
+made any progress with the fix you wanted to put together by now? Or can 
+you estimate when a fix will be ready?
+
+Best regards,
+Raphael
+
 
