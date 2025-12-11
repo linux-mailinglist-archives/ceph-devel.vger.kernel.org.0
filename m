@@ -1,190 +1,198 @@
-Return-Path: <ceph-devel+bounces-4170-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4171-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EABDCB30F0
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 Dec 2025 14:43:50 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA7DCB4A07
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Dec 2025 04:29:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A24843053911
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 Dec 2025 13:43:34 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 4DC9230014D2
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Dec 2025 03:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CD230EF75;
-	Wed, 10 Dec 2025 13:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D037279DC3;
+	Thu, 11 Dec 2025 03:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=haak.id.au header.i=@haak.id.au header.b="XRnABThV"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="k0Y3NQ0d"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail.haak.id.au (mail.haak.id.au [172.105.183.32])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EB02DC77A;
-	Wed, 10 Dec 2025 13:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.183.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482C826D4CA;
+	Thu, 11 Dec 2025 03:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765374213; cv=none; b=E4kZRp6+XgyNTRW2KSvtjXsLCEp3AwV9Xn7EvDpFUeRy4paoajjGYbSMa7wQoL4lNDFVvJgCDmcqbf8mf/n7DVXKKuzPSLp5vgjkyExwfPXuzuY4WTVI/1ikj50My0jOXkXT99SDOtGpd/T3+BDRkAv9MifgOZdiRCYS5tVue6w=
+	t=1765423747; cv=none; b=fjYmachgHeLHP/mKHSmo8fFH5S+pOxcj/dFSHK0WnoKeyCbt6dAjrXrT2T93mMwz6kUV4QjQvDAivjDraWKhWd5zhISPrkfDdEqPlak070joim6ZJJqF78NKEwSqoxHfGwzEqCY8NvHEnXz0YGS0Eig0/qjMHriPQQ37tvkAKO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765374213; c=relaxed/simple;
-	bh=vbIJ79++239f65+5uhoikdJTPHTEYBJa19HsvUJ+OnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t159XRP2U1ydVu8lYWhzeOnf6qRBg7FUYUfey8L1D2mmBbjccn7EW4juPYcNhrcxqstpA8V2oqfrsImD2TASRQnsnEVcBWfpPFQHt1BMZ8ZVzeUnWkFOut7hy3Np/h3PmXhYUFwlmSAhYNMpVDEgSoZGHdO4XuOR+/kAyWEIhaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=haak.id.au; spf=pass smtp.mailfrom=haak.id.au; dkim=pass (2048-bit key) header.d=haak.id.au header.i=@haak.id.au header.b=XRnABThV; arc=none smtp.client-ip=172.105.183.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=haak.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=haak.id.au
-Received: from xps15mal (180-150-104-78.b49668.bne.static.aussiebb.net [180.150.104.78])
-	by mail.haak.id.au (Postfix) with ESMTPSA id BF9E08337B;
-	Wed, 10 Dec 2025 23:43:21 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=haak.id.au; s=202002;
-	t=1765374201; bh=vbIJ79++239f65+5uhoikdJTPHTEYBJa19HsvUJ+OnQ=;
-	h=Date:From:To:Subject:From;
-	b=XRnABThVx+UyGFi49rlYBNZZc4lMF5MmkFiqKrorzROqSgYKKKxOCKCh6QEN3t4qS
-	 NznAnPk6uqT0M4UTQM0zaPZDfSaW6pa7g0Nap9bYHLpU+DciqyiHE2UH243ZHY8Lgm
-	 axLWa930++Y2DyXGTy8k3RQ+5MEE+MYIP1B0tU4Nh/iF/vlefHep2J2na4S/2IAPc9
-	 g+jYiPiP5DSBNrYlQzM3QyegSy/O405eVJArcwM5Zipqui/1JS3msrfIbMUb1yhlo0
-	 letOflN0a0fursH3pHQDh6SnyeIofX9TEPz9vXy3Q6GOJTTm84skZ32CJ5sU/mmI7W
-	 3EXCofFis4c/A==
-Date: Wed, 10 Dec 2025 23:43:18 +1000
-From: Mal Haak <malcolm@haak.id.au>
-To: "David Wang" <00107082@163.com>
+	s=arc-20240116; t=1765423747; c=relaxed/simple;
+	bh=B3kdRNOLcj/OXyiFm8PfITf4VLWItqfaYJfei09TnjM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=ButwW89CV80jVsu7Y882o0U+Rp7aNLkuU2yBKfGabt+hCIJFU2jzOuSDT9mcmeIBi5hw4NpCpxNxRsiUOwSPtxTWScSJcrzkxVZY/HxH12lQzG/isVfq5xRf7VNndSUKv93YymqafKj3fX6oh5sVGxgivM/GydAB6RouQiq/L1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=k0Y3NQ0d; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=B3kdRNOLcj/OXyiFm8PfITf4VLWItqfaYJfei09TnjM=; b=k
+	0Y3NQ0d67g/TaQ4Qbe/ODWd2C0g6XbhebbEYRMdWVY9zlq70aKJuwP4AA5VdvoNF
+	l+vefls+k76+p29lRR2D6jz0Xi9N2euS3VEJiYS3L56ZW8jBc/AJ3BMPkM616XQ7
+	a23LtooVwJcRcY7ZXSti1879d2E38OAAH50NutiXjA=
+Received: from 00107082$163.com ( [111.35.191.189] ) by
+ ajax-webmail-wmsvr-40-119 (Coremail) ; Thu, 11 Dec 2025 11:28:21 +0800
+ (CST)
+Date: Thu, 11 Dec 2025 11:28:21 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Mal Haak" <malcolm@haak.id.au>
 Cc: linux-kernel@vger.kernel.org, surenb@google.com, xiubli@redhat.com,
- idryomov@gmail.com, ceph-devel@vger.kernel.org
-Subject: Re: Possible memory leak in 6.17.7
-Message-ID: <20251210234318.5d8c2d68@xps15mal>
-In-Reply-To: <17469653.4a75.19b01691299.Coremail.00107082@163.com>
+	idryomov@gmail.com, ceph-devel@vger.kernel.org
+Subject: RRe: Possible memory leak in 6.17.7
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <20251210234318.5d8c2d68@xps15mal>
 References: <20251110182008.71e0858b@xps15mal>
-	<20251208110829.11840-1-00107082@163.com>
-	<20251209090831.13c7a639@xps15mal>
-	<17469653.4a75.19b01691299.Coremail.00107082@163.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+ <20251208110829.11840-1-00107082@163.com>
+ <20251209090831.13c7a639@xps15mal>
+ <17469653.4a75.19b01691299.Coremail.00107082@163.com>
+ <20251210234318.5d8c2d68@xps15mal>
+X-NTES-SC: AL_Qu2dB/iZvE8r5yOZY+kXn0oTju85XMCzuv8j3YJeN500piTN5A0fXF5jAFDb4sW3GSCVsjy7Th9p7ftbT4xqdI+OsYSFQS0LWcfM+qx0WXjk
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Message-ID: <2a9ba88e.3aa6.19b0b73dd4e.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:dygvCgDXx7pWOjppw8I2AA--.13W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbC7RaMN2k6OlaQ6gAA3F
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Tue, 9 Dec 2025 12:40:21 +0800 (CST)
-"David Wang" <00107082@163.com> wrote:
-
-> At 2025-12-09 07:08:31, "Mal Haak" <malcolm@haak.id.au> wrote:
-> >On Mon,  8 Dec 2025 19:08:29 +0800
-> >David Wang <00107082@163.com> wrote:
-> >  
-> >> On Mon, 10 Nov 2025 18:20:08 +1000
-> >> Mal Haak <malcolm@haak.id.au> wrote:  
-> >> > Hello,
-> >> > 
-> >> > I have found a memory leak in 6.17.7 but I am unsure how to
-> >> > track it down effectively.
-> >> > 
-> >> >     
-> >> 
-> >> I think the `memory allocation profiling` feature can help.
-> >> https://docs.kernel.org/mm/allocation-profiling.html
-> >> 
-> >> You would need to build a kernel with 
-> >> CONFIG_MEM_ALLOC_PROFILING=y
-> >> CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y
-> >> 
-> >> And check /proc/allocinfo for the suspicious allocations which take
-> >> more memory than expected.
-> >> 
-> >> (I once caught a nvidia driver memory leak.)
-> >> 
-> >> 
-> >> FYI
-> >> David
-> >>   
-> >
-> >Thank you for your suggestion. I have some results.
-> >
-> >Ran the rsync workload for about 9 hours. It started to look like it
-> >was happening.
-> ># smem -pw
-> >Area                           Used      Cache   Noncache 
-> >firmware/hardware             0.00%      0.00%      0.00% 
-> >kernel image                  0.00%      0.00%      0.00% 
-> >kernel dynamic memory        80.46%     65.80%     14.66% 
-> >userspace memory              0.35%      0.16%      0.19% 
-> >free memory                  19.19%     19.19%      0.00% 
-> ># sort -g /proc/allocinfo|tail|numfmt --to=iec
-> >         22M     5609 mm/memory.c:1190 func:folio_prealloc 
-> >         23M     1932 fs/xfs/xfs_buf.c:226 [xfs]
-> >func:xfs_buf_alloc_backing_mem 
-> >         24M    24135 fs/xfs/xfs_icache.c:97 [xfs]
-> > func:xfs_inode_alloc 27M     6693 mm/memory.c:1192
-> > func:folio_prealloc 58M    14784 mm/page_ext.c:271
-> > func:alloc_page_ext 258M      129 mm/khugepaged.c:1069
-> > func:alloc_charge_folio 430M   770788 lib/xarray.c:378
-> > func:xas_alloc 545M    36444 mm/slub.c:3059 func:alloc_slab_page 
-> >        9.8G  2563617 mm/readahead.c:189 func:ractl_alloc_folio 
-> >         20G  5164004 mm/filemap.c:2012 func:__filemap_get_folio 
-> >
-> >
-> >So I stopped the workload and dropped caches to confirm.
-> >
-> ># echo 3 > /proc/sys/vm/drop_caches
-> ># smem -pw
-> >Area                           Used      Cache   Noncache 
-> >firmware/hardware             0.00%      0.00%      0.00% 
-> >kernel image                  0.00%      0.00%      0.00% 
-> >kernel dynamic memory        33.45%      0.09%     33.36% 
-> >userspace memory              0.36%      0.16%      0.19% 
-> >free memory                  66.20%     66.20%      0.00% 
-> ># sort -g /proc/allocinfo|tail|numfmt --to=iec
-> >         12M     2987 mm/execmem.c:41 func:execmem_vmalloc 
-> >         12M        3 kernel/dma/pool.c:96 func:atomic_pool_expand 
-> >         13M      751 mm/slub.c:3061 func:alloc_slab_page 
-> >         16M        8 mm/khugepaged.c:1069 func:alloc_charge_folio 
-> >         18M     4355 mm/memory.c:1190 func:folio_prealloc 
-> >         24M     6119 mm/memory.c:1192 func:folio_prealloc 
-> >         58M    14784 mm/page_ext.c:271 func:alloc_page_ext 
-> >         61M    15448 mm/readahead.c:189 func:ractl_alloc_folio 
-> >         79M     6726 mm/slub.c:3059 func:alloc_slab_page 
-> >         11G  2674488 mm/filemap.c:2012 func:__filemap_get_folio
-> >
-> >So if I'm reading this correctly something is causing folios collect
-> >and not be able to be freed?  
-> 
-> CC cephfs, maybe someone could have an easy reading out of those
-> folio usage
-> 
-> 
-> >
-> >Also it's clear that some of the folio's are counting as cache and
-> >some aren't. 
-> >
-> >Like I said 6.17 and 6.18 both have the issue. 6.12 does not. I'm now
-> >going to manually walk through previous kernel releases and find
-> >where it first starts happening purely because I'm having issues
-> >building earlier kernels due to rust stuff and other python
-> >incompatibilities making doing a git-bisect a bit fun.
-> >
-> >I'll do it the packages way until I get closer, then solve the build
-> >issues. 
-> >
-> >Thanks,
-> >Mal
-> >  
-Thanks David.
-
-I've contacted the ceph developers as well. 
-
-There was a suggestion it was due to the change from, to quote:
-folio.free() to folio.put() or something like this.
-
-The change happened around 6.14/6.15
-
-I've found an easier reproducer. 
-
-There has been a suggestion that perhaps the ceph team might not fix
-this as "you can just reboot before the machine becomes unstable" and
-"Nobody else has encountered this bug"
-
-I'll leave that to other people to make a call on but I'd assume the
-lack of reports is due to the fact that most stable distros are still
-on a a far too early kernel and/or are using the fuse driver with k8s.
-
-Anyway, thanks for your assistance.
-
+CgpBdCAyMDI1LTEyLTEwIDIxOjQzOjE4LCAiTWFsIEhhYWsiIDxtYWxjb2xtQGhhYWsuaWQuYXU+
+IHdyb3RlOgo+T24gVHVlLCA5IERlYyAyMDI1IDEyOjQwOjIxICswODAwIChDU1QpCj4iRGF2aWQg
+V2FuZyIgPDAwMTA3MDgyQDE2My5jb20+IHdyb3RlOgo+Cj4+IEF0IDIwMjUtMTItMDkgMDc6MDg6
+MzEsICJNYWwgSGFhayIgPG1hbGNvbG1AaGFhay5pZC5hdT4gd3JvdGU6Cj4+ID5PbiBNb24sICA4
+IERlYyAyMDI1IDE5OjA4OjI5ICswODAwCj4+ID5EYXZpZCBXYW5nIDwwMDEwNzA4MkAxNjMuY29t
+PiB3cm90ZToKPj4gPiAgCj4+ID4+IE9uIE1vbiwgMTAgTm92IDIwMjUgMTg6MjA6MDggKzEwMDAK
+Pj4gPj4gTWFsIEhhYWsgPG1hbGNvbG1AaGFhay5pZC5hdT4gd3JvdGU6ICAKPj4gPj4gPiBIZWxs
+bywKPj4gPj4gPiAKPj4gPj4gPiBJIGhhdmUgZm91bmQgYSBtZW1vcnkgbGVhayBpbiA2LjE3Ljcg
+YnV0IEkgYW0gdW5zdXJlIGhvdyB0bwo+PiA+PiA+IHRyYWNrIGl0IGRvd24gZWZmZWN0aXZlbHku
+Cj4+ID4+ID4gCj4+ID4+ID4gICAgIAo+PiA+PiAKPj4gPj4gSSB0aGluayB0aGUgYG1lbW9yeSBh
+bGxvY2F0aW9uIHByb2ZpbGluZ2AgZmVhdHVyZSBjYW4gaGVscC4KPj4gPj4gaHR0cHM6Ly9kb2Nz
+Lmtlcm5lbC5vcmcvbW0vYWxsb2NhdGlvbi1wcm9maWxpbmcuaHRtbAo+PiA+PiAKPj4gPj4gWW91
+IHdvdWxkIG5lZWQgdG8gYnVpbGQgYSBrZXJuZWwgd2l0aCAKPj4gPj4gQ09ORklHX01FTV9BTExP
+Q19QUk9GSUxJTkc9eQo+PiA+PiBDT05GSUdfTUVNX0FMTE9DX1BST0ZJTElOR19FTkFCTEVEX0JZ
+X0RFRkFVTFQ9eQo+PiA+PiAKPj4gPj4gQW5kIGNoZWNrIC9wcm9jL2FsbG9jaW5mbyBmb3IgdGhl
+IHN1c3BpY2lvdXMgYWxsb2NhdGlvbnMgd2hpY2ggdGFrZQo+PiA+PiBtb3JlIG1lbW9yeSB0aGFu
+IGV4cGVjdGVkLgo+PiA+PiAKPj4gPj4gKEkgb25jZSBjYXVnaHQgYSBudmlkaWEgZHJpdmVyIG1l
+bW9yeSBsZWFrLikKPj4gPj4gCj4+ID4+IAo+PiA+PiBGWUkKPj4gPj4gRGF2aWQKPj4gPj4gICAK
+Pj4gPgo+PiA+VGhhbmsgeW91IGZvciB5b3VyIHN1Z2dlc3Rpb24uIEkgaGF2ZSBzb21lIHJlc3Vs
+dHMuCj4+ID4KPj4gPlJhbiB0aGUgcnN5bmMgd29ya2xvYWQgZm9yIGFib3V0IDkgaG91cnMuIEl0
+IHN0YXJ0ZWQgdG8gbG9vayBsaWtlIGl0Cj4+ID53YXMgaGFwcGVuaW5nLgo+PiA+IyBzbWVtIC1w
+dwo+PiA+QXJlYSAgICAgICAgICAgICAgICAgICAgICAgICAgIFVzZWQgICAgICBDYWNoZSAgIE5v
+bmNhY2hlIAo+PiA+ZmlybXdhcmUvaGFyZHdhcmUgICAgICAgICAgICAgMC4wMCUgICAgICAwLjAw
+JSAgICAgIDAuMDAlIAo+PiA+a2VybmVsIGltYWdlICAgICAgICAgICAgICAgICAgMC4wMCUgICAg
+ICAwLjAwJSAgICAgIDAuMDAlIAo+PiA+a2VybmVsIGR5bmFtaWMgbWVtb3J5ICAgICAgICA4MC40
+NiUgICAgIDY1LjgwJSAgICAgMTQuNjYlIAo+PiA+dXNlcnNwYWNlIG1lbW9yeSAgICAgICAgICAg
+ICAgMC4zNSUgICAgICAwLjE2JSAgICAgIDAuMTklIAo+PiA+ZnJlZSBtZW1vcnkgICAgICAgICAg
+ICAgICAgICAxOS4xOSUgICAgIDE5LjE5JSAgICAgIDAuMDAlIAo+PiA+IyBzb3J0IC1nIC9wcm9j
+L2FsbG9jaW5mb3x0YWlsfG51bWZtdCAtLXRvPWllYwo+PiA+ICAgICAgICAgMjJNICAgICA1NjA5
+IG1tL21lbW9yeS5jOjExOTAgZnVuYzpmb2xpb19wcmVhbGxvYyAKPj4gPiAgICAgICAgIDIzTSAg
+ICAgMTkzMiBmcy94ZnMveGZzX2J1Zi5jOjIyNiBbeGZzXQo+PiA+ZnVuYzp4ZnNfYnVmX2FsbG9j
+X2JhY2tpbmdfbWVtIAo+PiA+ICAgICAgICAgMjRNICAgIDI0MTM1IGZzL3hmcy94ZnNfaWNhY2hl
+LmM6OTcgW3hmc10KPj4gPiBmdW5jOnhmc19pbm9kZV9hbGxvYyAyN00gICAgIDY2OTMgbW0vbWVt
+b3J5LmM6MTE5Mgo+PiA+IGZ1bmM6Zm9saW9fcHJlYWxsb2MgNThNICAgIDE0Nzg0IG1tL3BhZ2Vf
+ZXh0LmM6MjcxCj4+ID4gZnVuYzphbGxvY19wYWdlX2V4dCAyNThNICAgICAgMTI5IG1tL2todWdl
+cGFnZWQuYzoxMDY5Cj4+ID4gZnVuYzphbGxvY19jaGFyZ2VfZm9saW8gNDMwTSAgIDc3MDc4OCBs
+aWIveGFycmF5LmM6Mzc4Cj4+ID4gZnVuYzp4YXNfYWxsb2MgNTQ1TSAgICAzNjQ0NCBtbS9zbHVi
+LmM6MzA1OSBmdW5jOmFsbG9jX3NsYWJfcGFnZSAKPj4gPiAgICAgICAgOS44RyAgMjU2MzYxNyBt
+bS9yZWFkYWhlYWQuYzoxODkgZnVuYzpyYWN0bF9hbGxvY19mb2xpbyAKPj4gPiAgICAgICAgIDIw
+RyAgNTE2NDAwNCBtbS9maWxlbWFwLmM6MjAxMiBmdW5jOl9fZmlsZW1hcF9nZXRfZm9saW8gCj4+
+ID4KPj4gPgo+PiA+U28gSSBzdG9wcGVkIHRoZSB3b3JrbG9hZCBhbmQgZHJvcHBlZCBjYWNoZXMg
+dG8gY29uZmlybS4KPj4gPgo+PiA+IyBlY2hvIDMgPiAvcHJvYy9zeXMvdm0vZHJvcF9jYWNoZXMK
+Pj4gPiMgc21lbSAtcHcKPj4gPkFyZWEgICAgICAgICAgICAgICAgICAgICAgICAgICBVc2VkICAg
+ICAgQ2FjaGUgICBOb25jYWNoZSAKPj4gPmZpcm13YXJlL2hhcmR3YXJlICAgICAgICAgICAgIDAu
+MDAlICAgICAgMC4wMCUgICAgICAwLjAwJSAKPj4gPmtlcm5lbCBpbWFnZSAgICAgICAgICAgICAg
+ICAgIDAuMDAlICAgICAgMC4wMCUgICAgICAwLjAwJSAKPj4gPmtlcm5lbCBkeW5hbWljIG1lbW9y
+eSAgICAgICAgMzMuNDUlICAgICAgMC4wOSUgICAgIDMzLjM2JSAKPj4gPnVzZXJzcGFjZSBtZW1v
+cnkgICAgICAgICAgICAgIDAuMzYlICAgICAgMC4xNiUgICAgICAwLjE5JSAKPj4gPmZyZWUgbWVt
+b3J5ICAgICAgICAgICAgICAgICAgNjYuMjAlICAgICA2Ni4yMCUgICAgICAwLjAwJSAKPj4gPiMg
+c29ydCAtZyAvcHJvYy9hbGxvY2luZm98dGFpbHxudW1mbXQgLS10bz1pZWMKPj4gPiAgICAgICAg
+IDEyTSAgICAgMjk4NyBtbS9leGVjbWVtLmM6NDEgZnVuYzpleGVjbWVtX3ZtYWxsb2MgCj4+ID4g
+ICAgICAgICAxMk0gICAgICAgIDMga2VybmVsL2RtYS9wb29sLmM6OTYgZnVuYzphdG9taWNfcG9v
+bF9leHBhbmQgCj4+ID4gICAgICAgICAxM00gICAgICA3NTEgbW0vc2x1Yi5jOjMwNjEgZnVuYzph
+bGxvY19zbGFiX3BhZ2UgCj4+ID4gICAgICAgICAxNk0gICAgICAgIDggbW0va2h1Z2VwYWdlZC5j
+OjEwNjkgZnVuYzphbGxvY19jaGFyZ2VfZm9saW8gCj4+ID4gICAgICAgICAxOE0gICAgIDQzNTUg
+bW0vbWVtb3J5LmM6MTE5MCBmdW5jOmZvbGlvX3ByZWFsbG9jIAo+PiA+ICAgICAgICAgMjRNICAg
+ICA2MTE5IG1tL21lbW9yeS5jOjExOTIgZnVuYzpmb2xpb19wcmVhbGxvYyAKPj4gPiAgICAgICAg
+IDU4TSAgICAxNDc4NCBtbS9wYWdlX2V4dC5jOjI3MSBmdW5jOmFsbG9jX3BhZ2VfZXh0IAo+PiA+
+ICAgICAgICAgNjFNICAgIDE1NDQ4IG1tL3JlYWRhaGVhZC5jOjE4OSBmdW5jOnJhY3RsX2FsbG9j
+X2ZvbGlvIAo+PiA+ICAgICAgICAgNzlNICAgICA2NzI2IG1tL3NsdWIuYzozMDU5IGZ1bmM6YWxs
+b2Nfc2xhYl9wYWdlIAo+PiA+ICAgICAgICAgMTFHICAyNjc0NDg4IG1tL2ZpbGVtYXAuYzoyMDEy
+IGZ1bmM6X19maWxlbWFwX2dldF9mb2xpbwoKTWF5YmUgbmFycm93aW5nIGRvd24gdGhlICJOb25j
+YWNoZSIgY2FsbGVyIG9mIF9fZmlsZW1hcF9nZXRfZm9saW8gd291bGQgaGVscCBjbGFyaWZ5IHRo
+aW5ncy4KKEl0IGNvdWxkIGJlIGRlc2lnbmVkIHRoYXQgd2F5LCBhbmQgIG5lZWRzIG90aGVyIHJv
+dXRlIHRoYW4gZHJvcHBpbmctY2FjaGUgdG8gcmVsZWFzZSB0aGUgbWVtb3J5LCBqdXN0IGd1ZXNz
+Li4uLikKSWYgeW91IHdhbnQsIHlvdSBjYW4gbW9kaWZ5IGNvZGUgdG8gc3BsaXQgdGhlIGFjY291
+bnRpbmcgZm9yIF9fZmlsZW1hcF9nZXRfZm9saW8gYWNjb3JkaW5nIHRvIGl0cyBjYWxsZXJzLgoK
+Rm9sbG93aW5nIGlzIGEgZHJhZnQgcGF0Y2g6IChiYXNlZCBvbiB2Ni4xOCkKCmRpZmYgLS1naXQg
+YS9pbmNsdWRlL2xpbnV4L3BhZ2VtYXAuaCBiL2luY2x1ZGUvbGludXgvcGFnZW1hcC5oCmluZGV4
+IDA5YjU4MWMxZDg3OC4uYmE4YzY1OWE2YWUzIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L3Bh
+Z2VtYXAuaAorKysgYi9pbmNsdWRlL2xpbnV4L3BhZ2VtYXAuaApAQCAtNzUzLDcgKzc1MywxMSBA
+QCBzdGF0aWMgaW5saW5lIGZnZl90IGZnZl9zZXRfb3JkZXIoc2l6ZV90IHNpemUpCiB9CiAKIHZv
+aWQgKmZpbGVtYXBfZ2V0X2VudHJ5KHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLCBwZ29m
+Zl90IGluZGV4KTsKLXN0cnVjdCBmb2xpbyAqX19maWxlbWFwX2dldF9mb2xpbyhzdHJ1Y3QgYWRk
+cmVzc19zcGFjZSAqbWFwcGluZywgcGdvZmZfdCBpbmRleCwKKworI2RlZmluZSBfX2ZpbGVtYXBf
+Z2V0X2ZvbGlvKC4uLikJCQlcCisJYWxsb2NfaG9va3MoX19maWxlbWFwX2dldF9mb2xpb19ub3By
+b2YoX19WQV9BUkdTX18pKQorCitzdHJ1Y3QgZm9saW8gKl9fZmlsZW1hcF9nZXRfZm9saW9fbm9w
+cm9mKHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLCBwZ29mZl90IGluZGV4LAogCQlmZ2Zf
+dCBmZ3BfZmxhZ3MsIGdmcF90IGdmcCk7CiBzdHJ1Y3QgcGFnZSAqcGFnZWNhY2hlX2dldF9wYWdl
+KHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLCBwZ29mZl90IGluZGV4LAogCQlmZ2ZfdCBm
+Z3BfZmxhZ3MsIGdmcF90IGdmcCk7CmRpZmYgLS1naXQgYS9tbS9maWxlbWFwLmMgYi9tbS9maWxl
+bWFwLmMKaW5kZXggMDI0YjcxZGE1MjI0Li5lMWMxYzI2ZDdjYjMgMTAwNjQ0Ci0tLSBhL21tL2Zp
+bGVtYXAuYworKysgYi9tbS9maWxlbWFwLmMKQEAgLTE5MzgsNyArMTkzOCw3IEBAIHZvaWQgKmZp
+bGVtYXBfZ2V0X2VudHJ5KHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLCBwZ29mZl90IGlu
+ZGV4KQogICoKICAqIFJldHVybjogVGhlIGZvdW5kIGZvbGlvIG9yIGFuIEVSUl9QVFIoKSBvdGhl
+cndpc2UuCiAgKi8KLXN0cnVjdCBmb2xpbyAqX19maWxlbWFwX2dldF9mb2xpbyhzdHJ1Y3QgYWRk
+cmVzc19zcGFjZSAqbWFwcGluZywgcGdvZmZfdCBpbmRleCwKK3N0cnVjdCBmb2xpbyAqX19maWxl
+bWFwX2dldF9mb2xpb19ub3Byb2Yoc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcsIHBnb2Zm
+X3QgaW5kZXgsCiAJCWZnZl90IGZncF9mbGFncywgZ2ZwX3QgZ2ZwKQogewogCXN0cnVjdCBmb2xp
+byAqZm9saW87CkBAIC0yMDA5LDcgKzIwMDksNyBAQCBzdHJ1Y3QgZm9saW8gKl9fZmlsZW1hcF9n
+ZXRfZm9saW8oc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcsIHBnb2ZmX3QgaW5kZXgsCiAJ
+CQllcnIgPSAtRU5PTUVNOwogCQkJaWYgKG9yZGVyID4gbWluX29yZGVyKQogCQkJCWFsbG9jX2dm
+cCB8PSBfX0dGUF9OT1JFVFJZIHwgX19HRlBfTk9XQVJOOwotCQkJZm9saW8gPSBmaWxlbWFwX2Fs
+bG9jX2ZvbGlvKGFsbG9jX2dmcCwgb3JkZXIpOworCQkJZm9saW8gPSBmaWxlbWFwX2FsbG9jX2Zv
+bGlvX25vcHJvZihhbGxvY19nZnAsIG9yZGVyKTsKIAkJCWlmICghZm9saW8pCiAJCQkJY29udGlu
+dWU7CiAKQEAgLTIwNTYsNyArMjA1Niw3IEBAIHN0cnVjdCBmb2xpbyAqX19maWxlbWFwX2dldF9m
+b2xpbyhzdHJ1Y3QgYWRkcmVzc19zcGFjZSAqbWFwcGluZywgcGdvZmZfdCBpbmRleCwKIAkJZm9s
+aW9fY2xlYXJfZHJvcGJlaGluZChmb2xpbyk7CiAJcmV0dXJuIGZvbGlvOwogfQotRVhQT1JUX1NZ
+TUJPTChfX2ZpbGVtYXBfZ2V0X2ZvbGlvKTsKK0VYUE9SVF9TWU1CT0woX19maWxlbWFwX2dldF9m
+b2xpb19ub3Byb2YpOwogCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBmb2xpbyAqZmluZF9nZXRfZW50
+cnkoc3RydWN0IHhhX3N0YXRlICp4YXMsIHBnb2ZmX3QgbWF4LAogCQl4YV9tYXJrX3QgbWFyaykK
+CgoKCkZZSQpEYXZpZAoKPj4gPgo+PiA+U28gaWYgSSdtIHJlYWRpbmcgdGhpcyBjb3JyZWN0bHkg
+c29tZXRoaW5nIGlzIGNhdXNpbmcgZm9saW9zIGNvbGxlY3QKPj4gPmFuZCBub3QgYmUgYWJsZSB0
+byBiZSBmcmVlZD8gIAo+PiAKPj4gQ0MgY2VwaGZzLCBtYXliZSBzb21lb25lIGNvdWxkIGhhdmUg
+YW4gZWFzeSByZWFkaW5nIG91dCBvZiB0aG9zZQo+PiBmb2xpbyB1c2FnZQo+PiAKPj4gCj4+ID4K
+Pj4gPkFsc28gaXQncyBjbGVhciB0aGF0IHNvbWUgb2YgdGhlIGZvbGlvJ3MgYXJlIGNvdW50aW5n
+IGFzIGNhY2hlIGFuZAo+PiA+c29tZSBhcmVuJ3QuIAo+PiA+Cj4+ID5MaWtlIEkgc2FpZCA2LjE3
+IGFuZCA2LjE4IGJvdGggaGF2ZSB0aGUgaXNzdWUuIDYuMTIgZG9lcyBub3QuIEknbSBub3cKPj4g
+PmdvaW5nIHRvIG1hbnVhbGx5IHdhbGsgdGhyb3VnaCBwcmV2aW91cyBrZXJuZWwgcmVsZWFzZXMg
+YW5kIGZpbmQKPj4gPndoZXJlIGl0IGZpcnN0IHN0YXJ0cyBoYXBwZW5pbmcgcHVyZWx5IGJlY2F1
+c2UgSSdtIGhhdmluZyBpc3N1ZXMKPj4gPmJ1aWxkaW5nIGVhcmxpZXIga2VybmVscyBkdWUgdG8g
+cnVzdCBzdHVmZiBhbmQgb3RoZXIgcHl0aG9uCj4+ID5pbmNvbXBhdGliaWxpdGllcyBtYWtpbmcg
+ZG9pbmcgYSBnaXQtYmlzZWN0IGEgYml0IGZ1bi4KPj4gPgo+PiA+SSdsbCBkbyBpdCB0aGUgcGFj
+a2FnZXMgd2F5IHVudGlsIEkgZ2V0IGNsb3NlciwgdGhlbiBzb2x2ZSB0aGUgYnVpbGQKPj4gPmlz
+c3Vlcy4gCj4+ID4KPj4gPlRoYW5rcywKPj4gPk1hbAo+PiA+ICAKPlRoYW5rcyBEYXZpZC4KPgo+
+SSd2ZSBjb250YWN0ZWQgdGhlIGNlcGggZGV2ZWxvcGVycyBhcyB3ZWxsLiAKPgo+VGhlcmUgd2Fz
+IGEgc3VnZ2VzdGlvbiBpdCB3YXMgZHVlIHRvIHRoZSBjaGFuZ2UgZnJvbSwgdG8gcXVvdGU6Cj5m
+b2xpby5mcmVlKCkgdG8gZm9saW8ucHV0KCkgb3Igc29tZXRoaW5nIGxpa2UgdGhpcy4KPgo+VGhl
+IGNoYW5nZSBoYXBwZW5lZCBhcm91bmQgNi4xNC82LjE1Cj4KPkkndmUgZm91bmQgYW4gZWFzaWVy
+IHJlcHJvZHVjZXIuIAo+Cj5UaGVyZSBoYXMgYmVlbiBhIHN1Z2dlc3Rpb24gdGhhdCBwZXJoYXBz
+IHRoZSBjZXBoIHRlYW0gbWlnaHQgbm90IGZpeAo+dGhpcyBhcyAieW91IGNhbiBqdXN0IHJlYm9v
+dCBiZWZvcmUgdGhlIG1hY2hpbmUgYmVjb21lcyB1bnN0YWJsZSIgYW5kCj4iTm9ib2R5IGVsc2Ug
+aGFzIGVuY291bnRlcmVkIHRoaXMgYnVnIgo+Cj5JJ2xsIGxlYXZlIHRoYXQgdG8gb3RoZXIgcGVv
+cGxlIHRvIG1ha2UgYSBjYWxsIG9uIGJ1dCBJJ2QgYXNzdW1lIHRoZQo+bGFjayBvZiByZXBvcnRz
+IGlzIGR1ZSB0byB0aGUgZmFjdCB0aGF0IG1vc3Qgc3RhYmxlIGRpc3Ryb3MgYXJlIHN0aWxsCj5v
+biBhIGEgZmFyIHRvbyBlYXJseSBrZXJuZWwgYW5kL29yIGFyZSB1c2luZyB0aGUgZnVzZSBkcml2
+ZXIgd2l0aCBrOHMuCj4KPkFueXdheSwgdGhhbmtzIGZvciB5b3VyIGFzc2lzdGFuY2UuCg==
 
