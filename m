@@ -1,294 +1,328 @@
-Return-Path: <ceph-devel+bounces-4172-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4173-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4706DCB4AC2
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Dec 2025 05:24:12 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51479CB76FA
+	for <lists+ceph-devel@lfdr.de>; Fri, 12 Dec 2025 01:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 840CE3010CFB
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Dec 2025 04:24:10 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C828D30046F9
+	for <lists+ceph-devel@lfdr.de>; Fri, 12 Dec 2025 00:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6681B4224;
-	Thu, 11 Dec 2025 04:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDB012D1F1;
+	Fri, 12 Dec 2025 00:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=haak.id.au header.i=@haak.id.au header.b="cat6QWor"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zcs1yJq3"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail.haak.id.au (mail.haak.id.au [172.105.183.32])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A3A4400;
-	Thu, 11 Dec 2025 04:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.183.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B75C4F5E0;
+	Fri, 12 Dec 2025 00:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765427048; cv=none; b=O5FI7QkYPeE5UE1hYEvqTKM91QPIhf6fB293p/srN3zSVHNx5hP8c8llW6On63rYnk0UVZcnOz97CYH9T9eQHDZbYdZn1ceKsXhdd7TZ1JaCeAL8dbJNtaDJiEc7JqTpEF1vq9NV9Xeg20ndfka5aK/qdFIFVFG2WcRMRkPBFPU=
+	t=1765498500; cv=none; b=EvzZT3mVT8N1sJNnYno9uYvdK+tJH7s+4P8mfaOKHbfmdlmVVjAX5LTGZ7KyfDVCbmAxCH78KmOrGCEF/tBKNpAPD333thrQNqHTLida0c+4D0eb2cq+OBjaxnQVD6+HQPvuKYSGKGZzQGXRUkquRoXsxPQdxmDKgCpFGyUQQcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765427048; c=relaxed/simple;
-	bh=WUmBOJtXhU4udAhNIOPZRanhMbW7bLMo5HVT3p//nOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ge9Ma4Tpz8XbwZSGRm2Fig3L+8kMGJ3S0lOaqJREdt62tIxahdi0bDWPdut4T6psa09Bx7pZgWTPBIgVrmulTROxQ5ZuhzVH0fHLCsT4VwqED3aofUvm77zm7P6hY/GkagYdIujyaKIdHpVYGuMyOTQfiLbXapIzs9/4v1STQEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=haak.id.au; spf=pass smtp.mailfrom=haak.id.au; dkim=pass (2048-bit key) header.d=haak.id.au header.i=@haak.id.au header.b=cat6QWor; arc=none smtp.client-ip=172.105.183.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=haak.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=haak.id.au
-Received: from xps15mal (unknown [1.146.64.210])
-	by mail.haak.id.au (Postfix) with ESMTPSA id 762877F162;
-	Thu, 11 Dec 2025 14:24:02 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=haak.id.au; s=202002;
-	t=1765427042; bh=WUmBOJtXhU4udAhNIOPZRanhMbW7bLMo5HVT3p//nOo=;
-	h=Date:From:To:Subject:From;
-	b=cat6QWorztuFWHmHQ6RXB5IgHAoL6JbRRYXcJfEq/M1EGLCb98ttR4LlF1V/mDJTM
-	 tw95BP5BcndG+DczG2BO968AYoFu68M0mD6UL520lX6pcBJG5wfz5IW0j9f1qnJeTm
-	 lu11UGYdz0j8PEWiY2AI+nLbK4ANjHHNnPnEpg0ekVH+QQkAKOn+VaO/X5vmZ5szH1
-	 +Q4u+Oe9bntQyiiqNcJZTVosNiBlPa8z0ygheugwNDvvHCwjz90VxyP6bSBBIC5eJs
-	 Hc9dCq2LJgxkoKvax2FORFltEIHtwPlI8swJnLqShYTGkjzNIYPA9sxb/IgkLjrl/U
-	 UtqsqHQu4dnZw==
-Date: Thu, 11 Dec 2025 14:23:58 +1000
-From: Mal Haak <malcolm@haak.id.au>
-To: "David Wang" <00107082@163.com>
-Cc: linux-kernel@vger.kernel.org, surenb@google.com, xiubli@redhat.com,
- idryomov@gmail.com, ceph-devel@vger.kernel.org
-Subject: Re: RRe: Possible memory leak in 6.17.7
-Message-ID: <20251211142358.563d9ac3@xps15mal>
-In-Reply-To: <2a9ba88e.3aa6.19b0b73dd4e.Coremail.00107082@163.com>
-References: <20251110182008.71e0858b@xps15mal>
-	<20251208110829.11840-1-00107082@163.com>
-	<20251209090831.13c7a639@xps15mal>
-	<17469653.4a75.19b01691299.Coremail.00107082@163.com>
-	<20251210234318.5d8c2d68@xps15mal>
-	<2a9ba88e.3aa6.19b0b73dd4e.Coremail.00107082@163.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1765498500; c=relaxed/simple;
+	bh=kuQqKQkaE8GaEKgdJ1tHmUhedZmO3yLm5NEIZrBTN2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TgAeOykhrQ0f0WjCDJ/wNATMKItuQ+pX40ytLiEi6xObQu6geItcDfHauqgMwasM8V+TWSHlXLM1FGDk72COAYwdMCxNfg898x3NmfqVQEUhUw+tM3bBege7WiXu77aq6YIME+yEX07ENjxntKPf+UkMbDF6alBA9cOKcAZODxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zcs1yJq3; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1765498499; x=1797034499;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kuQqKQkaE8GaEKgdJ1tHmUhedZmO3yLm5NEIZrBTN2k=;
+  b=Zcs1yJq3DfnLIgvaqL4HWawLRFdqo/Yok0VE6JrwX6dWAdlm4FB+yDvi
+   7/aMYhbDj1JpaO5iejry2gvjvIC+INpXXm+MIlAl1jBQfsokRVFP7xBOc
+   FeGPKnMYZCxs6N3gU4nLAxjd+lDrcVtsw0Xl90fluhVX9F3Uix6g4Lq2G
+   GLriBe2OpJRA7Zq1kqKTw3ZQvNYrQmUHrQ3ku8i0ULcaFhq8gVIj2Slgz
+   7wblhSDYofXufR5T+Di01hWlS7CF1yWEKC2Bry8AquXE7h3qmKLi1PjiH
+   6KP3LV1pYc727UEDYAuZuQ6bpQy2DlXgiIbWboob6KMSmgSYIMYJduIcX
+   g==;
+X-CSE-ConnectionGUID: rqsPa3OzRweN4dVoOX80TA==
+X-CSE-MsgGUID: oNsIVphBRHOO4ifW8x/1zQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="78954372"
+X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; 
+   d="scan'208";a="78954372"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2025 16:14:58 -0800
+X-CSE-ConnectionGUID: xKzEw5dbRP6/L7p9ygBuaQ==
+X-CSE-MsgGUID: 2tz2Szz4TvywrCnqCXsXsQ==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO d335e3c6db51) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 11 Dec 2025 16:14:55 -0800
+Received: from kbuild by d335e3c6db51 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vTqo9-000000005Dd-0aF5;
+	Fri, 12 Dec 2025 00:14:53 +0000
+Date: Fri, 12 Dec 2025 08:14:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alex Markuze <amarkuze@redhat.com>, ceph-devel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org, amarkuze@redhat.com,
+	vdubeyko@redhat.com
+Subject: Re: [PATCH v3 4/4] ceph: adding CEPH_SUBVOLUME_ID_NONE
+Message-ID: <202512120708.d8OjMmgQ-lkp@intel.com>
+References: <20251203154625.2779153-5-amarkuze@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251203154625.2779153-5-amarkuze@redhat.com>
 
-On Thu, 11 Dec 2025 11:28:21 +0800 (CST)
-"David Wang" <00107082@163.com> wrote:
+Hi Alex,
 
-> At 2025-12-10 21:43:18, "Mal Haak" <malcolm@haak.id.au> wrote:
-> >On Tue, 9 Dec 2025 12:40:21 +0800 (CST)
-> >"David Wang" <00107082@163.com> wrote:
-> >  
-> >> At 2025-12-09 07:08:31, "Mal Haak" <malcolm@haak.id.au> wrote:  
-> >> >On Mon,  8 Dec 2025 19:08:29 +0800
-> >> >David Wang <00107082@163.com> wrote:
-> >> >    
-> >> >> On Mon, 10 Nov 2025 18:20:08 +1000
-> >> >> Mal Haak <malcolm@haak.id.au> wrote:    
-> >> >> > Hello,
-> >> >> > 
-> >> >> > I have found a memory leak in 6.17.7 but I am unsure how to
-> >> >> > track it down effectively.
-> >> >> > 
-> >> >> >       
-> >> >> 
-> >> >> I think the `memory allocation profiling` feature can help.
-> >> >> https://docs.kernel.org/mm/allocation-profiling.html
-> >> >> 
-> >> >> You would need to build a kernel with 
-> >> >> CONFIG_MEM_ALLOC_PROFILING=y
-> >> >> CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y
-> >> >> 
-> >> >> And check /proc/allocinfo for the suspicious allocations which
-> >> >> take more memory than expected.
-> >> >> 
-> >> >> (I once caught a nvidia driver memory leak.)
-> >> >> 
-> >> >> 
-> >> >> FYI
-> >> >> David
-> >> >>     
-> >> >
-> >> >Thank you for your suggestion. I have some results.
-> >> >
-> >> >Ran the rsync workload for about 9 hours. It started to look like
-> >> >it was happening.
-> >> ># smem -pw
-> >> >Area                           Used      Cache   Noncache 
-> >> >firmware/hardware             0.00%      0.00%      0.00% 
-> >> >kernel image                  0.00%      0.00%      0.00% 
-> >> >kernel dynamic memory        80.46%     65.80%     14.66% 
-> >> >userspace memory              0.35%      0.16%      0.19% 
-> >> >free memory                  19.19%     19.19%      0.00% 
-> >> ># sort -g /proc/allocinfo|tail|numfmt --to=iec
-> >> >         22M     5609 mm/memory.c:1190 func:folio_prealloc 
-> >> >         23M     1932 fs/xfs/xfs_buf.c:226 [xfs]
-> >> >func:xfs_buf_alloc_backing_mem 
-> >> >         24M    24135 fs/xfs/xfs_icache.c:97 [xfs]
-> >> > func:xfs_inode_alloc 27M     6693 mm/memory.c:1192
-> >> > func:folio_prealloc 58M    14784 mm/page_ext.c:271
-> >> > func:alloc_page_ext 258M      129 mm/khugepaged.c:1069
-> >> > func:alloc_charge_folio 430M   770788 lib/xarray.c:378
-> >> > func:xas_alloc 545M    36444 mm/slub.c:3059 func:alloc_slab_page 
-> >> >        9.8G  2563617 mm/readahead.c:189 func:ractl_alloc_folio 
-> >> >         20G  5164004 mm/filemap.c:2012 func:__filemap_get_folio 
-> >> >
-> >> >
-> >> >So I stopped the workload and dropped caches to confirm.
-> >> >
-> >> ># echo 3 > /proc/sys/vm/drop_caches
-> >> ># smem -pw
-> >> >Area                           Used      Cache   Noncache 
-> >> >firmware/hardware             0.00%      0.00%      0.00% 
-> >> >kernel image                  0.00%      0.00%      0.00% 
-> >> >kernel dynamic memory        33.45%      0.09%     33.36% 
-> >> >userspace memory              0.36%      0.16%      0.19% 
-> >> >free memory                  66.20%     66.20%      0.00% 
-> >> ># sort -g /proc/allocinfo|tail|numfmt --to=iec
-> >> >         12M     2987 mm/execmem.c:41 func:execmem_vmalloc 
-> >> >         12M        3 kernel/dma/pool.c:96
-> >> > func:atomic_pool_expand 13M      751 mm/slub.c:3061
-> >> > func:alloc_slab_page 16M        8 mm/khugepaged.c:1069
-> >> > func:alloc_charge_folio 18M     4355 mm/memory.c:1190
-> >> > func:folio_prealloc 24M     6119 mm/memory.c:1192
-> >> > func:folio_prealloc 58M    14784 mm/page_ext.c:271
-> >> > func:alloc_page_ext 61M    15448 mm/readahead.c:189
-> >> > func:ractl_alloc_folio 79M     6726 mm/slub.c:3059
-> >> > func:alloc_slab_page 11G  2674488 mm/filemap.c:2012
-> >> > func:__filemap_get_folio  
-> 
-> Maybe narrowing down the "Noncache" caller of __filemap_get_folio
-> would help clarify things. (It could be designed that way, and  needs
-> other route than dropping-cache to release the memory, just
-> guess....) If you want, you can modify code to split the accounting
-> for __filemap_get_folio according to its callers.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on ceph-client/for-linus]
+[also build test WARNING on linus/master v6.18 next-20251211]
+[cannot apply to ceph-client/testing]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Markuze/ceph-handle-InodeStat-v8-versioned-field-in-reply-parsing/20251204-035756
+base:   https://github.com/ceph/ceph-client.git for-linus
+patch link:    https://lore.kernel.org/r/20251203154625.2779153-5-amarkuze%40redhat.com
+patch subject: [PATCH v3 4/4] ceph: adding CEPH_SUBVOLUME_ID_NONE
+config: x86_64-randconfig-101-20251210 (https://download.01.org/0day-ci/archive/20251212/202512120708.d8OjMmgQ-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251212/202512120708.d8OjMmgQ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512120708.d8OjMmgQ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> fs/ceph/mds_client.c:123:22: warning: unused variable 'cl' [-Wunused-variable]
+     123 |         struct ceph_client *cl = mdsc ? mdsc->fsc->client : NULL;
+         |                             ^~
+   1 warning generated.
 
 
-Thanks again, I'll add this patch in and see where I end up. 
+vim +/cl +123 fs/ceph/mds_client.c
 
-The issue is nothing will cause the memory to be freed. Dropping caches
-doesn't work, memory pressure doesn't work, unmounting the filesystems
-doesn't work. Removing the cephfs and netfs kernel modules also doesn't
-work. 
+b37fe1f923fb4b Yan, Zheng       2019-01-09  113  
+2f2dc053404feb Sage Weil        2009-10-06  114  static int parse_reply_info_in(void **p, void *end,
+14303d20f3ae3e Sage Weil        2010-12-14  115  			       struct ceph_mds_reply_info_in *info,
+48a90cabed1e21 Alex Markuze     2025-12-03  116  			       u64 features,
+48a90cabed1e21 Alex Markuze     2025-12-03  117  			       struct ceph_mds_client *mdsc)
+2f2dc053404feb Sage Weil        2009-10-06  118  {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  119  	int err = 0;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  120  	u8 struct_v = 0;
+48a90cabed1e21 Alex Markuze     2025-12-03  121  	u8 struct_compat = 0;
+48a90cabed1e21 Alex Markuze     2025-12-03  122  	u32 struct_len = 0;
+48a90cabed1e21 Alex Markuze     2025-12-03 @123  	struct ceph_client *cl = mdsc ? mdsc->fsc->client : NULL;
+48a90cabed1e21 Alex Markuze     2025-12-03  124  
+b5cda3b778d7c2 Alex Markuze     2025-12-03  125  	info->subvolume_id = CEPH_SUBVOLUME_ID_NONE;
+7361b2801d4572 Alex Markuze     2025-12-03  126  
+b37fe1f923fb4b Yan, Zheng       2019-01-09  127  	if (features == (u64)-1) {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  128  		ceph_decode_8_safe(p, end, struct_v, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  129  		ceph_decode_8_safe(p, end, struct_compat, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  130  		/* struct_v is expected to be >= 1. we only understand
+b37fe1f923fb4b Yan, Zheng       2019-01-09  131  		 * encoding with struct_compat == 1. */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  132  		if (!struct_v || struct_compat != 1)
+b37fe1f923fb4b Yan, Zheng       2019-01-09  133  			goto bad;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  134  		ceph_decode_32_safe(p, end, struct_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  135  		ceph_decode_need(p, end, struct_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  136  		end = *p + struct_len;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  137  	}
+2f2dc053404feb Sage Weil        2009-10-06  138  
+b37fe1f923fb4b Yan, Zheng       2019-01-09  139  	ceph_decode_need(p, end, sizeof(struct ceph_mds_reply_inode), bad);
+2f2dc053404feb Sage Weil        2009-10-06  140  	info->in = *p;
+2f2dc053404feb Sage Weil        2009-10-06  141  	*p += sizeof(struct ceph_mds_reply_inode) +
+2f2dc053404feb Sage Weil        2009-10-06  142  		sizeof(*info->in->fragtree.splits) *
+2f2dc053404feb Sage Weil        2009-10-06  143  		le32_to_cpu(info->in->fragtree.nsplits);
+2f2dc053404feb Sage Weil        2009-10-06  144  
+2f2dc053404feb Sage Weil        2009-10-06  145  	ceph_decode_32_safe(p, end, info->symlink_len, bad);
+2f2dc053404feb Sage Weil        2009-10-06  146  	ceph_decode_need(p, end, info->symlink_len, bad);
+2f2dc053404feb Sage Weil        2009-10-06  147  	info->symlink = *p;
+2f2dc053404feb Sage Weil        2009-10-06  148  	*p += info->symlink_len;
+2f2dc053404feb Sage Weil        2009-10-06  149  
+14303d20f3ae3e Sage Weil        2010-12-14  150  	ceph_decode_copy_safe(p, end, &info->dir_layout,
+14303d20f3ae3e Sage Weil        2010-12-14  151  			      sizeof(info->dir_layout), bad);
+2f2dc053404feb Sage Weil        2009-10-06  152  	ceph_decode_32_safe(p, end, info->xattr_len, bad);
+2f2dc053404feb Sage Weil        2009-10-06  153  	ceph_decode_need(p, end, info->xattr_len, bad);
+2f2dc053404feb Sage Weil        2009-10-06  154  	info->xattr_data = *p;
+2f2dc053404feb Sage Weil        2009-10-06  155  	*p += info->xattr_len;
+fb01d1f8b0343f Yan, Zheng       2014-11-14  156  
+b37fe1f923fb4b Yan, Zheng       2019-01-09  157  	if (features == (u64)-1) {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  158  		/* inline data */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  159  		ceph_decode_64_safe(p, end, info->inline_version, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  160  		ceph_decode_32_safe(p, end, info->inline_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  161  		ceph_decode_need(p, end, info->inline_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  162  		info->inline_data = *p;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  163  		*p += info->inline_len;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  164  		/* quota */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  165  		err = parse_reply_info_quota(p, end, info);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  166  		if (err < 0)
+b37fe1f923fb4b Yan, Zheng       2019-01-09  167  			goto out_bad;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  168  		/* pool namespace */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  169  		ceph_decode_32_safe(p, end, info->pool_ns_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  170  		if (info->pool_ns_len > 0) {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  171  			ceph_decode_need(p, end, info->pool_ns_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  172  			info->pool_ns_data = *p;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  173  			*p += info->pool_ns_len;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  174  		}
+245ce991cca55e Jeff Layton      2019-05-29  175  
+245ce991cca55e Jeff Layton      2019-05-29  176  		/* btime */
+245ce991cca55e Jeff Layton      2019-05-29  177  		ceph_decode_need(p, end, sizeof(info->btime), bad);
+245ce991cca55e Jeff Layton      2019-05-29  178  		ceph_decode_copy(p, &info->btime, sizeof(info->btime));
+245ce991cca55e Jeff Layton      2019-05-29  179  
+245ce991cca55e Jeff Layton      2019-05-29  180  		/* change attribute */
+a35ead314e0b92 Jeff Layton      2019-06-06  181  		ceph_decode_64_safe(p, end, info->change_attr, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  182  
+08796873a5183b Yan, Zheng       2019-01-09  183  		/* dir pin */
+08796873a5183b Yan, Zheng       2019-01-09  184  		if (struct_v >= 2) {
+08796873a5183b Yan, Zheng       2019-01-09  185  			ceph_decode_32_safe(p, end, info->dir_pin, bad);
+08796873a5183b Yan, Zheng       2019-01-09  186  		} else {
+08796873a5183b Yan, Zheng       2019-01-09  187  			info->dir_pin = -ENODATA;
+08796873a5183b Yan, Zheng       2019-01-09  188  		}
+08796873a5183b Yan, Zheng       2019-01-09  189  
+193e7b37628e97 David Disseldorp 2019-04-18  190  		/* snapshot birth time, remains zero for v<=2 */
+193e7b37628e97 David Disseldorp 2019-04-18  191  		if (struct_v >= 3) {
+193e7b37628e97 David Disseldorp 2019-04-18  192  			ceph_decode_need(p, end, sizeof(info->snap_btime), bad);
+193e7b37628e97 David Disseldorp 2019-04-18  193  			ceph_decode_copy(p, &info->snap_btime,
+193e7b37628e97 David Disseldorp 2019-04-18  194  					 sizeof(info->snap_btime));
+193e7b37628e97 David Disseldorp 2019-04-18  195  		} else {
+193e7b37628e97 David Disseldorp 2019-04-18  196  			memset(&info->snap_btime, 0, sizeof(info->snap_btime));
+193e7b37628e97 David Disseldorp 2019-04-18  197  		}
+193e7b37628e97 David Disseldorp 2019-04-18  198  
+e7f72952508ac4 Yanhu Cao        2020-08-28  199  		/* snapshot count, remains zero for v<=3 */
+e7f72952508ac4 Yanhu Cao        2020-08-28  200  		if (struct_v >= 4) {
+e7f72952508ac4 Yanhu Cao        2020-08-28  201  			ceph_decode_64_safe(p, end, info->rsnaps, bad);
+e7f72952508ac4 Yanhu Cao        2020-08-28  202  		} else {
+e7f72952508ac4 Yanhu Cao        2020-08-28  203  			info->rsnaps = 0;
+e7f72952508ac4 Yanhu Cao        2020-08-28  204  		}
+e7f72952508ac4 Yanhu Cao        2020-08-28  205  
+2d332d5bc42440 Jeff Layton      2020-07-27  206  		if (struct_v >= 5) {
+2d332d5bc42440 Jeff Layton      2020-07-27  207  			u32 alen;
+2d332d5bc42440 Jeff Layton      2020-07-27  208  
+2d332d5bc42440 Jeff Layton      2020-07-27  209  			ceph_decode_32_safe(p, end, alen, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  210  
+2d332d5bc42440 Jeff Layton      2020-07-27  211  			while (alen--) {
+2d332d5bc42440 Jeff Layton      2020-07-27  212  				u32 len;
+2d332d5bc42440 Jeff Layton      2020-07-27  213  
+2d332d5bc42440 Jeff Layton      2020-07-27  214  				/* key */
+2d332d5bc42440 Jeff Layton      2020-07-27  215  				ceph_decode_32_safe(p, end, len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  216  				ceph_decode_skip_n(p, end, len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  217  				/* value */
+2d332d5bc42440 Jeff Layton      2020-07-27  218  				ceph_decode_32_safe(p, end, len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  219  				ceph_decode_skip_n(p, end, len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  220  			}
+2d332d5bc42440 Jeff Layton      2020-07-27  221  		}
+2d332d5bc42440 Jeff Layton      2020-07-27  222  
+2d332d5bc42440 Jeff Layton      2020-07-27  223  		/* fscrypt flag -- ignore */
+2d332d5bc42440 Jeff Layton      2020-07-27  224  		if (struct_v >= 6)
+2d332d5bc42440 Jeff Layton      2020-07-27  225  			ceph_decode_skip_8(p, end, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  226  
+2d332d5bc42440 Jeff Layton      2020-07-27  227  		info->fscrypt_auth = NULL;
+2d332d5bc42440 Jeff Layton      2020-07-27  228  		info->fscrypt_auth_len = 0;
+2d332d5bc42440 Jeff Layton      2020-07-27  229  		info->fscrypt_file = NULL;
+2d332d5bc42440 Jeff Layton      2020-07-27  230  		info->fscrypt_file_len = 0;
+2d332d5bc42440 Jeff Layton      2020-07-27  231  		if (struct_v >= 7) {
+2d332d5bc42440 Jeff Layton      2020-07-27  232  			ceph_decode_32_safe(p, end, info->fscrypt_auth_len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  233  			if (info->fscrypt_auth_len) {
+2d332d5bc42440 Jeff Layton      2020-07-27  234  				info->fscrypt_auth = kmalloc(info->fscrypt_auth_len,
+2d332d5bc42440 Jeff Layton      2020-07-27  235  							     GFP_KERNEL);
+2d332d5bc42440 Jeff Layton      2020-07-27  236  				if (!info->fscrypt_auth)
+2d332d5bc42440 Jeff Layton      2020-07-27  237  					return -ENOMEM;
+2d332d5bc42440 Jeff Layton      2020-07-27  238  				ceph_decode_copy_safe(p, end, info->fscrypt_auth,
+2d332d5bc42440 Jeff Layton      2020-07-27  239  						      info->fscrypt_auth_len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  240  			}
+2d332d5bc42440 Jeff Layton      2020-07-27  241  			ceph_decode_32_safe(p, end, info->fscrypt_file_len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  242  			if (info->fscrypt_file_len) {
+2d332d5bc42440 Jeff Layton      2020-07-27  243  				info->fscrypt_file = kmalloc(info->fscrypt_file_len,
+2d332d5bc42440 Jeff Layton      2020-07-27  244  							     GFP_KERNEL);
+2d332d5bc42440 Jeff Layton      2020-07-27  245  				if (!info->fscrypt_file)
+2d332d5bc42440 Jeff Layton      2020-07-27  246  					return -ENOMEM;
+2d332d5bc42440 Jeff Layton      2020-07-27  247  				ceph_decode_copy_safe(p, end, info->fscrypt_file,
+2d332d5bc42440 Jeff Layton      2020-07-27  248  						      info->fscrypt_file_len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  249  			}
+2d332d5bc42440 Jeff Layton      2020-07-27  250  		}
+e3d0dedf78abdf Alex Markuze     2025-12-03  251  
+e3d0dedf78abdf Alex Markuze     2025-12-03  252  		/*
+e3d0dedf78abdf Alex Markuze     2025-12-03  253  		 * InodeStat encoding versions:
+e3d0dedf78abdf Alex Markuze     2025-12-03  254  		 *   v1-v7: various fields added over time
+e3d0dedf78abdf Alex Markuze     2025-12-03  255  		 *   v8: added optmetadata (versioned sub-structure containing
+e3d0dedf78abdf Alex Markuze     2025-12-03  256  		 *       optional inode metadata like charmap for case-insensitive
+e3d0dedf78abdf Alex Markuze     2025-12-03  257  		 *       filesystems). The kernel client doesn't support
+e3d0dedf78abdf Alex Markuze     2025-12-03  258  		 *       case-insensitive lookups, so we skip this field.
+e3d0dedf78abdf Alex Markuze     2025-12-03  259  		 *   v9: added subvolume_id (parsed below)
+e3d0dedf78abdf Alex Markuze     2025-12-03  260  		 */
+e3d0dedf78abdf Alex Markuze     2025-12-03  261  		if (struct_v >= 8) {
+e3d0dedf78abdf Alex Markuze     2025-12-03  262  			u32 v8_struct_len;
+e3d0dedf78abdf Alex Markuze     2025-12-03  263  
+e3d0dedf78abdf Alex Markuze     2025-12-03  264  			/* skip optmetadata versioned sub-structure */
+e3d0dedf78abdf Alex Markuze     2025-12-03  265  			ceph_decode_skip_8(p, end, bad);  /* struct_v */
+e3d0dedf78abdf Alex Markuze     2025-12-03  266  			ceph_decode_skip_8(p, end, bad);  /* struct_compat */
+e3d0dedf78abdf Alex Markuze     2025-12-03  267  			ceph_decode_32_safe(p, end, v8_struct_len, bad);
+e3d0dedf78abdf Alex Markuze     2025-12-03  268  			ceph_decode_skip_n(p, end, v8_struct_len, bad);
+e3d0dedf78abdf Alex Markuze     2025-12-03  269  		}
+e3d0dedf78abdf Alex Markuze     2025-12-03  270  
+7361b2801d4572 Alex Markuze     2025-12-03  271  		/* struct_v 9 added subvolume_id */
+7361b2801d4572 Alex Markuze     2025-12-03  272  		if (struct_v >= 9)
+7361b2801d4572 Alex Markuze     2025-12-03  273  			ceph_decode_64_safe(p, end, info->subvolume_id, bad);
+7361b2801d4572 Alex Markuze     2025-12-03  274  
+b37fe1f923fb4b Yan, Zheng       2019-01-09  275  		*p = end;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  276  	} else {
+2d332d5bc42440 Jeff Layton      2020-07-27  277  		/* legacy (unversioned) struct */
+fb01d1f8b0343f Yan, Zheng       2014-11-14  278  		if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
+fb01d1f8b0343f Yan, Zheng       2014-11-14  279  			ceph_decode_64_safe(p, end, info->inline_version, bad);
+fb01d1f8b0343f Yan, Zheng       2014-11-14  280  			ceph_decode_32_safe(p, end, info->inline_len, bad);
+fb01d1f8b0343f Yan, Zheng       2014-11-14  281  			ceph_decode_need(p, end, info->inline_len, bad);
+fb01d1f8b0343f Yan, Zheng       2014-11-14  282  			info->inline_data = *p;
+fb01d1f8b0343f Yan, Zheng       2014-11-14  283  			*p += info->inline_len;
+fb01d1f8b0343f Yan, Zheng       2014-11-14  284  		} else
+fb01d1f8b0343f Yan, Zheng       2014-11-14  285  			info->inline_version = CEPH_INLINE_NONE;
+fb01d1f8b0343f Yan, Zheng       2014-11-14  286  
+fb18a57568c2b8 Luis Henriques   2018-01-05  287  		if (features & CEPH_FEATURE_MDS_QUOTA) {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  288  			err = parse_reply_info_quota(p, end, info);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  289  			if (err < 0)
+b37fe1f923fb4b Yan, Zheng       2019-01-09  290  				goto out_bad;
+fb18a57568c2b8 Luis Henriques   2018-01-05  291  		} else {
+fb18a57568c2b8 Luis Henriques   2018-01-05  292  			info->max_bytes = 0;
+fb18a57568c2b8 Luis Henriques   2018-01-05  293  			info->max_files = 0;
+fb18a57568c2b8 Luis Henriques   2018-01-05  294  		}
+fb18a57568c2b8 Luis Henriques   2018-01-05  295  
+779fe0fb8e1883 Yan, Zheng       2016-03-07  296  		info->pool_ns_len = 0;
+779fe0fb8e1883 Yan, Zheng       2016-03-07  297  		info->pool_ns_data = NULL;
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  298  		if (features & CEPH_FEATURE_FS_FILE_LAYOUT_V2) {
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  299  			ceph_decode_32_safe(p, end, info->pool_ns_len, bad);
+779fe0fb8e1883 Yan, Zheng       2016-03-07  300  			if (info->pool_ns_len > 0) {
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  301  				ceph_decode_need(p, end, info->pool_ns_len, bad);
+779fe0fb8e1883 Yan, Zheng       2016-03-07  302  				info->pool_ns_data = *p;
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  303  				*p += info->pool_ns_len;
+779fe0fb8e1883 Yan, Zheng       2016-03-07  304  			}
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  305  		}
+08796873a5183b Yan, Zheng       2019-01-09  306  
+245ce991cca55e Jeff Layton      2019-05-29  307  		if (features & CEPH_FEATURE_FS_BTIME) {
+245ce991cca55e Jeff Layton      2019-05-29  308  			ceph_decode_need(p, end, sizeof(info->btime), bad);
+245ce991cca55e Jeff Layton      2019-05-29  309  			ceph_decode_copy(p, &info->btime, sizeof(info->btime));
+a35ead314e0b92 Jeff Layton      2019-06-06  310  			ceph_decode_64_safe(p, end, info->change_attr, bad);
+245ce991cca55e Jeff Layton      2019-05-29  311  		}
+245ce991cca55e Jeff Layton      2019-05-29  312  
+08796873a5183b Yan, Zheng       2019-01-09  313  		info->dir_pin = -ENODATA;
+e7f72952508ac4 Yanhu Cao        2020-08-28  314  		/* info->snap_btime and info->rsnaps remain zero */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  315  	}
+2f2dc053404feb Sage Weil        2009-10-06  316  	return 0;
+2f2dc053404feb Sage Weil        2009-10-06  317  bad:
+b37fe1f923fb4b Yan, Zheng       2019-01-09  318  	err = -EIO;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  319  out_bad:
+2f2dc053404feb Sage Weil        2009-10-06  320  	return err;
+2f2dc053404feb Sage Weil        2009-10-06  321  }
+2f2dc053404feb Sage Weil        2009-10-06  322  
 
-This is why I feel it's a ref_count (or similar) issue. 
-
-I've also found it seems to be a fixed amount leaked each time, per
-file. Simply doing lots of IO on one large file doesn't leak as fast as
-lots of "small" (greater than 10MB less than 100MB seems to be a sweet
-spot) 
-
-Also, dropping caches while the workload is running actually amplifies
-the issue. So it very much feels like something is wrong in the reclaim
-code.
-
-Anyway I'll get this patch applied and see where I end up. 
-
-I now have crash dumps (after enabling crash_on_oom) so I'm going to
-try and see if I can find these structures and see what state they are
-in
-
-Thanks again. 
-
-Mal
-
-
-> Following is a draft patch: (based on v6.18)
-> 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 09b581c1d878..ba8c659a6ae3 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -753,7 +753,11 @@ static inline fgf_t fgf_set_order(size_t size)
->  }
->  
->  void *filemap_get_entry(struct address_space *mapping, pgoff_t
-> index); -struct folio *__filemap_get_folio(struct address_space
-> *mapping, pgoff_t index, +
-> +#define __filemap_get_folio(...)			\
-> +	alloc_hooks(__filemap_get_folio_noprof(__VA_ARGS__))
-> +
-> +struct folio *__filemap_get_folio_noprof(struct address_space
-> *mapping, pgoff_t index, fgf_t fgp_flags, gfp_t gfp);
->  struct page *pagecache_get_page(struct address_space *mapping,
-> pgoff_t index, fgf_t fgp_flags, gfp_t gfp);
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 024b71da5224..e1c1c26d7cb3 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1938,7 +1938,7 @@ void *filemap_get_entry(struct address_space
-> *mapping, pgoff_t index) *
->   * Return: The found folio or an ERR_PTR() otherwise.
->   */
-> -struct folio *__filemap_get_folio(struct address_space *mapping,
-> pgoff_t index, +struct folio *__filemap_get_folio_noprof(struct
-> address_space *mapping, pgoff_t index, fgf_t fgp_flags, gfp_t gfp)
->  {
->  	struct folio *folio;
-> @@ -2009,7 +2009,7 @@ struct folio *__filemap_get_folio(struct
-> address_space *mapping, pgoff_t index, err = -ENOMEM;
->  			if (order > min_order)
->  				alloc_gfp |= __GFP_NORETRY |
-> __GFP_NOWARN;
-> -			folio = filemap_alloc_folio(alloc_gfp,
-> order);
-> +			folio =
-> filemap_alloc_folio_noprof(alloc_gfp, order); if (!folio)
->  				continue;
->  
-> @@ -2056,7 +2056,7 @@ struct folio *__filemap_get_folio(struct
-> address_space *mapping, pgoff_t index, folio_clear_dropbehind(folio);
->  	return folio;
->  }
-> -EXPORT_SYMBOL(__filemap_get_folio);
-> +EXPORT_SYMBOL(__filemap_get_folio_noprof);
->  
->  static inline struct folio *find_get_entry(struct xa_state *xas,
-> pgoff_t max, xa_mark_t mark)
-> 
-> 
-> 
-> 
-> FYI
-> David
-> 
-> >> >
-> >> >So if I'm reading this correctly something is causing folios
-> >> >collect and not be able to be freed?    
-> >> 
-> >> CC cephfs, maybe someone could have an easy reading out of those
-> >> folio usage
-> >> 
-> >>   
-> >> >
-> >> >Also it's clear that some of the folio's are counting as cache and
-> >> >some aren't. 
-> >> >
-> >> >Like I said 6.17 and 6.18 both have the issue. 6.12 does not. I'm
-> >> >now going to manually walk through previous kernel releases and
-> >> >find where it first starts happening purely because I'm having
-> >> >issues building earlier kernels due to rust stuff and other python
-> >> >incompatibilities making doing a git-bisect a bit fun.
-> >> >
-> >> >I'll do it the packages way until I get closer, then solve the
-> >> >build issues. 
-> >> >
-> >> >Thanks,
-> >> >Mal
-> >> >    
-> >Thanks David.
-> >
-> >I've contacted the ceph developers as well. 
-> >
-> >There was a suggestion it was due to the change from, to quote:
-> >folio.free() to folio.put() or something like this.
-> >
-> >The change happened around 6.14/6.15
-> >
-> >I've found an easier reproducer. 
-> >
-> >There has been a suggestion that perhaps the ceph team might not fix
-> >this as "you can just reboot before the machine becomes unstable" and
-> >"Nobody else has encountered this bug"
-> >
-> >I'll leave that to other people to make a call on but I'd assume the
-> >lack of reports is due to the fact that most stable distros are still
-> >on a a far too early kernel and/or are using the fuse driver with
-> >k8s.
-> >
-> >Anyway, thanks for your assistance.  
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
