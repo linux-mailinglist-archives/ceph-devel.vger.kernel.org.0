@@ -1,371 +1,442 @@
-Return-Path: <ceph-devel+bounces-4176-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4177-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CBA5CBF9C6
-	for <lists+ceph-devel@lfdr.de>; Mon, 15 Dec 2025 20:54:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC744CC00DA
+	for <lists+ceph-devel@lfdr.de>; Mon, 15 Dec 2025 22:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2A662304D56B
-	for <lists+ceph-devel@lfdr.de>; Mon, 15 Dec 2025 19:51:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DD6C03080689
+	for <lists+ceph-devel@lfdr.de>; Mon, 15 Dec 2025 21:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054E831B102;
-	Mon, 15 Dec 2025 19:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A68328246;
+	Mon, 15 Dec 2025 21:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AHpeBozO"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="SJ7JMdmE"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197592D9796
-	for <ceph-devel@vger.kernel.org>; Mon, 15 Dec 2025 19:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765827786; cv=fail; b=NZgeJ6TjVFXFckCq+4pYKBIdcfMJiA2j2rlvOPF40YdRMbkReWRdBPCSlfrgEkvYS1YtM1/i9iGp3FEHU1iUNNrjGUJjYWAe5g877WWN4rpZg0qcFFlpwW3aWNJwdYc0/D62d6GBuFtLqtT+bHtSEmsqyeysHnkb/WvcQlrsZOI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765827786; c=relaxed/simple;
-	bh=2cpj/yFdFtc4Wa85NwOuOfXm2NuYv6s5A6ov3yqZBC4=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=fpWrXuuKndGxOXLsjQQeIHF41F3tBPzM5hnLWBlN+A9lFPqF8gNQhAjb1aNucbap3qiZF6nMeSaICrXKU9/HQT66mxVf2pCPjyvEvo0W+nXNTPWde+90mwPskid08d8N19ejv1IVTgq4C6E5AQSeQnK+/DwZnGqjShXPrWyol74=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AHpeBozO; arc=fail smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BFD2Qg8018120
-	for <ceph-devel@vger.kernel.org>; Mon, 15 Dec 2025 19:43:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=QRsh5zUWFOiC0fL8bfXTexFgL9h/mRXoLZ8A7XrPlHs=; b=AHpeBozO
-	QaZOlykJiOQ35BrHPOrFDW3H5JrOrVCzA3slVXXSMfs6tSSKm99gKdEJKpNIG6o7
-	6wWw8uV+KSHzkg/4Yk6Cpq4ghcHupXbVsP520kPFfbJ8B4vdI3dfFedXj6159GJs
-	Pv1Hqzoo5zFz2FO+D0vfO8RfwK2S1WMJGpw4M/f3mXFHt+wPcvWVR8h0QsXTZq8N
-	rgNiWpQmtxtkI1UeF6xw+bsU/7K8tdrVBhp+oPK9K3imd7UKBjr9C6LDjNLzDRrX
-	Zg52R5NMPhUb7NsRX6CRewPbFzyZ3GAkyfS+w2+bXfqd8eEKyQp8hbLpEBjXhkhX
-	SnueMrqqbrIWlw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0yvb3ntf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <ceph-devel@vger.kernel.org>; Mon, 15 Dec 2025 19:43:02 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BFJWT9N029546
-	for <ceph-devel@vger.kernel.org>; Mon, 15 Dec 2025 19:43:02 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0yvb3nta-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Dec 2025 19:43:02 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BFJalrd005311;
-	Mon, 15 Dec 2025 19:43:01 GMT
-Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011018.outbound.protection.outlook.com [40.93.194.18])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b0yvb3nt6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Dec 2025 19:43:01 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ImBl3XEBgKBpusjAEPDiavB1RBO5WZE2rEBm4sAjCZUxF77+iiLQ6fUCYLYkdHx3Qmp9YFwoeSfzhwpUoyeENesy2U1Ivy5mvJbAyC3e1KCvcQblW4Fm0QAduEherhfYflljRatBTxQdJ/X0YvOJlitCF2Xwp8ZlncwGYKeEspH1bOvriCPXM/ks6aGwJsXKk9kGrrBn686tbs7YfYnIoIZgXT3bwWFC3UFyTqzb2wCV+wNd5Odg0SMwi6bUVsXIe1FtBHjoYqFvx1b+ET0ZGNMXO97ZZQuJA9/w67trDgmNG3gAEzsC6rUmucfelmvEK3CriVSHWUWkD58XpeZqTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zwrSxpjnrRYYonx9zTLEF5azD+1i/dW9sfYvvpla0J8=;
- b=xZjb1GhGiuGHnHhXtj6bs8yKWPPXrmqR04O0H78AwWi3AFwfFgs2wLjs04fr4In6NbBeD69op8ksUXjiUu+0y+kbq9he9Fue40WN5X4QnMGEizRLEr0lK4wBE5kPzNfTAoOYugMeLqtjYA4y9HvVANhrjv2x+vDU2rcIR3LKD/bmlX1CAYhQCspNYMxTyLHPIE1CL24RdtgYSAhr+Ez8eBdhgPU3aaXaolJcvAOiYQ11jy1OCI08VYtY5h0Jz3odKgO247RMXzWm5xGTAk8Ro8qEE3Sg2XsfnI3KlIrsNZi51jANNRoh+gv+b8AdUKLptiRten8ldI/yKqduuEIl4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by DS0PR15MB6093.namprd15.prod.outlook.com (2603:10b6:8:12c::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.12; Mon, 15 Dec
- 2025 19:42:56 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9412.011; Mon, 15 Dec 2025
- 19:42:56 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "malcolm@haak.id.au" <malcolm@haak.id.au>,
-        "00107082@163.com"
-	<00107082@163.com>
-CC: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        Xiubo Li
-	<xiubli@redhat.com>,
-        "idryomov@gmail.com" <idryomov@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "surenb@google.com" <surenb@google.com>
-Thread-Topic: [EXTERNAL] Re: RRe: Possible memory leak in 6.17.7
-Thread-Index: AQHcalYDU1NctrlESU+S2CMf8hQ3tLUjIVeA
-Date: Mon, 15 Dec 2025 19:42:56 +0000
-Message-ID: <8c8e8dc4d30a8ca37a57d7f29c5f29cdf7a904ee.camel@ibm.com>
-References: <20251110182008.71e0858b@xps15mal>
-		<20251208110829.11840-1-00107082@163.com>
-		<20251209090831.13c7a639@xps15mal>
-		<17469653.4a75.19b01691299.Coremail.00107082@163.com>
-		<20251210234318.5d8c2d68@xps15mal>
-		<2a9ba88e.3aa6.19b0b73dd4e.Coremail.00107082@163.com>
-	 <20251211142358.563d9ac3@xps15mal>
-In-Reply-To: <20251211142358.563d9ac3@xps15mal>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|DS0PR15MB6093:EE_
-x-ms-office365-filtering-correlation-id: 9117f7f9-0442-4196-6b67-08de3c122547
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|10070799003|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?QlhSUFFXTkFaZmUwTVpHUjN4NVUwTVRsdk9TL2oxWTdKaW5TcEdnS1RDcVpa?=
- =?utf-8?B?VkJVYnNvcnR4SFY3c2FBWmNwRFQ1VWRTblBsa2VLWG8xZ21PLzJQbFljazZj?=
- =?utf-8?B?aTIwejJaVUx1UlE5N3doRE1LY0J2aUg1aEpjcHlVWWpvM0t3ZzNtaUxMcnpQ?=
- =?utf-8?B?SEpUc0xxallCcnZxNHRkQ3FlY2w3bkVjamUxbTUrTDBKS0pIbnNYME9GZ3oy?=
- =?utf-8?B?VmJiRm92VCtPMWxrbjZrRlE5WkdZL3FGUUYrd1lTRXplZndQNWJ3QVkvcUdi?=
- =?utf-8?B?VmlkRm5FakJvSzJLMG1yb0RRY3ByWkZ3SUhETERBRHEyczhFNnJxQ3RjMmRX?=
- =?utf-8?B?ZEowOFZBbG1DbnV2N00zZCt5NGU2Mld0bklTVG5QakFXazV4eUFMZnNBZzM3?=
- =?utf-8?B?WER3UTBpL0doM253WDlMSE8yUmU1UGg1czdja0NPanlicjFQUktrQk9MMGFS?=
- =?utf-8?B?TnBCYWZXbnR6N3dzMTl0c0V5RnkzUDNHSEJzKzlKVjJLSHdLQzN0VHVZQk5P?=
- =?utf-8?B?Qkl0RURNbVdXT2ZNSTE1SmJXOVdoVXF4SGg5UmVJK1c4OWRuRnNkNDg2eFV0?=
- =?utf-8?B?S1ZHRGZhaWc4VHZMQnZ0Qjd1RDMxK2pZSXZkd014TTJzcVJmQ295M2NHY3B3?=
- =?utf-8?B?ZVhUeW50Qy9nOGd3UnU2M2VJMDZaTnc3aUp3cUI4VG1JNzRHeEN4amt4K1Uy?=
- =?utf-8?B?QXFsWHl1L2dXYVUyaTBraGtXdCs4Q2VTZ0xiWDZsV2xKWEtYUDlKT3NwZDEw?=
- =?utf-8?B?Nkx4SmUzNmRwVTB1ZFJaTDk0QTNZdzNENjJUZ2o4RHNwWmQxMFVOQitjNTFW?=
- =?utf-8?B?SmZLb015d3J4WE9wYmR5bFhXQWE3RUZ1QUllWHNvQ3hkdDNwRE1xKzJLMXFx?=
- =?utf-8?B?OTFNYjFWbTJoMGdYTGpOTjhVdmpRUmZzVFZ1NjEyNGtoWmZ1eGtqVnliMHV5?=
- =?utf-8?B?a0htTlA3Q1VrUmxURUQ4M0ZZWkwzais5aXFpYnJpczhXQUpVOVk3NG0zcEtM?=
- =?utf-8?B?U2o0Q2VzUW5GZE9PdG00M3FscUlQMFpTTHpyNURvSWVnNmY5NWxqOVEvZm9y?=
- =?utf-8?B?bG15dmR6RHpZQlE0N1hsNjRDVHMvdWY0dDhyL21ZUFN6ZjFtZmJ5alZ5STNv?=
- =?utf-8?B?dEh6T2ZSL1UzNFR2RWtpL0hONUpyNzM0U0JKUS9pMHB3Q2RKRU5qRkUxZHMz?=
- =?utf-8?B?dDMzOHN1MSswSUkyWXNHYVYyR0N1T2JEbFdLOEsxcmYxclpJUFJaM2IrNUtu?=
- =?utf-8?B?UUE2U3VDVm9PVy9BeFBzUmZhKzNvR042RUY4ZkNJR2RNdVFod0lIQTlGSStr?=
- =?utf-8?B?a2lXMmNKQWFRYWM0M2pXWXJ4NElqVmFjU25YT3plaVkvaSt4ZWhscks4ckxV?=
- =?utf-8?B?am9KdXBuRThudS9pUEhDd2kybExUblg1c3ppRVVrTllPTnhvUE56ZFdIVWxU?=
- =?utf-8?B?NFRTYmprczBlSkFhQnQ2NVh5MkhjVGJtbnNxWEtPMFVHUUJpbjNlU0lQWXQz?=
- =?utf-8?B?RkQyZDBCeDlibEx2L04vS2ZJemhjaEhsYjVsSzU1K3hRdTg3eGJ5WDB3R3Yz?=
- =?utf-8?B?emlRNmFqZjJtWWJYRkpDSjJBbm5LODJpSE1veU4ydmJYaGlWdmJHcHpPb3p0?=
- =?utf-8?B?UlB3R3U2Vy9EYVk4QVpHV3FNd2hUQmEwQnhJM0Q1SDZrdXJIZlU3M1FvUlZW?=
- =?utf-8?B?UWlmbHRSTHdmR1VPS1orOW9FUnFnMWx0MG5TNm1PV01uZlZmVkxFaVRremQ2?=
- =?utf-8?B?TXk0QnFPMHFvblJpQW5hUWxwcjlDSXBZL2g2c1hnL2pJWDhmTTZURFVlSHpN?=
- =?utf-8?B?V2h0YzFIRVhiZTJ0b3E3Qm9rcU50U2tHajJyTWdMOVV6UVViV0pjZTRpa2Vl?=
- =?utf-8?B?cytCVHdObzNlOXdlZjU1M3hGTTdDTGNYRkU4OFZmTmVXR1ljUDQzUDhaVUs2?=
- =?utf-8?B?M1Z6QWVaNHJFQ2Vmb3NiOXlDRUduWU5CRGNQYXBnc0l5Q1crWERUUXQxM2Nx?=
- =?utf-8?B?ODRhUlJqY0ZWY0lLMVRIYitvMllwcFRwUE5VTXhSVkh3RXlzOWVoZGRwWmhm?=
- =?utf-8?Q?9vuD/H?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(10070799003)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?R0tqV3VWMmNwdW5OVGN1eTUxUTVadXl2cXJFYmlON3ZELzFJY2tpR0tkZEhP?=
- =?utf-8?B?OWxya3ZUR1owWFRXY1g1SmFkcTN3UGdIa3Q1SCthaVpUZWtRQWVhS0I4U3Fk?=
- =?utf-8?B?YzNpSWpCVk1RWkRiYzRUdHhFUjVjcmpGMGVWbzVkMkgxbzJZZlBHd002YzBH?=
- =?utf-8?B?bGNFdnkweDcrdmd2TmMvejZ4TVFPOC9nMjROeFpUYXNFUkJvcDNodWpYTkc3?=
- =?utf-8?B?SzVzcGsyWWRXM2RYcXBDeDE5OWFqK3VURVRheEIxU0xqc3AwWERlWUh4WEpw?=
- =?utf-8?B?L2hRYnFBSXg0ajNSVkNtWFhKaHUzdUxCZ0IvN1hMMVRKcTZQMHg2MlhBVHZk?=
- =?utf-8?B?c1Bzc09saW5aUFNGYURXcnlEK3JXR080eDc3QTNPMThGbHlWeTVoNkpLS2hn?=
- =?utf-8?B?TTRucTRIQWpISjFFN0JBUGxENytiWFhXa3F0Vjl6eTZkWERseWY2K3RZVGJ5?=
- =?utf-8?B?K2pPczNuZkhPL3g1MW9NN3FldkVFOGNVNHBtQzF6VlAyTE1uUmt5bzhVUFNj?=
- =?utf-8?B?V1hKc2FCTjRMNlFEam5Jak01Y1VQQ1ZYZ3J6VlUweTFrb0g5b1ZmMW9nSjhl?=
- =?utf-8?B?K3o5ZE1pMEhQaDR2c3RhN011cnMyVDR5ajFMYkFWYlJOaVVISFNIakFlWEh1?=
- =?utf-8?B?MDJ6ejNDZ2pUMXlIR3B2VndGL3BRMmc2WFdZZWx4ZXdMVGpmaUxsUTdqWnBk?=
- =?utf-8?B?VXlKVTNEcFdpdW42ZGFONXd2c1o5bVQ3VmZPbllFVnhVS2MrdDRhT3hVR1Zn?=
- =?utf-8?B?UFhPS0YvOVZuYWkyR05RZmp0eitJTFZuVStwQ1dQaTdYSTlFVjBJRlRkU1pi?=
- =?utf-8?B?RFdWOU90SWFMNmkrcUo1UnlneHIzcVExUmFNRXBjVW1wVnlPNkZ4UG9Oc0pB?=
- =?utf-8?B?WTJ1OHJpV1A4MlNhZC9ocnlLbVI4dCtMVFU3ZmEzSzZ3UGhBQzQzVENoMVlw?=
- =?utf-8?B?dWQyUWZXQzZVWkpybmFaYzFWMktzOHhOcm1qQ0FUS1JYbWFHamhycXAvcDYz?=
- =?utf-8?B?YjFWbXNmeXlvalg3M1J3R0Evb1lQNzc4RUdFYUQwTGh6OGtJUEJOd0dJZjMv?=
- =?utf-8?B?ZVZzVTRxYTArYzVycHlUbXJ0engycGkrN1VtenVXMFg5WjhobGRJcmVoaWR6?=
- =?utf-8?B?YjRJdjlJaVBVZlVNbkZnTmJVVmhGWFNNMDlvY0EySHNvWGFOL0laK2V4ZDh2?=
- =?utf-8?B?M3cxRDF6WmE3RkozakczbjRldk1hMExvKzlaUTVtMC9TaWM5cEd4bk96STJ2?=
- =?utf-8?B?SGFnL3dSY3NaaGRpRTg5VVl5S2hRYmZzV2RIbGpNOUZ1TWYwWXplVklzaE01?=
- =?utf-8?B?ME56STY4d3Y2Y2R5WFpsdUpHVWEzSXhsakxYVG5CcHhvUldpc1BER2k3NXFa?=
- =?utf-8?B?QlQyUWlmT1Fzb2NvekpPTVpDd0ZMemRSVEhxQk5JWUM5RXlSV3l4WlF5dnUw?=
- =?utf-8?B?a1AvRll3Z216U2NvT3ZZTERWaEVvNG1LREs1TldCVG1IeHVXYWJDc3JHYU8x?=
- =?utf-8?B?RVRwRVJuR3RkMlVHNTNiQWtPVHdSWUY5c01jUk1qaUtIbXVkNmRuMVpmTERG?=
- =?utf-8?B?ZVRuZWdyeGZYVW4wVkFLM3Q1ZTBnVThLZ1c1MnF1T2RlMTVDMnZGVDlFOEg3?=
- =?utf-8?B?Sk51dEIreHRjNit1eUNPV1dPSVNFU1ZnblNuRHRkV1ZKUDFYcFNSd09YTGw0?=
- =?utf-8?B?R01rWFZiakRLSmpuTHp5NzdGdU5KQkJEOG1sZFBTbm9DNFlEN3ZGQkZ5Z2hG?=
- =?utf-8?B?akxTZkxRM2JPK0tvd3BlU29pUTFpSXgxR3JRN0xuOFN0cGxFM1BIV3N4aGpP?=
- =?utf-8?B?SzhZbklCR1RBNVlUSk1kaHFQa2JuQVZyVDFyVkQ0RkQwUFR0VkNlTnpDVVVj?=
- =?utf-8?B?cGdoeHJ1R0tjenhnd21VR01XK01yOU1LQmVFQ1dmV0ZVWXpmQXNZYUgyenln?=
- =?utf-8?B?STFrZzMzWDRoclEzRWNjYWE1VXZrUmpmSWhsamJCRzV1dDFvQmN0djBUT3p5?=
- =?utf-8?B?YlZwK09ZOUZiU1p5YVF2cFRmMHBZc3BuakQrd3N1ZVlzakVoR2VQRkxsSEM0?=
- =?utf-8?B?WVAwc0ZJZXlESStKbyt1L21IZlVaMmlodWptL3FWcURKbjl4Smo1eGRYMUpi?=
- =?utf-8?B?NE1sdEZLMXRzb0lkTlhNOHpld0FnTFlMV0tDVXFHS0hhcW03QzZnbWkyUllR?=
- =?utf-8?Q?s3FrwdQVAQododws8muARJc=3D?=
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9117f7f9-0442-4196-6b67-08de3c122547
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Dec 2025 19:42:56.5442
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: f8eRXNkT7cWjSDxaBDZaGfKONiIbwK1I09iuPl4oDXBHdqd4/xXfdKOMFcEYgq6dtjuTSLWnsRpqXCt0PRQekw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR15MB6093
-X-Authority-Analysis: v=2.4 cv=V/JwEOni c=1 sm=1 tr=0 ts=694064c6 cx=c_pps
- a=jA10WLhXiBAWrDGJQFCh7w==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=Byx-y9mGAAAA:8
- a=xOX-IIiaxov_uOVt2iYA:9 a=QEXdDO2ut3YA:10 a=_HJTmwTDQgIA:10
-X-Proofpoint-GUID: uGMi-eMTRgON6ryyHl1LNxQiISili08S
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjEzMDAyMyBTYWx0ZWRfX1fESk8bN9Z5O
- N2JPlDzzmQPlfCs0Po7Wh0h2AMtbGcnrZEfrBYh0Clsvjvq4vfsI8x5ng1tHPo5/itA/u84RW97
- dbu3stBMPPafuhZmRP5HD6jjo4GRRY0GA4Gj+U8BsEtWTldY87SucHKhxvZP9l/MPXpbK+w3KGb
- QtdAroC7YSOoKYiq7So54J8gQTlg2u13arw0/te2vXDcMwvhAKuc3UwfLWXJ1N9XmooDRjjRirn
- eY1KX+sPjJnjE1d7FQD1n7wGXkaBd9vD5KEZHlYzK5yx2J/jGCqon5/PCUXAdlI2hNZVWE+cLaW
- DpT7/MfvnSejAV+gk6E5DSqsETyqxqXubsDAPQIs3F9+OyvSS9woWl88fTKGfLGi2fgaDeEGdTW
- GsjSJRVlOer8wwEWvhFxoY1ctFyHWg==
-X-Proofpoint-ORIG-GUID: S1GotUYUmvGSDNN96mY0u6YQ0sD2t-ri
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1CB5CE9AEDA18C45B5BBED756C3AEC7B@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADAB2E92B3
+	for <ceph-devel@vger.kernel.org>; Mon, 15 Dec 2025 21:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765835611; cv=none; b=foFjZgDePmmtXLjIxE6VlEe77tqxXKV4vc4PIA3L4zw+xHUt0KeIWzBpr+dACKHOFQ5X75E4OOz0pX4YWLeX9Ow4TT9Ivvto3yKFIZ2sb4yX3PyMMb/i7/NKvzmj21UY4KB2hGcod7YBk3O79U5LwZ6Fk2qXsE3HRZURjHjvJ6M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765835611; c=relaxed/simple;
+	bh=cODjO7/AmZtp7MUgEu3ofjcRw2KyHMDkaGFVBxvZ7tY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M9RStQlbFqzq26L+JhGXaN8iocQOOavKcdAlqZmdfulWHrpC+Zf3xQcI0IulFlWGP4luDmyEoQbGM7pDHu+ssWJm/lItwghlbFHtZfbRrr312FTLcRyFejI+VFy9oOlCr+6bp6LV/7bwhR1W78orIeOYNp9LVbAIYjTp5IRuVg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=SJ7JMdmE; arc=none smtp.client-ip=209.85.128.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-78c4aa7af99so43360517b3.0
+        for <ceph-devel@vger.kernel.org>; Mon, 15 Dec 2025 13:53:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1765835608; x=1766440408; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PWYgf837M5XKLrW9NPd0RjKt04PAK+Ls/nZZVHJ16Gw=;
+        b=SJ7JMdmEmX/xCwr8lFrVfIqZ8PIdf111j+Uzr0rixOXldtKHH5OqVtXG3vpgoF5X/4
+         1jbnN4z7rgWmT6KIApLUEj99q1URxXcB9wmYzC5MdD9y4DT1SnuQPt9zbl+vV3SwMglL
+         bcNmVkvlSsUjGdXVxiDc7t17lUmba/o2l718Y5usXsmJgsl0gf1VdgC7qn23j18vWPnE
+         msSz1aclWRIK15KyG7A2SHo96KC1fLdup5F5q/iIHzfnFqVYUOzVT/d6+Kv3YrJxiMsu
+         8f/pDFPVHiFX2MPm0lQDhJJeL9QWgYUoCtG52hJqx+sikmHHLQ34Wg//YyQjhX4w0FvH
+         +x9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765835608; x=1766440408;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PWYgf837M5XKLrW9NPd0RjKt04PAK+Ls/nZZVHJ16Gw=;
+        b=ZsDxVL9kHN8MMrPQeiyZLV7RbyERyHM66E56H/kQp/qXXsuY4Ip0WWXfqqZfNkTzFR
+         eUEO3sU01vlfi4cmxZUAE/qrF5ZwR9QPGQjpdC0awj7/Nm6XcqmNnDUEynCNXmQ1MmiH
+         KIx7CiCT59Q1DG27aPOSiZWrtG2cRxywt7Oi/RbdzselvltCV40gwMt9ywR/O2ngBygH
+         ffakOTLlEFCak2zCaf9eLB8rXDKmYxYmgzYHl7BpfkAsdne2LPuI9e9NSX5OATTTXxWc
+         x12Hir++KfNQUX73YtBqo7IoDbCzK/3tyBQEPWkLW01LfGFWqKdFGZPlcrbN3S4vWEcu
+         jBEw==
+X-Gm-Message-State: AOJu0YxVwR0JqyDIW1xm5RS01jst5xGqpQvvu3BjIOgxKBbjtpyBEuP6
+	2/C4Z0q5UmPPeglUncNnFDWQs5Ld3I4ARYuu6DoZyBU2ywVBaQMCZAtDyAU5npKtuZ/383IxdPZ
+	CRfqHmoAR5297ocE=
+X-Gm-Gg: AY/fxX45ecWoBKqbQL/+ai8AZtV7yTch7B8+bLBswhIclz2KTM9/3GBhcObfX6PNYHT
+	uuS6KRqqgks/QOqIxjWQaDwtVV8Jbv3jSl8ujsf7LcpncvMLGZFsZnvSKkmH10U7P21RAgJKXfJ
+	CJtuq9l8vOGckl8UnZQUHDgpmNSLc7IP2LOTCb26uUjBeSCQZduBLI7x0BQVeMzDVGmvz6W4cjd
+	OxfORiofyI5D3OAPPMo5VO0+eMgzc4swA9qUcoOfsgqPgLYhEx9KT6mBgdOpbhu0PEkt37c/L9c
+	erTRWuTkyQIAvcdf2d3Z+mmKXTZIxTdMjR9tJq60dUBOXCeht53PRa0edKWNIsX+x+9Adl4uCwC
+	p2uMtVA7QEJ/C1b1vbyRUiKGgfcoMgKM24f2FQ8SuV4/WNcngNHdM5gTg/S/UJ5G4z6eZTeivxE
+	bV+7453lnT6IWCuLUFadbXyByZxn8Z258drH2f1YQ=
+X-Google-Smtp-Source: AGHT+IHyeewqt+vXK8dbVKz/yacjaLPPaaHa3Mxu7PQEIpjJxpFIWthsAySbBO1i5mvwhhAwqDbIAw==
+X-Received: by 2002:a05:690c:c11:b0:788:bda:4895 with SMTP id 00721157ae682-78e66952a54mr101257857b3.3.1765835607882;
+        Mon, 15 Dec 2025 13:53:27 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:877:a727:61cf:6a50])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78e748ff32bsm32375557b3.24.2025.12.15.13.53.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 13:53:27 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org,
+	pdonnell@redhat.com
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com,
+	khiremat@redhat.com,
+	Pavan.Rallabhandi@ibm.com
+Subject: [PATCH v2] ceph: fix kernel crash in ceph_open()
+Date: Mon, 15 Dec 2025 13:53:02 -0800
+Message-ID: <20251215215301.10433-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: RE: RRe: Possible memory leak in 6.17.7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-15_04,2025-12-15_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
- clxscore=1011 spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=2 engine=8.19.0-2510240000 definitions=main-2512130023
+Content-Transfer-Encoding: 8bit
 
-Hi Mal,
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-On Thu, 2025-12-11 at 14:23 +1000, Mal Haak wrote:
-> On Thu, 11 Dec 2025 11:28:21 +0800 (CST)
-> "David Wang" <00107082@163.com> wrote:
->=20
-> > At 2025-12-10 21:43:18, "Mal Haak" <malcolm@haak.id.au> wrote:
-> > > On Tue, 9 Dec 2025 12:40:21 +0800 (CST)
-> > > "David Wang" <00107082@163.com> wrote:
-> > > =20
-> > > > At 2025-12-09 07:08:31, "Mal Haak" <malcolm@haak.id.au> wrote: =20
-> > > > > On Mon,  8 Dec 2025 19:08:29 +0800
-> > > > > David Wang <00107082@163.com> wrote:
-> > > > >   =20
-> > > > > > On Mon, 10 Nov 2025 18:20:08 +1000
-> > > > > > Mal Haak <malcolm@haak.id.au> wrote:   =20
-> > > > > > > Hello,
-> > > > > > >=20
-> > > > > > > I have found a memory leak in 6.17.7 but I am unsure how to
-> > > > > > > track it down effectively.
-> > > > > > >=20
-> > > > > > >      =20
-> > > > > >=20
-> > > > > > I think the `memory allocation profiling` feature can help.
-> > > > > > https://docs.kernel.org/mm/allocation-profiling.html =20
-> > > > > >=20
-> > > > > > You would need to build a kernel with=20
-> > > > > > CONFIG_MEM_ALLOC_PROFILING=3Dy
-> > > > > > CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=3Dy
-> > > > > >=20
-> > > > > > And check /proc/allocinfo for the suspicious allocations which
-> > > > > > take more memory than expected.
-> > > > > >=20
-> > > > > > (I once caught a nvidia driver memory leak.)
-> > > > > >=20
-> > > > > >=20
-> > > > > > FYI
-> > > > > > David
-> > > > > >    =20
-> > > > >=20
-> > > > > Thank you for your suggestion. I have some results.
-> > > > >=20
-> > > > > Ran the rsync workload for about 9 hours. It started to look like
-> > > > > it was happening.
-> > > > > # smem -pw
-> > > > > Area                           Used      Cache   Noncache=20
-> > > > > firmware/hardware             0.00%      0.00%      0.00%=20
-> > > > > kernel image                  0.00%      0.00%      0.00%=20
-> > > > > kernel dynamic memory        80.46%     65.80%     14.66%=20
-> > > > > userspace memory              0.35%      0.16%      0.19%=20
-> > > > > free memory                  19.19%     19.19%      0.00%=20
-> > > > > # sort -g /proc/allocinfo|tail|numfmt --to=3Diec
-> > > > >         22M     5609 mm/memory.c:1190 func:folio_prealloc=20
-> > > > >         23M     1932 fs/xfs/xfs_buf.c:226 [xfs]
-> > > > > func:xfs_buf_alloc_backing_mem=20
-> > > > >         24M    24135 fs/xfs/xfs_icache.c:97 [xfs]
-> > > > > func:xfs_inode_alloc 27M     6693 mm/memory.c:1192
-> > > > > func:folio_prealloc 58M    14784 mm/page_ext.c:271
-> > > > > func:alloc_page_ext 258M      129 mm/khugepaged.c:1069
-> > > > > func:alloc_charge_folio 430M   770788 lib/xarray.c:378
-> > > > > func:xas_alloc 545M    36444 mm/slub.c:3059 func:alloc_slab_page=
-=20
-> > > > >        9.8G  2563617 mm/readahead.c:189 func:ractl_alloc_folio=20
-> > > > >         20G  5164004 mm/filemap.c:2012 func:__filemap_get_folio=20
-> > > > >=20
-> > > > >=20
-> > > > > So I stopped the workload and dropped caches to confirm.
-> > > > >=20
-> > > > > # echo 3 > /proc/sys/vm/drop_caches
-> > > > > # smem -pw
-> > > > > Area                           Used      Cache   Noncache=20
-> > > > > firmware/hardware             0.00%      0.00%      0.00%=20
-> > > > > kernel image                  0.00%      0.00%      0.00%=20
-> > > > > kernel dynamic memory        33.45%      0.09%     33.36%=20
-> > > > > userspace memory              0.36%      0.16%      0.19%=20
-> > > > > free memory                  66.20%     66.20%      0.00%=20
-> > > > > # sort -g /proc/allocinfo|tail|numfmt --to=3Diec
-> > > > >         12M     2987 mm/execmem.c:41 func:execmem_vmalloc=20
-> > > > >         12M        3 kernel/dma/pool.c:96
-> > > > > func:atomic_pool_expand 13M      751 mm/slub.c:3061
-> > > > > func:alloc_slab_page 16M        8 mm/khugepaged.c:1069
-> > > > > func:alloc_charge_folio 18M     4355 mm/memory.c:1190
-> > > > > func:folio_prealloc 24M     6119 mm/memory.c:1192
-> > > > > func:folio_prealloc 58M    14784 mm/page_ext.c:271
-> > > > > func:alloc_page_ext 61M    15448 mm/readahead.c:189
-> > > > > func:ractl_alloc_folio 79M     6726 mm/slub.c:3059
-> > > > > func:alloc_slab_page 11G  2674488 mm/filemap.c:2012
-> > > > > func:__filemap_get_folio =20
-> >=20
-> > Maybe narrowing down the "Noncache" caller of __filemap_get_folio
-> > would help clarify things. (It could be designed that way, and  needs
-> > other route than dropping-cache to release the memory, just
-> > guess....) If you want, you can modify code to split the accounting
-> > for __filemap_get_folio according to its callers.
->=20
->=20
-> Thanks again, I'll add this patch in and see where I end up.=20
->=20
-> The issue is nothing will cause the memory to be freed. Dropping caches
-> doesn't work, memory pressure doesn't work, unmounting the filesystems
-> doesn't work. Removing the cephfs and netfs kernel modules also doesn't
-> work.=20
->=20
-> This is why I feel it's a ref_count (or similar) issue.=20
->=20
-> I've also found it seems to be a fixed amount leaked each time, per
-> file. Simply doing lots of IO on one large file doesn't leak as fast as
-> lots of "small" (greater than 10MB less than 100MB seems to be a sweet
-> spot)=20
->=20
-> Also, dropping caches while the workload is running actually amplifies
-> the issue. So it very much feels like something is wrong in the reclaim
-> code.
->=20
-> Anyway I'll get this patch applied and see where I end up.=20
->=20
-> I now have crash dumps (after enabling crash_on_oom) so I'm going to
-> try and see if I can find these structures and see what state they are
-> in
->=20
->=20
+The CephFS kernel client has regression starting from 6.18-rc1.
 
-Thanks a lot for reporting the issue. Finally, I can see the discussion in =
-email
-list. :) Are you working on the patch with the fix? Should we wait for the =
-fix
-or I need to start the issue reproduction and investigation? I am simply tr=
-ying
-to avoid patches collision and, also, I have multiple other issues for the =
-fix
-in CephFS kernel client. :)
+sudo ./check -g quick
+FSTYP         -- ceph
+PLATFORM      -- Linux/x86_64 ceph-0005 6.18.0-rc5+ #52 SMP PREEMPT_DYNAMIC Fri
+Nov 14 11:26:14 PST 2025
+MKFS_OPTIONS  -- 192.168.1.213:3300:/scratch
+MOUNT_OPTIONS -- -o name=admin,ms_mode=secure 192.168.1.213:3300:/scratch
+/mnt/cephfs/scratch
 
-Thanks,
-Slava.
+Killed
+
+Nov 14 11:48:10 ceph-0005 kernel: [  154.723902] libceph: mon0
+(2)192.168.1.213:3300 session established
+Nov 14 11:48:10 ceph-0005 kernel: [  154.727225] libceph: client167616
+Nov 14 11:48:11 ceph-0005 kernel: [  155.087260] BUG: kernel NULL pointer
+dereference, address: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.087756] #PF: supervisor read access in
+kernel mode
+Nov 14 11:48:11 ceph-0005 kernel: [  155.088043] #PF: error_code(0x0000) - not-
+present page
+Nov 14 11:48:11 ceph-0005 kernel: [  155.088302] PGD 0 P4D 0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.088688] Oops: Oops: 0000 [#1] SMP KASAN
+NOPTI
+Nov 14 11:48:11 ceph-0005 kernel: [  155.090080] CPU: 4 UID: 0 PID: 3453 Comm:
+xfs_io Not tainted 6.18.0-rc5+ #52 PREEMPT(voluntary)
+Nov 14 11:48:11 ceph-0005 kernel: [  155.091245] Hardware name: QEMU Standard PC
+(i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
+Nov 14 11:48:11 ceph-0005 kernel: [  155.092103] RIP: 0010:strcmp+0x1c/0x40
+Nov 14 11:48:11 ceph-0005 kernel: [  155.092493] Code: 90 90 90 90 90 90 90 90
+90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c0 01 84
+d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3 cc cc
+cc cc 31
+Nov 14 11:48:11 ceph-0005 kernel: [  155.094057] RSP: 0018:ffff8881536875c0
+EFLAGS: 00010246
+Nov 14 11:48:11 ceph-0005 kernel: [  155.094522] RAX: 0000000000000000 RBX:
+ffff888116003200 RCX: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.095114] RDX: 0000000000000063 RSI:
+0000000000000000 RDI: ffff88810126c900
+Nov 14 11:48:11 ceph-0005 kernel: [  155.095714] RBP: ffff8881536876a8 R08:
+0000000000000000 R09: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.096297] R10: 0000000000000000 R11:
+0000000000000000 R12: dffffc0000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.096889] R13: ffff8881061d0000 R14:
+0000000000000000 R15: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.097490] FS:  000074a85c082840(0000)
+GS:ffff8882401a4000(0000) knlGS:0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.098146] CS:  0010 DS: 0000 ES: 0000
+CR0: 0000000080050033
+Nov 14 11:48:11 ceph-0005 kernel: [  155.098630] CR2: 0000000000000000 CR3:
+0000000110ebd001 CR4: 0000000000772ef0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.099219] PKRU: 55555554
+Nov 14 11:48:11 ceph-0005 kernel: [  155.099476] Call Trace:
+Nov 14 11:48:11 ceph-0005 kernel: [  155.099686]  <TASK>
+Nov 14 11:48:11 ceph-0005 kernel: [  155.099873]  ?
+ceph_mds_check_access+0x348/0x1760
+Nov 14 11:48:11 ceph-0005 kernel: [  155.100267]  ?
+__kasan_check_write+0x14/0x30
+Nov 14 11:48:11 ceph-0005 kernel: [  155.100671]  ? lockref_get+0xb1/0x170
+Nov 14 11:48:11 ceph-0005 kernel: [  155.100979]  ?
+__pfx__raw_spin_lock+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.101372]  ceph_open+0x322/0xef0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.101669]  ? __pfx_ceph_open+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.101996]  ?
+__pfx_apparmor_file_open+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.102434]  ?
+__ceph_caps_issued_mask_metric+0xd6/0x180
+Nov 14 11:48:11 ceph-0005 kernel: [  155.102911]  do_dentry_open+0x7bf/0x10e0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.103249]  ? __pfx_ceph_open+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.103508]  vfs_open+0x6d/0x450
+Nov 14 11:48:11 ceph-0005 kernel: [  155.103697]  ? may_open+0xec/0x370
+Nov 14 11:48:11 ceph-0005 kernel: [  155.103893]  path_openat+0x2017/0x50a0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.104110]  ? __pfx_path_openat+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.104345]  ?
+__pfx_stack_trace_save+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.104599]  ?
+stack_depot_save_flags+0x28/0x8f0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.104865]  ? stack_depot_save+0xe/0x20
+Nov 14 11:48:11 ceph-0005 kernel: [  155.105063]  do_filp_open+0x1b4/0x450
+Nov 14 11:48:11 ceph-0005 kernel: [  155.105253]  ?
+__pfx__raw_spin_lock_irqsave+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.105538]  ? __pfx_do_filp_open+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.105748]  ? __link_object+0x13d/0x2b0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.105949]  ?
+__pfx__raw_spin_lock+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.106169]  ?
+__check_object_size+0x453/0x600
+Nov 14 11:48:11 ceph-0005 kernel: [  155.106428]  ? _raw_spin_unlock+0xe/0x40
+Nov 14 11:48:11 ceph-0005 kernel: [  155.106635]  do_sys_openat2+0xe6/0x180
+Nov 14 11:48:11 ceph-0005 kernel: [  155.106827]  ?
+__pfx_do_sys_openat2+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.107052]  __x64_sys_openat+0x108/0x240
+Nov 14 11:48:11 ceph-0005 kernel: [  155.107258]  ?
+__pfx___x64_sys_openat+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.107529]  ?
+__pfx___handle_mm_fault+0x10/0x10
+Nov 14 11:48:11 ceph-0005 kernel: [  155.107783]  x64_sys_call+0x134f/0x2350
+Nov 14 11:48:11 ceph-0005 kernel: [  155.108007]  do_syscall_64+0x82/0xd50
+Nov 14 11:48:11 ceph-0005 kernel: [  155.108201]  ?
+fpregs_assert_state_consistent+0x5c/0x100
+Nov 14 11:48:11 ceph-0005 kernel: [  155.108467]  ? do_syscall_64+0xba/0xd50
+Nov 14 11:48:11 ceph-0005 kernel: [  155.108626]  ? __kasan_check_read+0x11/0x20
+Nov 14 11:48:11 ceph-0005 kernel: [  155.108801]  ?
+count_memcg_events+0x25b/0x400
+Nov 14 11:48:11 ceph-0005 kernel: [  155.109013]  ? handle_mm_fault+0x38b/0x6a0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.109216]  ? __kasan_check_read+0x11/0x20
+Nov 14 11:48:11 ceph-0005 kernel: [  155.109457]  ?
+fpregs_assert_state_consistent+0x5c/0x100
+Nov 14 11:48:11 ceph-0005 kernel: [  155.109724]  ?
+irqentry_exit_to_user_mode+0x2e/0x2a0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.109991]  ? irqentry_exit+0x43/0x50
+Nov 14 11:48:11 ceph-0005 kernel: [  155.110180]  ? exc_page_fault+0x95/0x100
+Nov 14 11:48:11 ceph-0005 kernel: [  155.110389]
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Nov 14 11:48:11 ceph-0005 kernel: [  155.110638] RIP: 0033:0x74a85bf145ab
+Nov 14 11:48:11 ceph-0005 kernel: [  155.110821] Code: 25 00 00 41 00 3d 00 00
+41 00 74 4b 64 8b 04 25 18 00 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c ff ff ff
+b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28 64 48
+2b 14 25
+Nov 14 11:48:11 ceph-0005 kernel: [  155.111724] RSP: 002b:00007ffc77d316d0
+EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+Nov 14 11:48:11 ceph-0005 kernel: [  155.112080] RAX: ffffffffffffffda RBX:
+0000000000000002 RCX: 000074a85bf145ab
+Nov 14 11:48:11 ceph-0005 kernel: [  155.112442] RDX: 0000000000000000 RSI:
+00007ffc77d32789 RDI: 00000000ffffff9c
+Nov 14 11:48:11 ceph-0005 kernel: [  155.112790] RBP: 00007ffc77d32789 R08:
+00007ffc77d31980 R09: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.113125] R10: 0000000000000000 R11:
+0000000000000246 R12: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.113502] R13: 00000000ffffffff R14:
+0000000000000180 R15: 0000000000000001
+Nov 14 11:48:11 ceph-0005 kernel: [  155.113838]  </TASK>
+Nov 14 11:48:11 ceph-0005 kernel: [  155.113957] Modules linked in:
+intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_core
+pmt_telemetry pmt_discovery pmt_class intel_pmc_ssram_telemetry intel_vsec
+kvm_intel kvm joydev irqbypass polyval_clmulni ghash_clmulni_intel aesni_intel
+rapl floppy input_leds psmouse i2c_piix4 vga16fb mac_hid i2c_smbus vgastate
+serio_raw bochs qemu_fw_cfg pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp
+parport efi_pstore
+Nov 14 11:48:11 ceph-0005 kernel: [  155.116339] CR2: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.116574] ---[ end trace 0000000000000000
+]---
+Nov 14 11:48:11 ceph-0005 kernel: [  155.116826] RIP: 0010:strcmp+0x1c/0x40
+Nov 14 11:48:11 ceph-0005 kernel: [  155.117058] Code: 90 90 90 90 90 90 90 90
+90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c0 01 84
+d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3 cc cc
+cc cc 31
+Nov 14 11:48:11 ceph-0005 kernel: [  155.118070] RSP: 0018:ffff8881536875c0
+EFLAGS: 00010246
+Nov 14 11:48:11 ceph-0005 kernel: [  155.118362] RAX: 0000000000000000 RBX:
+ffff888116003200 RCX: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.118748] RDX: 0000000000000063 RSI:
+0000000000000000 RDI: ffff88810126c900
+Nov 14 11:48:11 ceph-0005 kernel: [  155.119116] RBP: ffff8881536876a8 R08:
+0000000000000000 R09: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.119492] R10: 0000000000000000 R11:
+0000000000000000 R12: dffffc0000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.119865] R13: ffff8881061d0000 R14:
+0000000000000000 R15: 0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.120242] FS:  000074a85c082840(0000)
+GS:ffff8882401a4000(0000) knlGS:0000000000000000
+Nov 14 11:48:11 ceph-0005 kernel: [  155.120704] CS:  0010 DS: 0000 ES: 0000
+CR0: 0000000080050033
+Nov 14 11:48:11 ceph-0005 kernel: [  155.121008] CR2: 0000000000000000 CR3:
+0000000110ebd001 CR4: 0000000000772ef0
+Nov 14 11:48:11 ceph-0005 kernel: [  155.121409] PKRU: 55555554
+
+We have issue here [1] if fs_name == NULL:
+
+const char fs_name = mdsc->fsc->mount_options->mds_namespace;
+    ...
+    if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) {
+            / fsname mismatch, try next one */
+            return 0;
+    }
+
+v2
+Patrick Donnelly suggested that: In summary, we should definitely start
+decoding `fs_name` from the MDSMap and do strict authorizations checks
+against it. Note that the `--mds_namespace` should only be used for
+selecting the file system to mount and nothing else. It's possible
+no mds_namespace is specified but the kernel will mount the only
+file system that exists which may have name "foo".
+
+This patch reworks ceph_mdsmap_decode() and namespace_equals() with
+the goal of supporting the suggested concept. Now struct ceph_mdsmap
+contains m_fs_name field that receives copy of extracted FS name
+by ceph_extract_encoded_string(). For the case of "old" CephFS file systems,
+it is used "cephfs" name. Also, namespace_equals() method has been
+reworked with the goal of proper names comparison.
+
+[1] https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/ceph/mds_client.c#L5666
+
+Fixes: 22c73d52a6d0 ("ceph: fix multifs mds auth caps issue")
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Patrick Donnelly <pdonnell@redhat.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
+---
+ fs/ceph/mds_client.c         |  2 +-
+ fs/ceph/mdsmap.c             | 26 ++++++++++++++++++++------
+ fs/ceph/mdsmap.h             |  1 +
+ fs/ceph/super.h              | 19 ++++++++++++++++---
+ include/linux/ceph/ceph_fs.h |  6 ++++++
+ 5 files changed, 44 insertions(+), 10 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 7e4eab824dae..1c02f97c5b52 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -5671,7 +5671,7 @@ static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
+ 	u32 caller_uid = from_kuid(&init_user_ns, cred->fsuid);
+ 	u32 caller_gid = from_kgid(&init_user_ns, cred->fsgid);
+ 	struct ceph_client *cl = mdsc->fsc->client;
+-	const char *fs_name = mdsc->fsc->mount_options->mds_namespace;
++	const char *fs_name = mdsc->mdsmap->m_fs_name;
+ 	const char *spath = mdsc->fsc->mount_options->server_path;
+ 	bool gid_matched = false;
+ 	u32 gid, tlen, len;
+diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+index 2c7b151a7c95..b54a226510f1 100644
+--- a/fs/ceph/mdsmap.c
++++ b/fs/ceph/mdsmap.c
+@@ -353,22 +353,35 @@ struct ceph_mdsmap *ceph_mdsmap_decode(struct ceph_mds_client *mdsc, void **p,
+ 		__decode_and_drop_type(p, end, u8, bad_ext);
+ 	}
+ 	if (mdsmap_ev >= 8) {
+-		u32 fsname_len;
++		size_t fsname_len;
++
+ 		/* enabled */
+ 		ceph_decode_8_safe(p, end, m->m_enabled, bad_ext);
++
+ 		/* fs_name */
+-		ceph_decode_32_safe(p, end, fsname_len, bad_ext);
++		m->m_fs_name = ceph_extract_encoded_string(p, end,
++							   &fsname_len,
++							   GFP_NOFS);
++		if (IS_ERR(m->m_fs_name)) {
++			m->m_fs_name = NULL;
++			goto nomem;
++		}
+ 
+ 		/* validate fsname against mds_namespace */
+-		if (!namespace_equals(mdsc->fsc->mount_options, *p,
++		if (!namespace_equals(mdsc->fsc->mount_options, m->m_fs_name,
+ 				      fsname_len)) {
+ 			pr_warn_client(cl, "fsname %*pE doesn't match mds_namespace %s\n",
+-				       (int)fsname_len, (char *)*p,
++				       (int)fsname_len, m->m_fs_name,
+ 				       mdsc->fsc->mount_options->mds_namespace);
+ 			goto bad;
+ 		}
+-		/* skip fsname after validation */
+-		ceph_decode_skip_n(p, end, fsname_len, bad);
++	} else {
++		m->m_enabled = false;
++		/*
++		 * name for "old" CephFS file systems,
++		 * see ceph.git e2b151d009640114b2565c901d6f41f6cd5ec652
++		 */
++		m->m_fs_name = kstrdup(CEPH_OLD_FS_NAME, GFP_NOFS);
+ 	}
+ 	/* damaged */
+ 	if (mdsmap_ev >= 9) {
+@@ -430,6 +443,7 @@ void ceph_mdsmap_destroy(struct ceph_mdsmap *m)
+ 		kfree(m->m_info);
+ 	}
+ 	kfree(m->m_data_pg_pools);
++	kfree(m->m_fs_name);
+ 	kfree(m);
+ }
+ 
+diff --git a/fs/ceph/mdsmap.h b/fs/ceph/mdsmap.h
+index 1f2171dd01bf..d48d07c3516d 100644
+--- a/fs/ceph/mdsmap.h
++++ b/fs/ceph/mdsmap.h
+@@ -45,6 +45,7 @@ struct ceph_mdsmap {
+ 	bool m_enabled;
+ 	bool m_damaged;
+ 	int m_num_laggy;
++	char *m_fs_name;
+ };
+ 
+ static inline struct ceph_entity_addr *
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index a1f781c46b41..c53bec40ea69 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -104,6 +104,8 @@ struct ceph_mount_options {
+ 	struct fscrypt_dummy_policy dummy_enc_policy;
+ };
+ 
++#define CEPH_NAMESPACE_WIDCARD		"*"
++
+ /*
+  * Check if the mds namespace in ceph_mount_options matches
+  * the passed in namespace string. First time match (when
+@@ -113,9 +115,20 @@ struct ceph_mount_options {
+ static inline int namespace_equals(struct ceph_mount_options *fsopt,
+ 				   const char *namespace, size_t len)
+ {
+-	return !(fsopt->mds_namespace &&
+-		 (strlen(fsopt->mds_namespace) != len ||
+-		  strncmp(fsopt->mds_namespace, namespace, len)));
++	if (!fsopt->mds_namespace && !namespace)
++		return true;
++
++	if (!fsopt->mds_namespace)
++		return true;
++
++	if (strcmp(fsopt->mds_namespace, CEPH_NAMESPACE_WIDCARD) == 0)
++		return true;
++
++	if (!namespace)
++		return false;
++
++	return !(strlen(fsopt->mds_namespace) != len ||
++		  strncmp(fsopt->mds_namespace, namespace, len));
+ }
+ 
+ /* mount state */
+diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+index c7f2c63b3bc3..08e5dbe15ca4 100644
+--- a/include/linux/ceph/ceph_fs.h
++++ b/include/linux/ceph/ceph_fs.h
+@@ -31,6 +31,12 @@
+ #define CEPH_INO_CEPH   2            /* hidden .ceph dir */
+ #define CEPH_INO_GLOBAL_SNAPREALM  3 /* global dummy snaprealm */
+ 
++/*
++ * name for "old" CephFS file systems,
++ * see ceph.git e2b151d009640114b2565c901d6f41f6cd5ec652
++ */
++#define CEPH_OLD_FS_NAME	"cephfs"
++
+ /* arbitrary limit on max # of monitors (cluster of 3 is typical) */
+ #define CEPH_MAX_MON   31
+ 
+-- 
+2.52.0
+
 
