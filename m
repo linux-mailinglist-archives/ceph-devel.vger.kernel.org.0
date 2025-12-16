@@ -1,203 +1,137 @@
-Return-Path: <ceph-devel+bounces-4184-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4185-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9D8CC48D4
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Dec 2025 18:08:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AC1CC50EA
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Dec 2025 21:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 26DAD3029F66
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Dec 2025 17:08:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AB66C303EF6B
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Dec 2025 20:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F15C347FEC;
-	Tue, 16 Dec 2025 12:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18E832F751;
+	Tue, 16 Dec 2025 20:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="N7rOBGNs"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="YD4REUXR"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f66.google.com (mail-yx1-f66.google.com [74.125.224.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519A633C1B9;
-	Tue, 16 Dec 2025 12:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E5A3002DC
+	for <ceph-devel@vger.kernel.org>; Tue, 16 Dec 2025 20:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765889014; cv=none; b=eifvOXSQzGSeb7avvASfThnE0mpBehfWjQ7cR0zWAHaauqXWDyMm0sKbokw7Dw6J4n9Pvqu/oXOuFCycOmvnbNSsN4Lv0ml2PBduQul6x3pK09h1/DkeRR+7BLpXZnIpvlLyOyXYxOOLZslsEHsWDcCxWXP2koYvFGM8DOYL/bo=
+	t=1765915222; cv=none; b=ad0BmbaIYQnEY6rjLivNHfmGW7K2h03hxnWJRDko71UwdLyFcazt8qXnIjSAxb/XzFxdzH3zmZOwfqOAEKzXefmWiIX66wf2lhYrM4rtvn9dFosaaHYsEniZycEvWBZrEYTSvDNhotZ82eVlK1C2jPMeZWiwWZM1HM4zNNvz1pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765889014; c=relaxed/simple;
-	bh=7HhjMcDlqMo7HdaZhH7CKRLjVK+dELTDP2gWqBUidm4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=unhmpozNAp3AJz1RTZDNEGsevVZj0edUpXEpwjh5ATe2bpFoazvVuwzzr+3hr1tU0uE2+VWaFqvub1G0G3Q6VbqlN7/HDukInQaMtgVXqFlV1hZ0w9zdLFPJpHZOxdUVN00YAuHYOvkznmNQXwSZ4kBd0UfpytE+rZC2bmdwfI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=N7rOBGNs; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=7HhjMcDlqMo7HdaZhH7CKRLjVK+dELTDP2gWqBUidm4=; b=N
-	7rOBGNsJqFMMh6efmwUeDTOZoPgijZ9JYggwTZI51VC7GsDsbRHuqlepT/uMm4yD
-	sZCeBWtWsdrPX3peytU/VaG8F5fAEVupYkO4r21qILvhMuO5m8K9xbjccZCY/hlT
-	d2QoXtJQuepp4ZXm1x3zvuqHxNRgBOj1s7GPLGwV4o=
-Received: from 00107082$163.com ( [111.35.191.189] ) by
- ajax-webmail-wmsvr-40-104 (Coremail) ; Tue, 16 Dec 2025 20:42:37 +0800
- (CST)
-Date: Tue, 16 Dec 2025 20:42:37 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Mal Haak" <malcolm@haak.id.au>
-Cc: "Viacheslav Dubeyko" <Slava.Dubeyko@ibm.com>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-	"Xiubo Li" <xiubli@redhat.com>,
-	"idryomov@gmail.com" <idryomov@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"surenb@google.com" <surenb@google.com>, dhowells@redhat.com,
-	pc@manguebit.org, netfs@lists.linux.dev
-Subject: Re: Possible memory leak in 6.17.7
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <5845dde.b3e3.19b2718bc89.Coremail.00107082@163.com>
-References: <20251110182008.71e0858b@xps15mal>
- <20251208110829.11840-1-00107082@163.com>
- <20251209090831.13c7a639@xps15mal>
- <17469653.4a75.19b01691299.Coremail.00107082@163.com>
- <20251210234318.5d8c2d68@xps15mal>
- <2a9ba88e.3aa6.19b0b73dd4e.Coremail.00107082@163.com>
- <20251211142358.563d9ac3@xps15mal>
- <8c8e8dc4d30a8ca37a57d7f29c5f29cdf7a904ee.camel@ibm.com>
- <20251216112647.39ac2295@xps15mal>
- <63fa6bc2.6afc.19b25f618ad.Coremail.00107082@163.com>
- <20251216170918.5f7848cc@xps15mal> <20251216215527.61c2e16f@xps15mal>
- <5845dde.b3e3.19b2718bc89.Coremail.00107082@163.com>
-X-NTES-SC: AL_Qu2dB/STt0Eu4SKQYOkZnEYQheY4XMKyuPkg1YJXOp80tiTB6DsxYH5BN1fL6cCILiC3kBylXAh119Z7VIB4eq3YgqMh+N436UnSYY+u17fS
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1765915222; c=relaxed/simple;
+	bh=W9myzMlDVTfDdzd2dxRqugETmI9Y3kZ4dF3KewVdvTk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oY+niGMfiMMJj4jLE+9H18E9UUJ/aDrCiAyCAa7i4SbnNyCxFzm3YcN/iNEakyZIEjzxpVVvnd7lkHgJ3VgEASpFpY+ads4NG91YklevSL55Yp4LpxR2mpDlZ7AQO9cILxHXoKIeE7SVy6PeJ7sEDZxww2aGw4p+grWxrotZvwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=YD4REUXR; arc=none smtp.client-ip=74.125.224.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yx1-f66.google.com with SMTP id 956f58d0204a3-6447213ea47so5442521d50.3
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Dec 2025 12:00:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1765915219; x=1766520019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ce5/Jr+wXPPAgYBiuheNMGHCY0MttENpNDX20Yhq0K4=;
+        b=YD4REUXRUHGvS+huWIEc/0By59SEsOz7NPuFVFelPHCkReK1Y96iqAeWPRqWjsXRLF
+         5AyJeUh5MFtJ4dQ+8J/Ng4Zpx4fM7oFKsc9x5EVYxQSV5isdjAEJ+XKH86txNI/uTOjc
+         NfZD9Xq56P+0+IDR2Ez4H6lPxqeSNkt6kV20Yc2a+O7RVxYPm8/502Sfm5pXKxSLQpsx
+         rhImIGS5w2/5V7FDKjnZX+GYkZFgwhhpkP112eMb4WQ1sOH9FjGD1qkmJOySmL89YrYe
+         rdwNeFQGBK8id5PUS3+pMY8PcfY8Wlbekb8IsPxLAmNdilNCo2Gs9+se8P9pqzyNlvV6
+         LH5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765915219; x=1766520019;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ce5/Jr+wXPPAgYBiuheNMGHCY0MttENpNDX20Yhq0K4=;
+        b=lsxXySEO8eUuEAp75swRTcIsIh3LWPGOgul76F7ntZylaVQghxOAzFPFWD9SN2sYPj
+         uxrYKX2MdAKotBvrt81JV+N+szjqpGetUn7D9aa/a6pK0ve9E4iDzcyMcAVwowj9/pCO
+         GBIAm0qitwELmX9KlI2hdyp7TizQrxJ+MdoDQbWkfH1YR6SAzlYKgEOReechIW8MXG/s
+         XhAGYFvf6Al5R7UIIl4lLke+f0koyEw+N8DpoBFfmnT4tVQSqXT9U9U6jTvZ/WVK4Y1E
+         oDYSgrkg5BNXXUwgBCwKYAcJO32ipjfB0RUrU+KwgIZYgMf3XpOW1ZteISTXngvLT6SS
+         Rh+Q==
+X-Gm-Message-State: AOJu0YyIZOsvp2VKtbOj041kw0gpWb/RnQcczt+HrfL9sogDv23AzV2Q
+	99EdTdiTZZEb7Kx1xvyzLLdcmSnR2GnpcR4MUkKxguPBBq3otFFq9KZevfbXlU4a7D7J8ISEI1r
+	BedN4hIfWGGzx
+X-Gm-Gg: AY/fxX4+UsAWnKEk5Zm2MPiuAzdAx84jHEmYH1nsT0i6OGzH5jRmvNjpvVa7K0e+y86
+	LdpdSyBwcXfGNxmGXUy/5y4mxe6+rXgsBt7wuqJvvkUcPKGSSqvznUGG5YIs5zMfTWW4quy7wxb
+	SGxw4nI6SmkXQe8Jg/98zidqSCO/lUJFoVYUxIIZVeNzRu3RGxFp9CWF8oW3ccoDxUFz8brUx6b
+	AjaQAjVl05V16WhDIqECdOWTyHARqD/fF+xVKE1ieETGRRy55j14uPYKhr5/PkaMRvs8WMMtf8U
+	Z71xQ4Plrvd6KQyBbEvtC0XLDP10NaCqeto6/AQSlfS7b5WJ5CaA7pdWjDTpaF5kNYB8MKe7hbf
+	6erF0Wsj6Xli1nY3QO7pHiySb4/yk5SYwzLoXXH78F+eVwXyPCmDAweiSk4m28lBilAFJmtZ19m
+	MTIEBz7L/IupQNgQLHgiWN1YITe6Bv2kIA+TKEBCc=
+X-Google-Smtp-Source: AGHT+IFss4XifqHhQdhVU+8YTknoHGIrjYBMPTiUOuaw5AB/60y6F7hQuTuki2v3rPw9Z10H0e6/0w==
+X-Received: by 2002:a05:690e:1c08:b0:645:5b0e:c916 with SMTP id 956f58d0204a3-6455b0ecbcdmr10495906d50.3.1765915219244;
+        Tue, 16 Dec 2025 12:00:19 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:877:a727:61cf:6a50])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78e749e5bc1sm42744327b3.30.2025.12.16.12.00.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Dec 2025 12:00:18 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com,
+	Pavan.Rallabhandi@ibm.com
+Subject: [PATCH v3] ceph: rework co-maintainers list in MAINTAINERS file
+Date: Tue, 16 Dec 2025 12:00:06 -0800
+Message-ID: <20251216200005.16281-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <10b5964a.b798.19b272f1b79.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:aCgvCgD3f0q+U0Fp5047AA--.5486W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbCxh6uWWlBU74pqwAA3o
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
 
-CkF0IDIwMjUtMTItMTYgMjA6MTg6MTEsICJEYXZpZCBXYW5nIiA8MDAxMDcwODJAMTYzLmNvbT4g
-d3JvdGU6Cj4KPkF0IDIwMjUtMTItMTYgMTk6NTU6MjcsICJNYWwgSGFhayIgPG1hbGNvbG1AaGFh
-ay5pZC5hdT4gd3JvdGU6Cj4+T24gVHVlLCAxNiBEZWMgMjAyNSAxNzowOToxOCArMTAwMAo+Pk1h
-bCBIYWFrIDxtYWxjb2xtQGhhYWsuaWQuYXU+IHdyb3RlOgo+Pgo+Pj4gT24gVHVlLCAxNiBEZWMg
-MjAyNSAxNTowMDo0MyArMDgwMCAoQ1NUKQo+Pj4gIkRhdmlkIFdhbmciIDwwMDEwNzA4MkAxNjMu
-Y29tPiB3cm90ZToKPj4+IAo+Pj4gPiBBdCAyMDI1LTEyLTE2IDA5OjI2OjQ3LCAiTWFsIEhhYWsi
-IDxtYWxjb2xtQGhhYWsuaWQuYXU+IHdyb3RlOiAgCj4+PiA+ID5PbiBNb24sIDE1IERlYyAyMDI1
-IDE5OjQyOjU2ICswMDAwCj4+PiA+ID5WaWFjaGVzbGF2IER1YmV5a28gPFNsYXZhLkR1YmV5a29A
-aWJtLmNvbT4gd3JvdGU6Cj4+PiA+ID4gICAgCj4+PiA+ID4+IEhpIE1hbCwKPj4+ID4gPj4gICAg
-IAo+Pj4gPiA+PFNOSVA+ICAgICAKPj4+ID4gPj4gCj4+PiA+ID4+IFRoYW5rcyBhIGxvdCBmb3Ig
-cmVwb3J0aW5nIHRoZSBpc3N1ZS4gRmluYWxseSwgSSBjYW4gc2VlIHRoZQo+Pj4gPiA+PiBkaXNj
-dXNzaW9uIGluIGVtYWlsIGxpc3QuIDopIEFyZSB5b3Ugd29ya2luZyBvbiB0aGUgcGF0Y2ggd2l0
-aAo+Pj4gPiA+PiB0aGUgZml4PyBTaG91bGQgd2Ugd2FpdCBmb3IgdGhlIGZpeCBvciBJIG5lZWQg
-dG8gc3RhcnQgdGhlIGlzc3VlCj4+PiA+ID4+IHJlcHJvZHVjdGlvbiBhbmQgaW52ZXN0aWdhdGlv
-bj8gSSBhbSBzaW1wbHkgdHJ5aW5nIHRvIGF2b2lkCj4+PiA+ID4+IHBhdGNoZXMgY29sbGlzaW9u
-IGFuZCwgYWxzbywgSSBoYXZlIG11bHRpcGxlIG90aGVyIGlzc3VlcyBmb3IKPj4+ID4gPj4gdGhl
-IGZpeCBpbiBDZXBoRlMga2VybmVsIGNsaWVudC4gOikKPj4+ID4gPj4gCj4+PiA+ID4+IFRoYW5r
-cywKPj4+ID4gPj4gU2xhdmEuICAgIAo+Pj4gPiA+Cj4+PiA+ID5IZWxsbywKPj4+ID4gPgo+Pj4g
-PiA+VW5mb3J0dW5hdGVseSBjcmVhdGluZyBhIHBhdGNoIGlzIGp1c3Qgb3V0c2lkZSBteSBjb21m
-b3J0IHpvbmUsCj4+PiA+ID5JJ3ZlIGxpdmVkIHRvbyBsb25nIGluIEx1c3RyZSBsYW5kLiAgICAK
-Pj4+ID4gCj4+PiA+IEhpLCBqdXN0IG91dCBvZiBjdXJpb3NpdHksIGhhdmUgeW91IG5hcnJvd2Vk
-IGRvd24gdGhlIGNhbGxlciBvZgo+Pj4gPiBfX2ZpbGVtYXBfZ2V0X2ZvbGlvIGNhdXNpbmcgdGhl
-IG1lbW9yeSBwcm9ibGVtPyBPciBkbyB5b3UgaGF2ZQo+Pj4gPiB0cm91YmxlIGFwcGx5aW5nIHRo
-ZSBkZWJ1ZyBwYXRjaCBmb3IgbWVtb3J5IGFsbG9jYXRpb24gcHJvZmlsaW5nPwo+Pj4gPiAKPj4+
-ID4gRGF2aWQgCj4+PiA+ICAgCj4+PiBIaSBEYXZpZCwKPj4+IAo+Pj4gSSBoYWRuJ3QgeWV0IGFz
-IEkgZGlkIHRlc3QgWEZTIGFuZCBORlMgdG8gc2VlIGlmIGl0IHJlcGxpY2F0ZWQgdGhlCj4+PiBi
-ZWhhdmlvdXIgYW5kIGl0IGRpZCBub3QuIAo+Pj4gCj4+PiBCdXQgYWN0dWFsbHkgdGhpcyBjb3Vs
-ZCBzcGVlZCB0aGluZ3MgdXAgY29uc2lkZXJhYmx5LiBJIHdpbGwgZG8gdGhhdAo+Pj4gbm93IGFu
-ZCBzZWUgd2hhdCBJIGdldC4KPj4+IAo+Pj4gVGhhbmtzCj4+PiAKPj4+IE1hbAo+Pj4gCj4+SSBk
-aWQganVzdCBnaXZlIGl0IGEgYmxhc3QuIAo+Pgo+PlVuZm9ydHVuYXRlbHkgaXQgcmV0dXJuZWQg
-ZXhhY3RseSB3aGF0IEkgZXhwZWN0ZWQsIHRoYXQgaXMgdGhlIGNhbGxzCj4+YXJlIGFsbCBjb21p
-bmcgZnJvbSBuZXRmcy4KPj4KPj5XaGljaCBtYWtlcyBzZW5zZSBmb3IgY2VwaGZzLiAKPj4KPj4j
-IHNvcnQgLWcgL3Byb2MvYWxsb2NpbmZvfHRhaWx8bnVtZm10IC0tdG89aWVjCj4+ICAgICAgICAg
-MTBNICAgICAyNTQxIGRyaXZlcnMvYmxvY2svenJhbS96cmFtX2Rydi5jOjE1OTcgW3pyYW1dCj4+
-ZnVuYzp6cmFtX21ldGFfYWxsb2MgMTJNICAgICAzMDAxIG1tL2V4ZWNtZW0uYzo0MSBmdW5jOmV4
-ZWNtZW1fdm1hbGxvYyAKPj4gICAgICAgICAxMk0gICAgIDM2MDUga2VybmVsL2ZvcmsuYzozMTEg
-ZnVuYzphbGxvY190aHJlYWRfc3RhY2tfbm9kZSAKPj4gICAgICAgICAxNk0gICAgICA5OTIgbW0v
-c2x1Yi5jOjMwNjEgZnVuYzphbGxvY19zbGFiX3BhZ2UgCj4+ICAgICAgICAgMjBNICAgIDM1NTQ0
-IGxpYi94YXJyYXkuYzozNzggZnVuYzp4YXNfYWxsb2MgCj4+ICAgICAgICAgMzFNICAgICA3NzA0
-IG1tL21lbW9yeS5jOjExOTIgZnVuYzpmb2xpb19wcmVhbGxvYyAKPj4gICAgICAgICA2OU0gICAg
-MTc1NjIgbW0vbWVtb3J5LmM6MTE5MCBmdW5jOmZvbGlvX3ByZWFsbG9jIAo+PiAgICAgICAgMTA0
-TSAgICAgODIxMiBtbS9zbHViLmM6MzA1OSBmdW5jOmFsbG9jX3NsYWJfcGFnZSAKPj4gICAgICAg
-IDEyNE0gICAgMzAwNzUgbW0vcmVhZGFoZWFkLmM6MTg5IGZ1bmM6cmFjdGxfYWxsb2NfZm9saW8g
-Cj4+ICAgICAgICAyLjZHICAgNjYxMzkyIGZzL25ldGZzL2J1ZmZlcmVkX3JlYWQuYzo2MzUgW25l
-dGZzXQo+PmZ1bmM6bmV0ZnNfd3JpdGVfYmVnaW4gCj4+Cj4+U28sIHVuZm9ydHVuYXRlbHkgaXQg
-ZG9lc24ndCByZXZlYWwgdGhlIHRydWUgc291cmNlLiBCdXQgd2FzIHdvcnRoIGEKPj5zaG90ISBT
-byB0aGFua3MgYWdhaW4KPgo+T2gsICBhdCBsZWFzdCBjZXBoZnMgY291bGQgYmUgcnVsZWQgb3V0
-LCByaWdodD8KZWhoLi4uLiwgSSB0aGluayBJIGNvdWxkIGJlIHdyb25nIGFib3V0IHRoaXMuLi4u
-LgoKPgo+Q0MgbmV0ZnMgZm9sa3MgdGhlbi4gOikKCj4KPgo+Pgo+Pk1hbAo+Pgo+Pgo+Pj4gPiA+
-Cj4+PiA+ID5JJ3ZlIGhhdmUgYmVlbiB0cnlpbmcgdG8gbmFycm93IGRvd24gYSBjb25zaXN0ZW50
-IHJlcHJvZHVjZXIgdGhhdCdzCj4+PiA+ID5hcyBmYXN0IGFzIG15IHByb2R1Y3Rpb24gd29ya2xv
-YWQuIChJdCBjcmFzaGVzIGEgMzJHQiBWTSBpbiAyaHJzKQo+Pj4gPiA+QW5kIEkgaGF2ZW4ndCBn
-b3QgaXQgcXVpdGUgYXMgZmFzdC4gSSB0aGluayB0aGUgZGQgd29ya2xvYWQgaXMgdG9vCj4+PiA+
-ID53ZWxsIGJlaGF2ZWQuIAo+Pj4gPiA+Cj4+PiA+ID5JIGNhbiBjb25maXJtIHRoZSBpc3N1ZSBh
-cHBlYXJlZCBpbiB0aGUgbWFqb3IgcGF0Y2ggc2V0IHRoYXQgd2FzCj4+PiA+ID5hcHBsaWVkIGFz
-IHBhcnQgb2YgdGhlIDYuMTUga2VybmVsLiBTbyBkdXJpbmcgdGhlIG1vcmUgY29tcGxldGUKPj4+
-ID4gPnBhZ2VzIHRvIGZvbGlvcyBzd2l0Y2ggYW5kIHRoYXQgbm90aGluZyBoYXMgY2hhbmdlZCBp
-biB0aGUgYnVnCj4+PiA+ID5iZWhhdmlvdXIgc2luY2UgdGhlbi4gSSBkaWQgaGF2ZSBhIGxvb2sg
-YXQgYWxsIHRoZSBkaWZmcyBmcm9tIDYuMTQKPj4+ID4gPnRvIDYuMTggb24gYWRkci5jIGFuZCBk
-aWRuJ3Qgc2VlIGFueSBjaGFuZ2VzIHBvc3QgNi4xNSB0aGF0IGxvb2tlZAo+Pj4gPiA+bGlrZSB0
-aGV5IHdvdWxkIGltcGFjdCB0aGUgYnVnIGJlaGF2aW9yLiAKPj4+ID4gPgo+Pj4gPiA+QWdhaW4s
-IEknbSBub3Qgc3VwZXIgZmFtaWxpYXIgd2l0aCB0aGUgQ2VwaEZTIGNvZGUgYnV0IHRvIGhhemFy
-ZCBhCj4+PiA+ID5ndWVzcywgYnV0IEkgdGhpbmsgdGhhdCB0aGUgd2ViIGRvd25sb2FkIHdvcmts
-b2FkIHRyaWdnZXJzIHRoaW5ncwo+Pj4gPiA+ZmFzdGVyIHN1Z2dlc3RzIHRoYXQgdW5hbGlnbmVk
-IHdyaXRlcyBtaWdodCBtYWtlIHRoaW5ncyB3b3JzZS4gQnV0Cj4+PiA+ID5hZ2FpbiwgSSdtIG5v
-dCAxMDAlIHN1cmUuIEkgY2FuJ3QgZmluZCBhIHJlcHJvZHVjZXIgYXMgZmFzdCBhcwo+Pj4gPiA+
-ZG93bmxvYWRpbmcgYSBkYXRhc2V0LiBSc3luYyBvZiBsb3RzIGFuZCBsb3RzIG9mIHRpbnkgZmls
-ZXMgaXMgYQo+Pj4gPiA+dGFkIGZhc3RlciB0aGFuIHRoZSBkZCBjYXNlLgo+Pj4gPiA+Cj4+PiA+
-ID5JIGRpZCBzZWUgc29tZSBjaGFuZ2VzIGluIGNlcGhfY2hlY2tfcGFnZV9iZWZvcmVfd3JpdGUg
-d2hlcmUgdGhlCj4+PiA+ID5wcmV2aW91cyBjb2RlIHVubG9ja2VkIHBhZ2VzIGFuZCB0aGVuIGNv
-bnRpbnVlZCB3aGVyZSBhcyB0aGUKPj4+ID4gPmNoYW5nZWQgZm9saW8gY29kZSBqdXN0IHJldHVy
-bnMgRU5PREFUQSBhbmQgZG9lc24ndCB1bmxvY2sKPj4+ID4gPmFueXRoaW5nIHdpdGggbW9zdCBv
-ZiB0aGUgcmVzdCBvZiB0aGUgbG9naWMgdW5jaGFuZ2VkLiBUaGlzIG1pZ2h0Cj4+PiA+ID5iZSBw
-ZXJmZWN0bHkgZmluZSwgYnV0IGluIG15LCBhZG1pdHRlZGx5IGxpbWl0ZWQsIHJlYWRpbmcgb2Yg
-dGhlCj4+PiA+ID5jb2RlIEkgY291bGRuJ3QgZmlndXJlIG91dCB3aGVyZSBhbnl0aGluZyB0aGF0
-IHdhcyBsb2NrZWQgcHJpb3IgdG8KPj4+ID4gPnRoaXMgYmVpbmcgY2FsbGVkIHdvdWxkIGdldCB1
-bmxvY2tlZCBsaWtlIGl0IGRpZCBwcmlvciB0byB0aGUKPj4+ID4gPmNoYW5nZS4gQWdhaW4sIEkg
-Y291bGQgYmUgbWlsZXMgb2ZmIGhlcmUgYW5kIG9uZSBvZiB0aGUgYnVsawo+Pj4gPiA+cmVjbGFp
-bS91bmxvY2sgcGFzc2VzIHRoYXQgd2FzIGFkZGVkIG1pZ2h0IGJlIGNsZWFuaW5nIHRoaXMgdXAK
-Pj4+ID4gPmNvcnJlY3RseSBvciBzb21lIG90aGVyIGZ1bmN0aW9uYWwgY2hhbmdlIG1pZ2h0IHRh
-a2UgY2FyZSBvZiB0aGlzLAo+Pj4gPiA+YnV0IGl0IGxvb2tzIHRvIGJlIHBvdGVudGlhbGx5IGlu
-IHRoZSBjb2RlIHBhdGggSSdtIGV4Y2lzaW5nIGFuZAo+Pj4gPiA+aXQgaGFzIGhhZCBzb21lIHVu
-bG9jayBsb2dpYyBjaGFuZ2VkLiAKPj4+ID4gPgo+Pj4gPiA+SSd2ZSBzcGVudCBtb3N0IG9mIG15
-IHRpbWUgdHJ5aW5nIHRvIGZpbmQgYSBzb2xpZCBxdWljayByZXByb2R1Y2VyLgo+Pj4gPiA+Tm90
-IHRoYXQgaXQgdGFrZXMgbG9uZyB0byBzdGFydCBsZWFraW5nIGZvbGlvcywgYnV0IEkgd2FudGVk
-Cj4+PiA+ID5zb21ldGhpbmcgdGhhdCBhZ2dyZXNzaXZlbHkgdHJpZ2dlcmVkIGl0IHNvIGEgc21h
-bGwgdm0gd291bGQgb29tCj4+PiA+ID5xdWlja2x5IGFuZCB3aGVuIGNvbWJpbmVkIHdpdGggY3Jh
-c2hfb25fb29tIGl0IGNvdWxkIHBvdGVudGlhbGx5IGJlCj4+PiA+ID51c2VkIGZvciByZWdyZXNz
-aW9uIHRlc3RpbmcgYnkgd2F5IG9mICJkaWQgdm0gY3Jhc2g/Ii4KPj4+ID4gPgo+Pj4gPiA+SSdt
-IG5vdCBzdXJlIGlmIGl0IHdpbGwgc3VwZXIgaGVscCwgYnV0IEknbGwgcHJvdmlkZSB3aGF0IGRl
-dGFpbHMgSQo+Pj4gPiA+Y2FuIGFib3V0IHRoZSBhY3R1YWwgd29ya2xvYWQgdGhhdCByZWFsbHkg
-c2V0cyBpdCBvZmYuIEl0J3MgYQo+Pj4gPiA+cHl0aG9uIGJhc2VkIHRvb2wgZm9yIGRvd25sb2Fk
-aW5nIGRhdGFzZXRzLiBEYXRhc2V0cyBhcmUgc3BsaXQKPj4+ID4gPmludG8gTiBjaHVua3MgYW5k
-IHRoZSB0b29sIGRvd25sb2FkcyB0aGVtIGluIHBhcmFsbGVsIDEwMCBhdCBhCj4+PiA+ID50aW1l
-IHVudGlsIGFsbCBOIGNodW5rcyBhcmUgZG93bi4gVGhlIGNvbXByZXNzZWQgZGF0YXNldCBpcyB0
-aGVuCj4+PiA+ID51bnBhY2tlZCBhbmQgcmVhc3NlbWJsZWQgZm9yIHVzZSB3aXRoIHdvcmtsb2Fk
-cy4gCj4+PiA+ID4KPj4+ID4gPlRoaXMgaXMgcmVwbGljYXRpbmcgYSBjb21tb24gaG9tZSBmb2xk
-ZXIgdXNlY2FzZSBpbiBIUEMuIENlcGhGUyBpcwo+Pj4gPiA+dmVyeSBhdHRyYWN0aXZlIGZvciBo
-b21lIGZvbGRlcnMgZHVlIHRvIGl0J3MgIk5GUy1saWtlIiB1dGlsaXR5IGFuZAo+Pj4gPiA+cGVy
-Zm9ybWFuY2UuIEFuZCBtYW55IHRvb2xzIHVzZSBhIHNpbWlsYXIgbWV0aG9kIGZvciBmZXRjaGlu
-ZyBsYXJnZQo+Pj4gPiA+ZGF0YXNldHMuIFRvb2xzIGFyZSBmcmVxdWVudGx5IHdyaXR0ZW4gaW4g
-cHl0aG9uIG9yIGdvLiAKPj4+ID4gPgo+Pj4gPiA+Tm9uZSBvZiBteSBjdXN0b21lcnMgaGF2ZSBo
-aXQgdGhpcyB5ZXQsIG5vdCBoYXZlIGFueSBlbnRlcnByaXNlCj4+PiA+ID5jdXN0b21lcnMgYXMg
-bm9uZSBoYXZlIG1vdmVkIHRvIGEgbmV3IGVub3VnaCBrZXJuZWwgeWV0IGR1ZSB0byBzbG93Cj4+
-PiA+ID51cGdyYWRlIGN5Y2xlcy4gRXZlbiBQcm94bW94IGhhdmUgb25seSBqdXN0IHN0YXJ0ZWQg
-dGVzdGluZyBvbiBhCj4+PiA+ID5rZXJuZWwgdmVyc2lvbiA+IDYuMTQuIAo+Pj4gPiA+Cj4+PiA+
-ID5JJ20gbW9yZSB0aGFuIGhhcHB5IHRvIGhlbHAgaG93ZXZlciBJIGNhbiB3aXRoIHRlc3Rpbmcu
-IEkgY2FuIHJ1bgo+Pj4gPiA+aW5zdHJ1bWVudGVkIGtlcm5lbHMgb3IgdGVzdCBwYXRjaGVzIG9y
-IHdoYXRldmVyIHlvdSBuZWVkLiBJIGFtCj4+PiA+ID5zb3JyeSBJIGhhdmVuJ3QgYmVlbiBhYmxl
-IHRvIHByb2R1Y2UgYSBzdXBlciBjbGVhbiwgZmFzdCByZXByb2R1Y2VyCj4+PiA+ID4obXkgdGVz
-dCBjbHVzdGVyIGF0IGhvbWUgaXMgYWxsIHNwaW5uZXJzIGFuZCBvbmx5IDUwMFRCIHVzYWJsZSku
-Cj4+PiA+ID5CdXQgSSBmaWd1cmVkIEkgbmVlZGVkIHRvIGdldCB0aGUgd29yZCBvdXQgYXNhcCBh
-cyBkaXN0cm9zIGFuZCBzb29uCj4+PiA+ID5jdXN0b21lcnMgYXJlIGdvaW5nIHRvIGJlIG1vdmlu
-ZyBwYXN0IDYuMTItNi4xNCBrZXJuZWxzIGFzIHRoZSA1LTcKPj4+ID4gPnllYXIgdXBkYXRlIGN5
-Y2xlIG1hcmNoZXMgb24uIEVzcGVjaWFsbHkgdGhvc2Ugd2FudGluZyB0byB0YWtlIGZ1bGwKPj4+
-ID4gPmFkdmFudGFnZSBvZiBDYWNoZUZTIGFuZCBlbmNyeXB0aW9uIGZ1bmN0aW9uYWxpdHkuIAo+
-Pj4gPiA+Cj4+PiA+ID5BZ2FpbiB0aGFua3MgZm9yIGxvb2tpbmcgYXQgdGhpcyBhbmQgZG8gcmVh
-Y2ggb3V0IGlmIEkgY2FuIGhlbHAgaW4KPj4+ID4gPmFueXdheS4gSSBhbSBpbiB0aGUgY2VwaCBz
-bGFjayBpZiBpdCdzIGZhc3RlciB0byByZWFjaCBvdXQgdGhhdAo+Pj4gPiA+d2F5Lgo+Pj4gPiA+
-Cj4+PiA+ID5SZWdhcmRzCj4+PiA+ID4KPj4+ID4gPk1hbCBIYWFrICAgIAo+Pj4gCg==
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+
+This patch reworks the list of co-mainteainers for
+Ceph file system in MAINTAINERS file.
+
+Fixes: d74d6c0e9895 ("ceph: add bug tracking system info to MAINTAINERS")
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
+---
+ MAINTAINERS | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5b11839cba9d..f17933667828 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5801,7 +5801,8 @@ F:	drivers/power/supply/cw2015_battery.c
+ 
+ CEPH COMMON CODE (LIBCEPH)
+ M:	Ilya Dryomov <idryomov@gmail.com>
+-M:	Xiubo Li <xiubli@redhat.com>
++M:	Alex Markuze <amarkuze@redhat.com>
++M:	Viacheslav Dubeyko <slava@dubeyko.com>
+ L:	ceph-devel@vger.kernel.org
+ S:	Supported
+ W:	http://ceph.com/
+@@ -5812,8 +5813,9 @@ F:	include/linux/crush/
+ F:	net/ceph/
+ 
+ CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)
+-M:	Xiubo Li <xiubli@redhat.com>
+ M:	Ilya Dryomov <idryomov@gmail.com>
++M:	Alex Markuze <amarkuze@redhat.com>
++M:	Viacheslav Dubeyko <slava@dubeyko.com>
+ L:	ceph-devel@vger.kernel.org
+ S:	Supported
+ W:	http://ceph.com/
+-- 
+2.52.0
+
 
