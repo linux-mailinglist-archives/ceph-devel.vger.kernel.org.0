@@ -1,175 +1,196 @@
-Return-Path: <ceph-devel+bounces-4188-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4189-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCE3CC61F5
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Dec 2025 07:00:33 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40689CC6490
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Dec 2025 07:46:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 6621130039CD
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Dec 2025 06:00:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E1E833032A94
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Dec 2025 06:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB091A76DE;
-	Wed, 17 Dec 2025 06:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700B121FF2A;
+	Wed, 17 Dec 2025 06:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QJpRrcQO"
+	dkim=pass (2048-bit key) header.d=haak.id.au header.i=@haak.id.au header.b="Bq+rP4Bd"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+Received: from mail.haak.id.au (mail.haak.id.au [172.105.183.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C323A1E93;
-	Wed, 17 Dec 2025 06:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EF33254AC;
+	Wed, 17 Dec 2025 06:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.183.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765951228; cv=none; b=ObGBxlDs3yDCi/BIP0dcERWrNzKyA62NRFhCY/ZrzXn0eDIt7CRvzm4ElcHHiaiKhiw/Z5lwz4ueEPdLOWLk5uXjhcOHjyPSMlxqQlYzjM/E6ZDByQaM46s2b/+ZaT1qPq5YbiGdC1RP2eopfbtihv4hrPxbAx3QQjLEnYzkMkg=
+	t=1765953979; cv=none; b=ZICT9hjueghwq9hz3oUqioAxjjZqcU+dh5wlpSTzYA553Nh2EoAbQWJvQ/EEWyD2iXrKYSANo4dGnaDrcebqnGhl/O5NXY2flPTTZKxv18y06AgqueFfW3BS0lGmyeq7qKUkLQhbTRAx7rVJaIc8VjQqRhdIukT0kS9V8jaIhu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765951228; c=relaxed/simple;
-	bh=cGxSYM1FVg6vvaBkakF3B4mYpBZjkj5Yh3C7k1dtP80=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=RYFYpQ9QEx/BnkJyjyjobMizJVislkZ5kwoSrdnACwMVMp7BM77vACLVgdEyVseyjsFFl4Ggg8ze+NlGY4XjtgU9YoZUrTB+gOhkT/M69qeglD5B2J4buXFxhnqYh3fIEk62ZdGcv12YXc029Ac8QCPLJ2+/j0B8w537EN2AhR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QJpRrcQO; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=cGxSYM1FVg6vvaBkakF3B4mYpBZjkj5Yh3C7k1dtP80=; b=Q
-	JpRrcQOOgBBtHqsp8NC9b1Vls2z9Hho2YCHnVkUE0etRHhIzHg87MBA+lGtexpcY
-	fpibu3jGddTumMR/D92/XHgaD7soJatcWxWcq/GogxzUeQk9uTyMSuVbR6PmcPey
-	KGtsfa0VywnoB/K2AhHBvEg2FXfS82815v6QkMFpMQ=
-Received: from 00107082$163.com ( [111.35.191.189] ) by
- ajax-webmail-wmsvr-40-136 (Coremail) ; Wed, 17 Dec 2025 13:59:47 +0800
- (CST)
-Date: Wed, 17 Dec 2025 13:59:47 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Mal Haak" <malcolm@haak.id.au>
+	s=arc-20240116; t=1765953979; c=relaxed/simple;
+	bh=280i07e/ItBS7CG7rQyVCoITfkXg1EfLvXpcUJiFHHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d4C+qVb1aGfFaUqYBGt0F2FggnEbPOv9p/tnewC3f2/Naw3SKLNn88qHTety3XkusV55Ag3nmpDRfIr1YZ2tMUG/Vigax/r8R/SMME9ZWiQV7jkCF1ObUB2UBgL0+fYnH4aeaX5sCb/M0yeS26nji6ov4i2jPqdD6aKPfFyT63w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=haak.id.au; spf=pass smtp.mailfrom=haak.id.au; dkim=pass (2048-bit key) header.d=haak.id.au header.i=@haak.id.au header.b=Bq+rP4Bd; arc=none smtp.client-ip=172.105.183.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=haak.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=haak.id.au
+Received: from xps15mal (180-150-104-78.b49668.bne.static.aussiebb.net [180.150.104.78])
+	by mail.haak.id.au (Postfix) with ESMTPSA id 485FE833B1;
+	Wed, 17 Dec 2025 16:46:05 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=haak.id.au; s=202002;
+	t=1765953965; bh=280i07e/ItBS7CG7rQyVCoITfkXg1EfLvXpcUJiFHHM=;
+	h=Date:From:To:Subject:From;
+	b=Bq+rP4Bd9Q0lpxsBfqqSsrFfi31VXWOqv+jhqvWA/PjjKEWulgt5OJtWXAfNBMVYy
+	 eP6RyaqPEpikWCtfKYXTUA2B0z3+b9j+ofNISA+ErH0HCoYy92sAtt3yXyK2nutB5B
+	 kgIBve5pqfPjdfS5/ZZyYcRv43UignTt0VLj4fzOhheQrEfhhz0vO+UkeW3H5GrKKa
+	 CaVdP7CuThx+3IvGLBRnYEwYZOFiW9tmNG9XJaIGa66ZKYNWhwGUzkKwo6JqhwgpSc
+	 xL9CPv6Q50Ffg//PyDFqhaY/2XuNxqKmbPoF0GU+9SGW698GJk+yYFv+nBza2LbvJg
+	 pY/URzXi9PnYg==
+Date: Wed, 17 Dec 2025 16:46:02 +1000
+From: Mal Haak <malcolm@haak.id.au>
+To: "David Wang" <00107082@163.com>
 Cc: "Viacheslav Dubeyko" <Slava.Dubeyko@ibm.com>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-	"Xiubo Li" <xiubli@redhat.com>,
-	"idryomov@gmail.com" <idryomov@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"surenb@google.com" <surenb@google.com>
+ "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "Xiubo Li"
+ <xiubli@redhat.com>, "idryomov@gmail.com" <idryomov@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "surenb@google.com" <surenb@google.com>
 Subject: Re: Possible memory leak in 6.17.7
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20251216112647.39ac2295@xps15mal>
+Message-ID: <20251217164602.563ddae3@xps15mal>
+In-Reply-To: <12e9afa5.6f62.19b2ae4aaf2.Coremail.00107082@163.com>
 References: <20251110182008.71e0858b@xps15mal>
- <20251208110829.11840-1-00107082@163.com>
- <20251209090831.13c7a639@xps15mal>
- <17469653.4a75.19b01691299.Coremail.00107082@163.com>
- <20251210234318.5d8c2d68@xps15mal>
- <2a9ba88e.3aa6.19b0b73dd4e.Coremail.00107082@163.com>
- <20251211142358.563d9ac3@xps15mal>
- <8c8e8dc4d30a8ca37a57d7f29c5f29cdf7a904ee.camel@ibm.com>
- <20251216112647.39ac2295@xps15mal>
-X-NTES-SC: AL_Qu2dB/Wevkkj4SaQbekZnEYQheY4XMKyuPkg1YJXOp80sSb/xSU8X1ptOEDw1PCoKzGslyGHVxt00Plkb7t0cpMPdbo8n/axE1d3LrPss1tK
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	<20251208110829.11840-1-00107082@163.com>
+	<20251209090831.13c7a639@xps15mal>
+	<17469653.4a75.19b01691299.Coremail.00107082@163.com>
+	<20251210234318.5d8c2d68@xps15mal>
+	<2a9ba88e.3aa6.19b0b73dd4e.Coremail.00107082@163.com>
+	<20251211142358.563d9ac3@xps15mal>
+	<8c8e8dc4d30a8ca37a57d7f29c5f29cdf7a904ee.camel@ibm.com>
+	<20251216112647.39ac2295@xps15mal>
+	<12e9afa5.6f62.19b2ae4aaf2.Coremail.00107082@163.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <12e9afa5.6f62.19b2ae4aaf2.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:iCgvCgD3__TURkJpYrk8AA--.3054W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbCxhSxXGlCRtTlSwAA3o
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-CkF0IDIwMjUtMTItMTYgMDk6MjY6NDcsICJNYWwgSGFhayIgPG1hbGNvbG1AaGFhay5pZC5hdT4g
-d3JvdGU6Cj5PbiBNb24sIDE1IERlYyAyMDI1IDE5OjQyOjU2ICswMDAwCj5WaWFjaGVzbGF2IER1
-YmV5a28gPFNsYXZhLkR1YmV5a29AaWJtLmNvbT4gd3JvdGU6Cj4KPj4gSGkgTWFsLAo+PiAKPjxT
-TklQPiAKPj4gCj4+IFRoYW5rcyBhIGxvdCBmb3IgcmVwb3J0aW5nIHRoZSBpc3N1ZS4gRmluYWxs
-eSwgSSBjYW4gc2VlIHRoZQo+PiBkaXNjdXNzaW9uIGluIGVtYWlsIGxpc3QuIDopIEFyZSB5b3Ug
-d29ya2luZyBvbiB0aGUgcGF0Y2ggd2l0aCB0aGUKPj4gZml4PyBTaG91bGQgd2Ugd2FpdCBmb3Ig
-dGhlIGZpeCBvciBJIG5lZWQgdG8gc3RhcnQgdGhlIGlzc3VlCj4+IHJlcHJvZHVjdGlvbiBhbmQg
-aW52ZXN0aWdhdGlvbj8gSSBhbSBzaW1wbHkgdHJ5aW5nIHRvIGF2b2lkIHBhdGNoZXMKPj4gY29s
-bGlzaW9uIGFuZCwgYWxzbywgSSBoYXZlIG11bHRpcGxlIG90aGVyIGlzc3VlcyBmb3IgdGhlIGZp
-eCBpbgo+PiBDZXBoRlMga2VybmVsIGNsaWVudC4gOikKPj4gCj4+IFRoYW5rcywKPj4gU2xhdmEu
-Cj4KPkhlbGxvLAo+Cj5VbmZvcnR1bmF0ZWx5IGNyZWF0aW5nIGEgcGF0Y2ggaXMganVzdCBvdXRz
-aWRlIG15IGNvbWZvcnQgem9uZSwgSSd2ZQo+bGl2ZWQgdG9vIGxvbmcgaW4gTHVzdHJlIGxhbmQu
-Cj4KPkkndmUgaGF2ZSBiZWVuIHRyeWluZyB0byBuYXJyb3cgZG93biBhIGNvbnNpc3RlbnQgcmVw
-cm9kdWNlciB0aGF0J3MgYXMKPmZhc3QgYXMgbXkgcHJvZHVjdGlvbiB3b3JrbG9hZC4gKEl0IGNy
-YXNoZXMgYSAzMkdCIFZNIGluIDJocnMpIEFuZCBJCj5oYXZlbid0IGdvdCBpdCBxdWl0ZSBhcyBm
-YXN0LiBJIHRoaW5rIHRoZSBkZCB3b3JrbG9hZCBpcyB0b28gd2VsbAo+YmVoYXZlZC4gCj4KPkkg
-Y2FuIGNvbmZpcm0gdGhlIGlzc3VlIGFwcGVhcmVkIGluIHRoZSBtYWpvciBwYXRjaCBzZXQgdGhh
-dCB3YXMKPmFwcGxpZWQgYXMgcGFydCBvZiB0aGUgNi4xNSBrZXJuZWwuIFNvIGR1cmluZyB0aGUg
-bW9yZSBjb21wbGV0ZSBwYWdlcwo+dG8gZm9saW9zIHN3aXRjaCBhbmQgdGhhdCBub3RoaW5nIGhh
-cyBjaGFuZ2VkIGluIHRoZSBidWcgYmVoYXZpb3VyIHNpbmNlCj50aGVuLiBJIGRpZCBoYXZlIGEg
-bG9vayBhdCBhbGwgdGhlIGRpZmZzIGZyb20gNi4xNCB0byA2LjE4IG9uIGFkZHIuYwo+YW5kIGRp
-ZG4ndCBzZWUgYW55IGNoYW5nZXMgcG9zdCA2LjE1IHRoYXQgbG9va2VkIGxpa2UgdGhleSB3b3Vs
-ZCBpbXBhY3QKPnRoZSBidWcgYmVoYXZpb3IuIAoKSGksCkp1c3QgYSBzdWdnZXN0aW9uLCBpbiBj
-YXNlIHlvdSBydW4gb3V0IG9mIGlkZWEgZm9yIGZ1cnRoZXIgaW52ZXN0aWdhdGlvbi4gIApJIHRo
-aW5rIHlvdSBjYW4gYmlzZWN0ICptYW51YWxseSogIHRhcmdldGluZyBjaGFuZ2VzICBvZiBmcy9j
-ZXBoZnMgYmV0d2VlbiA2LjE0IGFuZCA2LjE1CgoKJCBnaXQgbG9nICAtLXByZXR0eT0nZm9ybWF0
-OiVoICVhbicgdjYuMTQuLnY2LjE1IGZzL2NlcGgKMzQ5YjdkNzdmNWExIExpbnVzIFRvcnZhbGRz
-CmIyNjFkMjIyMjA2MyBFcmljIEJpZ2dlcnMKZjQ1MmEyMjA0NjE0IERhdmlkIEhvd2VsbHMKZTYz
-MDQ2YWRlZmMwIExpbnVzIFRvcnZhbGRzCjU5YjU5YTk0MzE3NyBNYXR0aGV3IFdpbGNveCAoT3Jh
-Y2xlKSAgPC0tLS0tLS0tLS0tMwplZmJkZDkyZWQ5ZjYgTWF0dGhldyBXaWxjb3ggKE9yYWNsZSkK
-ZDFiNDUyNjczYWY0IE1hdHRoZXcgV2lsY294IChPcmFjbGUpCmFkNDlmZTJiM2Q1NCBNYXR0aGV3
-IFdpbGNveCAoT3JhY2xlKQphNTVjZjRmZDhmYWUgTWF0dGhldyBXaWxjb3ggKE9yYWNsZSkKMTVm
-ZGFmMmZkNjBkIE1hdHRoZXcgV2lsY294IChPcmFjbGUpCjYyMTcxYzE2ZGE2MCBNYXR0aGV3IFdp
-bGNveCAoT3JhY2xlKQpiYWZmOTc0MGJjOGYgTWF0dGhldyBXaWxjb3ggKE9yYWNsZSkKZjk3MDdh
-OGI1YjlkIE1hdHRoZXcgV2lsY294IChPcmFjbGUpCjg4YTU5YmRhM2YzNyBNYXR0aGV3IFdpbGNv
-eCAoT3JhY2xlKQoxOWEyODgxMTA0MzUgTWF0dGhldyBXaWxjb3ggKE9yYWNsZSkKZmQ3NDQ5ZDkz
-N2U3IFZpYWNoZXNsYXYgRHViZXlrbyAgPC0tLS0tLS0tLTIKMTU1MWVjNjFkYzU1IFZpYWNoZXNs
-YXYgRHViZXlrbwpjZTgwYjc2ZGQzMjcgVmlhY2hlc2xhdiBEdWJleWtvCmYwODA2OGRmNGFhNCBW
-aWFjaGVzbGF2IER1YmV5a28KM2Y5MmM3YjU3Njg3IE5laWxCcm93biAgICAgICAgICAgICAgIDwt
-LS0tLS0tLS0tLTEKODhkNWJhZjY5MDgyIE5laWxCcm93bgoKVGhlcmUgd2VyZSAzIG1ham9yIHBh
-dGNoIHNldCAoZ3JvdXAgYnkgYXV0aG9yKSwgIHRoZSBzdXNwZWN0IGNvdWxkIGJlIG5hcnJvd2Vk
-IGRvd24gZnVydGhlci4KCgooQmlzZWN0LCBldmVuIG92ZXIgYSBzaG9ydCByYW5nZSBvZiBwYXRj
-aCwgaXMgcXVpdGUgYW4gdW5wbGVhc2FudCBleHBlcmllbmNlIHRob3VnaC4uLi4pCgpGWUkKRGF2
-aWQKCj4KPkFnYWluLCBJJ20gbm90IHN1cGVyIGZhbWlsaWFyIHdpdGggdGhlIENlcGhGUyBjb2Rl
-IGJ1dCB0byBoYXphcmQgYQo+Z3Vlc3MsIGJ1dCBJIHRoaW5rIHRoYXQgdGhlIHdlYiBkb3dubG9h
-ZCB3b3JrbG9hZCB0cmlnZ2VycyB0aGluZ3MgZmFzdGVyCj5zdWdnZXN0cyB0aGF0IHVuYWxpZ25l
-ZCB3cml0ZXMgbWlnaHQgbWFrZSB0aGluZ3Mgd29yc2UuIEJ1dCBhZ2FpbiwgSSdtCj5ub3QgMTAw
-JSBzdXJlLiBJIGNhbid0IGZpbmQgYSByZXByb2R1Y2VyIGFzIGZhc3QgYXMgZG93bmxvYWRpbmcg
-YQo+ZGF0YXNldC4gUnN5bmMgb2YgbG90cyBhbmQgbG90cyBvZiB0aW55IGZpbGVzIGlzIGEgdGFk
-IGZhc3RlciB0aGFuIHRoZQo+ZGQgY2FzZS4KPgo+SSBkaWQgc2VlIHNvbWUgY2hhbmdlcyBpbiBj
-ZXBoX2NoZWNrX3BhZ2VfYmVmb3JlX3dyaXRlIHdoZXJlIHRoZQo+cHJldmlvdXMgY29kZSB1bmxv
-Y2tlZCBwYWdlcyBhbmQgdGhlbiBjb250aW51ZWQgd2hlcmUgYXMgdGhlIGNoYW5nZWQKPmZvbGlv
-IGNvZGUganVzdCByZXR1cm5zIEVOT0RBVEEgYW5kIGRvZXNuJ3QgdW5sb2NrIGFueXRoaW5nIHdp
-dGggbW9zdAo+b2YgdGhlIHJlc3Qgb2YgdGhlIGxvZ2ljIHVuY2hhbmdlZC4gVGhpcyBtaWdodCBi
-ZSBwZXJmZWN0bHkgZmluZSwgYnV0Cj5pbiBteSwgYWRtaXR0ZWRseSBsaW1pdGVkLCByZWFkaW5n
-IG9mIHRoZSBjb2RlIEkgY291bGRuJ3QgZmlndXJlIG91dAo+d2hlcmUgYW55dGhpbmcgdGhhdCB3
-YXMgbG9ja2VkIHByaW9yIHRvIHRoaXMgYmVpbmcgY2FsbGVkIHdvdWxkIGdldAo+dW5sb2NrZWQg
-bGlrZSBpdCBkaWQgcHJpb3IgdG8gdGhlIGNoYW5nZS4gQWdhaW4sIEkgY291bGQgYmUgbWlsZXMg
-b2ZmCj5oZXJlIGFuZCBvbmUgb2YgdGhlIGJ1bGsgcmVjbGFpbS91bmxvY2sgcGFzc2VzIHRoYXQg
-d2FzIGFkZGVkIG1pZ2h0IGJlCj5jbGVhbmluZyB0aGlzIHVwIGNvcnJlY3RseSBvciBzb21lIG90
-aGVyIGZ1bmN0aW9uYWwgY2hhbmdlIG1pZ2h0IHRha2UKPmNhcmUgb2YgdGhpcywgYnV0IGl0IGxv
-b2tzIHRvIGJlIHBvdGVudGlhbGx5IGluIHRoZSBjb2RlIHBhdGggSSdtCj5leGNpc2luZyBhbmQg
-aXQgaGFzIGhhZCBzb21lIHVubG9jayBsb2dpYyBjaGFuZ2VkLiAKPgo+SSd2ZSBzcGVudCBtb3N0
-IG9mIG15IHRpbWUgdHJ5aW5nIHRvIGZpbmQgYSBzb2xpZCBxdWljayByZXByb2R1Y2VyLiBOb3QK
-PnRoYXQgaXQgdGFrZXMgbG9uZyB0byBzdGFydCBsZWFraW5nIGZvbGlvcywgYnV0IEkgd2FudGVk
-IHNvbWV0aGluZyB0aGF0Cj5hZ2dyZXNzaXZlbHkgdHJpZ2dlcmVkIGl0IHNvIGEgc21hbGwgdm0g
-d291bGQgb29tIHF1aWNrbHkgYW5kIHdoZW4KPmNvbWJpbmVkIHdpdGggY3Jhc2hfb25fb29tIGl0
-IGNvdWxkIHBvdGVudGlhbGx5IGJlIHVzZWQgZm9yIHJlZ3Jlc3Npb24KPnRlc3RpbmcgYnkgd2F5
-IG9mICJkaWQgdm0gY3Jhc2g/Ii4KPgo+SSdtIG5vdCBzdXJlIGlmIGl0IHdpbGwgc3VwZXIgaGVs
-cCwgYnV0IEknbGwgcHJvdmlkZSB3aGF0IGRldGFpbHMgSSBjYW4KPmFib3V0IHRoZSBhY3R1YWwg
-d29ya2xvYWQgdGhhdCByZWFsbHkgc2V0cyBpdCBvZmYuIEl0J3MgYSBweXRob24gYmFzZWQKPnRv
-b2wgZm9yIGRvd25sb2FkaW5nIGRhdGFzZXRzLiBEYXRhc2V0cyBhcmUgc3BsaXQgaW50byBOIGNo
-dW5rcyBhbmQgdGhlCj50b29sIGRvd25sb2FkcyB0aGVtIGluIHBhcmFsbGVsIDEwMCBhdCBhIHRp
-bWUgdW50aWwgYWxsIE4gY2h1bmtzIGFyZQo+ZG93bi4gVGhlIGNvbXByZXNzZWQgZGF0YXNldCBp
-cyB0aGVuIHVucGFja2VkIGFuZCByZWFzc2VtYmxlZCBmb3IKPnVzZSB3aXRoIHdvcmtsb2Fkcy4g
-Cj4KPlRoaXMgaXMgcmVwbGljYXRpbmcgYSBjb21tb24gaG9tZSBmb2xkZXIgdXNlY2FzZSBpbiBI
-UEMuIENlcGhGUyBpcyB2ZXJ5Cj5hdHRyYWN0aXZlIGZvciBob21lIGZvbGRlcnMgZHVlIHRvIGl0
-J3MgIk5GUy1saWtlIiB1dGlsaXR5IGFuZAo+cGVyZm9ybWFuY2UuIEFuZCBtYW55IHRvb2xzIHVz
-ZSBhIHNpbWlsYXIgbWV0aG9kIGZvciBmZXRjaGluZyBsYXJnZQo+ZGF0YXNldHMuIFRvb2xzIGFy
-ZSBmcmVxdWVudGx5IHdyaXR0ZW4gaW4gcHl0aG9uIG9yIGdvLiAKPgo+Tm9uZSBvZiBteSBjdXN0
-b21lcnMgaGF2ZSBoaXQgdGhpcyB5ZXQsIG5vdCBoYXZlIGFueSBlbnRlcnByaXNlCj5jdXN0b21l
-cnMgYXMgbm9uZSBoYXZlIG1vdmVkIHRvIGEgbmV3IGVub3VnaCBrZXJuZWwgeWV0IGR1ZSB0byBz
-bG93Cj51cGdyYWRlIGN5Y2xlcy4gRXZlbiBQcm94bW94IGhhdmUgb25seSBqdXN0IHN0YXJ0ZWQg
-dGVzdGluZyBvbiBhIGtlcm5lbAo+dmVyc2lvbiA+IDYuMTQuIAo+Cj5JJ20gbW9yZSB0aGFuIGhh
-cHB5IHRvIGhlbHAgaG93ZXZlciBJIGNhbiB3aXRoIHRlc3RpbmcuIEkgY2FuIHJ1bgo+aW5zdHJ1
-bWVudGVkIGtlcm5lbHMgb3IgdGVzdCBwYXRjaGVzIG9yIHdoYXRldmVyIHlvdSBuZWVkLiBJIGFt
-IHNvcnJ5IEkKPmhhdmVuJ3QgYmVlbiBhYmxlIHRvIHByb2R1Y2UgYSBzdXBlciBjbGVhbiwgZmFz
-dCByZXByb2R1Y2VyIChteSB0ZXN0Cj5jbHVzdGVyIGF0IGhvbWUgaXMgYWxsIHNwaW5uZXJzIGFu
-ZCBvbmx5IDUwMFRCIHVzYWJsZSkuIEJ1dCBJIGZpZ3VyZWQgSQo+bmVlZGVkIHRvIGdldCB0aGUg
-d29yZCBvdXQgYXNhcCBhcyBkaXN0cm9zIGFuZCBzb29uIGN1c3RvbWVycyBhcmUgZ29pbmcKPnRv
-IGJlIG1vdmluZyBwYXN0IDYuMTItNi4xNCBrZXJuZWxzIGFzIHRoZSA1LTcgeWVhciB1cGRhdGUg
-Y3ljbGUKPm1hcmNoZXMgb24uIEVzcGVjaWFsbHkgdGhvc2Ugd2FudGluZyB0byB0YWtlIGZ1bGwg
-YWR2YW50YWdlIG9mIENhY2hlRlMKPmFuZCBlbmNyeXB0aW9uIGZ1bmN0aW9uYWxpdHkuIAo+Cj5B
-Z2FpbiB0aGFua3MgZm9yIGxvb2tpbmcgYXQgdGhpcyBhbmQgZG8gcmVhY2ggb3V0IGlmIEkgY2Fu
-IGhlbHAgaW4KPmFueXdheS4gSSBhbSBpbiB0aGUgY2VwaCBzbGFjayBpZiBpdCdzIGZhc3RlciB0
-byByZWFjaCBvdXQgdGhhdCB3YXkuCj4KPlJlZ2FyZHMKPgo+TWFsIEhhYWsK
+On Wed, 17 Dec 2025 13:59:47 +0800 (CST)
+"David Wang" <00107082@163.com> wrote:
+
+> At 2025-12-16 09:26:47, "Mal Haak" <malcolm@haak.id.au> wrote:
+> >On Mon, 15 Dec 2025 19:42:56 +0000
+> >Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+> >  
+> >> Hi Mal,
+> >>   
+> ><SNIP>   
+> >> 
+> >> Thanks a lot for reporting the issue. Finally, I can see the
+> >> discussion in email list. :) Are you working on the patch with the
+> >> fix? Should we wait for the fix or I need to start the issue
+> >> reproduction and investigation? I am simply trying to avoid patches
+> >> collision and, also, I have multiple other issues for the fix in
+> >> CephFS kernel client. :)
+> >> 
+> >> Thanks,
+> >> Slava.  
+> >
+> >Hello,
+> >
+> >Unfortunately creating a patch is just outside my comfort zone, I've
+> >lived too long in Lustre land.
+> >
+> >I've have been trying to narrow down a consistent reproducer that's
+> >as fast as my production workload. (It crashes a 32GB VM in 2hrs)
+> >And I haven't got it quite as fast. I think the dd workload is too
+> >well behaved. 
+> >
+> >I can confirm the issue appeared in the major patch set that was
+> >applied as part of the 6.15 kernel. So during the more complete pages
+> >to folios switch and that nothing has changed in the bug behaviour
+> >since then. I did have a look at all the diffs from 6.14 to 6.18 on
+> >addr.c and didn't see any changes post 6.15 that looked like they
+> >would impact the bug behavior.   
+> 
+> Hi,
+> Just a suggestion, in case you run out of idea for further
+> investigation. I think you can bisect *manually*  targeting changes
+> of fs/cephfs between 6.14 and 6.15
+> 
+> 
+> $ git log  --pretty='format:%h %an' v6.14..v6.15 fs/ceph
+> 349b7d77f5a1 Linus Torvalds
+> b261d2222063 Eric Biggers
+> f452a2204614 David Howells
+> e63046adefc0 Linus Torvalds
+> 59b59a943177 Matthew Wilcox (Oracle)  <-----------3
+> efbdd92ed9f6 Matthew Wilcox (Oracle)
+> d1b452673af4 Matthew Wilcox (Oracle)
+> ad49fe2b3d54 Matthew Wilcox (Oracle)
+> a55cf4fd8fae Matthew Wilcox (Oracle)
+> 15fdaf2fd60d Matthew Wilcox (Oracle)
+> 62171c16da60 Matthew Wilcox (Oracle)
+> baff9740bc8f Matthew Wilcox (Oracle)
+> f9707a8b5b9d Matthew Wilcox (Oracle)
+> 88a59bda3f37 Matthew Wilcox (Oracle)
+> 19a288110435 Matthew Wilcox (Oracle)
+> fd7449d937e7 Viacheslav Dubeyko  <---------2
+> 1551ec61dc55 Viacheslav Dubeyko
+> ce80b76dd327 Viacheslav Dubeyko
+> f08068df4aa4 Viacheslav Dubeyko
+> 3f92c7b57687 NeilBrown               <-----------1
+> 88d5baf69082 NeilBrown
+> 
+> There were 3 major patch set (group by author),  the suspect could be
+> narrowed down further.
+> 
+> 
+> (Bisect, even over a short range of patch, is quite an unpleasant
+> experience though....)
+> 
+> FYI
+> David
+> 
+> >
+<SNIP>
+
+Yeah, I don't think it's a small patch that is the cause of the issue. 
+
+It looks like there was a patch set that migrated cephfs off handling
+individual pages and onto folios to enable wider use of netfs features
+like local caching and encryption, as examples. I'm not sure that set
+can be broken up and result in a working cephfs module. Which limits
+the utility of a git-bisect. I'm pretty sure the issue is in addr.c
+somewhere and most of the changes in there are one patch. That said,
+after I get this crash dump I'll probably do it anyway. 
+
+What I really need to do is get a crash dump to look at what state the
+folios and their tracking is in. Assuming I can grok what I'm looking
+at. This is the bit I'm most apprehensive of. I'm hoping I can find a
+list of folios used by the reclaim machinery that is missing
+a bunch of folios. That or a bunch with inflated refcounts or
+something. 
+
+Something is going awry, but it's not fast. I thought I had a quick
+reproducer. I was wrong, I sized the DD workload incorrectly and
+triggered the panic_on_oom due to that, not the bug. 
+
+I'm re-running the reproducer now, on a VM with 2GB of ram and its been
+running for around 3hrs and I think at most its leaked possibly
+100MB-150MB of ram at most. (It was averaging 190-200MB of noncache
+usage. It's now averaging 290-340MB). 
+
+It does accelerate. The more folios that are in the weird state, the
+more end up in the weird state. Which feels like fragmentation side
+effects, but I'm just speculating.  
+
+Anyway, one of the wonderful ceph developers is looking into it. I just
+hope I can do enough to help them locate the issue. They are having
+troubles reproducing last I heard from them but they might have been
+expecting a slightly faster reproducer.
+
+I have however recreated it on a physical host not just a vm. So I feel
+like I can rule out being a VM as a cause.
+
+Anyway thanks for your continued assistance!
+
+Mal
 
