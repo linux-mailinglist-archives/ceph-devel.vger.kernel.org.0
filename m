@@ -1,139 +1,129 @@
-Return-Path: <ceph-devel+bounces-4193-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4194-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B23CCABD7
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Dec 2025 08:56:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED4DCCB64E
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Dec 2025 11:33:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E9E09300D66F
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Dec 2025 07:56:22 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 34C443037E1B
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Dec 2025 10:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DD32E36F3;
-	Thu, 18 Dec 2025 07:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64511332EA1;
+	Thu, 18 Dec 2025 10:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtqz4OTf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fw8J0xoz"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9393822FF22
-	for <ceph-devel@vger.kernel.org>; Thu, 18 Dec 2025 07:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CFB3321BA
+	for <ceph-devel@vger.kernel.org>; Thu, 18 Dec 2025 10:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766044581; cv=none; b=rco38NYd5Qb2JEGHWq0VJPNti6nAbhiRiefpYZv/U8nlRgu5cnI0P9C63sqyrI20V8p1/cPIoNiGP8QdQ1UplXcCO+pEHajdGLbpqcOJ8reVr1HYB4Qf89QqJmp/3kp7Eb4MuKgvN3i59KJ6BIzvrl4aN9+7dURx/YUJX1lf03I=
+	t=1766053858; cv=none; b=ieLuwj5zoJuy9FOuDs7M6aWTy89D0hKez0I0Kcb4P6JicTxKi/e738g2/a1MGSrRDCTaGI96G3s4o6JB3wYb2XhBUjv3x7BZ4Nc+Z427un+r3GZ3T1reXhVsoqHeDH2xqdReQeaN1LEVQyRHLSFEFkOtH1XdzT8r6WRja4NSMlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766044581; c=relaxed/simple;
-	bh=qUhv/WVO97iNaIQ1FzvXmfWz4JvCFSI9eW4uzD8Ds20=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nRr0eZl44WiC+f3WUwziNTdRcY65Gqs/dGmxcmVc/39Ip1TJdFzod9GGUOFeEy4OfJXu7lBQfy0LTcvxld49x4ES/8jnV/EWw6E8Kbj7Oah48mAvY9T3Vg69sbHT+gsAAe7f6AE2pqIKoUWExSlobdxYn45RiKSRzT1y4j6LNkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtqz4OTf; arc=none smtp.client-ip=209.85.216.49
+	s=arc-20240116; t=1766053858; c=relaxed/simple;
+	bh=coLA1gMnueOdWW2y3zkfSAuSFNiYs3kPhCnOPTkxuf0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FQSyRrO1Ro+pBdtvgn7u2eGk56TUpoYIP3Qt1LW4MnQUdKQ4EECP/mVk5VMM5+la2OMnLhTdG43vohrDjxPIzGKytcrV/GDEwERoFzrXIbNo5nx2rdrfHrO2WSSBvXNhn3umd30dMeMnOjwX1bVp03ksYxNXrsoW3ZEbWFt+ePo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fw8J0xoz; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-34c27d14559so281966a91.2
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Dec 2025 23:56:19 -0800 (PST)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-bd1b0e2c1eeso362204a12.0
+        for <ceph-devel@vger.kernel.org>; Thu, 18 Dec 2025 02:30:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766044579; x=1766649379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MMkuXW4b3ShoHrgyNV0wgRq15Ymd9snXpguC9jssOUE=;
-        b=dtqz4OTfhzikNX39QKYuDK17ftqgNkcnb81CzxYrZK/XSVmk8x74agt8uOC0BNAmMw
-         IX2Amb4I+q5mXi0iexqr3uj19AnqKEUU557+CJZ930wqDoW+/w8o6a7F9NRehu4cUgmn
-         Q0iDQDP/YGA5llvQdONosgVD2hspVnZtTTXgoCFjosvA6T/4XmuKjWxC1R3lCzg++uIZ
-         Qzjl/8BjHYjTWKvjEX/qwFq7htYjYKvvWMnrvYMOk6g4tzjzMefB+kE1PctO3w0haLNK
-         /N+RGJPa5AYh6aeNl/+0UZ4MDylu58SuNOJYg9DXTNr73XZsSCEn65zjqPKz1vZ+fJIZ
-         i3cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766044579; x=1766649379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1766053856; x=1766658656; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MMkuXW4b3ShoHrgyNV0wgRq15Ymd9snXpguC9jssOUE=;
-        b=xOhSycPuKwwjRoIEOhvlMsWRMtTIuH0i0MkSqlv+NfCqNAblSfeUyKdKuha+Tkk6p/
-         2bRbu5sUY0Yu2xoKIhNHnfHIMtO7jR9g3WcBZbt7SdQCw3jLTRw3DLVW5scSAU21KbND
-         7vf3gUwWC6gND0DfjunHCUQJREnSCz6Oo1MpMXuRpN5CyPBwcN0QsqorTGv8KYPLrq2L
-         pqktHC3XRdPiTwZQZTYt5WN8UBwRnkEtIY27xgJW526uWs6wH5LXA1+Txn0IXowSXd75
-         x8eEOfeZ/lftT4YGele13cwuTcP+IBWZGqOQjZsZP5XyH6HM6FYSUJAM44KfZYIrCq/N
-         24bQ==
-X-Gm-Message-State: AOJu0YwMqMlKQ3PcCspQQd1d16n3UZ4QxOIG2DRFKisGNO5wMSn1gt+T
-	rZ1Z6qvcfhEZCqWljl2ttpfLBuUStfIfD53kwvlKbYPlubtM1fLzX7Ep
-X-Gm-Gg: AY/fxX6qkws1lx1p32J+3z5tn01c4UczKfVSe0QQfjEaB5ZbqXU4BukuUhtfJC/+loi
-	rmAM1sSi61Fd4uc2oDhx+UvGq+Tg6No2m+7OGZI2Em/cB2a3kziIqtOr0YbAy4j75CmFRjQS85/
-	zvbaagBqkBjfBMTX8diQ/6QyuzywkCEllqAb/JYkSXGDxykoxG2wb+Zamupe18X3szJmDswi8p/
-	s68pNPYY9XsnMjWY0Q5CBfcFsOHfthzrwAO6axQ5Irsm4opMkZs/70IQX3YJ9YHZJuiqRlyDcQ8
-	ARap0HgFkAnndE5RkK7xn5Zzgh5LA7x/UsjBe2gh6o5rVnwUXpM02LJx121V3aiRKnWyQzqr2ch
-	0GSGVy9FtwsTdcu3pi+VvTPn/yUqKZX0nFjNECgm/S7N79GOrJyyfcX+oyHqCGGmKL98Yby0jk/
-	SgF/5Muvlj6UChvPuYehM/pqRvVkIHqTIfyWP+tiSNQ0AdxNzBx08p/WnxvlWgQr7JCCXkvhQUa
-	69FT3hhLs0=
-X-Google-Smtp-Source: AGHT+IFRXXg2xmw/l/+q3DDAOesT1rj27CThyNJNgghkwc7rlSQV1reOiXw4zSJ44hj4CFuxeU5JDg==
-X-Received: by 2002:a17:90b:35c9:b0:33f:f22c:8602 with SMTP id 98e67ed59e1d1-34abd858b3cmr18258188a91.26.1766044578847;
-        Wed, 17 Dec 2025 23:56:18 -0800 (PST)
-Received: from oslab.mshome.net (n058152022071.netvigator.com. [58.152.22.71])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e70d4f7d3sm1664430a91.4.2025.12.17.23.56.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Dec 2025 23:56:18 -0800 (PST)
-From: Tuo Li <islituo@gmail.com>
-To: idryomov@gmail.com,
-	xiubli@redhat.com
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tuo Li <islituo@gmail.com>
-Subject: [PATCH] net: ceph: Fix a possible null-pointer dereference in decode_choose_args()
-Date: Thu, 18 Dec 2025 15:56:03 +0800
-Message-ID: <20251218075603.8797-1-islituo@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=qfx0RSNVAivkH6E1CctvNqx0dWYRIEIIvPaPiHNi3os=;
+        b=fw8J0xozTCj++5U+USmL9K9+0AUaiUN2hPOITMXq8m9FDVCk24dJr5HbPJJIaIeuo2
+         GBkeNu+UBMxKAN1vFx560UjWjN5jSek70QEjCB6iHApc20D9n1GpsTXkuP6WbxAiwjQm
+         YOyWM/pO4/vFQsGQxhUiVD/u+VwS0pJsXVI2ZPrwTr3wnzrfwSb03EcX+SAfTcd7zvr9
+         Sk4/MzA7w9300n3KBuradHKIoPsACOm3cDCSElhI+9y+vYbs8gqo3ZFvi7ZBFtg3TIe5
+         clNcMzSdqnfWxs2gLWPTrYGJlgm5rvnUVFGXSraUzUrcPuUmv3e8F6XpcwVeFYCsQ42r
+         GxFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766053856; x=1766658656;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qfx0RSNVAivkH6E1CctvNqx0dWYRIEIIvPaPiHNi3os=;
+        b=WUvbVO8079hLjTQiTuTL8StxEZs2HFz6z/jGesTka1JC04N5iBCxGXucgr4jq6tPxH
+         FBAblawWRuwVlVZqfAxBkQf0KSGfveRI+JksLKEtirA74/DdBwLROKEc1TdLz9oSNPYz
+         Ja2V9+q7dmNaidx5lwT8G6FYIqXovZj79+mMYn3q1flf3EUc3UHXJKwHsUEEhRCWfUnM
+         Vu0JRjs2SHOngOGRJPrNVzuUnn1q2OOOz6lH2h9A+s7uoB39rpJtFuuhtTcMBTgoxeco
+         xWfVgRs8nmzqo4jORscnGOXaiXF9A4/ZoeCkjNI3E0RwstFEu4xfKSSQOV8z6Oh+CAt7
+         cJNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDzcVvKshAfpPgAomWmQg3PzV8id/F9YcVu1UDuQJ1wCX2e1DZkPu4lLO2UcDHUVxWQYSgSX4dMaYB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb9xLazuUoOVCJJtHXzbt5YFDnqwMjIMg1mJnQfjOgMJ54A0pj
+	WPLvGNfh9RcZ2RG/dMBzz50/9H8Sc5s1kEYKhedVYyjUxs2Sip3Axnd5UZrFVrrtklU3AQzTyN/
+	DrkWBNRrQI42EinbKyRK/FaZAqcSEDA4=
+X-Gm-Gg: AY/fxX68yZvP9uMZc10COccce5Xdj6mr/o/NiD3z4kkjO5H4eFBU5UmtGAdaCIKvnLr
+	otxTZscBjfAwU6IjhpjXOTQCU+QijOCJ0iv8VP0DtnreTP6EkgQD2w9kihkjS5fBxTpce83Q0hJ
+	4YWZo/Uoc75cgLVBy+uagaNskJrJNMaRsvuKsL/TzMJqJkukBBRUq8rDJm6pYGt7npbtiuW80UL
+	S3WgftH9H2lbpI+W8VSQ7Z5NsRacWyJwRX7fxqXPL5znAak5u1KYb4ovWf1Ldf0b2ryW4E=
+X-Google-Smtp-Source: AGHT+IGTrXflbA7TuH+HMFPKadliLmhPvmaddni0A+suBBUE0r17KKOfpya47jmQzV7xIWL/JMQTbmyuegC/gaPJ6Kk=
+X-Received: by 2002:a05:7022:7f1a:b0:11f:2c9e:87f8 with SMTP id
+ a92af1059eb24-11f34c12699mr14026707c88.34.1766053856001; Thu, 18 Dec 2025
+ 02:30:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251215215301.10433-2-slava@dubeyko.com> <CA+2bHPbtGQwxT5AcEhF--AthRTzBS2aCb0mKvM_jCu_g+GM17g@mail.gmail.com>
+ <efbd55b968bdaaa89d3cf29a9e7f593aee9957e0.camel@ibm.com> <CA+2bHPYRUycP0M5m6_XJiBXPEw0SyPCKJNk8P5-9uRSdtdFw4w@mail.gmail.com>
+In-Reply-To: <CA+2bHPYRUycP0M5m6_XJiBXPEw0SyPCKJNk8P5-9uRSdtdFw4w@mail.gmail.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 18 Dec 2025 11:30:42 +0100
+X-Gm-Features: AQt7F2rd8ZAR0qUouk3bbCRZlGum8CJLI2DtlF-AsBtcTzZCpUDhii1Zu1eXreo
+Message-ID: <CAOi1vP_y+UT8yk00gxQZ7YOfAN3kTu6e6LE1Ya87goMFLEROsw@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix kernel crash in ceph_open()
+To: Patrick Donnelly <pdonnell@redhat.com>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, "slava@dubeyko.com" <slava@dubeyko.com>, 
+	Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>, Viacheslav Dubeyko <vdubeyko@redhat.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
+	Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In decode_choose_args(), arg_map->size is updated before memory is
-allocated for arg_map->args using kcalloc(). If kcalloc() fails, execution
-jumps to the fail label, where free_choose_arg_map() is called to release
-resources. However, free_choose_arg_map() unconditionally iterates over
-arg_map->args using arg_map->size, which can lead to a NULL pointer
-dereference when arg_map->args is NULL:
+On Thu, Dec 18, 2025 at 4:50=E2=80=AFAM Patrick Donnelly <pdonnell@redhat.c=
+om> wrote:
+> > >  Suggest documenting (in the man page) that
+> > > mds_namespace mntopt can be "*" now.
+> > >
+> >
+> > Agreed. Which man page do you mean? Because 'man mount' contains no inf=
+o about
+> > Ceph. And it is my worry that we have nothing there. We should do somet=
+hing
+> > about it. Do I miss something here?
+>
+> https://github.com/ceph/ceph/blob/2e87714b94a9e16c764ef6f97de50aecf1b0c41=
+e/doc/man/8/mount.ceph.rst
+>
+> ^ that file. (There may be others but I think that's the main one
+> users look at.)
 
-  for (i = 0; i < arg_map->size; i++) {
-    struct crush_choose_arg *arg = &arg_map->args[i];
+Hi Patrick,
 
-	for (j = 0; j < arg->weight_set_size; j++)
-	  kfree(arg->weight_set[j].weights);
-    kfree(arg->weight_set);
-	kfree(arg->ids);
-  }
+Is that actually desired?  After having to take a look at the userspace
+code to suggest the path forward in the thread for the previous version
+of Slava's patch, I got the impression that "*" was just an MDSAuthCaps
+thing.  It's one of the two ways to express a match for any fs_name
+(the other is not specifying fs_name in the cap at all).
 
-To prevent this potential NULL pointer dereference, move the assignment to
-arg_map->size to after successful allocation of arg_map->args. This ensures
-that when allocation fails, arg_map->size remains zero and the loop in 
-free_choose_arg_map() is not executed.
+I don't think this kind of matching is supposed to occur when mounting.
+When fs_name is passed via ceph_select_filesystem() API or --client_fs
+option on mount it appears to be a literal comparison that happens in
+FSMapUser::get_fs_cid().  Assuming "*" isn't a valid fs_name (it it was
+the cap syntax wouldn't make sense), the user passing "*" for fs_name
+when mounting would always lead to an error.
 
-Signed-off-by: Tuo Li <islituo@gmail.com>
----
- net/ceph/osdmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-index d245fa508e1c..f67a87b3a7c8 100644
---- a/net/ceph/osdmap.c
-+++ b/net/ceph/osdmap.c
-@@ -363,13 +363,13 @@ static int decode_choose_args(void **p, void *end, struct crush_map *c)
- 
- 		ceph_decode_64_safe(p, end, arg_map->choose_args_index,
- 				    e_inval);
--		arg_map->size = c->max_buckets;
- 		arg_map->args = kcalloc(arg_map->size, sizeof(*arg_map->args),
- 					GFP_NOIO);
- 		if (!arg_map->args) {
- 			ret = -ENOMEM;
- 			goto fail;
- 		}
-+		arg_map->size = c->max_buckets;
- 
- 		ceph_decode_32_safe(p, end, num_buckets, e_inval);
- 		while (num_buckets--) {
--- 
-2.43.0
-
+                Ilya
 
