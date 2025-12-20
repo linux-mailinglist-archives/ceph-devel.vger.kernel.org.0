@@ -1,156 +1,123 @@
-Return-Path: <ceph-devel+bounces-4213-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4214-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9507CD34DF
-	for <lists+ceph-devel@lfdr.de>; Sat, 20 Dec 2025 19:12:04 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2D6CD36C6
+	for <lists+ceph-devel@lfdr.de>; Sat, 20 Dec 2025 21:43:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9BF14300B997
-	for <lists+ceph-devel@lfdr.de>; Sat, 20 Dec 2025 18:12:03 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 895F43001611
+	for <lists+ceph-devel@lfdr.de>; Sat, 20 Dec 2025 20:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83EE2F2905;
-	Sat, 20 Dec 2025 18:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D96F2FE584;
+	Sat, 20 Dec 2025 20:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QC6VONCK"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MQQ9+q7Y"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1725E296BB5
-	for <ceph-devel@vger.kernel.org>; Sat, 20 Dec 2025 18:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E246310627
+	for <ceph-devel@vger.kernel.org>; Sat, 20 Dec 2025 20:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766254321; cv=none; b=du8CtJgi008i4eBvZLDgHch+vTWyYIZ1OBXzjwGQjTDIpNAzQvEHhSxWvQWcM6smYQJowf+M2/FQhuJmQpHIQMQ8EDIBrJ7GR/u/1W0n4O1gi4VOZgLJ/3dQWFjcfHQ12NkEKoEC+Qjh5aBHpGNC0jWeNgfR+Q88d+My0LfSWGs=
+	t=1766263427; cv=none; b=KgrQP1PzEj6xzpglISoZ3Uyumhp/dSR22d3VyALQHCiAvs1WtLNv7FdwG0uQfV9qQ3vWxu6SqlCSB4whB3p5Dqt3b8xyx5/DuiuxLoftsFOsKe/N2+4JEWuzqePN6BwrqvxxugtWB0SaznzTWFITdntIShCUkb+2HSKMVAaS+qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766254321; c=relaxed/simple;
-	bh=Ay3KGStVgzqEmjhLIfYGf6oieNagHUwSAZbApxiWH74=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nFABMNbEz+sqF8wgZq6K74s4X+AU8TGyciLzopK77Ia2LrZqGtHxpCBlml416+7iidCZqwb6MuNfUXABUg5UbO2SZ5DIsZsSJ9vMaws13xHU1o9gA+nZVMXf3f5Z4++2aWBqF3hGaIatot6InfazBoqMMRSqS5Z5AVZ1b563xn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QC6VONCK; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2a110548cdeso38872775ad.0
-        for <ceph-devel@vger.kernel.org>; Sat, 20 Dec 2025 10:11:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766254319; x=1766859119; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OCPrsavXRrgCkioku0preGR8OkAAFMEdGgsNu7tZv/0=;
-        b=QC6VONCK00zk1WMSHcZaTG0t3ysPJac27Jv8MtAorrTe3ETdkH58Bx+rXtSWeKZkiA
-         25/VmCnlWjfOTea2HP5lvaMMmYzmCUnxPn2ud2fDVaOctyipJYnQ18gefCmMVc+Ol+5G
-         K8DOGdtdbHLbpSHdrpDt5U5H4FsskJg3FP5gnn56TkM0A3vllNG5b+/iHYIo7wOB42u+
-         vmi1r+ePauG6iHX7Ng5YtkE2RGVLX/aYw7iRMi82g1vqsGccr881fV4Aen2i/2F/5hNR
-         EsSYMQmuwapjrRYtK85amJZQJAgu3LhEKYHq0NcmKc7AZOuZL3yGL2xV0ht+hoerNXB0
-         FCWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766254319; x=1766859119;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OCPrsavXRrgCkioku0preGR8OkAAFMEdGgsNu7tZv/0=;
-        b=Jwf9e2HL+3QdLFIcV2ndk9I4DtDghDxApfPhqiI80gMQRDWkE2RZdH/GQgCIVxVA9y
-         Jg3W6D6NEP1OGKZK4ne6qivs7SCLYSy9CWSHD6VXKTMu/r+yf3QXVmh8wPDRrPt3w4Mu
-         JtP/cglxCUePENtCyjj0zD7rMYEDUaPYqWwRV2YdcK2IrzMHHQlXgvciJjXM78HaV+eT
-         GWoK3aa0piItF1N9Zww0gmPIFrAhoFV+bn8uuuJOJziCyfjfODN2ZDzdV9X6JJjNg/b1
-         PDbtjd8X/NpaCXUvPJQT85xiIjMswnDVZ4pnfcym7f0LwNN9+KMAzGYavRMS8d4W/B/m
-         +J4Q==
-X-Gm-Message-State: AOJu0YwFR2XIRTERPqT4aITv3pfCfk4lcVEoQH6A6HBjwKqsRzkXXX2g
-	fU6MQwjpdQkSNeOz087y65caQfW/lao6DYVgDEnJWNK0jMHxIjEDOG4P
-X-Gm-Gg: AY/fxX6QRJHNNP1Z8xX/FewY4TZ1zn1mf8QW2wg/+fs0Jy543i5ndWso4PtSZD3oJHJ
-	fpZSIyCZWfXGx6+ABZIiSDFFpByjqd2OEDkKWb3DLJUV5j1I+LhfC4siUGhN8SyZJSmOQjRf7JP
-	jkVFYLKpYZbbbUOOHYsY6d4sZu9T9MFNpzNktahYWJy04kEaMcGcq1pZNt6K/sNavwIkR3slqT7
-	B5zWlo5Do1Q7VY2rW2pFfjrvYxkXB6zvWvL3ew0DC1PIr41SQu+xzuCn/cQ/G6FAqcHg4XOsxmM
-	GtN77dw3r5OldTqAsi0GshCSbFOC6IaSgpfVrMBTqhS76aN/MrD2QGBphH/bmWuI+2QtV4p8k3l
-	mcNQMMOuRNXlkji/sd+qoOXQOCJjxoU4bdjQmE9ascXMF1zxARs6zW/CxDCl+7cZdooi8ggYzq+
-	rH8KdineDvF3fX6Ry2sbFb1beElN4xTCimFYse/mcyHj0=
-X-Google-Smtp-Source: AGHT+IEuKZUO1bxNs2FSDcuN04H0zaA+q7W8IXJpJUS/kqD3kBRFMFi/lh36QgFBP4ZWFQbTKjulkw==
-X-Received: by 2002:a17:902:c403:b0:2a1:35df:2513 with SMTP id d9443c01a7336-2a2f22317b1mr64715615ad.17.1766254319364;
-        Sat, 20 Dec 2025 10:11:59 -0800 (PST)
-Received: from localhost.localdomain ([223.72.88.58])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3d5d3e1sm54325085ad.76.2025.12.20.10.11.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Dec 2025 10:11:59 -0800 (PST)
-From: Tuo Li <islituo@gmail.com>
-To: idryomov@gmail.com,
-	xiubli@redhat.com
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tuo Li <islituo@gmail.com>
-Subject: [PATCH v2] net: ceph: make free_choose_arg_map() resilient to partial allocation
-Date: Sun, 21 Dec 2025 02:11:49 +0800
-Message-ID: <20251220181149.46699-1-islituo@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1766263427; c=relaxed/simple;
+	bh=XDCK+uO8ImkcGZB9c1/m2PCmuqB+JyCSrfTUtVVbdJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q/290tJ8oyJmCpsquTJRx1tbXBgdfFaLN6l0kbm5JOq/TYO8qyLFBNUjA+UfJmKahww2vWbX59zFFf9Kpm1csAMpuqaYbt/0asaeJyz2opxAPZNDcrDasl9NssMPY0WwwgosyYwVdWBklwrIDZkPHkbIYrQeF5uOrJB5G3sb3CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MQQ9+q7Y; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1766263426; x=1797799426;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=XDCK+uO8ImkcGZB9c1/m2PCmuqB+JyCSrfTUtVVbdJo=;
+  b=MQQ9+q7YgeQzp/UHrrZ/Zy2o6v060brNop5jDo5JPMzodrbJKu7zfelj
+   UhlzI4ia7vhyYbaikrfenhqHmHqbk1ksMF1RWB/a64iSgta1SHuC8Ce7U
+   3z3DtFFk7WmUqfjm250Yd+Lek4p//WZLlWRmeyeEDLov8e5oSnqh75BKU
+   iDmwTOnDXVDk3GcvRQ6pTXhnO3+qw7BJ1dCV3bjdkDbK8Olx6XO9q5JLW
+   gTlN6KwrZV8InXxDdzL8vaoVw4I1CKczmXJQOnmg0ojx8+N+XWhS+E9fJ
+   JCg3seuaoHD82zqYAwr/OsMO5P1FWCzCFFIt9Is1ZL2nDE8qIyH0XBgv7
+   A==;
+X-CSE-ConnectionGUID: HYJRV2L+RpmKrQiMD7foSw==
+X-CSE-MsgGUID: dfDTc9kdTHqfZKh/fibArg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11648"; a="85601321"
+X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
+   d="scan'208";a="85601321"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2025 12:43:46 -0800
+X-CSE-ConnectionGUID: j2ygyByPS0qC4L+cquTVCg==
+X-CSE-MsgGUID: cOSWewgNQMeEHjS277EXlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
+   d="scan'208";a="198914774"
+Received: from lkp-server01.sh.intel.com (HELO 0d09efa1b85f) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 20 Dec 2025 12:43:44 -0800
+Received: from kbuild by 0d09efa1b85f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vX3nh-0000000057V-2FBK;
+	Sat, 20 Dec 2025 20:43:41 +0000
+Date: Sun, 21 Dec 2025 04:43:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: lamtung-monash <lam.nguyentung@monash.edu>
+Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
+Subject: [ceph-client:pr/29 1/1]
+ arch/powerpc/kvm/../../../virt/kvm/eventfd.c:621:26: error:
+ 'KVM_MAX_IRQ_ROUTES' undeclared; did you mean 'KVM_CAP_IRQ_ROUTING'?
+Message-ID: <202512210455.ARaCp1h0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-free_choose_arg_map() may dereference a NULL pointer if its caller fails
-after a partial allocation.
+tree:   https://github.com/ceph/ceph-client.git pr/29
+head:   a0479e90ee5778543f7bcaafd85387c2eea73126
+commit: a0479e90ee5778543f7bcaafd85387c2eea73126 [1/1] Don't accept obviously wrong gsi values via KVM_IRQFD
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20251221/202512210455.ARaCp1h0-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251221/202512210455.ARaCp1h0-lkp@intel.com/reproduce)
 
-For example, in decode_choose_args(), if allocation of arg_map->args
-fails, execution jumps to the fail label and free_choose_arg_map() is
-called. Since arg_map->size is updated to a non-zero value before memory
-allocation, free_choose_arg_map() will iterate over arg_map->args and
-dereference a NULL pointer.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512210455.ARaCp1h0-lkp@intel.com/
 
-To prevent this potential NULL pointer dereference and make
-free_choose_arg_map() more resilient, add checks for pointers before
-iterating.
+All errors (new ones prefixed by >>):
 
-Signed-off-by: Tuo Li <islituo@gmail.com>
----
-v2:
-* Add pointer checks before iterating in free_choose_arg_map(), instead of
-  moving the arg_map->size assignment in decode_choose_args().
-  Thanks to Viacheslav Dubeyko for pointing out the issue with the previous
-  patch, and to Ilya Dryomov for the helpful advice.
----
- net/ceph/osdmap.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+   arch/powerpc/kvm/../../../virt/kvm/eventfd.c: In function 'kvm_irqfd':
+>> arch/powerpc/kvm/../../../virt/kvm/eventfd.c:621:26: error: 'KVM_MAX_IRQ_ROUTES' undeclared (first use in this function); did you mean 'KVM_CAP_IRQ_ROUTING'?
+     621 |         if (args->gsi >= KVM_MAX_IRQ_ROUTES)
+         |                          ^~~~~~~~~~~~~~~~~~
+         |                          KVM_CAP_IRQ_ROUTING
+   arch/powerpc/kvm/../../../virt/kvm/eventfd.c:621:26: note: each undeclared identifier is reported only once for each function it appears in
 
-diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-index 34b3ab59602f..08157945af43 100644
---- a/net/ceph/osdmap.c
-+++ b/net/ceph/osdmap.c
-@@ -241,22 +241,26 @@ static struct crush_choose_arg_map *alloc_choose_arg_map(void)
- 
- static void free_choose_arg_map(struct crush_choose_arg_map *arg_map)
- {
--	if (arg_map) {
--		int i, j;
-+	int i, j;
-+
-+	if (!arg_map)
-+		return;
- 
--		WARN_ON(!RB_EMPTY_NODE(&arg_map->node));
-+	WARN_ON(!RB_EMPTY_NODE(&arg_map->node));
- 
-+	if (arg_map->args) {
- 		for (i = 0; i < arg_map->size; i++) {
- 			struct crush_choose_arg *arg = &arg_map->args[i];
--
--			for (j = 0; j < arg->weight_set_size; j++)
--				kfree(arg->weight_set[j].weights);
--			kfree(arg->weight_set);
-+			if (arg->weight_set) {
-+				for (j = 0; j < arg->weight_set_size; j++)
-+					kfree(arg->weight_set[j].weights);
-+				kfree(arg->weight_set);
-+			}
- 			kfree(arg->ids);
- 		}
- 		kfree(arg_map->args);
--		kfree(arg_map);
- 	}
-+	kfree(arg_map);
- }
- 
- DEFINE_RB_FUNCS(choose_arg_map, struct crush_choose_arg_map, choose_args_index,
+
+vim +621 arch/powerpc/kvm/../../../virt/kvm/eventfd.c
+
+   614	
+   615	int
+   616	kvm_irqfd(struct kvm *kvm, struct kvm_irqfd *args)
+   617	{
+   618		if (args->flags & ~(KVM_IRQFD_FLAG_DEASSIGN | KVM_IRQFD_FLAG_RESAMPLE))
+   619			return -EINVAL;
+   620	
+ > 621		if (args->gsi >= KVM_MAX_IRQ_ROUTES)
+   622			return -EINVAL;
+   623	
+   624		if (args->flags & KVM_IRQFD_FLAG_DEASSIGN)
+   625			return kvm_irqfd_deassign(kvm, args);
+   626	
+   627		return kvm_irqfd_assign(kvm, args);
+   628	}
+   629	
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
