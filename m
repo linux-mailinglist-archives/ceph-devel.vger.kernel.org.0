@@ -1,269 +1,239 @@
-Return-Path: <ceph-devel+bounces-4210-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4211-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCC8CD2378
-	for <lists+ceph-devel@lfdr.de>; Sat, 20 Dec 2025 00:58:54 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47393CD2884
+	for <lists+ceph-devel@lfdr.de>; Sat, 20 Dec 2025 07:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C14F530173AC
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Dec 2025 23:58:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 31DE130155E0
+	for <lists+ceph-devel@lfdr.de>; Sat, 20 Dec 2025 06:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A81F2E9EDA;
-	Fri, 19 Dec 2025 23:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC3729346F;
+	Sat, 20 Dec 2025 06:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c8bup+hi";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="fbmDdrvD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dI6R/G+4"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943282D877B
-	for <ceph-devel@vger.kernel.org>; Fri, 19 Dec 2025 23:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36CF25C80E
+	for <ceph-devel@vger.kernel.org>; Sat, 20 Dec 2025 06:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766188730; cv=none; b=vD6rooNGVSzNxqad7wxosgIHnM5eE0uDX+mlhb2ppQRxhy1EGRedaeVkxcf+Klu8fEIxHgYMUK/xoQcYRa5EW9rzTyDqS/TzuodslbFUezfYt1BM96EABhyAsYowFaAw5NLsBR/RsyKN3jZqEo6CQJK+EvO4+xRNxcv9/Qbw0Zk=
+	t=1766211910; cv=none; b=p6aDlIJcJlLIiBuFLuwrMfl1eAGiBW9i4tBqYDllPCrTN856e1xMi3TRlHYoMuYYDNhjVVhuxlwLcJnyaKVhSCVQkyCLUYm0KtpV3Ii6J1tKxGLJz6nPwYHZ3OMVov4rfm7QrQTqN1jCKmmdq37DXzZtu0fVLmasG1Ow93CjCtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766188730; c=relaxed/simple;
-	bh=3u+wRxvSnBu2DYnRS5qezVpOYUKFtp8f+0DURL13tJE=;
+	s=arc-20240116; t=1766211910; c=relaxed/simple;
+	bh=D6FeS90Nj1iKMVHt3wpk0Fuh2gcwJBgtf5xoOr/OeIc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tCRUxDENzneVlGq+1jWbbj1dAO21BIwMkGBc6q1U98ZcifpBiVegh0Z3yaldb7pzf+nPMyL/Umgel7CiEyFy+pbkAgHiKBC2THtyTdjmq2Ac6gUukiKYahUTec9wQUhKNGzRFCBvl0E9LIN/Q0L1j4MpbxZ8vRWtrb/wxOyM4pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c8bup+hi; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=fbmDdrvD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766188727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rk8dyP1U3BGhjW2OLLawRUf26Ox6mt0Bj/ji5DJjy0w=;
-	b=c8bup+hicanJdcSLVbO0F7/hLaSRiTRI21qpPwunGMCTW9PE2V2ZwSmDgYkuQg6mVpKeaa
-	RLEAt3KVr4V/CJ48B+Yi4S7IKJfW7pPNJ2a3Q2wBUCbt4MhXSE0Rk4OucXlshOdLjacGvI
-	nmBFmX75Qet4DcIMIq4Nl6qVVf0ofok=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-dwoJSkh-NZG8lIAsrFTlXw-1; Fri, 19 Dec 2025 18:58:46 -0500
-X-MC-Unique: dwoJSkh-NZG8lIAsrFTlXw-1
-X-Mimecast-MFC-AGG-ID: dwoJSkh-NZG8lIAsrFTlXw_1766188726
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-6574d564a9eso3460603eaf.2
-        for <ceph-devel@vger.kernel.org>; Fri, 19 Dec 2025 15:58:46 -0800 (PST)
+	 To:Cc:Content-Type; b=apsjUb/IHU0kBLQeDygJIXjzcPp8nGWGNTNuKiPkCh0kPGoTchSr2XX0tG+41+m+Klfn4A0uL0iwHPAQspSpYPfMknVXzmSisKMDXRNtDa6J66Ttls8lVMifylfxOLRGLe518icGXWmBJiCUNqJ9Fb5pPFrYHTvcIh5kgdBD2K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dI6R/G+4; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2a0d5c365ceso29934365ad.3
+        for <ceph-devel@vger.kernel.org>; Fri, 19 Dec 2025 22:25:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1766188725; x=1766793525; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1766211908; x=1766816708; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rk8dyP1U3BGhjW2OLLawRUf26Ox6mt0Bj/ji5DJjy0w=;
-        b=fbmDdrvD7H1a/Rpvod9PomL9fnjdfhoapu+F3k39Op4BvzJid5LUYqPl46C1UYfBMJ
-         5Kv/R0J3tOtmqjHaQ0dS6ASJYIFQ3s8q78t3XM3E48p7lvtXhyiODU9qraJknmawe1mI
-         9Tt0ToPQxeJeaNlfzUEActX3y24HF5evBsGC/fLSzgzKbCZS455gOuMSecSH79/geF6F
-         1OrV22sX1Bs8uDen0E8y3zwHIzKBgQlW+mwcvFSkuU1MKlwokJjb6zCMHzXzgTg/qZ5/
-         bH20s7WCiaF0NF6wEvyzQeExNFpLaYqAzKj9NqsvMifloK8SuTGG8BSZHQ5GJ4IXcx+Z
-         7GVA==
+        bh=Bban3JBmQ/h0Y1kLfFj3ZIomZCy9kEdnoLpD/EjcgHQ=;
+        b=dI6R/G+4vnH6UrpddUar4AsgTF106p1eVijdh6t2eCNTsV8nkxyyEwgZCoSdG7wqQ2
+         no2QIXDwmF42d0tjPzB8nlIe4zG5n3CmwiRqVYGytRpMTvOYtSul1eFqhM8PDZvvsMD2
+         9klIDvRL6Se/eTMKf1peZwYON5CHtevzC1Jv4B50Lknly0dgZokzOVtEZMUAkV0as+BG
+         d4Go2D0JDS4jqvjwiyDXViy3bzsOmVDgRDqErkyykZQBksjjlciR+v+I0UCV2ivzoj+1
+         ZF+ZM4TBKo2DAyAN8WK25Z4RVDhLDrty62BxcwHPkiw3v5qy8CopyO+2vW9XeofDR9h8
+         i57w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766188725; x=1766793525;
+        d=1e100.net; s=20230601; t=1766211908; x=1766816708;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=rk8dyP1U3BGhjW2OLLawRUf26Ox6mt0Bj/ji5DJjy0w=;
-        b=mhFhEZjTv1IPcCnXWg1mel80543x3L7A+2FdSNLn8q/FZcGdLHai9sqHiPRIyVJMHN
-         oyqxzQnvkT0FFfwRHyPvKvTE7WKMnqVmw+8ilyfeGzbF7ql0u4/GeVPIrCnoxTXZClVO
-         CKFp+8dwNyjppZ34DxUizgDwgygVAy+2tMlAwJnOXCI1tzO3CrH1dUzQNyDSMDh1r9Ey
-         wGX4AlPU4N8vkXloSfEsC/hcxRMXMvzh05i4LA7947BwAoftC4vNvcBoX6lAqA5WkXzJ
-         9RBssoeeXePNrgnyzblJ8gfdMmePepobM3PenWHgTqWNhHWmOip3NGr5vaBLAn+FmORj
-         vg0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUsflmHpQHCmJLnGBpQWqZdtZj83tmqypfjF1GVdx8wIvoAQfEzWic9exlpm0opebLImoT+Ew0Y0vqA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4aQwUTmTy//k+jJDDpM3rmkzvFq6dED+PG4U0hasG4ACzkZ6u
-	No9+zjimKn/y2MsbywDeM0YiVPxaJ0rknP5wIIgcgeUMYFCbuYN+ECpfU8rw4KGoAl+yx1I/HUk
-	9QD4nYmDiLC2RBb3AwPV8rWYuhH8VPDtG/UGh2cEyDMtaOZCUJV0wPMZ8hm6jSTZdlng/xGih+E
-	2JmhLR0jUHZQ84RhnbQ0FVTDP/FrlYYWPbUK0k3w==
-X-Gm-Gg: AY/fxX7beo1SdwhdwPN+xxwxFhqWmn/jdHU9ltyE1S+VhHbmEU0yFIh9fQpNx/DLMIX
-	xZ5rr7Gj4BjnUMcZKlNZgimSAMfop2lOUeU4y9oV+mFc3RKNa61eln9UTdfw+LN7Cwbq0Tg4ZY6
-	ODAndBpr3CtLUsNg7SxPqi2q57MLbPoWZeIAAQReUnljug/RJVzdf/9mYu0se9Y52n/4vaa33uW
-	zKx57lZxMq8FFVM+CpNz23rdg==
-X-Received: by 2002:a05:6820:6381:b0:65b:31cf:ca92 with SMTP id 006d021491bc7-65d0eb4d653mr1271492eaf.84.1766188725643;
-        Fri, 19 Dec 2025 15:58:45 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFA3RVT/hPLpqrv6NTSpuR3bzXU3BTHq6KK23XsClo5T9r8b1/qe4V6MAkyTtjGtXHF7pqMXsvM9f2tlcbdlXQ=
-X-Received: by 2002:a05:6820:6381:b0:65b:31cf:ca92 with SMTP id
- 006d021491bc7-65d0eb4d653mr1271489eaf.84.1766188725284; Fri, 19 Dec 2025
- 15:58:45 -0800 (PST)
+        bh=Bban3JBmQ/h0Y1kLfFj3ZIomZCy9kEdnoLpD/EjcgHQ=;
+        b=vUagtonezVKhBGH3qMNwZu5tUNIGPmGq7zPfvkWVwMMpVJ4ZwQmrWT+DpDRdop/eDp
+         u05IvCSNps9DAu8BJthwnAMzEBsrXOV1NzGTMO/Ci0wpOZnH2MEb+gm1dy434YDoY7P8
+         uFxwfAY08nMO91Fw41jZlNgS1jwctoVp0pfxFb77jrjBSUytaEtu4OnZJ1vDBfUTOjBM
+         TiNBUbEWf0z2KYwXER07UzPZ/D6OX77qdL2s230G95y/YrlgGIRTLPHMpFewfNpQk/9f
+         QZyEcn6qhYzkIRoFvti6LSTn8HrI/o1XJexhyajm/rHogHzrLOL1n9q/f0ji7AdaKwCG
+         nr6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVOhNS54E5DOSwJK42LxBpMCH0sHq1Fsp8uEjsfVcS6OwtYeA2TZLWJgY4hWPZzb0N0XlCyjgdHsThy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3Wja+xjQ6B5Oe/uJzIWvZSFrdWnDtCeEYqX7EEjmXCmvuplDj
+	Tqs8YM2mN+FYwsGD2VxPKGWi4ttQjX9Lk5GhWrkfEz5RWgve4rgSliNI7EvMeROjVnTEyVBw5jT
+	QdsjpDox4gVZi63KkgpwuKsWU4IH1ETpjHjxkyuo=
+X-Gm-Gg: AY/fxX6spl4Eskt88FNBt+ZlkpEsmR2WTTWk+kFOg3Eyz87657mRzkkA3TFC8u5ZLYa
+	VALZLUh7ukm66komKMrxj+MTh6onBz/dGfzsRlbR+4r3horThjIRWixqj+JNadIiYz9LNEI7QQx
+	wD8w1cTTt+IrvZ2V+3n0AqsxHFk61xiFrOY/RkOhU4/a6HSi4KSxnoU5FdgOjjCnENffiBSx4Lv
+	ymXCxY/4N010j/xt+N+lEoujEpETYSjn/iwaXt7O00HIn+6D1vwyHWkEa5yaarSMM4vFw==
+X-Google-Smtp-Source: AGHT+IGuWkGPUOtPviWRmI7Cu2A0cbNbu9z/8pBOIVtN5JS2S2DjMuBO0S4Z86gQsXzRIl4WZKNGuJIJMY6PCU9Ib4g=
+X-Received: by 2002:a05:7022:e803:b0:119:e569:f27f with SMTP id
+ a92af1059eb24-121722eb27emr5673686c88.40.1766211907841; Fri, 19 Dec 2025
+ 22:25:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215215301.10433-2-slava@dubeyko.com> <CA+2bHPbtGQwxT5AcEhF--AthRTzBS2aCb0mKvM_jCu_g+GM17g@mail.gmail.com>
- <efbd55b968bdaaa89d3cf29a9e7f593aee9957e0.camel@ibm.com> <CA+2bHPYRUycP0M5m6_XJiBXPEw0SyPCKJNk8P5-9uRSdtdFw4w@mail.gmail.com>
- <CAOi1vP_y+UT8yk00gxQZ7YOfAN3kTu6e6LE1Ya87goMFLEROsw@mail.gmail.com>
- <CA+2bHPYp-vcorCDEKU=3f6-H2nj5PHT=U_4=4pmO5bihiDStrA@mail.gmail.com>
- <CAOi1vP8o7NAmrHi96UJ8B8DxFSHCgiczDCU=r2TAVn2oi1VD8A@mail.gmail.com>
- <CA+2bHPb41OinL5E_HXpXTGww2WWqEU3k06JfVHZ9joUQuYsBPg@mail.gmail.com> <7d1f950f242b748b16acb88a92e062206628cd35.camel@ibm.com>
-In-Reply-To: <7d1f950f242b748b16acb88a92e062206628cd35.camel@ibm.com>
-From: Patrick Donnelly <pdonnell@redhat.com>
-Date: Fri, 19 Dec 2025 18:58:19 -0500
-X-Gm-Features: AQt7F2qxAGvLoyudmB7kefd92tNMjPgsCxKXQXYC6Jb4YBC2eEDBrrILcl6XNow
-Message-ID: <CA+2bHPaFSheGxMvZWuk5OYWrGk3KzOmSSNRoMUNEY=og_uHkxg@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix kernel crash in ceph_open()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "idryomov@gmail.com" <idryomov@gmail.com>, Kotresh Hiremath Ravishankar <khiremat@redhat.com>, 
-	Viacheslav Dubeyko <vdubeyko@redhat.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>, 
-	Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>, Alex Markuze <amarkuze@redhat.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20251218075603.8797-1-islituo@gmail.com> <f9f2ef979100a8809d7e3ac6106362f7a273e1e0.camel@ibm.com>
+ <CADm8TenqC62ddsVdo3ipC_HL3S1w7jC-=54NbU3qWvJUvyB+Xg@mail.gmail.com> <CAOi1vP9Ho5eObbH4o-_66M9RFks=g7OUNnUyPUFMq1CgnBxfKQ@mail.gmail.com>
+In-Reply-To: <CAOi1vP9Ho5eObbH4o-_66M9RFks=g7OUNnUyPUFMq1CgnBxfKQ@mail.gmail.com>
+From: Tuo Li <islituo@gmail.com>
+Date: Sat, 20 Dec 2025 14:24:56 +0800
+X-Gm-Features: AQt7F2pz4Y32ACFDdQIiDrUDephlNa77rlzWIo1vOT9l-fQC8zHiDd8rMteoGPE
+Message-ID: <CADm8TemRooH7BBpzW6E+S5yjMK=JG0gNARXJmttRX0Bp7ByQ9g@mail.gmail.com>
+Subject: Re: [PATCH] net: ceph: Fix a possible null-pointer dereference in decode_choose_args()
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Xiubo Li <xiubli@redhat.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 19, 2025 at 3:44=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
+On Fri, Dec 19, 2025 at 9:35=E2=80=AFPM Ilya Dryomov <idryomov@gmail.com> w=
+rote:
 >
-> On Fri, 2025-12-19 at 08:21 -0500, Patrick Donnelly wrote:
-> > On Fri, Dec 19, 2025 at 8:01=E2=80=AFAM Ilya Dryomov <idryomov@gmail.co=
-m> wrote:
+> On Fri, Dec 19, 2025 at 7:26=E2=80=AFAM Tuo Li <islituo@gmail.com> wrote:
+> >
+> > Hi Slava,
+> >
+> > On Fri, Dec 19, 2025 at 3:11=E2=80=AFAM Viacheslav Dubeyko
+> > <Slava.Dubeyko@ibm.com> wrote:
 > > >
-> > > On Thu, Dec 18, 2025 at 7:08=E2=80=AFPM Patrick Donnelly <pdonnell@re=
-dhat.com> wrote:
+> > > On Thu, 2025-12-18 at 15:56 +0800, Tuo Li wrote:
+> > > > In decode_choose_args(), arg_map->size is updated before memory is
+> > > > allocated for arg_map->args using kcalloc(). If kcalloc() fails, ex=
+ecution
+> > > > jumps to the fail label, where free_choose_arg_map() is called to r=
+elease
+> > > > resources. However, free_choose_arg_map() unconditionally iterates =
+over
+> > > > arg_map->args using arg_map->size, which can lead to a NULL pointer
+> > > > dereference when arg_map->args is NULL:
 > > > >
-> > > > On Thu, Dec 18, 2025 at 5:31=E2=80=AFAM Ilya Dryomov <idryomov@gmai=
-l.com> wrote:
-> > > > >
-> > > > > On Thu, Dec 18, 2025 at 4:50=E2=80=AFAM Patrick Donnelly <pdonnel=
-l@redhat.com> wrote:
-> > > > > > > >  Suggest documenting (in the man page) that
-> > > > > > > > mds_namespace mntopt can be "*" now.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Agreed. Which man page do you mean? Because 'man mount' conta=
-ins no info about
-> > > > > > > Ceph. And it is my worry that we have nothing there. We shoul=
-d do something
-> > > > > > > about it. Do I miss something here?
-> > > > > >
-> > > > > > https://github.com/ceph/ceph/blob/2e87714b94a9e16c764ef6f97de50=
-aecf1b0c41e/doc/man/8/mount.ceph.rst
-> > > > > >
-> > > > > > ^ that file. (There may be others but I think that's the main o=
-ne
-> > > > > > users look at.)
-> > > > >
-> > > > > Hi Patrick,
-> > > > >
-> > > > > Is that actually desired?  After having to take a look at the use=
-rspace
-> > > > > code to suggest the path forward in the thread for the previous v=
-ersion
-> > > > > of Slava's patch, I got the impression that "*" was just an MDSAu=
-thCaps
-> > > > > thing.  It's one of the two ways to express a match for any fs_na=
-me
-> > > > > (the other is not specifying fs_name in the cap at all).
+> > > >   for (i =3D 0; i < arg_map->size; i++) {
+> > > >     struct crush_choose_arg *arg =3D &arg_map->args[i];
 > > > >
-> > > > Well, '*' is not a valid name for a file system (enforced via
-> > > > src/mon/MonCommands.h) so it's fairly harmless to allow. I think th=
-ere
-> > >
-> > > By "allow", do you mean "handle specially"?  AFAIU passing "-o
-> > > mds_namespace=3D*" on mount is already allowed in the sense that the
-> > > value (a single "*" character) would be accepted and then matched
-> > > literally against the names in the fsmap.  Because "*" isn't a valid
-> > > name, such an attempt to mount is guaranteed to fail with ENOENT.
-> >
-> > Yes, correct.
-> >
-> > > > is a potential issue with "legacy fscid" (which indicates what the
-> > > > default file system to mount should be according to the ceph admin)=
-.
-> > > > That only really influences the ceph-fuse client I think because --
-> > > > after now looking at the kernel code -- it seems the kernel just
-> > > > mounts whatever it can find in the FSMap if no mds_namespace is
-> > > > specified. (If it were to respect the configured legacy file system=
-,
-> > > > it should sub to "mdsmap" if no mds_namespace is specified. s.f.
-> > > > src/mon/MDSMonitor.cc)
-> > >
-> > > In create_fs_client() the kernel asks for an unqualified mdsmap if
-> > > no mds_namespace is specified:
-> > >
-> > >     if (!fsopt->mds_namespace) {
-> > >             ceph_monc_want_map(&fsc->client->monc, CEPH_SUB_MDSMAP,
-> > >                                0, true);
-> > >     } else {
-> > >             ceph_monc_want_map(&fsc->client->monc, CEPH_SUB_FSMAP,
-> > >                                0, false);
-> > >     }
-> > >
-> > > I thought a subscription for an unqualified mdsmap (i.e. a generic
-> > > "mdsmap" instead of a specific "mdsmap.<fscid>") was how the default
-> > > filesystem thing worked.  Does this get overridden somewhere or am
-> > > I missing something else?
-> >
-> > Ah, I didn't see that code. Yes, this looks right then.
-> >
+> > > >       for (j =3D 0; j < arg->weight_set_size; j++)
+> > > >         kfree(arg->weight_set[j].weights);
+> > > >     kfree(arg->weight_set);
+> > > >       kfree(arg->ids);
+> > > >   }
 > > > >
-> > > > So I think there is a potential for "*" to be different from nothin=
-g.
-> > > > The latter is supposed to be whatever the legacy fscid is.
-> > >
-> > > Are you stating this in the context of mounting or in the context of
-> > > the MDS auth cap matching?
-> >
-> > mounting.
-> >
-> > >  In my previous message, I was trying to
-> > > separate the case of mounting (where the name can be supplied by the
-> > > user via mds_namespace option) from the case of ceph_mds_auth_match()
-> > > where the name that is coming from the mdsmap is matched against the
-> > > name in the cap.  AFAIU in userspace "*" has special meaning only in
-> > > the latter case.
-> >
-> > I understand what you've been saying. I contend that treating "*"
-> > specially for mds_namespace mntopt could be useful: you can select
-> > *any* available file system even if none of them are marked as the
-> > legacy fscid.
-> >
-> > Big picture I don't think this matters much. It'd probably be better
-> > to only use namespace_equals (no "*" handling) for mntopt matching and
-> > something else for the mds auth cap matching (yes "*" handling).
-> >
-> > > > Slava: I also want to point out that ceph_mdsc_handle_fsmap should
-> > > > also be calling namespace_equals (it currently duplicates the old
-> > > > logic).
+> > > > To prevent this potential NULL pointer dereference, move the assign=
+ment to
+> > > > arg_map->size to after successful allocation of arg_map->args. This=
+ ensures
+> > > > that when allocation fails, arg_map->size remains zero and the loop=
+ in
+> > > > free_choose_arg_map() is not executed.
 > > > >
-> > > > > I don't think this kind of matching is supposed to occur when mou=
-nting.
-> > > > > When fs_name is passed via ceph_select_filesystem() API or --clie=
-nt_fs
-> > > > > option on mount it appears to be a literal comparison that happen=
-s in
-> > > > > FSMapUser::get_fs_cid().
+> > > > Signed-off-by: Tuo Li <islituo@gmail.com>
+> > > > ---
+> > > >  net/ceph/osdmap.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > > >
-> > > > Sorry, are you mixing the kernel and C++? I'm not following.
+> > > > diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+> > > > index d245fa508e1c..f67a87b3a7c8 100644
+> > > > --- a/net/ceph/osdmap.c
+> > > > +++ b/net/ceph/osdmap.c
+> > > > @@ -363,13 +363,13 @@ static int decode_choose_args(void **p, void =
+*end, struct crush_map *c)
+> > > >
+> > > >               ceph_decode_64_safe(p, end, arg_map->choose_args_inde=
+x,
+> > > >                                   e_inval);
+> > > > -             arg_map->size =3D c->max_buckets;
 > > >
-> > > I'm trying to ensure that we don't introduce an unnecessary discrepan=
-cy
-> > > in behavior between the kernel client and the userspace client/gatewa=
-ys.
-> > > If passing "*" for fs_name is a sure way to make Client::mount() fail
-> > > with ENOENT in userspace, the kernel client shouldn't be doing (and o=
-n
-> > > top of that documenting) something different IMO.
+> > > The arg_map->size defines the size of memory allocation. If you remov=
+e the
+> > > assignment here, then which size kcalloc() will allocate. I assume we=
+ could have
+> > > two possible scenarios here: (1) arg_map->size is equal to zero -> no=
+ allocation
+> > > happens, (2) arg_map->size contains garbage value -> any failure coul=
+d happen.
+> > >
+> > > Have you reproduced the declared issue that you are trying to fix? Ar=
+e you sure
+> > > that your patch can fix the issue? Have you tested your patch at all?
+> > >
+> > > Thanks,
+> > > Slava.
 > >
-> > I wouldn't suggest the kernel change without also updating userspace.
-> > In any case, we can drop the suggestion.
+> > Thanks for your careful review.
+> >
+> > I found this issue through static analysis. It is indeed hard to reprod=
+uce
+> > in practice, since intentionally triggering a kcalloc() failure is not
+> > easy, but I think the NULL-dereference on the error path is theoretical=
+ly
+> > possible.
+> >
+> > You are absolutely right that my original fix is incorrect, as kcalloc(=
+)
+> > relies on arg_map->size, and moving the assignment can introduce a new
+> > bug. I am so sorry for the oversight.
+> >
+> > After reading the code again, I see two possible approaches:
+> >
+> > 1. Keep the assignment to arg_map->size after the allocation, but use
+> > c->max_buckets directly as the allocation size when calling kcalloc().
+> >
+> > 2. Keep the assignment before kcalloc(), but explicitly set
+> > arg_map->size =3D 0 before jumping to fail, so that free_choose_arg_map=
+()
+> > does not iterate over a NULL pointer.
+> >
+> > I would appreciate your thoughts on which approach is preferable, or if
+> > there is a better alternative.
 >
-> OK. Finally, I assume that we agreed to drop: "Suggest documenting (in th=
-e man
-> page) that
-> mds_namespace mntopt can be "*" now." Am I correct? :)
+> Hi Tuo,
+>
+> I think it would be better to make free_choose_arg_map() more resilient
+> instead.  The pattern that is followed elsewhere in the surrounding code
+> (e.g. crush_destroy()) is that the size of the array is considered valid
+> only the array itself is allocated.  Something like this:
+>
+> static void free_choose_arg_map(struct crush_choose_arg_map *arg_map)
+> {
+>         int i, j;
+>
+>         if (!arg_map)
+>                 return;
+>
+>         WARN_ON(!RB_EMPTY_NODE(&arg_map->node));
+>
+>         if (arg_map->args) {
+>                 for (i =3D 0; i < arg_map->size; i++) {
+>                         struct crush_choose_arg *arg =3D &arg_map->args[i=
+];
+>                         if (arg->weight_set) {
+>                                 for (j =3D 0; j < arg->weight_set_size; j=
+++)
+>                                         kfree(arg->weight_set[j].weights)=
+;
+>                                 kfree(arg->weight_set);
+>                         }
+>                         kfree(arg->ids);
+>                 }
+>                 kfree(arg_map->args);
+>         }
+>         kfree(arg_map);
+> }
+>
+> Thanks,
+>
+>                 Ilya
 
-Not just documentation but in the code too. namespace_equals should
-only be used for comparisons with the mds_namespace mntopt.
+Hi Ilya,
 
---=20
-Patrick Donnelly, Ph.D.
-He / Him / His
-Red Hat Partner Engineer
-IBM, Inc.
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+Thanks a lot for the detailed suggestion.
 
+I think that making free_choose_arg_map() more resilient is better.
+
+I will rework the fix accordingly and send a v2 patch shortly.
+
+Thanks again for the review and guidance.
+
+Sincerely,
+Tuo
 
