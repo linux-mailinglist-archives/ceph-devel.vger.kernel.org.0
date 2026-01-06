@@ -1,156 +1,224 @@
-Return-Path: <ceph-devel+bounces-4265-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4266-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DEBDCFAF33
-	for <lists+ceph-devel@lfdr.de>; Tue, 06 Jan 2026 21:34:58 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7316CFADA0
+	for <lists+ceph-devel@lfdr.de>; Tue, 06 Jan 2026 21:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7D42930A2E1D
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jan 2026 20:31:50 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 576033053A2A
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jan 2026 19:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140AE34C801;
-	Tue,  6 Jan 2026 19:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2F833EB0B;
+	Tue,  6 Jan 2026 19:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8SVg0Ub"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UBlILWIL"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEB934A77A
-	for <ceph-devel@vger.kernel.org>; Tue,  6 Jan 2026 19:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F0333F8B3
+	for <ceph-devel@vger.kernel.org>; Tue,  6 Jan 2026 19:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767728218; cv=none; b=l+xyhKOSkIu7+w3jnYYctVqe5tbLKwl1M1kvOcH9f5gIjsdkXyYZ2r5H+LywZzjbfqs/Nrb21KopM43f6RChYiOCQ+COgHq96hxr4l4P0xAmppnq2gl/UuN4aianZGc0rYdEYjAhZLie6PXXw9YgeY0720xiVXrHmtlS5zLY9Pc=
+	t=1767728835; cv=none; b=OpugX0ISqFrsdqas+dTtWbi7ZXiSP5Z/ckMxqslINUJPPLJRpu03eLSV1Ku0PluViJ28rWOl154ipQaYTuUhHrqMJvC8zO6ip3nv6dR0wUzvmK7UcbOVAvt5EHvFExotGq6UJ0CqxAQJWRhlEeq58gedWnNv0plM5IRqWN7rF+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767728218; c=relaxed/simple;
-	bh=+vK+pbCHg5AuQAMNcH7Xsrybo0VYc4JXzWJh91HOwvU=;
+	s=arc-20240116; t=1767728835; c=relaxed/simple;
+	bh=ILXA6kGNdK0AI2aMAWTuRv8djKFqV8ifp8wZl+5Vpjo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u4TWE0mWNkBt8Y2sGRlTvF4dqSedaiIqwQqi4fLvGH0vP1hz74OxkO0HaI7fetNiBDSJV8JpKSnpYuQ2WJ4BWbUtfG5pY/MWcnUuKlQ+zK/klBML+2uVFiDEawqm8sNvp38jBwJ0p4iG6UfgS2EaJr5G8FPQskzSjIwSjdN5VCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8SVg0Ub; arc=none smtp.client-ip=74.125.82.46
+	 To:Cc:Content-Type; b=MVdt2XQFsdhhQshZNXW1jgU96wgKLpf/2ieVODuBLpm9zGinZessQRLqw3OFrgQW/VYGXcC4uJv/EA1huPUV3ZlxNuAP6lM7FrPUshO1OEiRVF3TG425KQ7tQVXnkajf6Pz8F8xAsXJPk6RKXSCUWJsVLdfVon4neMo8XVI3iqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UBlILWIL; arc=none smtp.client-ip=74.125.82.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-121a0bcd364so758380c88.0
-        for <ceph-devel@vger.kernel.org>; Tue, 06 Jan 2026 11:36:57 -0800 (PST)
+Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-121bf277922so848785c88.0
+        for <ceph-devel@vger.kernel.org>; Tue, 06 Jan 2026 11:47:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767728216; x=1768333016; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767728832; x=1768333632; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WXjjaYaIKrw+gTeYW42cDMRYVRUc3JfFOvkovGI9dKg=;
-        b=D8SVg0UbobYJfTaeJ1nUeYQHUme/36dKFkmxX43woE+6u+uodSFn46UPlucgCi8kDq
-         8up0oxb+2TThSQhfyh1CkqeY2Nz8IAWrHzRoBBzxnfWK3/WPYl3gyMef14/8ACEGWKrN
-         c/cwqQwYg04VXQewW0D0X4bGqB4Yfm+54tPPgRI9iN5RPIDzq585ta3txylsruqGZ0DU
-         FX7oUJ5LYDgHHm7HCisrJyToaKz7JpIjqszMK+n3SsKRuBG7UPcikJVwbwmfobmZ6bWi
-         us2gKlh6ccMqj+c+Ws05cQw+U+onnpKbdFO5u1cQ8MsDZsBE2sP8kTaENFenuz8YqBP1
-         VGJg==
+        bh=1UiK6s1II+O4ak9r6TBCNK/ydyr827+wB4kZqECupmA=;
+        b=UBlILWILkCRTLTyaOzyAUHNh19bEHhDJ9sPp29G2oBeTPe8dfxQXY82lsEMzVhQQQL
+         uJs9Nrzl++gRcIkJhT70+Oo/Hl/ZDUuK4KHPUceGBni6a7YLxl9s7xwjPbbUwF7hNUw4
+         +hO8Xsdt2aofuF5l3kZW9w2Ed1v8Sns2nfCs+t2rOrkQ96GyRjXWm0t+SKCTv9Lg5xaS
+         P/vPxYhPkI07F2W429bmjdnMdf10d6NM5c3MWVKFA1OZmEoCujFltx2uRvjr6jEcjBnx
+         bG31rpf5DuTuRPJYh+tBdAzeQmYvkMuI5r8WRZGgLUahnuYx+t9Hkk66W5iHmZ5pfzKR
+         Yytg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767728216; x=1768333016;
+        d=1e100.net; s=20230601; t=1767728832; x=1768333632;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=WXjjaYaIKrw+gTeYW42cDMRYVRUc3JfFOvkovGI9dKg=;
-        b=GuPTFg0z+xbZ69NSVEJL4Wik476UJUeSIwAC6klnfKU+uewoI6bKbQq7stGZNxjDoS
-         oKZGMKrXY6m6lXBJJh8/JhsID1V6nDm+HAdxE9syxYWBVAxv8LSkZJJsMqRpjQaL5oMF
-         +OG3KdgkRlGw0OwJtc8lRlIoBH4NgpIzwXtChh6g8iLIdnd7zo4GGoqsiTW7FBEpMGa/
-         Xyh73NTN90L5jrMKsjOVVgL4Gt8Eq+VlMl3soMjDQ8/Shi/szKv4DrnuuYszNarwWDEQ
-         D/KWi1IgO8AmAXBrLwifAkEVaWuD1yQAj+5n/KM9LgNUJhsS4VnoxT9E+lJ2kIdeH45U
-         qH3w==
-X-Gm-Message-State: AOJu0Yw4+rTtW3k/FxFfVfP/48ekpno7DErJnlgRr+EEo1SBLCzDmF/c
-	aqxItz1KacvQTiadUX2G7UVfgvoLAqxFJHYIDup0+0tlKl4hGfJINYcaLoRhX484CxlW3/WPWqF
-	OuLxJTZU1ArrBtLsBuM/CqT8mL7aQzbU=
-X-Gm-Gg: AY/fxX5u9xQbdlVrrU4hw8w44MIm12HjvXTPYfe4FdN3g/kj3yVmAQq1g5hGTDM0Eqf
-	1sPaPabtR1P2taX56j0xNM5z+hW2mkuMaCRB0iYMlB3v1prwV+AkcRW/UdIENL5BTZbOS5beZ7k
-	6OLEL9v8Ym8XjzJ08/itaMWygwWZY7lfVhz4UMGr7mvSV1WzQVlznpTBS3UmdJh31/Nc97x4tTT
-	WRqmgx0NgOxumm29JHgL3wOYs2T9oTotj99kuz8RgXq+J7ARUOwvq9nTY/OH2soObCC5uw=
-X-Google-Smtp-Source: AGHT+IE3zlqf6Rsg2NfEghTtEap2r7VGTGyPvf/chDcA2HhBdTWu7/EJ540dNhazupWOs+mIPT5IqVMGjG1guvh35hQ=
-X-Received: by 2002:a05:7022:429e:b0:119:e56c:18a9 with SMTP id
- a92af1059eb24-121f8b14700mr57733c88.17.1767728216103; Tue, 06 Jan 2026
- 11:36:56 -0800 (PST)
+        bh=1UiK6s1II+O4ak9r6TBCNK/ydyr827+wB4kZqECupmA=;
+        b=vuNlWdRUTKem1OHVNkqsWYLwQIZUE/B0m1YD9ZILDtXQmY2JgLFSNxfLhulSuRdf34
+         NQn7RWdKGhUFYmkfeDcVUvDp3I4+D7VI7kvrs92J8r9eY1DY4M8mWOu63YzwFTOUnL7q
+         +gJ6QLjHnH1di91IbAfrquRFH1Kw7S4RKhll5LoyhyMyfVOjjNL/nhukt3sdxCRXB/Gc
+         utpNxZT1VCU6zjUiZIPwaI2FWBuVQcARR52gI9hpPCGfenY2c+A1oUhFQEVMRqLTRNkD
+         b6ZMWZZYrppp4RbPJUMHssBeF1qqr8Q0h4RMwhWlCMd3+qhb0/VOAp8u/nKNaBqReGs0
+         fZ3Q==
+X-Gm-Message-State: AOJu0YxM8uBsdZ6EgfjPIQG9+ee7P7MWfG2bWl727rzvY797Vash64/U
+	HQQfNd0OLtTH4+s/f65syrv6Q0pM/78DhlS8gEV083qvAhUdYEOXN6Yvot6kB4cmZu3KP3/cvXj
+	wlKeXE0W1jIbnTfhl4lM2PYbhJEcQDKw=
+X-Gm-Gg: AY/fxX6Klqd98XL8gQtVs8OkpOdtgOXhAKwRPgKx2I2QyXz1iFrztT7bYrqe4syXfEa
+	7cWJjUqPDZON8v5qIen9WpI2ArcYx0JHYQ2Qctdbor1arc3TM/RpOc3GrissK3eEVgXd4Q3hrJ5
+	oZfRpQuwI0MFsOd/agugxX1el2ywYisXPJrXs3GeRDvF7dZPeRIG6VhD8OEcS0kMl6qPIWLBoFW
+	AqrjFhYYKdV30y/GkNgxzLQQppHBJ7Ps1PFx7pToBxmvklXigDLGGi6GHYkPwA7GDsk0Xg=
+X-Google-Smtp-Source: AGHT+IEx26um2r8qP1mJi2NpTjFrsg7wENr+WnisUr/007cGnUd4HjXM260XfcSzjJMU/yZ+xFN2n1RAFMhH0KdhLok=
+X-Received: by 2002:a05:7022:628a:b0:11b:a892:80b4 with SMTP id
+ a92af1059eb24-121f8afc1cdmr83031c88.5.1767728832055; Tue, 06 Jan 2026
+ 11:47:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260105213509.24587-1-idryomov@gmail.com> <5ed8e36b5ce24a324e31f5567d338bd35930bdfa.camel@ibm.com>
-In-Reply-To: <5ed8e36b5ce24a324e31f5567d338bd35930bdfa.camel@ibm.com>
+References: <20251231135845.4044168-1-idryomov@gmail.com> <0c55fc3a434624d4eb67babee7108e23e7774cff.camel@ibm.com>
+ <CAOi1vP97PK23jGxtFBDbqUoNDp_ptbHRXgQvdPDxrk78htKfLQ@mail.gmail.com> <b9f11d0303c9b682ab35e076697f199f1a114613.camel@ibm.com>
+In-Reply-To: <b9f11d0303c9b682ab35e076697f199f1a114613.camel@ibm.com>
 From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 6 Jan 2026 20:36:43 +0100
-X-Gm-Features: AQt7F2oQRHfLSMv06DcBnsmZ5YCXDZrZnCfM6HxbwDiaaNQDtrFUtdTVYpxPf7g
-Message-ID: <CAOi1vP81_aedyGGE+sgXLyu+K6ecW3uxJ28baqu_kERuQHpwKg@mail.gmail.com>
-Subject: Re: [PATCH] libceph: make calc_target() set t->paused, not just clear it
+Date: Tue, 6 Jan 2026 20:46:59 +0100
+X-Gm-Features: AQt7F2rlzvMJyU9TyOq1HUVD3NDl3TexgMb0qcc-whQyok0cGk0nXE-V0A7Mbsw
+Message-ID: <CAOi1vP8ehjwzo5iRUKHkXQdQNLP60ny84pxxXJMkKLyFYNz9ow@mail.gmail.com>
+Subject: Re: [PATCH] libceph: return the handler error from mon_handle_auth_done()
 To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"raphael.zimmer@tu-ilmenau.de" <raphael.zimmer@tu-ilmenau.de>, Alex Markuze <amarkuze@redhat.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 5, 2026 at 11:47=E2=80=AFPM Viacheslav Dubeyko
+On Mon, Jan 5, 2026 at 11:36=E2=80=AFPM Viacheslav Dubeyko
 <Slava.Dubeyko@ibm.com> wrote:
 >
-> On Mon, 2026-01-05 at 22:34 +0100, Ilya Dryomov wrote:
-> > Currently calc_target() clears t->paused if the request shouldn't be
-> > paused anymore, but doesn't ever set t->paused even though it's able to
-> > determine when the request should be paused.  Setting t->paused is left
-> > to __submit_request() which is fine for regular requests but doesn't
-> > work for linger requests -- since __submit_request() doesn't operate
-> > on linger requests, there is nowhere for lreq->t.paused to be set.
-> > One consequence of this is that watches don't get reestablished on
-> > paused -> unpaused transitions in cases where requests have been paused
-> > long enough for the (paused) unwatch request to time out and for the
-> > subsequent (re)watch request to enter the paused state.  On top of the
-> > watch not getting reestablished, rbd_reregister_watch() gets stuck with
-> > rbd_dev->watch_mutex held:
+> On Mon, 2026-01-05 at 23:09 +0100, Ilya Dryomov wrote:
+> > On Mon, Jan 5, 2026 at 8:37=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyk=
+o@ibm.com> wrote:
+> > >
+> > > On Wed, 2025-12-31 at 14:58 +0100, Ilya Dryomov wrote:
+> > > > Currently any error from ceph_auth_handle_reply_done() is propagate=
+d
+> > > > via finish_auth() but isn't returned from mon_handle_auth_done().  =
+This
+> > > > results in higher layers learning that (despite the monitor conside=
+ring
+> > > > us to be successfully authenticated) something went wrong in the
+> > > > authentication phase and reacting accordingly, but msgr2 still tryi=
+ng
+> > > > to proceed with establishing the session in the background.  In the
+> > > > case of secure mode this can trigger a WARN in setup_crypto() and l=
+ater
+> > > > lead to a NULL pointer dereference inside of prepare_auth_signature=
+().
+> > > >
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+> > > > ---
+> > > >  net/ceph/mon_client.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+> > > > index c227ececa925..fa8dd2a20f7d 100644
+> > > > --- a/net/ceph/mon_client.c
+> > > > +++ b/net/ceph/mon_client.c
+> > > > @@ -1417,7 +1417,7 @@ static int mon_handle_auth_done(struct ceph_c=
+onnection *con,
+> > > >       if (!ret)
+> > > >               finish_hunting(monc);
+> > > >       mutex_unlock(&monc->mutex);
+> > > > -     return 0;
+> > > > +     return ret;
+> > > >  }
+> > > >
+> > > >  static int mon_handle_auth_bad_method(struct ceph_connection *con,
+> > >
+> > > Makes sense to me. Looks good.
+> > >
+> > > Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > >
+> > > As far as I can see, we have the same strange implementation pattern =
+in
+> > > mon_handle_auth_bad_method() [1]:
+> > >
+> > > static int mon_handle_auth_bad_method(struct ceph_connection *con,
+> > >                                       int used_proto, int result,
+> > >                                       const int *allowed_protos, int =
+proto_cnt,
+> > >                                       const int *allowed_modes, int m=
+ode_cnt)
+> > > {
+> > >         struct ceph_mon_client *monc =3D con->private;
+> > >         bool was_authed;
+> > >
+> > >         mutex_lock(&monc->mutex);
+> > >         WARN_ON(!monc->hunting);
+> > >         was_authed =3D ceph_auth_is_authenticated(monc->auth);
+> > >         ceph_auth_handle_bad_method(monc->auth, used_proto, result,
+> > >                                     allowed_protos, proto_cnt,
+> > >                                     allowed_modes, mode_cnt);
+> > >         finish_auth(monc, -EACCES, was_authed);
+> > >         mutex_unlock(&monc->mutex);
+> > >         return 0;
+> > > }
+> > >
+> > > If we don't return error code at all, then why declaration of functio=
+n expects
+> > > of error code returning? Should we exchange returning data type on vo=
+id?
 > >
-> >   rbd_register_watch
-> >     __rbd_register_watch
-> >       ceph_osdc_watch
-> >         linger_reg_commit_wait
+> > Hi Slava,
 > >
-> > It's waiting for lreq->reg_commit_wait to be completed, but for that to
-> > happen the respective request needs to end up on need_resend_linger lis=
-t
-> > and be kicked when requests are unpaused.  There is no chance for that
-> > if the request in question is never marked paused in the first place.
+> > mon_handle_auth_bad_method() implements a msgr2 callout, just like
+> > mon_handle_auth_done() does.  The handler may need to e.g. allocate
+> > memory or in general do any number of things that could fail, so the
+> > interface must provide a way to signal such failures to the messenger
+> > to ensure that it doesn't try to proceed any further with the session.
+> > Theoretically the return type could be downgraded to bool, but
+> > definitely not to void.
 > >
-> > The fact that rbd_dev->watch_mutex remains taken out forever then
-> > prevents the image from getting unmapped -- "rbd unmap" would inevitabl=
-y
-> > hang in D state on an attempt to grab the mutex.
-> >
-> > Cc: stable@vger.kernel.org
-> > Reported-by: Raphael Zimmer <raphael.zimmer@tu-ilmenau.de>
-> > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> > ---
-> >  net/ceph/osd_client.c | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> > index 1a7be2f615dc..610e584524d1 100644
-> > --- a/net/ceph/osd_client.c
-> > +++ b/net/ceph/osd_client.c
-> > @@ -1586,6 +1586,7 @@ static enum calc_target_result calc_target(struct=
- ceph_osd_client *osdc,
-> >       struct ceph_pg_pool_info *pi;
-> >       struct ceph_pg pgid, last_pgid;
-> >       struct ceph_osds up, acting;
-> > +     bool should_be_paused;
-> >       bool is_read =3D t->flags & CEPH_OSD_FLAG_READ;
-> >       bool is_write =3D t->flags & CEPH_OSD_FLAG_WRITE;
-> >       bool force_resend =3D false;
-> > @@ -1654,10 +1655,16 @@ static enum calc_target_result calc_target(stru=
-ct ceph_osd_client *osdc,
-> >                                &last_pgid))
-> >               force_resend =3D true;
-> >
-> > -     if (t->paused && !target_should_be_paused(osdc, t, pi)) {
-> > -             t->paused =3D false;
-> > +     should_be_paused =3D target_should_be_paused(osdc, t, pi);
-> > +     if (t->paused && !should_be_paused) {
 >
-> Do we need dout() message here as symmetric to the added one?
+> Maybe, do we need to add the comment that explaining all of this?
 
-No -- the value of unpaused is already logged before returning.
+This isn't specific to the messenger, so I don't think so.  When one
+encounters a method with a bunch of parameters or a return value that
+doesn't immediately make sense, a very common explanation is that the
+method implements an interface and that the given implementation just
+happens to not depend on those parameters or always succeed, etc.  The
+interface is usually wired up in the same file and is trivial to look
+up by searching for the name of the method:
+
+static const struct ceph_connection_operations osd_con_ops =3D {
+        ...
+        .get_auth_request =3D osd_get_auth_request,
+        .handle_auth_reply_more =3D osd_handle_auth_reply_more,
+        .handle_auth_done =3D osd_handle_auth_done,
+        .handle_auth_bad_method =3D osd_handle_auth_bad_method,
+};
+
+From there one can check out the interface itself:
+
+/*
+ * Ceph defines these callbacks for handling connection events.
+ */
+struct ceph_connection_operations {
+        ...
+        /* msgr2 authentication exchange */
+        int (*get_auth_request)(struct ceph_connection *con,
+                                void *buf, int *buf_len,
+                                void **authorizer, int *authorizer_len);
+        int (*handle_auth_reply_more)(struct ceph_connection *con,
+                                      void *reply, int reply_len,
+                                      void *buf, int *buf_len,
+                                      void **authorizer, int *authorizer_le=
+n);
+        int (*handle_auth_done)(struct ceph_connection *con,
+                                u64 global_id, void *reply, int reply_len,
+                                u8 *session_key, int *session_key_len,
+                                u8 *con_secret, int *con_secret_len);
+        int (*handle_auth_bad_method)(struct ceph_connection *con,
+                                      int used_proto, int result,
+                                      const int *allowed_protos, int proto_=
+cnt,
+                                      const int *allowed_modes, int mode_cn=
+t);
+};
 
 Thanks,
 
