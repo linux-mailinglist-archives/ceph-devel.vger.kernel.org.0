@@ -1,215 +1,199 @@
-Return-Path: <ceph-devel+bounces-4262-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4263-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7318CF6EEA
-	for <lists+ceph-devel@lfdr.de>; Tue, 06 Jan 2026 07:54:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D677CF6EF0
+	for <lists+ceph-devel@lfdr.de>; Tue, 06 Jan 2026 07:54:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E9913301D679
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jan 2026 06:52:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B5B50301B2EF
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jan 2026 06:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E272FABE7;
-	Tue,  6 Jan 2026 06:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFFB2FABE7;
+	Tue,  6 Jan 2026 06:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+Ho42mv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISL9vzp3"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C7E1A83F9
-	for <ceph-devel@vger.kernel.org>; Tue,  6 Jan 2026 06:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2D028FFF6
+	for <ceph-devel@vger.kernel.org>; Tue,  6 Jan 2026 06:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767682364; cv=none; b=IRMdwLxLVF9OAwM/FzgGvBjZh9Ih24PTisYh5uppoFnjqCvhBe/y7cISmcrUqcUfgcagra0MGPGtzb7+TgBqBU9YWCxu3upQ/flYhc2J78nVXf8wKU5Ase1sQZ9pA0b1PbLC+RzMdHxUEvb9ZKqW6v+VOZd4m+QP8LZouQfQZJk=
+	t=1767682412; cv=none; b=cAWF7s/GGUIrb4dJCJxj4t8Gk+5SGwlYVWtkwZtcK/hmK+Sha2SVMAITgInMablV+IsxUmEUQ/AZRzhYOf39W+uV1bxvVohjbp+gD2suihXCUe/ix878hjaDrpv6sFekCA9m5FfxrRrXQAFb84paUHEFsPu1Nhnpc0sTgK8elV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767682364; c=relaxed/simple;
-	bh=ldGsdXFxFu3xsBTGzSJZFSXDMtd7h8Xq1ZGg8CU04mQ=;
+	s=arc-20240116; t=1767682412; c=relaxed/simple;
+	bh=LIftr669zk/jWjjCHKjVl97Eknq8lheTyPhEYvY3L60=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dfW4K6Wh6VY013Mmc/nbNK2DaCk/PvIpqym9PFtCF8ahDZQgVAA/6ggLF/UgBypdGQp106bDB2BEyr1eQ3Rr9LnMvRvmACo7RRgw+HDx3UzElyqMdb41v4pNSGIThWH0lLkSPhDxzFjd3M7629kk16ud1BTNBSR0yMfQ/+xLqU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+Ho42mv; arc=none smtp.client-ip=209.85.221.46
+	 To:Cc:Content-Type; b=JItjkcRhpbdm8sH0Z539hku1pcWXHoL/5hJP6ImI/ShvAmtdeEE9QuMu/iYRKGC+z0/tlUL3sG9YNdtDqDdK4v7ecHv/TsjoXOSUNiUgXYHcUz2aNPPG3yc+uqAlgBQnuik8fRoFZGk8NHdTFSwEUBHnPEDlI1BtfxnMJt9SFrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ISL9vzp3; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b3b0d76fcso366985f8f.3
-        for <ceph-devel@vger.kernel.org>; Mon, 05 Jan 2026 22:52:42 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42e2ba54a6fso222151f8f.3
+        for <ceph-devel@vger.kernel.org>; Mon, 05 Jan 2026 22:53:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767682361; x=1768287161; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767682409; x=1768287209; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Rn9TQgUB35xi9VXhhElF6zAI0W2Qq/UK06bS94ywRVk=;
-        b=Q+Ho42mvBrRVrrmsgICGv3qc0zqJq0WBiuPL5DOhIMOayFltYMe4OnIcMxvP/fv4So
-         y69ALWU3fgqwxvxK0vIFXB+07Lb1R5HAmYoUAzdnsQgTkw/D8zxlTpCDoH3Xv/Of0NAM
-         jauid+RI0PmB1Myj6UI8hergg6fgifJ4yP7PXUBGox2R9cVSOeHQ9oK3wFngvR3HY2x/
-         sZTllQXk+Yfe9LlSyQaXfwofYDP/4jRDvElayHRpRzq3dLyYBZ9ucxuwyqtcHhXqSUPZ
-         saQkILtml+fBI7CuW4yEPMh/SyXkzd8QcK785XNByBkU6xRxf5ycR15Ie8mTuwKXyoR4
-         cPqQ==
+        bh=1y5U6WAbYoOb9xnbqZlaBZX7OOF3q1TP90ZeOZQg5L0=;
+        b=ISL9vzp3AeUhHEbFr7uUFmznO5jms/7UaE6C2AYka1PljlQ5glM3uNTcLo0/dj9EAY
+         iNZnrNcNgJPHb8Zuc/cXQdVWH9SrR1Z3Ot6OOA5oTq4Y3huwRIouAEtEAX9nuPL4X+Vj
+         gqXF/vobjJQIIPbucsrIUgiT4mnMSM1ymyo/cZGUiMmD0ucJDrMHxsPij/ehtN4Ppntl
+         pwMjckyrctdIvmLfq2rS3d7lCOOngZFzsxsB8CPaDIqttMpGZwVVvuaQpyzjwxdy4ibn
+         Iy//hSVXkuai30fAghOBATNi5UwVVN6msXkToYoFN2EgMukAtyKAQRl4WKsRJ6GWEicp
+         q25w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767682361; x=1768287161;
+        d=1e100.net; s=20230601; t=1767682409; x=1768287209;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Rn9TQgUB35xi9VXhhElF6zAI0W2Qq/UK06bS94ywRVk=;
-        b=b6/DlDe0kpcjn711Nfx302wQ/POAanHpwpqZk/O5J8v3+XeEk42iwGYj4zMy0cGxuf
-         6P4TLHH3/QJaxEPmyiDz+VYFXSKrzmbV1QP/StUGHX4i+ZhY7mzg1/MP6EUwJ8znl1gV
-         4cVvp5/hrtrZkAYIuxYLXQUF2HK7YFgtIVCa/hw1V+BRe1jYvrSGVPF6NYFasu0zcBc7
-         TKFEImuy34sKwOkrM/FnioHz4WcZuNzd2RvpAn+rNt5UILAYkgPv3QQUatXW9PxHktl4
-         yxk1yyIY6H96EUm0yX7bQCsDUSrKXMwT/80tJYUijsZ2B1DqPf6WPhKzI6Z70uvizpPC
-         i3Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNbXYvE6qY/oGI3VqPBWIyK/WZH0q84XLlUr0lG/7ffYZNTyd0yxEgZSnY6s9lUfrKwTLOWCFo0hHl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5bdEaRjLYG5ElyF3IzHwDIQ37+Uc3quRxNc0mUSzix/i+hhDh
-	+yvFpR5x4yvEIv0s1aPetWoOa+nrtnasnVLrTSFj9+6xS1T7hThUzPxuzmSp3GfGQZMnOuPxMXW
-	GWTrG+rQPrN64R7hahDxyYKe/Ba3QhvE=
-X-Gm-Gg: AY/fxX4OMtmR8N/EliZo56GjLGjjDTQAatXLAMPJ+4dZTmAdpM/PI3ZjcqvY4/tSNrv
-	4Qr8tY5Y4aqTeyooaV6xmwklyiqLzvRFiRwQcWbA8x4N+OH2DTG2teR6ueXHqd27heZLmXSp2kD
-	TthAF/GTYuwlZsGv5o85XTBzG6HbWiJslk1hZn37w5TzxU7fGaSgnHn62x4fJDSvtj+IiO1bxlO
-	o/2HWKopR1WIxXdCtBSkjxt2HJUoXzuClmGmZsFoMIGUM/Dy/jIFJH2ZYiJWwqeWR22oPiafA4V
-	XVIAjFJpcKur31CDGdjAMw1JM+Um
-X-Google-Smtp-Source: AGHT+IHkzheiWDsu3Tie2YRfl2Rs17I2MZZFoKuqAplH4JngFa3MjKXuUVDsqgaz71+jH30+7xzENXTwDBSKqDXexEQ=
-X-Received: by 2002:a05:6000:2302:b0:430:f255:14b3 with SMTP id
- ffacd0b85a97d-432bc9f562amr2306441f8f.43.1767682360802; Mon, 05 Jan 2026
- 22:52:40 -0800 (PST)
+        bh=1y5U6WAbYoOb9xnbqZlaBZX7OOF3q1TP90ZeOZQg5L0=;
+        b=WUvgZEfa3z7JfNAqAhfA3ScG1gePtey+fkwDTTA/HZMhVHlRNGM0XIPf/GdITA/zIG
+         iO/bomd7gnLqgmJU9iuc3ET84CFhxr7ovd4tF+vLYzPzIfyVTXihbZ2vwcxa3Xuc3M9v
+         ZWFNJ1anvbygZHc/hd/tVTeicZG9bADqgdjTOhZ/lX+rqqL3+r8bZ35V392dVI21s4t0
+         XTx5fcPZgEYEozNXRkR8pP0zaGwQmU4hMnV01vOChVRieZXD1iJfOl19RJByxe/UmfHm
+         uoFhFM5HjBXixdS80xYpnEMkw+2xlSFisHCBp5zzkSsNApwMsW+dQS/OYTDmXSqJJWRn
+         c5ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUTxoMFgSfry0L5ozY4TNJ9tqv4EKrtMMbSh20OnCvCLdmFqq28XfJknFiCnQLmdgXsUJF7G9Jj6Kgo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBGGr5sfMjbVCLVyUz4PSk1tQFSnzOjYD5tkLlzAJPhIqVujHU
+	B+chXlE2IYpo4VVUvmjPIEkq7aQxHDYLeTaBi3re9p8kkA57mM0hmqpIwf8DjLqiLPSzbGsNnmP
+	hiyjqKjMEyCdtpLNq2mJt/K9Nl+40un8=
+X-Gm-Gg: AY/fxX7rnBt+hccijZbutnLG55lbvTtfHg8pcQ0dwozFi+52rlAbhfmVXtvf6RSL2tQ
+	wbROJKiAy/UH+d8SA6yuh+dsBoAi77+lgaedPj5OJ24flDYux249z+nOgW/81HU7HD8QLCsH7lH
+	N7jDsZ9TbZSvn/2SLqbdbyK7cmlPTS/84KRNNNeLlkOomqn5KWK8oUa4RbzDE8d49pmsq158JGP
+	PYiBzWN9LYgPqsneCND60nzSkNOXngcxb0vdhRZbNA44/LqzqlXaDw9BXR6/UdfY5scsPyEJs71
+	I1PXyKDDhbxsz3Lj6kAQ3g373vr+
+X-Google-Smtp-Source: AGHT+IFUJWpfhBc1UQYREHXQfiPYebrwPMVVM9mo8IKhQD0djEMBAU5QEkjkg7BitFBPHJ1qAcd2SNCAlS3ddrqc3BY=
+X-Received: by 2002:a05:6000:400b:b0:432:8504:8d5b with SMTP id
+ ffacd0b85a97d-432bca50697mr2357831f8f.50.1767682408823; Mon, 05 Jan 2026
+ 22:53:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251231024316.4643-1-CFSworks@gmail.com> <20251231024316.4643-4-CFSworks@gmail.com>
- <90190adb0e384d4d9d451d444c46f177bb95366d.camel@ibm.com>
-In-Reply-To: <90190adb0e384d4d9d451d444c46f177bb95366d.camel@ibm.com>
+References: <20251231024316.4643-1-CFSworks@gmail.com> <20251231024316.4643-5-CFSworks@gmail.com>
+ <5fba25f7b85276411c091cb7206b2dc057d89c68.camel@ibm.com>
+In-Reply-To: <5fba25f7b85276411c091cb7206b2dc057d89c68.camel@ibm.com>
 From: Sam Edwards <cfsworks@gmail.com>
-Date: Mon, 5 Jan 2026 22:52:29 -0800
-X-Gm-Features: AQt7F2qecFY42oeNK1b5j0ZScFM7tbibbtSuEsvYRAf7mNPiTGRbxAk-2svhnhw
-Message-ID: <CAH5Ym4is+dfE4Td8cuA0s4_4fkGNy+X1R_N+nSZDzSjYfxNBfg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] ceph: Free page array when ceph_submit_write fails
+Date: Mon, 5 Jan 2026 22:53:17 -0800
+X-Gm-Features: AQt7F2oeBLu8u8nDHtRk87_oJyIZfNw123FsmGteGKwQ52mKx0EX_ROSZwv_0BQ
+Message-ID: <CAH5Ym4ig7uBdereXpL8T3Cjn1zqzRxG1VwXb59rwHQjTQKWrPw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ceph: Assert writeback loop invariants
 To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 Cc: Xiubo Li <xiubli@redhat.com>, "idryomov@gmail.com" <idryomov@gmail.com>, 
-	Milind Changire <mchangir@redhat.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>, 
+	Milind Changire <mchangir@redhat.com>, 
 	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, 
 	"jlayton@kernel.org" <jlayton@kernel.org>, 
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 5, 2026 at 1:09=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyko@ib=
+On Mon, Jan 5, 2026 at 2:29=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyko@ib=
 m.com> wrote:
 >
 > On Tue, 2025-12-30 at 18:43 -0800, Sam Edwards wrote:
 > > If `locked_pages` is zero, the page array must not be allocated:
 > > ceph_process_folio_batch() uses `locked_pages` to decide when to
-> > allocate `pages`,
-> >
->
-
-Hi Slava,
-
-> I don't quite follow how this statement is relevant to the issue. If
-> `locked_pages` is zero, then ceph_submit_write() will not to be called. D=
-o I
-> miss something here?
-
-That statement is only informing that ceph_process_folio_batch() will
-BUG() when locked_pages =3D=3D 0 && pages !=3D NULL. It establishes why
-`pages` must be freed/NULLed before the next iteration of
-ceph_writepages_start()'s loop (which sets locked_pages =3D 0).
-
->
-> > and redundant allocations trigger
+> > allocate `pages`, and redundant allocations trigger
 > > ceph_allocate_page_array()'s BUG_ON(), resulting in a worker oops (and
 > > writeback stall) or even a kernel panic. Consequently, the main loop in
 > > ceph_writepages_start() assumes that the lifetime of `pages` is confine=
 d
 > > to a single iteration.
->
-> It will be great to see the reproducer script or application and call tra=
-ce of
-> the issue. Could you please share the reproduction path and the call trac=
-e of
-> the issue?
-
-It's difficult to reproduce organically. It arises when
-`!ceph_inc_osd_stopping_blocker(fsc->mdsc)`, which I understand can
-only happen in a race. I used the fault injection framework to force
-ceph_inc_osd_stopping_blocker() to fail.
-
-The call trace is disinteresting. See my reply to your comments on
-patch 1: it's the same trace.
-
->
 > >
-> > The ceph_submit_write() function claims ownership of the page array on
-> > success.
+> > This expectation is currently not clear enough, as evidenced by the
+> > previous two patches which fix oopses caused by `pages` persisting into
+> > the next loop iteration.
 > >
->
-> As far as I can see, writepages_finish() should free the page array on su=
-ccess.
-
-That's my understanding too; by "claims ownership of the page array" I
-only mean that ceph_writepages_start() isn't responsible for cleaning
-it up, once it calls ceph_submit_write().
-
->
-> > But failures only redirty/unlock the pages and fail to free the
-> > array, making the failure case in ceph_submit_write() fatal.
+> > Use an explicit BUG_ON() at the top of the loop to assert the loop's
+> > preexisting expectation that `pages` is cleaned up by the previous
+> > iteration. Because this is closely tied to `locked_pages`, also make it
+> > the previous iteration's responsibility to guarantee its reset, and
+> > verify with a second new BUG_ON() instead of handling (and masking)
+> > failures to do so.
 > >
-> > Free the page array in ceph_submit_write()'s error-handling 'if' block
-> > so that the caller's invariant (that the array does not outlive the
-> > iteration) is maintained unconditionally, allowing failures in
-> > ceph_submit_write() to be recoverable as originally intended.
-> >
-> > Fixes: 1551ec61dc55 ("ceph: introduce ceph_submit_write() method")
-> > Cc: stable@vger.kernel.org
 > > Signed-off-by: Sam Edwards <CFSworks@gmail.com>
 > > ---
-> >  fs/ceph/addr.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
+> >  fs/ceph/addr.c | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
 > >
 > > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > index 2b722916fb9b..91cc43950162 100644
+> > index 91cc43950162..b3569d44d510 100644
 > > --- a/fs/ceph/addr.c
 > > +++ b/fs/ceph/addr.c
-> > @@ -1466,6 +1466,13 @@ int ceph_submit_write(struct address_space *mapp=
-ing,
-> >                       unlock_page(page);
+> > @@ -1669,7 +1669,9 @@ static int ceph_writepages_start(struct address_s=
+pace *mapping,
+> >               tag_pages_for_writeback(mapping, ceph_wbc.index, ceph_wbc=
+.end);
+> >
+> >       while (!has_writeback_done(&ceph_wbc)) {
+> > -             ceph_wbc.locked_pages =3D 0;
+> > +             BUG_ON(ceph_wbc.locked_pages);
+> > +             BUG_ON(ceph_wbc.pages);
+> > +
+>
+
+Hi Slava,
+
+> It's not good idea to introduce BUG_ON() in write pages logic. I am defin=
+itely
+> against these two BUG_ON() here.
+
+I share your distaste for BUG_ON() in writeback. However, the
+BUG_ON(ceph_wbc.pages); already exists in ceph_allocate_page_array().
+This patch is trying to catch that earlier, where it's easier to
+troubleshoot. If I changed these to WARN_ON(), it would not prevent
+the oops.
+
+And the writeback code has a lot of BUG_ON() checks already (so I am
+not "introducing" BUG_ON), but I suppose you could be saying "it's
+already a problem, please don't make it worse."
+
+If I introduce a ceph_discard_page_array() function (as discussed on
+patch 4), I could call it at the top of the loop (to *ensure* a clean
+state) instead of using BUG_ON() (to *assert* a clean state). I'd like
+to hear from other reviewers which approach they'd prefer.
+
+>
+> >               ceph_wbc.max_pages =3D ceph_wbc.wsize >> PAGE_SHIFT;
+> >
+> >  get_more_pages:
+> > @@ -1703,11 +1705,10 @@ static int ceph_writepages_start(struct address=
+_space *mapping,
 > >               }
 > >
-> > +             if (ceph_wbc->from_pool) {
-> > +                     mempool_free(ceph_wbc->pages, ceph_wb_pagevec_poo=
-l);
-> > +                     ceph_wbc->from_pool =3D false;
-> > +             } else
-> > +                     kfree(ceph_wbc->pages);
-> > +             ceph_wbc->pages =3D NULL;
+> >               rc =3D ceph_submit_write(mapping, wbc, &ceph_wbc);
+> > -             if (rc)
+> > -                     goto release_folios;
+> > -
 >
-> Probably, it makes sense to introduce a method ceph_free_page_array likew=
-ise to
-> __ceph_allocate_page_array() and to use for freeing page array in all pla=
-ces.
+> Frankly speaking, its' completely not clear the from commit message why w=
+e move
+> this check. What's the problem is here? How this move can fix the issue?
 
-I like the suggestion but not the name. Instead of
-ceph_free_page_array(), it should probably be called
-ceph_discard_page_array(), because it is also redirtying the pages and
-must not be used after successful writeback. (To me, "free" implies
-success while "discard" implies failure.)
-
-> Could ceph_wbc->locked_pages be greater than zero but ceph_wbc->pages =3D=
-=3D NULL?
-
-ceph_wbc->locked_pages is the current array index into
-ceph_wbc->pages, so they both need to be reset sometime before the
-next iteration of ceph_writepages_start()'s loop.
+The diff makes it a little unclear, but I'm actually moving
+ceph_wbc.{locked_pages,strip_unit_end} =3D 0; *above* the check (see
+commit message: "also make it the previous iteration's responsibility
+to guarantee [locked_pages is] reset") so that they happen
+unconditionally. Git just happens to see it in terms of the if/goto
+moving downward, not the assignments moving up.
 
 Warm regards,
 Sam
-
 
 
 >
 > Thanks,
 > Slava.
 >
-> > +
-> >               ceph_osdc_put_request(req);
-> >               return -EIO;
-> >       }
+> >               ceph_wbc.locked_pages =3D 0;
+> >               ceph_wbc.strip_unit_end =3D 0;
+> > +             if (rc)
+> > +                     goto release_folios;
+> >
+> >               if (folio_batch_count(&ceph_wbc.fbatch) > 0) {
+> >                       ceph_wbc.nr_folios =3D
 
