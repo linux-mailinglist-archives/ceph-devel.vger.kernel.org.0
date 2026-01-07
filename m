@@ -1,88 +1,88 @@
-Return-Path: <ceph-devel+bounces-4276-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4277-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0086BCFB70C
-	for <lists+ceph-devel@lfdr.de>; Wed, 07 Jan 2026 01:16:09 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37903CFB7B8
+	for <lists+ceph-devel@lfdr.de>; Wed, 07 Jan 2026 01:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6D9E4302C8FC
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jan 2026 00:15:30 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 9190E3008C99
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jan 2026 00:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB168188735;
-	Wed,  7 Jan 2026 00:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EF71E991B;
+	Wed,  7 Jan 2026 00:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAF+eVcG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzvRtC/T"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4EF137750
-	for <ceph-devel@vger.kernel.org>; Wed,  7 Jan 2026 00:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742E61DDC3F
+	for <ceph-devel@vger.kernel.org>; Wed,  7 Jan 2026 00:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767744928; cv=none; b=Y8raULXlSmf5OIK6w7hqm9y8Ew3kzRoCoLdsejXPHfbYXwIsiwL+sj+fKH/bA1tJabXiO8Ugrv+K+8DvQhFIDm+mZwZD88qSTctLf4YyafAIMD9OKbNlc6TYcaWTXId0abmWI9j0nsiLJyt4G4umPef8QhjLxucLcxjF3ckHWj0=
+	t=1767746033; cv=none; b=AwJ/IBCa9pXwXMy0MEVjD0xWoF2oviHcBhV73HpnaVRbE1wtojVwv4LbVqwELL/RL8RAziiPJ9UF6mubs5ShcuAyrcGTXIbFQD94/bUA4jFYDu3PrMlSEub32j+P2ajtT7z/nC2Al91a/vlGlGDOjlJneLFV9UYTD+7qayRRHtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767744928; c=relaxed/simple;
-	bh=rYCWTgWYbmLP8Fsdt1iBlHAc1LLZ8h4ydLU1lCjaRwA=;
+	s=arc-20240116; t=1767746033; c=relaxed/simple;
+	bh=9LNf5uyM7PeViOzaPr73mUBfY3bo7yujUM1Kfj3wBtc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hFVZmUinTNNRNAksh2vDRAm1fLGW5hN24ceVWGS1bO2Tf7tq8r7YCtoeGBbVTDNnSLKFetuCC//iBzf5c8UARgjXqqJrSroE9/UATr5Wxm71S0ueorsbXMXceXiPUhGciBAjObltlb7DVmex39xSx5eMdMr0liMK2ejuk87xdXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LAF+eVcG; arc=none smtp.client-ip=209.85.221.51
+	 To:Cc:Content-Type; b=La/NbBewkuP7LOGaOKeO9eA5+th/0ElYQ0JdLykzuLf3+ncaxUhGdzJg+0wZm0yhGt8hUeP/6SgoRQxoeCah7gzwVb40xyAPCo7CytcveYMVeXQ1E2G4uYl609Qk/meXjvkdGmhJOzMd9q+RLKIHw8PCfasKsXb1WcgzvgKqs0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzvRtC/T; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42e2ba54a6fso556829f8f.3
-        for <ceph-devel@vger.kernel.org>; Tue, 06 Jan 2026 16:15:26 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47bdbc90dcaso10845185e9.1
+        for <ceph-devel@vger.kernel.org>; Tue, 06 Jan 2026 16:33:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767744925; x=1768349725; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767746030; x=1768350830; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Vx79OS7VB+ZQQNUpXThPdMdOwzIVItE44eUhJR1tRZ4=;
-        b=LAF+eVcG8ZU2AeMEu8yrHt0UBMRLqBMkYOqth+1tULfZESgTOICaitnNwo0rH0+jcl
-         fOUK1GQ0D0tqJoBY+jDxzACb6KUgiT6eylRFO0+moYd0y/CDYNtATRygoA9/i5oKHN5q
-         wcPDHxvCPOf4OL1JwF1VdYvoXdbZPXTzmVIYwK45b3DEnwd9N15i/+CxMBOz/4gDyLcc
-         S5P6BLcxwactfPX0o0oMj6ycd8ydM5TLfxt+781q/JONcKSkrdYUkXl6Nu6ZdT74MHps
-         8s8mTYgPjmmDcMoNzBxNhIA/SAmxkF2mRg05ZaaB2nKRCLTERrwm7FG/xekUbGiZJ3+M
-         UgCg==
+        bh=Izfcp9nSGloW/IJ9+CQjD8lhQ5XI8VMhMTNLb0M+uW8=;
+        b=XzvRtC/TUFK0xagOoWyfPJwhsv2flpw1e7b2aUuZKPQoCW4P1jZ7GyQ0VLBEKZ0Gcs
+         V1fiS7HZ+Rx2AJgwrqVI+neiLZGuyOo8YwG9dYGKLw91Fabz9zAOTFjfm4EqjOZN6igC
+         HtTOSQSlnMJlmzhJP3XUuEl2d9KIaAeR3TU8ldcrLl3IkHLtqtqPvDhROCH537BHwvNa
+         y6CQ28VlX8REOPetY2ZxtH1LbWA7Z699OQ8QP/kkgjxYtLYf4lmDbNpThoPBYNbgB3Yf
+         WlVmhmBoVzqC04SkKiBJl6q+ahaBme0eYSbmuvz1gM+dM7pn9Rh5u2xP78/IvdGoOzXM
+         6hJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767744925; x=1768349725;
+        d=1e100.net; s=20230601; t=1767746030; x=1768350830;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Vx79OS7VB+ZQQNUpXThPdMdOwzIVItE44eUhJR1tRZ4=;
-        b=Xuy763XFLJ8eYqtWhB6DjnblGrLIKugB5o45FW1qQaJsRnh8bIPWC99Or+OQ1X9H/p
-         Pg8QkOuh+hvwr/A6iN0/W4u/YGcI8h+PvRUN8cZQ5WlW9O+dk5/CfPzKiLAaBDTDWKhd
-         eAzX97XQJD5hWKV3lJsbtSCz/yE9riNl3HXUpXIGiLukH2XiIXF/WRDmb3O7HTp5TrvT
-         XXRj3EqMB0UCequN4DTklsuG9OvHRLEJEajs6GhSUZVav4T91o9K0/BntoibU1bh8dG+
-         IplliqXcddT9j8Yinb3Jk0LriMagG6EcwOXndCmU8SXTK3gTR7HU3Y2JVHJmvraIB+Qh
-         KSuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVQuwuNExJzP+jmE/mbTOT3XEJeDaeyGtusfJz9htvG0qrLy7y56IxGLxBjr6Mehhs7AbxsbsrfO+1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPOgmkan5SDbxYqhPhyGS0Yk2uRbB/sI5cbIB3qsBsBQjH4GZD
-	cTFFFo4CGhjL8u/Wg2RHa0uiEG37SxPCRIb6oIUAJkUoy/JzwZvpvtA5HPgKEoXjP5jvm6QQfpV
-	9Us9hIO6mFSbsxSgMS9BdZHuXdmH3xBs=
-X-Gm-Gg: AY/fxX4WOlp5MS8YkbFyXSi/mXiDDAemSv+R5xJirLVrOkNA1BA+oaFHWHp4fp2gpXH
-	kqt8c4Inw05B+hQejhU8m3QwNFE7cwreZkoAlO0aqeQ77N3btimqrIh4rHvorgQsNggfgb0wNdz
-	eIXWWs8vSzBqplU5SJG0GFThc0oRcsyDEP9KR4PUey4XbX8CxdI1DqBoSpKAvGV8fg+vrGrf3ig
-	xN7dTExi9dOfU2sY5yaQnhr71sJqRS7SBoXuVWig2PGH4rdJ1Uzg9sxhm9DpbwdNo287XNKd9A/
-	JmkmC7PV1PpEs0Mpp5MRnv3fzIF9
-X-Google-Smtp-Source: AGHT+IH3zW/Ui0lliH/ZzImWy7mu3pdxcAHPFYwiAms+uVPmbCkqVo1ZCaRawfU40d+Jw9hAL9Y5rBPeZHpOoNI2ggA=
-X-Received: by 2002:a05:6000:40c9:b0:431:316:9212 with SMTP id
- ffacd0b85a97d-432c3628186mr751165f8f.6.1767744924526; Tue, 06 Jan 2026
- 16:15:24 -0800 (PST)
+        bh=Izfcp9nSGloW/IJ9+CQjD8lhQ5XI8VMhMTNLb0M+uW8=;
+        b=O7F3qBKJJGM8Az1catdXo6zRGKWbqVCsy28Mr91FoMEBgf29c/fl29KjBVMrxN8w1E
+         tiHkPoL3tll03ADXS3oFUU9ViWxqWEQrfdaHxC/m8EXT8D8wjCHnM7AbZQANxpHS9/4N
+         H3xLPw/4pc0EMG9y+3UqIwvlxyrZMB9aJoPy6eoYzZXr3FPdL3XxzcnJvFfJet3RPuT8
+         6BkJDocpdonNvau1Havl20n4JPxTmgDxj+yshACW2hCILOqxZqekGwOzMdfH2Erx1e8U
+         NNuXi777h1XqzDJ9VRAJ/eUwY+o3nPD7nw/7RYSKDe/ndeEGLkgauwrqe7eTDhCJIiT0
+         IOgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLAPz0suvYRQkGFVDzDB7qy5gjq6R3OCi/LLe969cT7tnAAnOfZLHPrP2nODzggtyS3/3u2jJ7H0su@vger.kernel.org
+X-Gm-Message-State: AOJu0YydKK9xcL1tBZB81s013AHj3/d+5YP5dRMsTyvFTgTHQ71pvAsA
+	ciPbVquXX8BLsM5DcPm/uVAEf0k/tzXFOz9LvSMt8umEiEqDUbINZTXWC3WQXsaXJ3HuACb3nuj
+	0ysOMezHmNw8QJIRScceMvXDfRCRNC/I=
+X-Gm-Gg: AY/fxX42YDWEiLGOPzl/FlN2qEaiRC4j9lLG16q+5IuxKmxjDFpZcjQOYVbyvuxGobd
+	IDHGW8T3l62tHemSbtcyk3ximTl8V9vHX0W0rRZyP/qASaaoyw8odwS7cFhVZb3C/CaIG1vNSLK
+	muqGlKW+n9bN5rzdSWiSmFFpbBjNmPtwmbIkFGMnDfqGgmIfCRVzoSVCfKBR7EMA5UKLHttmfZ6
+	aLgozqpmt6GnMCXoyDjRjGQPjHJkuhG3Nh6QTMGsB1c45EqDkwd1JjUz6SUvDEq3pIctklBEDJj
+	YTtsBbh8LSPS5rm37+IgRXUnwzX/
+X-Google-Smtp-Source: AGHT+IHnE+r7bGv/BkxZ6LJhXngM4EyGuF2bd3sQnhEUsKf8xxvzuAYkADKmfPfEUw7qWYwEM4IF8p+euzLP8YCo0x4=
+X-Received: by 2002:a05:600c:4e8a:b0:479:2a09:9262 with SMTP id
+ 5b1f17b1804b1-47d84b18037mr6856645e9.9.1767746029492; Tue, 06 Jan 2026
+ 16:33:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251231024316.4643-1-CFSworks@gmail.com> <20251231024316.4643-3-CFSworks@gmail.com>
- <fe859743904a2add8d7d67f64ab9686769670782.camel@ibm.com> <CAH5Ym4jnsYNp7Y5icBtQJZvX_JW=nvprj61ZH1XDX3Js0ePggA@mail.gmail.com>
- <d680c81d5f48e02a1282cc029aacdb7e093d2d5c.camel@ibm.com>
-In-Reply-To: <d680c81d5f48e02a1282cc029aacdb7e093d2d5c.camel@ibm.com>
+References: <20251231024316.4643-1-CFSworks@gmail.com> <20251231024316.4643-5-CFSworks@gmail.com>
+ <5fba25f7b85276411c091cb7206b2dc057d89c68.camel@ibm.com> <CAH5Ym4ig7uBdereXpL8T3Cjn1zqzRxG1VwXb59rwHQjTQKWrPw@mail.gmail.com>
+ <a3a4413f8d9c7df1fc53b2421c9256496f682a4c.camel@ibm.com>
+In-Reply-To: <a3a4413f8d9c7df1fc53b2421c9256496f682a4c.camel@ibm.com>
 From: Sam Edwards <cfsworks@gmail.com>
-Date: Tue, 6 Jan 2026 16:15:13 -0800
-X-Gm-Features: AQt7F2oNpb3JEky7VU6B4CILXd0-Bq3VYqDH6H-Njj1suMedJjP4l0KJKr4Jawc
-Message-ID: <CAH5Ym4jaZO5NWYZCzf9NpmhVm58MB0+aD4-4NR+iiozHRXDmhQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] ceph: Remove error return from ceph_process_folio_batch()
+Date: Tue, 6 Jan 2026 16:33:38 -0800
+X-Gm-Features: AQt7F2rW86FdMXuY4HjhNoWPfSqVr2zt2Cqvnt43jPG3uYuSS8QgCXwS2vMA5Jk
+Message-ID: <CAH5Ym4iZ7ZTsFxHCHQPnHS5U-vZL8=Z_5T0cXJeB56dzw+CQpw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ceph: Assert writeback loop invariants
 To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 Cc: Milind Changire <mchangir@redhat.com>, Xiubo Li <xiubli@redhat.com>, 
 	"idryomov@gmail.com" <idryomov@gmail.com>, "brauner@kernel.org" <brauner@kernel.org>, 
@@ -91,236 +91,177 @@ Cc: Milind Changire <mchangir@redhat.com>, Xiubo Li <xiubli@redhat.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 6, 2026 at 2:47=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyko@ib=
+On Tue, Jan 6, 2026 at 3:00=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyko@ib=
 m.com> wrote:
 >
-> On Mon, 2026-01-05 at 22:52 -0800, Sam Edwards wrote:
-> > On Mon, Jan 5, 2026 at 12:36=E2=80=AFPM Viacheslav Dubeyko
-> > <Slava.Dubeyko@ibm.com> wrote:
+> On Mon, 2026-01-05 at 22:53 -0800, Sam Edwards wrote:
+> > On Mon, Jan 5, 2026 at 2:29=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyk=
+o@ibm.com> wrote:
 > > >
 > > > On Tue, 2025-12-30 at 18:43 -0800, Sam Edwards wrote:
-> > > > Following the previous patch, ceph_process_folio_batch() no longer
-> > > > returns errors because the writeback loop cannot handle them.
+> > > > If `locked_pages` is zero, the page array must not be allocated:
+> > > > ceph_process_folio_batch() uses `locked_pages` to decide when to
+> > > > allocate `pages`, and redundant allocations trigger
+> > > > ceph_allocate_page_array()'s BUG_ON(), resulting in a worker oops (=
+and
+> > > > writeback stall) or even a kernel panic. Consequently, the main loo=
+p in
+> > > > ceph_writepages_start() assumes that the lifetime of `pages` is con=
+fined
+> > > > to a single iteration.
+> > > >
+> > > > This expectation is currently not clear enough, as evidenced by the
+> > > > previous two patches which fix oopses caused by `pages` persisting =
+into
+> > > > the next loop iteration.
+> > > >
+> > > > Use an explicit BUG_ON() at the top of the loop to assert the loop'=
+s
+> > > > preexisting expectation that `pages` is cleaned up by the previous
+> > > > iteration. Because this is closely tied to `locked_pages`, also mak=
+e it
+> > > > the previous iteration's responsibility to guarantee its reset, and
+> > > > verify with a second new BUG_ON() instead of handling (and masking)
+> > > > failures to do so.
+> > > >
+> > > > Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+> > > > ---
+> > > >  fs/ceph/addr.c | 9 +++++----
+> > > >  1 file changed, 5 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> > > > index 91cc43950162..b3569d44d510 100644
+> > > > --- a/fs/ceph/addr.c
+> > > > +++ b/fs/ceph/addr.c
+> > > > @@ -1669,7 +1669,9 @@ static int ceph_writepages_start(struct addre=
+ss_space *mapping,
+> > > >               tag_pages_for_writeback(mapping, ceph_wbc.index, ceph=
+_wbc.end);
+> > > >
+> > > >       while (!has_writeback_done(&ceph_wbc)) {
+> > > > -             ceph_wbc.locked_pages =3D 0;
+> > > > +             BUG_ON(ceph_wbc.locked_pages);
+> > > > +             BUG_ON(ceph_wbc.pages);
+> > > > +
 > > >
 > >
 > > Hi Slava,
 > >
-> > > I am not completely convinced that we can remove returning error code=
- here. What
-> > > if we don't process any folio in ceph_process_folio_batch(), then we =
-cannot call
-> > > the ceph_submit_write(). It sounds to me that we need to have error c=
-ode to jump
-> > > to release_folios in such case.
+> > > It's not good idea to introduce BUG_ON() in write pages logic. I am d=
+efinitely
+> > > against these two BUG_ON() here.
 > >
-> > This goto is already present (search the comment "did we get anything?"=
-).
+> > I share your distaste for BUG_ON() in writeback. However, the
+> > BUG_ON(ceph_wbc.pages); already exists in ceph_allocate_page_array().
+> > This patch is trying to catch that earlier, where it's easier to
+> > troubleshoot. If I changed these to WARN_ON(), it would not prevent
+> > the oops.
+> >
+> > And the writeback code has a lot of BUG_ON() checks already (so I am
+> > not "introducing" BUG_ON), but I suppose you could be saying "it's
+> > already a problem, please don't make it worse."
+> >
+>
+> It looks really strange that you do at first:
+>
+> -             ceph_wbc.locked_pages =3D 0;
+>
+> and then you introduce two BUG_ON():
+>
+> +             BUG_ON(ceph_wbc.locked_pages);
+> +             BUG_ON(ceph_wbc.pages);
+>
+> But what's the point? It looks more natural simply to make initialization=
+ here:
+>
+>               ceph_wbc.locked_pages =3D 0;
+>               ceph_wbc.strip_unit_end =3D 0;
+>
+> What's wrong with it?
+
+The problem is if that block runs at the top of the loop while
+ceph_wbc.pages !=3D NULL, the worker will oops in
+ceph_allocate_page_array(). This is a particularly difficult oops to
+diagnose. We should prevent it by carefully maintaining the loop's
+invariants, but if prevention fails, the next best option is to oops
+earlier, as close as possible to the actual bug.
+
+>
+> > If I introduce a ceph_discard_page_array() function (as discussed on
+> > patch 4), I could call it at the top of the loop (to *ensure* a clean
+> > state) instead of using BUG_ON() (to *assert* a clean state). I'd like
+> > to hear from other reviewers which approach they'd prefer.
 > >
 > > >
+> > > >               ceph_wbc.max_pages =3D ceph_wbc.wsize >> PAGE_SHIFT;
 > > > >
-> > > > Since this function already indicates failure to lock any pages by
-> > > > leaving `ceph_wbc.locked_pages =3D=3D 0`, and the writeback loop ha=
-s no way
+> > > >  get_more_pages:
+> > > > @@ -1703,11 +1705,10 @@ static int ceph_writepages_start(struct add=
+ress_space *mapping,
+> > > >               }
+> > > >
+> > > >               rc =3D ceph_submit_write(mapping, wbc, &ceph_wbc);
+> > > > -             if (rc)
+> > > > -                     goto release_folios;
+> > > > -
 > > >
-> > > Frankly speaking, I don't quite follow what do you mean by "this func=
-tion
-> > > already indicates failure to lock any pages". What do you mean here?
+> > > Frankly speaking, its' completely not clear the from commit message w=
+hy we move
+> > > this check. What's the problem is here? How this move can fix the iss=
+ue?
 > >
-> > I feel like there's a language barrier here. I understand from your
-> > homepage that you speak Russian. I believe the Russian translation of
-> > what I'm trying to say is:
-> >
-> > =D0=AD=D1=82=D0=B0 =D1=84=D1=83=D0=BD=D0=BA=D1=86=D0=B8=D1=8F =D1=83=D0=
-=B6=D0=B5 =D1=81=D0=B8=D0=B3=D0=BD=D0=B0=D0=BB=D0=B8=D0=B7=D0=B8=D1=80=D1=
-=83=D0=B5=D1=82 =D0=BE =D1=82=D0=BE=D0=BC, =D1=87=D1=82=D0=BE =D0=BD=D0=B8 =
-=D0=BE=D0=B4=D0=BD=D0=B0 =D1=81=D1=82=D1=80=D0=B0=D0=BD=D0=B8=D1=86=D0=B0 =
-=D0=BD=D0=B5 =D0=B1=D1=8B=D0=BB=D0=B0
-> > =D0=B7=D0=B0=D0=B1=D0=BB=D0=BE=D0=BA=D0=B8=D1=80=D0=BE=D0=B2=D0=B0=D0=
-=BD=D0=B0, =D0=BF=D0=BE=D1=81=D0=BA=D0=BE=D0=BB=D1=8C=D0=BA=D1=83 ceph_wbc.=
-locked_pages =D0=BE=D1=81=D1=82=D0=B0=D1=91=D1=82=D1=81=D1=8F =D1=80=D0=B0=
-=D0=B2=D0=BD=D1=8B=D0=BC 0.
+> > The diff makes it a little unclear, but I'm actually moving
+> > ceph_wbc.{locked_pages,strip_unit_end} =3D 0; *above* the check (see
+> > commit message: "also make it the previous iteration's responsibility
+> > to guarantee [locked_pages is] reset") so that they happen
+> > unconditionally. Git just happens to see it in terms of the if/goto
+> > moving downward, not the assignments moving up.
 >
-> It haven't made your statement more clear. :)
->
-> As far as I can see, this statement has no connection to the patch 2. It =
-is more
-> relevant to the patch 3.
->
-> >
-> > It's likely that I didn't phrase the English version clearly enough.
-> > Do you have a clearer phrasing I could use? This is the central point
-> > of this patch, so it's crucial that it's well-understood.
-> >
-> > >
-> > > > to handle abandonment of a locked batch, change the return type of
-> > > > ceph_process_folio_batch() to `void` and remove the pathological go=
-to in
-> > > > the writeback loop. The lack of a return code emphasizes that
-> > > > ceph_process_folio_batch() is designed to be abort-free: that is, o=
-nce
-> > > > it commits a folio for writeback, it will not later abandon it or
-> > > > propagate an error for that folio.
-> > >
-> > > I think you need to explain your point more clear. Currently, I am no=
-t convinced
-> > > that this modification makes sense.
-> >
-> > ACK; a good commit message needs to be clear to everyone. I'm not sure
-> > where I went wrong in my wording, but I'll try to restate my thought
-> > process; so maybe you can tell me where I lose you:
-> > 1) At this point in the series (after patch 1 is applied), there is no
-> > remaining possible way for ceph_process_folio_batch() to return a
-> > nonzero value. All possible codepaths result in rc=3D0.
->
-> I am still not convinced that patch 1 is correct.
+> I simply don't see any explanation why we are moving this check.
 
-Then we should resolve patch 1 first before continuing with this
-discussion. This patch is predicated on the correctness of patch 1, so
-until that premise is agreed upon, any review of this patch is
-necessarily blocked on that outcome.
+The check is not being moved; other lines are being moved above it,
+and Git's diff algorithm made it look like the check moved.
+This equivalent diff makes the actual change clearer:
+         rc =3D ceph_submit_write(mapping, wbc, &ceph_wbc);
++        ceph_wbc.locked_pages =3D 0;
++        ceph_wbc.strip_unit_end =3D 0;
+         if (rc)
+             goto release_folios;
+-
+-        ceph_wbc.locked_pages =3D 0;
+-        ceph_wbc.strip_unit_end =3D 0;
 
-If you have specific technical objections to patch 1, let=E2=80=99s address
-those directly in that thread. Once we reach a consensus there, we can
-continue the discussion of this patch on solid ground.
+         if (folio_batch_count(&ceph_wbc.fbatch) > 0) {
+             ceph_wbc.nr_folios =3D
 
+> And what this
+> move is fixing. I believe it's really important to explain what this
+> modification is fixing.
 
-> So, we should expect to
-> receive error code from move_dirty_folio_in_page_array(), especially for =
-the
-> case if no one folio has been processed. And if no one folio has been pro=
-cessed,
-> then we need to return error code.
->
-> The ceph_process_folio_batch() is complex function and we need to have th=
-e way
-> to return the error code from internal function's logic to the caller's l=
-ogic.
-> We cannot afford not to have the return error code from this function. Be=
-cause
-> we need to be ready to release unprocessed folios if something was wrong =
-in the
-> function's logic.
+This is not a bugfix; it's purely code cleanup -- more of the
+"defensive programming" that we both like to see.
+
+Cheers,
+Sam
+
 >
 > Thanks,
 > Slava.
 >
-> > 2) Therefore, the `if` statement that checks the
-> > ceph_process_folio_batch() return code is dead code.
-> > 3) Trying to `goto release_folios` when the page array is active
-> > constitutes a bug. So the `if (!ceph_wbc.locked_pages) goto
-> > release_folios;` condition is correct, but the `if (rc) goto
-> > release_folios;` is incorrect. (It's dead code anyway, see #2 above.)
-> > 4) Therefore, delete the `if (rc) goto release_folios;` dead code and
-> > rely solely on `if (!ceph_wbc.locked_pages) goto release_folios;`
-> > 5) Since we aren't using the return code of ceph_process_folio_batch()
-> > -- a static function with no other callers -- it should not return a
-> > status in the first place.
-> > 6) By design ceph_process_folio_batch() is a "best-effort" function:
-> > it tries to lock as many pages as it *can* (and that might be 0!) and
-> > returns once it can't proceed. It is *not* allowed to abort: that is,
-> > it cannot commit some pages for writeback, then change its mind and
-> > prevent writeback of the whole batch.
-> > 7) Removing the return code from ceph_process_folio_batch() does not
-> > prevent ceph_writepages_start() from knowing if a failure happened on
-> > the first folio. ceph_writepages_start() already checks whether
-> > ceph_wbc.locked_pages =3D=3D 0.
-> > 8) Removing the return code from ceph_process_folio_batch() *does*
-> > prevent ceph_writepages_start() from knowing *what* went wrong when
-> > the first folio failed, but ceph_writepages_start() wasn't doing
-> > anything with that information anyway. It only cared about the error
-> > status as a boolean.
-> > 9) Most importantly: This patch does NOT constitute a behavioral
-> > change. It is removing unreachable (and, when reached, buggy)
-> > codepaths.
 > >
 > > Warm regards,
 > > Sam
-> >
 > >
 > >
 > > >
 > > > Thanks,
 > > > Slava.
 > > >
+> > > >               ceph_wbc.locked_pages =3D 0;
+> > > >               ceph_wbc.strip_unit_end =3D 0;
+> > > > +             if (rc)
+> > > > +                     goto release_folios;
 > > > >
-> > > > Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-> > > > ---
-> > > >  fs/ceph/addr.c | 17 +++++------------
-> > > >  1 file changed, 5 insertions(+), 12 deletions(-)
-> > > >
-> > > > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > > > index 3462df35d245..2b722916fb9b 100644
-> > > > --- a/fs/ceph/addr.c
-> > > > +++ b/fs/ceph/addr.c
-> > > > @@ -1283,16 +1283,16 @@ static inline int move_dirty_folio_in_page_=
-array(struct address_space *mapping,
-> > > >  }
-> > > >
-> > > >  static
-> > > > -int ceph_process_folio_batch(struct address_space *mapping,
-> > > > -                          struct writeback_control *wbc,
-> > > > -                          struct ceph_writeback_ctl *ceph_wbc)
-> > > > +void ceph_process_folio_batch(struct address_space *mapping,
-> > > > +                           struct writeback_control *wbc,
-> > > > +                           struct ceph_writeback_ctl *ceph_wbc)
-> > > >  {
-> > > >       struct inode *inode =3D mapping->host;
-> > > >       struct ceph_fs_client *fsc =3D ceph_inode_to_fs_client(inode)=
-;
-> > > >       struct ceph_client *cl =3D fsc->client;
-> > > >       struct folio *folio =3D NULL;
-> > > >       unsigned i;
-> > > > -     int rc =3D 0;
-> > > > +     int rc;
-> > > >
-> > > >       for (i =3D 0; can_next_page_be_processed(ceph_wbc, i); i++) {
-> > > >               folio =3D ceph_wbc->fbatch.folios[i];
-> > > > @@ -1322,12 +1322,10 @@ int ceph_process_folio_batch(struct address=
-_space *mapping,
-> > > >               rc =3D ceph_check_page_before_write(mapping, wbc,
-> > > >                                                 ceph_wbc, folio);
-> > > >               if (rc =3D=3D -ENODATA) {
-> > > > -                     rc =3D 0;
-> > > >                       folio_unlock(folio);
-> > > >                       ceph_wbc->fbatch.folios[i] =3D NULL;
-> > > >                       continue;
-> > > >               } else if (rc =3D=3D -E2BIG) {
-> > > > -                     rc =3D 0;
-> > > >                       folio_unlock(folio);
-> > > >                       ceph_wbc->fbatch.folios[i] =3D NULL;
-> > > >                       break;
-> > > > @@ -1369,7 +1367,6 @@ int ceph_process_folio_batch(struct address_s=
-pace *mapping,
-> > > >               rc =3D move_dirty_folio_in_page_array(mapping, wbc, c=
-eph_wbc,
-> > > >                               folio);
-> > > >               if (rc) {
-> > > > -                     rc =3D 0;
-> > > >                       folio_redirty_for_writepage(wbc, folio);
-> > > >                       folio_unlock(folio);
-> > > >                       break;
-> > > > @@ -1380,8 +1377,6 @@ int ceph_process_folio_batch(struct address_s=
-pace *mapping,
-> > > >       }
-> > > >
-> > > >       ceph_wbc->processed_in_fbatch =3D i;
-> > > > -
-> > > > -     return rc;
-> > > >  }
-> > > >
-> > > >  static inline
-> > > > @@ -1685,10 +1680,8 @@ static int ceph_writepages_start(struct addr=
-ess_space *mapping,
-> > > >                       break;
-> > > >
-> > > >  process_folio_batch:
-> > > > -             rc =3D ceph_process_folio_batch(mapping, wbc, &ceph_w=
-bc);
-> > > > +             ceph_process_folio_batch(mapping, wbc, &ceph_wbc);
-> > > >               ceph_shift_unused_folios_left(&ceph_wbc.fbatch);
-> > > > -             if (rc)
-> > > > -                     goto release_folios;
-> > > >
-> > > >               /* did we get anything? */
-> > > >               if (!ceph_wbc.locked_pages)
+> > > >               if (folio_batch_count(&ceph_wbc.fbatch) > 0) {
+> > > >                       ceph_wbc.nr_folios =3D
 
