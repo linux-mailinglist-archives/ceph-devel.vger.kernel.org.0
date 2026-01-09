@@ -1,235 +1,619 @@
-Return-Path: <ceph-devel+bounces-4351-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4352-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722BAD0835C
-	for <lists+ceph-devel@lfdr.de>; Fri, 09 Jan 2026 10:32:27 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F26DD0B887
+	for <lists+ceph-devel@lfdr.de>; Fri, 09 Jan 2026 18:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5F77B30DEDC6
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Jan 2026 09:27:05 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id D6E59302CC7B
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Jan 2026 17:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0931B3596E9;
-	Fri,  9 Jan 2026 09:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B074631A06C;
+	Fri,  9 Jan 2026 17:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="16e6Tram";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PGw8o01N";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="16e6Tram";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PGw8o01N"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gqkqumFc";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="OfKMj8lC"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B1E3590DC
-	for <ceph-devel@vger.kernel.org>; Fri,  9 Jan 2026 09:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0CC500973
+	for <ceph-devel@vger.kernel.org>; Fri,  9 Jan 2026 17:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767950823; cv=none; b=gzEwULKYkwyhzxDh/C4Vu5UjzWgXi4adTq1jgmQHGO81j3K3McHHlM2wD/5Wu3ycmO1KLjUzV7pQ4/5sS5/cfn2yLOHSCPh6+0JMHx7eOw0kUGLbCqHZSxg90/rPwVryxpexSBHAa3denxbtJ/XgFN9tzP/50LKRrFk1tvBHV8M=
+	t=1767978476; cv=none; b=Z4rCXEOAsAnNnZrDlBuSjkKttRp2yNWqUBo0kpLgD8YaE5JwxUngYasuRMIOVlrGvATZJhqgSv4sXUW53GvueGLmWDUhTCtjQbcpzQqU3IaqQDkJljYzT9LCOEwp+K9B7OVxJfpXs4NM+s9VXfO3MEkVeZAGKgXP+fJkaXwZuV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767950823; c=relaxed/simple;
-	bh=ieYSLGgTtXaBSsZi7KAl2J0dTzr2UwfHoVXBpw/UxdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OeiSLRANZ75zzAg9ApCDndalxxL8XGTJEdNd3W0r137u8pxla1NnngH6TqvkWa3AVjOS31wfc7boPPL+LhxhItHz0A1CfEJ9xn+jIPXsWirjYvZEfoF9n7IO/XjLBeN1yTjF11YKAkByDXkUsHHQYwK6wqUGzYg6ZSdndm6lzxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=16e6Tram; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PGw8o01N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=16e6Tram; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PGw8o01N; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3FAB45BEE8;
-	Fri,  9 Jan 2026 09:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767950819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1767978476; c=relaxed/simple;
+	bh=huRxJQDIb3w85HB5Gg9Yl9KkH922WVM9qKseF1suB6Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nyLLo93b5b5OqVzMFp5AnbXNYkjR2f8CJFLFgEuyDcu2Gm67FR+sDYTxh21R6eRe1EZcC4z+4bb1RQG43YbBHO2AzvqdCRCocb3NaqIv4tTLDGH1ctNYHKl/NSV2UVUN7KesbmA2y9L3coXevRpuCDfE2Hbi/csDLxAo6ii0mBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gqkqumFc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=OfKMj8lC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1767978473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6ix79vpLIssdL500RHYujbFB++xsIiyUcELipWU4WwU=;
-	b=16e6TramPJH4Gs7875HDbzGuy8ICZI2BILnT1SGRvVAXeI5sQUjzAFlNaNR9kACorpHpXM
-	nei3ptJVD2BUcQ5r+hV5aj5YMzGmHUhxPPheHPPJgtr2K4a0j9TnIfXo+9hSNy8lOl3XCf
-	SJ1RxzU1924fXlBtLP3laUNrmhN+RXw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767950819;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ix79vpLIssdL500RHYujbFB++xsIiyUcELipWU4WwU=;
-	b=PGw8o01N9jcoRQmfnP+ZoeS9HgNB1q6FOHcZJKmgTM6SnO2dBelSCiHyvByrrSDNihQRUj
-	Pa0cf4D023nkzOAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767950819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ix79vpLIssdL500RHYujbFB++xsIiyUcELipWU4WwU=;
-	b=16e6TramPJH4Gs7875HDbzGuy8ICZI2BILnT1SGRvVAXeI5sQUjzAFlNaNR9kACorpHpXM
-	nei3ptJVD2BUcQ5r+hV5aj5YMzGmHUhxPPheHPPJgtr2K4a0j9TnIfXo+9hSNy8lOl3XCf
-	SJ1RxzU1924fXlBtLP3laUNrmhN+RXw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767950819;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ix79vpLIssdL500RHYujbFB++xsIiyUcELipWU4WwU=;
-	b=PGw8o01N9jcoRQmfnP+ZoeS9HgNB1q6FOHcZJKmgTM6SnO2dBelSCiHyvByrrSDNihQRUj
-	Pa0cf4D023nkzOAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E4C83EA63;
-	Fri,  9 Jan 2026 09:26:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mcNIC+PJYGkUAgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 09 Jan 2026 09:26:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D22A1A0A4F; Fri,  9 Jan 2026 10:26:58 +0100 (CET)
-Date: Fri, 9 Jan 2026 10:26:58 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Luis de Bethencourt <luisbg@kernel.org>, 
-	Salah Triki <salah.triki@gmail.com>, Nicolas Pitre <nico@fluxnic.net>, 
-	Christoph Hellwig <hch@infradead.org>, Anders Larsen <al@alarsen.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>, Gao Xiang <xiang@kernel.org>, 
-	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>, 
-	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, 
-	Dave Kleikamp <shaggy@kernel.org>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
-	Viacheslav Dubeyko <slava@dubeyko.com>, Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall <hubcap@omnibond.com>, 
-	Martin Brandenburg <martin@omnibond.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>, Phillip Lougher <phillip@squashfs.org.uk>, 
-	Carlos Maiolino <cem@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, 
-	Yuezhang Mo <yuezhang.mo@sony.com>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Andreas Gruenbacher <agruenba@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, 
-	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev, 
-	ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org, gfs2@lists.linux.dev, 
-	linux-doc@vger.kernel.org, v9fs@lists.linux.dev, ceph-devel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
- lease support
-Message-ID: <qzdy4ipzuxl3exs26tr3kd5bloyp7lrr3fqircgcxltvoprd6k@shasgtm4zncv>
-References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
- <m3mywef74xhcakianlrovrnaadnhzhfqjfusulkcnyioforfml@j2xnk7dzkmv4>
- <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
+	bh=iNN3XKG/l9YBe/Fwe75LlMiDor3ysYrljgCh3+R6g10=;
+	b=gqkqumFcJYbDngI1Muea+tf1JeJFNbpDncKQb5HezMZkh1nTwlQajYdvZfmWr6Vwj2rlAG
+	dYPIB5J8hyrJPFWBfwmuVyb3jHCzXil5XId+BJwfpb+RHqyVyH/3RNbRqzNqLnQIdTjmHF
+	UXCZHRYhkGSsb4XzuvhvbIejJqMiIXA=
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
+ [209.85.167.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-75--8NUKuetOamNyb22g3zi_w-1; Fri, 09 Jan 2026 12:07:52 -0500
+X-MC-Unique: -8NUKuetOamNyb22g3zi_w-1
+X-Mimecast-MFC-AGG-ID: -8NUKuetOamNyb22g3zi_w_1767978471
+Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-45a79cd15d8so3724201b6e.0
+        for <ceph-devel@vger.kernel.org>; Fri, 09 Jan 2026 09:07:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1767978471; x=1768583271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iNN3XKG/l9YBe/Fwe75LlMiDor3ysYrljgCh3+R6g10=;
+        b=OfKMj8lCqu3dtcd+X2BkBvITocXwMuB1zNB+DNT/iGyHMr1X6MjSdvsgzjOg7R53yy
+         A9J/j+zkaF3Ou2K8hQNkCIYmEG4TuOM4RKw/z3wNBx11PCV2a6qEnqCYQ0WFblk26EVZ
+         motn0bdOBH91jsO2fG9BJRTl+M3/GwhiffjuEI4O3CNmXgQ0a3lbEom5YIlJvRKtig0s
+         o2l3JTH+yBv0/1OGQojWn96Gd1oFqVGNZaOIkEduoFuC26OATfCEwEeVy9aU/+aM5unD
+         eN/2qhWqLXAcn4NeJnG5QT8ETOKrL1vNC2FeTLUzeSRsEki7tiI4qxxROGg2nZDL3DD4
+         4U2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767978471; x=1768583271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=iNN3XKG/l9YBe/Fwe75LlMiDor3ysYrljgCh3+R6g10=;
+        b=QdjOqg6SxDpRADom9La5Z8+5SKvDgwcTkEQ8vbzw7oPI3TLHrJy18en6Bko+YyIBZv
+         aZfz5L7ruVb/13P4YeOq4Jkp12n1RjVcO9JYa2YQOlg6A5OxsdNfXmTY8X3uaZYP2/J+
+         G0E1OynEF4ph1fEHR5xYiFNPwAdRXTXscq9VBLrll08hHEA7Gavvv6XwU6jKwJXJ/ZpJ
+         ERIvKnunHvhbhv6DlVQfLnRzMundkVBsBDV0hoRXcCEussfsYP57g2MXkQaOuqf+/6In
+         7pqQoJB0Trvl8oGA0pCqm2bQbWXSmFfmT9emu4zQziTE10KpE+8TXBQ6riC7xq5AjQNx
+         WsSw==
+X-Gm-Message-State: AOJu0YydzuqUqvORp66t72aXHdOKqqibRdq1P9kMipWFLHBF2JTBGqV2
+	qgU5Aw7YKWVeO6TLI8ecJzd/e8vdgQ82/JDgsQzsbZh3tScTX2BWm9H4yceM5RjELXYWBicqlCf
+	jh20LeGAM+896d+RgDsfTp4F+XKTccLbJ+e9kOujOWQJ8fmGyS5yVIbRLiIzeZnpj1reoOWH8Gs
+	uWznQ4qczmJzNqlAznhGQNFn+oC4LuquK4SAXUkz3QxGvhmgsL
+X-Gm-Gg: AY/fxX439bPnx2/CBBYN5SSBinuwE1UgWLmT7ubsZFEQPKUuwtljUyq5ckTj8WcwkPz
+	IDTvHGZIdtg6mz5mMLR738T0SL7Q6wW0P4KvGTUdaWROaEyugDybYQAfFAk6ZmE0/iPhu50l3g0
+	lXAzRLEOEkqRG74UJP+p9VsqiSGbz4d0dUOz0s6KMpyF0/w3UXQa6m3YUoVg+j4fpfUgM8b34em
+	ENpMVBEeZRlSNFs2Q98wdDumQ==
+X-Received: by 2002:a05:6808:6a86:b0:450:f3e4:eb05 with SMTP id 5614622812f47-45a6bed20e1mr5451495b6e.64.1767978470949;
+        Fri, 09 Jan 2026 09:07:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEy8tVd1WkdpjjvpWIyqlunn7NBPgWceSzoTTOgzlKTboUDnZFrRqmnp2vkoFF5ijCVkBdwlSlGjscdQcE0Oww=
+X-Received: by 2002:a05:6808:6a86:b0:450:f3e4:eb05 with SMTP id
+ 5614622812f47-45a6bed20e1mr5451475b6e.64.1767978470462; Fri, 09 Jan 2026
+ 09:07:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,kernel.org,gmail.com,fluxnic.net,infradead.org,alarsen.net,zeniv.linux.org.uk,suse.com,fb.com,linux.alibaba.com,google.com,huawei.com,vivo.com,mit.edu,dilger.ca,mail.parknet.co.jp,nod.at,dubeyko.com,paragon-software.com,fasheh.com,evilplan.org,omnibond.com,szeredi.hu,squashfs.org.uk,linux-foundation.org,samsung.com,sony.com,oracle.com,redhat.com,lwn.net,ionkov.net,codewreck.org,crudebyte.com,samba.org,manguebit.org,microsoft.com,talpey.com,vger.kernel.org,lists.ozlabs.org,lists.sourceforge.net,lists.infradead.org,lists.linux.dev,lists.orangefs.org,kvack.org,lists.samba.org];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLwapsqjcu3srfensh8n36bg4p)];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[86];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
+References: <20260108223453.907929-2-slava@dubeyko.com>
+In-Reply-To: <20260108223453.907929-2-slava@dubeyko.com>
+From: Patrick Donnelly <pdonnell@redhat.com>
+Date: Fri, 9 Jan 2026 12:07:23 -0500
+X-Gm-Features: AZwV_QhZfpqGUggGSedE_pdIKziYyRT0KZtKY3AUuknXJzojB_acmYEW5xaVAMM
+Message-ID: <CA+2bHPZ9WiTnJXFgoRveHchOm0j=A1qeKt+T59QJpfMkrPX0Mw@mail.gmail.com>
+Subject: Re: [PATCH v4] ceph: fix kernel crash in ceph_open()
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
+	linux-fsdevel@vger.kernel.org, amarkuze@redhat.com, Slava.Dubeyko@ibm.com, 
+	vdubeyko@redhat.com, khiremat@redhat.com, Pavan.Rallabhandi@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 08-01-26 13:56:57, Jeff Layton wrote:
-> On Thu, 2026-01-08 at 18:40 +0100, Jan Kara wrote:
-> > On Thu 08-01-26 12:12:55, Jeff Layton wrote:
-> > > Yesterday, I sent patches to fix how directory delegation support is
-> > > handled on filesystems where the should be disabled [1]. That set is
-> > > appropriate for v6.19. For v7.0, I want to make lease support be more
-> > > opt-in, rather than opt-out:
-> > > 
-> > > For historical reasons, when ->setlease() file_operation is set to NULL,
-> > > the default is to use the kernel-internal lease implementation. This
-> > > means that if you want to disable them, you need to explicitly set the
-> > > ->setlease() file_operation to simple_nosetlease() or the equivalent.
-> > > 
-> > > This has caused a number of problems over the years as some filesystems
-> > > have inadvertantly allowed leases to be acquired simply by having left
-> > > it set to NULL. It would be better if filesystems had to opt-in to lease
-> > > support, particularly with the advent of directory delegations.
-> > > 
-> > > This series has sets the ->setlease() operation in a pile of existing
-> > > local filesystems to generic_setlease() and then changes
-> > > kernel_setlease() to return -EINVAL when the setlease() operation is not
-> > > set.
-> > > 
-> > > With this change, new filesystems will need to explicitly set the
-> > > ->setlease() operations in order to provide lease and delegation
-> > > support.
-> > > 
-> > > I mainly focused on filesystems that are NFS exportable, since NFS and
-> > > SMB are the main users of file leases, and they tend to end up exporting
-> > > the same filesystem types. Let me know if I've missed any.
-> > 
-> > So, what about kernfs and fuse? They seem to be exportable and don't have
-> > .setlease set...
-> > 
-> 
-> Yes, FUSE needs this too. I'll add a patch for that.
-> 
-> As far as kernfs goes: AIUI, that's basically what sysfs and resctrl
-> are built on. Do we really expect people to set leases there?
-> 
-> I guess it's technically a regression since you could set them on those
-> sorts of files earlier, but people don't usually export kernfs based
-> filesystems via NFS or SMB, and that seems like something that could be
-> used to make mischief.
+Hi Slava,
 
-I agree exporting kernfs based filesystem doesn't make a huge amount of
-sense.
+On Thu, Jan 8, 2026 at 5:35=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.co=
+m> wrote:
+>
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> The CephFS kernel client has regression starting from 6.18-rc1.
+>
+> sudo ./check -g quick
+> FSTYP         -- ceph
+> PLATFORM      -- Linux/x86_64 ceph-0005 6.18.0-rc5+ #52 SMP PREEMPT_DYNAM=
+IC Fri
+> Nov 14 11:26:14 PST 2025
+> MKFS_OPTIONS  -- 192.168.1.213:3300:/scratch
+> MOUNT_OPTIONS -- -o name=3Dadmin,ms_mode=3Dsecure 192.168.1.213:3300:/scr=
+atch
+> /mnt/cephfs/scratch
+>
+> Killed
+>
+> Nov 14 11:48:10 ceph-0005 kernel: [  154.723902] libceph: mon0
+> (2)192.168.1.213:3300 session established
+> Nov 14 11:48:10 ceph-0005 kernel: [  154.727225] libceph: client167616
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.087260] BUG: kernel NULL pointer
+> dereference, address: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.087756] #PF: supervisor read acc=
+ess in
+> kernel mode
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.088043] #PF: error_code(0x0000) =
+- not-
+> present page
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.088302] PGD 0 P4D 0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.088688] Oops: Oops: 0000 [#1] SM=
+P KASAN
+> NOPTI
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.090080] CPU: 4 UID: 0 PID: 3453 =
+Comm:
+> xfs_io Not tainted 6.18.0-rc5+ #52 PREEMPT(voluntary)
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.091245] Hardware name: QEMU Stan=
+dard PC
+> (i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.092103] RIP: 0010:strcmp+0x1c/0x=
+40
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.092493] Code: 90 90 90 90 90 90 =
+90 90
+> 90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c=
+0 01 84
+> d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3=
+ cc cc
+> cc cc 31
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.094057] RSP: 0018:ffff8881536875=
+c0
+> EFLAGS: 00010246
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.094522] RAX: 0000000000000000 RB=
+X:
+> ffff888116003200 RCX: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.095114] RDX: 0000000000000063 RS=
+I:
+> 0000000000000000 RDI: ffff88810126c900
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.095714] RBP: ffff8881536876a8 R0=
+8:
+> 0000000000000000 R09: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.096297] R10: 0000000000000000 R1=
+1:
+> 0000000000000000 R12: dffffc0000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.096889] R13: ffff8881061d0000 R1=
+4:
+> 0000000000000000 R15: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.097490] FS:  000074a85c082840(00=
+00)
+> GS:ffff8882401a4000(0000) knlGS:0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.098146] CS:  0010 DS: 0000 ES: 0=
+000
+> CR0: 0000000080050033
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.098630] CR2: 0000000000000000 CR=
+3:
+> 0000000110ebd001 CR4: 0000000000772ef0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.099219] PKRU: 55555554
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.099476] Call Trace:
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.099686]  <TASK>
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.099873]  ?
+> ceph_mds_check_access+0x348/0x1760
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.100267]  ?
+> __kasan_check_write+0x14/0x30
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.100671]  ? lockref_get+0xb1/0x17=
+0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.100979]  ?
+> __pfx__raw_spin_lock+0x10/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.101372]  ceph_open+0x322/0xef0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.101669]  ? __pfx_ceph_open+0x10/=
+0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.101996]  ?
+> __pfx_apparmor_file_open+0x10/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.102434]  ?
+> __ceph_caps_issued_mask_metric+0xd6/0x180
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.102911]  do_dentry_open+0x7bf/0x=
+10e0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.103249]  ? __pfx_ceph_open+0x10/=
+0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.103508]  vfs_open+0x6d/0x450
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.103697]  ? may_open+0xec/0x370
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.103893]  path_openat+0x2017/0x50=
+a0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.104110]  ? __pfx_path_openat+0x1=
+0/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.104345]  ?
+> __pfx_stack_trace_save+0x10/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.104599]  ?
+> stack_depot_save_flags+0x28/0x8f0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.104865]  ? stack_depot_save+0xe/=
+0x20
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.105063]  do_filp_open+0x1b4/0x45=
+0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.105253]  ?
+> __pfx__raw_spin_lock_irqsave+0x10/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.105538]  ? __pfx_do_filp_open+0x=
+10/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.105748]  ? __link_object+0x13d/0=
+x2b0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.105949]  ?
+> __pfx__raw_spin_lock+0x10/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.106169]  ?
+> __check_object_size+0x453/0x600
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.106428]  ? _raw_spin_unlock+0xe/=
+0x40
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.106635]  do_sys_openat2+0xe6/0x1=
+80
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.106827]  ?
+> __pfx_do_sys_openat2+0x10/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.107052]  __x64_sys_openat+0x108/=
+0x240
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.107258]  ?
+> __pfx___x64_sys_openat+0x10/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.107529]  ?
+> __pfx___handle_mm_fault+0x10/0x10
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.107783]  x64_sys_call+0x134f/0x2=
+350
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.108007]  do_syscall_64+0x82/0xd5=
+0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.108201]  ?
+> fpregs_assert_state_consistent+0x5c/0x100
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.108467]  ? do_syscall_64+0xba/0x=
+d50
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.108626]  ? __kasan_check_read+0x=
+11/0x20
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.108801]  ?
+> count_memcg_events+0x25b/0x400
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.109013]  ? handle_mm_fault+0x38b=
+/0x6a0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.109216]  ? __kasan_check_read+0x=
+11/0x20
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.109457]  ?
+> fpregs_assert_state_consistent+0x5c/0x100
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.109724]  ?
+> irqentry_exit_to_user_mode+0x2e/0x2a0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.109991]  ? irqentry_exit+0x43/0x=
+50
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.110180]  ? exc_page_fault+0x95/0=
+x100
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.110389]
+> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.110638] RIP: 0033:0x74a85bf145ab
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.110821] Code: 25 00 00 41 00 3d =
+00 00
+> 41 00 74 4b 64 8b 04 25 18 00 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c f=
+f ff ff
+> b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28=
+ 64 48
+> 2b 14 25
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.111724] RSP: 002b:00007ffc77d316=
+d0
+> EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.112080] RAX: ffffffffffffffda RB=
+X:
+> 0000000000000002 RCX: 000074a85bf145ab
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.112442] RDX: 0000000000000000 RS=
+I:
+> 00007ffc77d32789 RDI: 00000000ffffff9c
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.112790] RBP: 00007ffc77d32789 R0=
+8:
+> 00007ffc77d31980 R09: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.113125] R10: 0000000000000000 R1=
+1:
+> 0000000000000246 R12: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.113502] R13: 00000000ffffffff R1=
+4:
+> 0000000000000180 R15: 0000000000000001
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.113838]  </TASK>
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.113957] Modules linked in:
+> intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_=
+core
+> pmt_telemetry pmt_discovery pmt_class intel_pmc_ssram_telemetry intel_vse=
+c
+> kvm_intel kvm joydev irqbypass polyval_clmulni ghash_clmulni_intel aesni_=
+intel
+> rapl floppy input_leds psmouse i2c_piix4 vga16fb mac_hid i2c_smbus vgasta=
+te
+> serio_raw bochs qemu_fw_cfg pata_acpi sch_fq_codel rbd msr parport_pc ppd=
+ev lp
+> parport efi_pstore
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.116339] CR2: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.116574] ---[ end trace 000000000=
+0000000
+> ]---
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.116826] RIP: 0010:strcmp+0x1c/0x=
+40
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.117058] Code: 90 90 90 90 90 90 =
+90 90
+> 90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c=
+0 01 84
+> d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3=
+ cc cc
+> cc cc 31
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.118070] RSP: 0018:ffff8881536875=
+c0
+> EFLAGS: 00010246
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.118362] RAX: 0000000000000000 RB=
+X:
+> ffff888116003200 RCX: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.118748] RDX: 0000000000000063 RS=
+I:
+> 0000000000000000 RDI: ffff88810126c900
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.119116] RBP: ffff8881536876a8 R0=
+8:
+> 0000000000000000 R09: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.119492] R10: 0000000000000000 R1=
+1:
+> 0000000000000000 R12: dffffc0000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.119865] R13: ffff8881061d0000 R1=
+4:
+> 0000000000000000 R15: 0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.120242] FS:  000074a85c082840(00=
+00)
+> GS:ffff8882401a4000(0000) knlGS:0000000000000000
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.120704] CS:  0010 DS: 0000 ES: 0=
+000
+> CR0: 0000000080050033
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.121008] CR2: 0000000000000000 CR=
+3:
+> 0000000110ebd001 CR4: 0000000000772ef0
+> Nov 14 11:48:11 ceph-0005 kernel: [  155.121409] PKRU: 55555554
+>
+> We have issue here [1] if fs_name =3D=3D NULL:
+>
+> const char fs_name =3D mdsc->fsc->mount_options->mds_namespace;
+>     ...
+>     if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) {
+>             / fsname mismatch, try next one */
+>             return 0;
+>     }
+>
+> v2
+> Patrick Donnelly suggested that: In summary, we should definitely start
+> decoding `fs_name` from the MDSMap and do strict authorizations checks
+> against it. Note that the `--mds_namespace` should only be used for
+> selecting the file system to mount and nothing else. It's possible
+> no mds_namespace is specified but the kernel will mount the only
+> file system that exists which may have name "foo".
+>
+> v3
+> The namespace_equals() logic has been generalized into
+> __namespace_equals() with the goal of using it in
+> ceph_mdsc_handle_fsmap() and ceph_mds_auth_match().
+> The misspelling of CEPH_NAMESPACE_WILDCARD has been corrected.
+>
+> v4
+> The __namespace_equals() now supports wildcard check.
+>
+> This patch reworks ceph_mdsmap_decode() and namespace_equals() with
+> the goal of supporting the suggested concept. Now struct ceph_mdsmap
+> contains m_fs_name field that receives copy of extracted FS name
+> by ceph_extract_encoded_string(). For the case of "old" CephFS file syste=
+ms,
+> it is used "cephfs" name. Also, namespace_equals() method has been
+> reworked with the goal of proper names comparison.
+>
+> [1] https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/ceph/mds_client.=
+c#L5666
+> [2] https://tracker.ceph.com/issues/73886
+>
+> Fixes: 22c73d52a6d0 ("ceph: fix multifs mds auth caps issue")
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> cc: Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+> cc: Alex Markuze <amarkuze@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Patrick Donnelly <pdonnell@redhat.com>
+> cc: Ceph Development <ceph-devel@vger.kernel.org>
+> ---
+>  fs/ceph/mds_client.c         | 12 ++++----
+>  fs/ceph/mdsmap.c             | 22 +++++++++++----
+>  fs/ceph/mdsmap.h             |  1 +
+>  fs/ceph/super.h              | 54 ++++++++++++++++++++++++++++++++----
+>  include/linux/ceph/ceph_fs.h |  6 ++++
+>  5 files changed, 78 insertions(+), 17 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 7e4eab824dae..339736423cae 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -5671,7 +5671,7 @@ static int ceph_mds_auth_match(struct ceph_mds_clie=
+nt *mdsc,
+>         u32 caller_uid =3D from_kuid(&init_user_ns, cred->fsuid);
+>         u32 caller_gid =3D from_kgid(&init_user_ns, cred->fsgid);
+>         struct ceph_client *cl =3D mdsc->fsc->client;
+> -       const char *fs_name =3D mdsc->fsc->mount_options->mds_namespace;
+> +       const char *fs_name =3D mdsc->mdsmap->m_fs_name;
+>         const char *spath =3D mdsc->fsc->mount_options->server_path;
+>         bool gid_matched =3D false;
+>         u32 gid, tlen, len;
+> @@ -5679,7 +5679,9 @@ static int ceph_mds_auth_match(struct ceph_mds_clie=
+nt *mdsc,
+>
+>         doutc(cl, "fsname check fs_name=3D%s  match.fs_name=3D%s\n",
+>               fs_name, auth->match.fs_name ? auth->match.fs_name : "");
+> -       if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) =
+{
+> +
+> +       if (!__namespace_equals(auth->match.fs_name, is_wildcard_requeste=
+d,
+> +                               fs_name, NULL, NAME_MAX)) {
+>                 /* fsname mismatch, try next one */
+>                 return 0;
+>         }
+> @@ -6122,7 +6124,6 @@ void ceph_mdsc_handle_fsmap(struct ceph_mds_client =
+*mdsc, struct ceph_msg *msg)
+>  {
+>         struct ceph_fs_client *fsc =3D mdsc->fsc;
+>         struct ceph_client *cl =3D fsc->client;
+> -       const char *mds_namespace =3D fsc->mount_options->mds_namespace;
+>         void *p =3D msg->front.iov_base;
+>         void *end =3D p + msg->front.iov_len;
+>         u32 epoch;
+> @@ -6157,9 +6158,8 @@ void ceph_mdsc_handle_fsmap(struct ceph_mds_client =
+*mdsc, struct ceph_msg *msg)
+>                 namelen =3D ceph_decode_32(&info_p);
+>                 ceph_decode_need(&info_p, info_end, namelen, bad);
+>
+> -               if (mds_namespace &&
+> -                   strlen(mds_namespace) =3D=3D namelen &&
+> -                   !strncmp(mds_namespace, (char *)info_p, namelen)) {
+> +               if (namespace_equals(fsc->mount_options,
+> +                                    (char *)info_p, namelen)) {
+>                         mount_fscid =3D fscid;
+>                         break;
+>                 }
+> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+> index 2c7b151a7c95..9cadf811eb4b 100644
+> --- a/fs/ceph/mdsmap.c
+> +++ b/fs/ceph/mdsmap.c
+> @@ -353,22 +353,31 @@ struct ceph_mdsmap *ceph_mdsmap_decode(struct ceph_=
+mds_client *mdsc, void **p,
+>                 __decode_and_drop_type(p, end, u8, bad_ext);
+>         }
+>         if (mdsmap_ev >=3D 8) {
+> -               u32 fsname_len;
+> +               size_t fsname_len;
+> +
+>                 /* enabled */
+>                 ceph_decode_8_safe(p, end, m->m_enabled, bad_ext);
+> +
+>                 /* fs_name */
+> -               ceph_decode_32_safe(p, end, fsname_len, bad_ext);
+> +               m->m_fs_name =3D ceph_extract_encoded_string(p, end,
+> +                                                          &fsname_len,
+> +                                                          GFP_NOFS);
+> +               if (IS_ERR(m->m_fs_name)) {
+> +                       m->m_fs_name =3D NULL;
+> +                       goto nomem;
+> +               }
+>
+>                 /* validate fsname against mds_namespace */
+> -               if (!namespace_equals(mdsc->fsc->mount_options, *p,
+> +               if (!namespace_equals(mdsc->fsc->mount_options, m->m_fs_n=
+ame,
+>                                       fsname_len)) {
+>                         pr_warn_client(cl, "fsname %*pE doesn't match mds=
+_namespace %s\n",
+> -                                      (int)fsname_len, (char *)*p,
+> +                                      (int)fsname_len, m->m_fs_name,
+>                                        mdsc->fsc->mount_options->mds_name=
+space);
+>                         goto bad;
+>                 }
+> -               /* skip fsname after validation */
+> -               ceph_decode_skip_n(p, end, fsname_len, bad);
+> +       } else {
+> +               m->m_enabled =3D false;
+> +               m->m_fs_name =3D kstrdup(CEPH_OLD_FS_NAME, GFP_NOFS);
+>         }
+>         /* damaged */
+>         if (mdsmap_ev >=3D 9) {
+> @@ -430,6 +439,7 @@ void ceph_mdsmap_destroy(struct ceph_mdsmap *m)
+>                 kfree(m->m_info);
+>         }
+>         kfree(m->m_data_pg_pools);
+> +       kfree(m->m_fs_name);
+>         kfree(m);
+>  }
+>
+> diff --git a/fs/ceph/mdsmap.h b/fs/ceph/mdsmap.h
+> index 1f2171dd01bf..d48d07c3516d 100644
+> --- a/fs/ceph/mdsmap.h
+> +++ b/fs/ceph/mdsmap.h
+> @@ -45,6 +45,7 @@ struct ceph_mdsmap {
+>         bool m_enabled;
+>         bool m_damaged;
+>         int m_num_laggy;
+> +       char *m_fs_name;
+>  };
+>
+>  static inline struct ceph_entity_addr *
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index a1f781c46b41..fe950bd72452 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -104,18 +104,62 @@ struct ceph_mount_options {
+>         struct fscrypt_dummy_policy dummy_enc_policy;
+>  };
+>
+> +#define CEPH_NAMESPACE_WILDCARD                "*"
+> +
+> +typedef bool (*wildcard_check_fn)(const char *name);
+> +
+> +static inline bool is_wildcard_requested(const char *name)
+> +{
+> +       if (!name)
+> +               return false;
+> +
+> +       return strcmp(name, CEPH_NAMESPACE_WILDCARD) =3D=3D 0;
+> +}
+> +
+> +static inline bool __namespace_equals(const char *name1,
+> +                                     wildcard_check_fn is_wildcard_reque=
+sted1,
+> +                                     const char *name2,
+> +                                     wildcard_check_fn is_wildcard_reque=
+sted2,
+> +                                     size_t max_len)
 
-> AFAICT, kernfs_export_ops is mostly to support open_by_handle_at(). See
-> commit aa8188253474 ("kernfs: add exportfs operations").
-> 
-> One idea: we could add a wrapper around generic_setlease() for
-> filesystems like this that will do a WARN_ONCE() and then call
-> generic_setlease(). That would keep leases working on them but we might
-> get some reports that would tell us who's setting leases on these files
-> and why.
+I'm puzzled by this. For all callers, is_wildcard_requested1 is always
+is_wildcard_requested (why have it as a parameter at all?) and
+is_wildcard_requested2 is always NULL.
 
-Yeah, this makes sense at least for some transition period so that we
-faster learn if our judgement about sane / insane lease use was wrong.
+Additionally, for all callers, I believe name1 and name2 should never
+be NULL? Perhaps you mean to check e.g. name1[0] =3D=3D '\0'?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+In any case, please comment each of these below conditions because
+it's hard to follow without doing the logic for each case manually in
+one's head.
+
+
+
+> +       size_t len1, len2;
+> +
+> +       if (!name1 && !name2)
+> +               return true;
+> +
+> +       if (name1) {
+> +               if (is_wildcard_requested1 && is_wildcard_requested1(name=
+1))
+> +                       return true;
+> +               else if (!name2)
+> +                       return false;
+> +       }
+> +
+> +       if (name2) {
+> +               if (is_wildcard_requested2 && is_wildcard_requested2(name=
+2))
+> +                       return true;
+> +               else if (!name1)
+> +                       return true;
+> +       }
+> +
+> +       WARN_ON_ONCE(!name1 || !name2);
+> +
+> +       len1 =3D strnlen(name1, max_len);
+> +       len2 =3D strnlen(name2, max_len);
+> +
+> +       return !(len1 !=3D len2 || strncmp(name1, name2, len1));
+> +}
+> +
+>  /*
+>   * Check if the mds namespace in ceph_mount_options matches
+>   * the passed in namespace string. First time match (when
+>   * ->mds_namespace is NULL) is treated specially, since
+>   * ->mds_namespace needs to be initialized by the caller.
+>   */
+> -static inline int namespace_equals(struct ceph_mount_options *fsopt,
+> -                                  const char *namespace, size_t len)
+> +static inline bool namespace_equals(struct ceph_mount_options *fsopt,
+> +                                   const char *namespace, size_t len)
+>  {
+> -       return !(fsopt->mds_namespace &&
+> -                (strlen(fsopt->mds_namespace) !=3D len ||
+> -                 strncmp(fsopt->mds_namespace, namespace, len)));
+> +       return __namespace_equals(fsopt->mds_namespace, is_wildcard_reque=
+sted,
+> +                                 namespace, NULL, len);
+
+I think we agreed that the "*" wildcard should have _no_ special
+meaning as a glob for fsopt->mds_namespace?
+
+--=20
+Patrick Donnelly, Ph.D.
+He / Him / His
+Red Hat Partner Engineer
+IBM, Inc.
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+
 
