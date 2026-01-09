@@ -1,275 +1,193 @@
-Return-Path: <ceph-devel+bounces-4344-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4345-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578A3D069CD
-	for <lists+ceph-devel@lfdr.de>; Fri, 09 Jan 2026 01:31:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5A4D0731B
+	for <lists+ceph-devel@lfdr.de>; Fri, 09 Jan 2026 06:26:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 10023302E06F
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Jan 2026 00:30:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7B6483015EF6
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Jan 2026 05:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CA61E633C;
-	Fri,  9 Jan 2026 00:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D05727FB2A;
+	Fri,  9 Jan 2026 05:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBLYha5Z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FCNW4zBK"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EFA199949
-	for <ceph-devel@vger.kernel.org>; Fri,  9 Jan 2026 00:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC491F151C
+	for <ceph-devel@vger.kernel.org>; Fri,  9 Jan 2026 05:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767918611; cv=none; b=Udz/2FbU2WF/1tnN/sp6/v7tE/cjfVeSVbwTkaj5PpGMJrKBT8M2k1N0yVemjxsMQvaRWgUAfn6HS/KrLfLgNFqNslDYs0GJ6Q3uWBzICnQOdu2Gr/JfzKLQe+lFN6V0GJUlgDqdTZ8y+YhjaKBdYjwrMhUegMN/DfoirRXu6fg=
+	t=1767936384; cv=none; b=kbSlLddraCOnzjkYBgr7Pb1dgcLy7vy1+ytaRUC8jNmxaNDmXyU8/rgZxbxI+4qALaOjo4E3AU8KCBbg3H0YzoqTCeHotHTEHYs7a4rUHmqLdTfagZk9Sw9FsIDKuyGthaFa4Eesw/52ZAcqrQFAdHuJmT/N0Vae5oitexgP7z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767918611; c=relaxed/simple;
-	bh=FQevz05rTmEcBW13DrlcKq2QCO7ffBl0HPj3LkzAk64=;
+	s=arc-20240116; t=1767936384; c=relaxed/simple;
+	bh=SMlm1Zj+VPtmhO+U2BlswVGk3VmIYNq8C/pi+eNGgFU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pF2GDw5Dd13i0agiY9RPLAEhO4ewg+BeJVYbio0pYYLjuraFFGQoMdNwf5ZuQmjn4mALKGRBJ5tEBr8nhf18CLj5CHEebo5ciSkp7H5hM93S0ey2EHIt14J62hBn08RR5/x6X2WD5gSjanucLNuyOabdurs9LP9paZXsCVu8BQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBLYha5Z; arc=none smtp.client-ip=209.85.221.50
+	 To:Cc:Content-Type; b=ThgeWYBJTJzpqqEOA6khXIn2cbZDQng6vP6RFvP2MoCWM2cWAIeaR+7T6XinhJt5/Y/EffaD0gHHM3PtMgQxf790Wqpw56fTFqKtl/60Sk67LB561QDH9XcdvRdBLptQrtG2W6Bv8/n146m3qbt5W+Yu/WN86JlCw2WbAanrgZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FCNW4zBK; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-430f57cd471so1954336f8f.0
-        for <ceph-devel@vger.kernel.org>; Thu, 08 Jan 2026 16:30:09 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-38305f05717so16612601fa.1
+        for <ceph-devel@vger.kernel.org>; Thu, 08 Jan 2026 21:26:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767918608; x=1768523408; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767936380; x=1768541180; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CaPVvzJ4LbN1B2Y4P2DX67AxqOr8ShRD2iMYaC6rtCM=;
-        b=hBLYha5ZPBr/nEDWRrSx2uQLBDifpLkhH5ZAhWKlQgi+2mCYqOVJJine3e3EOrzkQk
-         ktYg9jTCES5v7zkjE2Tku8tGEsc/xaARIRrhUqzln4HNGrhUhB6PZkc8NdoOqtpjT6La
-         XYscjFaks690jEW6NmmUBmZYx9azXRwBGMM3jGVZob0J+nT3T6bicUejSw/XTST5DrzB
-         ZpBwRpF1iykkq7a6wPkEXwQGr3jOISKLWxABlO2N/z4CzYw6+UhHeAqPyErREbPNppxR
-         U9+Kp93tF6VA+WNj2GDbmoX8277Ja0oTlFhi2BxUrMNZcMk9C0hlbjMNAn/k8JNOEDt2
-         CwUQ==
+        bh=EEF8CAf2dAOD+neWtLdI+w7NxCIZ2WohswMXxqPrdck=;
+        b=FCNW4zBKvwe06rYcMueAfiJkXaVx77askqwvwX7CaEFH+6L3KlGJSk+bEnT7twnFlu
+         P/yPNDuhFF9KldguIgfQJUEYrjzXBpzGr9ymhPd8+54KoK8cbP5kMcMedYnuV8Kj4agV
+         DY0xjwrqP/6J413PUFdioqjbYLqYGCmxXPgnNCdMLjil7XqO5qmH5efBobLJT6gh3OGz
+         VE+LNRMzj1W0betHwvCbJtPCcXjicJ4dWKL9ELgIHdLGNeHo8bGeEw3mOVIMRWPnhzPQ
+         gBNuDOAwxH6WtvQg2uVaK+Xg7hl16AIP+FUkv3+pddWPJlc9FSeriHsKVG5oPAPuqF32
+         hcAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767918608; x=1768523408;
+        d=1e100.net; s=20230601; t=1767936380; x=1768541180;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=CaPVvzJ4LbN1B2Y4P2DX67AxqOr8ShRD2iMYaC6rtCM=;
-        b=DpXSMb9sJdfyAZLQUWGyENjSMn5FB9wJLati9p4kY5XqoRQkkfMNp5Z7fwoPwQqIDa
-         66bfF4gsbMTgPPOnX7hNAoIzXiaAGGc8ZEHkFMRLn9tnKaRBvfXu+WXRNXT2vYCpuARV
-         yCF3e+hx7/QXrd+tPOZvoDMFX70js1HReS5sbYkzeSgYz4h3+QCzRdfDvx9pXP+TkRG4
-         u+2QmgmmTEVO8n00nbqNjCRbNYReKnrw0e6JypQdo8+Oxs3YQBMbRhhqGkgtlRVEWrNg
-         maRJCNHvI+puV/rtjxN9pijUUCPKRVArIPcQnxQNrlknsXlLz9F750P2Rdo5bi8u/Ykr
-         EQIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5SiLzJKNADY64FtPXBSgtE2vb1NwMa44EqO+aoTO87bZutcLxvG5YS3ZKBCPlY/8wq3Uoleo24QaE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWO14VzLhJYJmtUu/ajpjYStXypj+i84mrv/idl2hpwklyUdEq
-	ea+YPB73Xft1Y7oOFlMzcfDNpPFLUijFQsb7oAV0Gum07/6KCXWnaMxGa1pFhELXPqDTdVK3MaD
-	zREL/y0qzToPRcEVGc02gHsQnRNp308M=
-X-Gm-Gg: AY/fxX5laHx3F6cDrMRlbj5aJIMP/zFHCG1b+6RggzgFxCGRuq1YtCx/RaOqlTYH/mI
-	8YgBY9okuoZa68jGCKmgwOuDBpyfF5yTNwBNIadfz9oyy7qhKi5+rnxO+diYmZ/IsTUuqb4fqCJ
-	6oNXOP2cwsgCdzbkgxdeGIAkrwjJ7GHeKqiqE6WuIOXawLwAVIxko7OJH8WsHq9e3Sxl4zXSmli
-	nDPm9oxam29V4rUa0nFTLimrQziuxfAlFzLcFmgZ223Z7VlHuXorAiODBc7HVmeCdl10memlCw3
-	x1gayw==
-X-Google-Smtp-Source: AGHT+IHX18AD6wCneFN/Depby87XqaBLWuU70jvGkwVCMMuKK91HmvxyJzt6rAr2bsWLfkF8p0SYmjCz9GWTrqupIwc=
-X-Received: by 2002:a05:6000:420c:b0:431:67d:5390 with SMTP id
- ffacd0b85a97d-432c37757demr11199309f8f.54.1767918607480; Thu, 08 Jan 2026
- 16:30:07 -0800 (PST)
+        bh=EEF8CAf2dAOD+neWtLdI+w7NxCIZ2WohswMXxqPrdck=;
+        b=PXR+MIOg5FtOkknf5o9nn7Ke8NGbMuC5EKhtxbtvpeYW82rqCwYmNBp0tTnGF8EMEI
+         6w4CabBcLYWxhPNd29Jo/K19bV4co4q8o/9CEx5tpcvh9Z3XcZ/lCJJvGfRcgnmrQw8A
+         dVk4SZ8ny8gNyyiLw7DQ4zP45iJHRybtTGCEiZ9t3fnFj/dLPjxn4JkoI5BJUviVtPbe
+         5XVk4QIIRCPqjdcsBBfkrBnhkX3/WRTzvaQR6+JpXcKilLjaiGdwY5X9sW8Ry0FPS3zw
+         RAn0aKvpJijb4jZprwiVtpgk4OBG/nrweg7xir1o6PQkU0mKcknt6KTBAaCnx+4IdRcL
+         oXnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIAYj7GMWkq3Z+r/t1mjNdUCFzFUPCK+DxYzqDop142oDI+Zl2tFWf8tF3//jyot5Om0tAhs954x5u@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1alPIqaNru14BaX1w/vyj/PjxPonI43GDf5DNqi+3caDJX7v3
+	iuoJm4ZoEoN2wHBhwoKwwULh6hl+de5TrckUM9nME8lFN9yy/0gxVtsyC3eeb+RNjrAjkWWFd7P
+	bX9omO26j+kkhThnETGaD57Se3UENVjg=
+X-Gm-Gg: AY/fxX4/vI4AMzr4f+zhUjU041lSROui5lJvDSQ5A8yVTwdqUU3yFpTOS60loNXDzdC
+	RSGiX9YYfDxNWdWBG31J0AXORB1e0W0sx10dbJAn+wh8cwCowtPr2VKJ87OMWDfcvUtythzsKAY
+	6ozkP6lCYQssNblH+3XED8YAXp/Jt4Wn1LJbL87lPKZPOANEMoZwbN+G6aGHMDm+TnCwxX13pgl
+	K+qafpSe/lvdAIl7rAuWGOTHACpOXAyqfRamfUe39187bTLn75y1RP4uHBzbQFVX/0jxGjw
+X-Google-Smtp-Source: AGHT+IFacKbx/HloTRDyL3KNE+dISSFeSIeO5gnLVmi9ry+Gc3uB4ma+c7Q9oZoxnNZINjg1j054MzA1urN4ujLkRdE=
+X-Received: by 2002:a05:651c:419b:b0:378:e3f9:2d26 with SMTP id
+ 38308e7fff4ca-382ff823bdamr21702801fa.39.1767936379607; Thu, 08 Jan 2026
+ 21:26:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260107210139.40554-1-CFSworks@gmail.com> <20260107210139.40554-3-CFSworks@gmail.com>
- <a16c48a05998429d26f68887cad4abec045869c7.camel@ibm.com>
-In-Reply-To: <a16c48a05998429d26f68887cad4abec045869c7.camel@ibm.com>
-From: Sam Edwards <cfsworks@gmail.com>
-Date: Thu, 8 Jan 2026 16:29:56 -0800
-X-Gm-Features: AZwV_Qhs1bYnF1ylgDtcnuHMu2faQRYszJb8TUTX8484Oc-ZB76U1YiGtjr8ibg
-Message-ID: <CAH5Ym4jn8wg+mYGqKGb17OZGBkyDeX-Vx3wgfVT0cqPtn36QFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] ceph: Remove error return from ceph_process_folio_batch()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: Xiubo Li <xiubli@redhat.com>, "idryomov@gmail.com" <idryomov@gmail.com>, 
-	Milind Changire <mchangir@redhat.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, 
-	"jlayton@kernel.org" <jlayton@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org> <20260108-setlease-6-20-v1-13-ea4dec9b67fa@kernel.org>
+In-Reply-To: <20260108-setlease-6-20-v1-13-ea4dec9b67fa@kernel.org>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Fri, 9 Jan 2026 14:26:03 +0900
+X-Gm-Features: AQt7F2pmUKGJKWpVwxhIrI-U32G4ALuqYGKPCGsBpfUc51GGTfk1sxJMQ_5a6zs
+Message-ID: <CAKFNMok9FG=hhzr8YrHYws5z3jTWOf2TXtFWvSfYbNy6+XLHxw@mail.gmail.com>
+Subject: Re: [PATCH 13/24] nilfs2: add setlease file operation
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
+	Nicolas Pitre <nico@fluxnic.net>, Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Anders Larsen <al@alarsen.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>, 
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
+	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
+	Viacheslav Dubeyko <slava@dubeyko.com>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, 
+	Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	Phillip Lougher <phillip@squashfs.org.uk>, Carlos Maiolino <cem@kernel.org>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
+	Andreas Gruenbacher <agruenba@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
+	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Christian Schoenebeck <linux_oss@crudebyte.com>, Xiubo Li <xiubli@redhat.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, 
+	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, 
+	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org, 
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-mm@kvack.org, 
+	gfs2@lists.linux.dev, linux-doc@vger.kernel.org, v9fs@lists.linux.dev, 
+	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 8, 2026 at 12:08=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
+On Fri, Jan 9, 2026 at 2:15=E2=80=AFAM Jeff Layton wrote:
 >
-> On Wed, 2026-01-07 at 13:01 -0800, Sam Edwards wrote:
-> > Following the previous patch, ceph_process_folio_batch() no longer
-> > returns errors because the writeback loop cannot handle them.
-> >
-> > Since this function already indicates failure to lock any pages by
-> > leaving `ceph_wbc.locked_pages =3D=3D 0`, and the writeback loop has no=
- way
-> > to handle abandonment of a locked batch, change the return type of
-> > ceph_process_folio_batch() to `void` and remove the pathological goto i=
-n
-> > the writeback loop. The lack of a return code emphasizes that
-> > ceph_process_folio_batch() is designed to be abort-free: that is, once
-> > it commits a folio for writeback, it will not later abandon it or
-> > propagate an error for that folio.
-> >
-> > Signed-off-by: Sam Edwards <CFSworks@gmail.com>
-> > ---
-> >  fs/ceph/addr.c | 17 +++++------------
-> >  1 file changed, 5 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > index 3462df35d245..2b722916fb9b 100644
-> > --- a/fs/ceph/addr.c
-> > +++ b/fs/ceph/addr.c
-> > @@ -1283,16 +1283,16 @@ static inline int move_dirty_folio_in_page_arra=
-y(struct address_space *mapping,
-> >  }
-> >
-> >  static
-> > -int ceph_process_folio_batch(struct address_space *mapping,
-> > -                          struct writeback_control *wbc,
-> > -                          struct ceph_writeback_ctl *ceph_wbc)
-> > +void ceph_process_folio_batch(struct address_space *mapping,
-> > +                           struct writeback_control *wbc,
-> > +                           struct ceph_writeback_ctl *ceph_wbc)
-> >  {
-> >       struct inode *inode =3D mapping->host;
-> >       struct ceph_fs_client *fsc =3D ceph_inode_to_fs_client(inode);
-> >       struct ceph_client *cl =3D fsc->client;
-> >       struct folio *folio =3D NULL;
-> >       unsigned i;
-> > -     int rc =3D 0;
-> > +     int rc;
-> >
-> >       for (i =3D 0; can_next_page_be_processed(ceph_wbc, i); i++) {
-> >               folio =3D ceph_wbc->fbatch.folios[i];
-> > @@ -1322,12 +1322,10 @@ int ceph_process_folio_batch(struct address_spa=
-ce *mapping,
-> >               rc =3D ceph_check_page_before_write(mapping, wbc,
-> >                                                 ceph_wbc, folio);
-> >               if (rc =3D=3D -ENODATA) {
-> > -                     rc =3D 0;
-> >                       folio_unlock(folio);
-> >                       ceph_wbc->fbatch.folios[i] =3D NULL;
-> >                       continue;
-> >               } else if (rc =3D=3D -E2BIG) {
-> > -                     rc =3D 0;
-> >                       folio_unlock(folio);
-> >                       ceph_wbc->fbatch.folios[i] =3D NULL;
-> >                       break;
-> > @@ -1369,7 +1367,6 @@ int ceph_process_folio_batch(struct address_space=
- *mapping,
-> >               rc =3D move_dirty_folio_in_page_array(mapping, wbc, ceph_=
-wbc,
-> >                               folio);
-> >               if (rc) {
-> > -                     rc =3D 0;
-> >                       folio_redirty_for_writepage(wbc, folio);
-> >                       folio_unlock(folio);
-> >                       break;
-> > @@ -1380,8 +1377,6 @@ int ceph_process_folio_batch(struct address_space=
- *mapping,
-> >       }
-> >
-> >       ceph_wbc->processed_in_fbatch =3D i;
-> > -
-> > -     return rc;
-> >  }
-> >
-> >  static inline
-> > @@ -1685,10 +1680,8 @@ static int ceph_writepages_start(struct address_=
-space *mapping,
-> >                       break;
-> >
-> >  process_folio_batch:
-> > -             rc =3D ceph_process_folio_batch(mapping, wbc, &ceph_wbc);
-> > +             ceph_process_folio_batch(mapping, wbc, &ceph_wbc);
-> >               ceph_shift_unused_folios_left(&ceph_wbc.fbatch);
-> > -             if (rc)
-> > -                     goto release_folios;
-> >
-> >               /* did we get anything? */
-> >               if (!ceph_wbc.locked_pages)
+> Add the setlease file_operation to nilfs_file_operations and
+> nilfs_dir_operations, pointing to generic_setlease.  A future patch
+> will change the default behavior to reject lease attempts with -EINVAL
+> when there is no setlease file operation defined. Add generic_setlease
+> to retain the ability to set leases on this filesystem.
 >
->  I don't see the point of removing the returning error code from the func=
-tion. I
-> prefer to have it because this method calls other ones with complex
-> functionality.
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Hey Slava,
+Looks good, Thanks!
 
-I've tried to clarify this patch a few ways now, but I still haven't
-seen actionable technical feedback, only misunderstanding or
-preference rather than concrete issues. I'm making one last, detailed
-attempt to explain the rationale; if it still isn't clear, I believe
-our only remaining option is to involve another maintainer to help
-complete the review.
+Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 
-As the function ceph_process_folio_batch() exists today (i.e. in
-Linus's tree), the API allows for 3 different possible outcomes (names
-my own, for illustrative purposes):
-- ERROR (rc !=3D 0): The function returns an error code, maybe after
-already allocating the page array and locking some pages, maybe not.
-It's ambiguous.
-- EMPTY (!rc && !locked_pages): The function executes normally, but
-does not lock any folios. It may do this if it encounters a problem on
-the first folio.
-- LOCKED (!rc && locked_pages >=3D 1): The function executes to
-completion without erroring after locking at least one folio. It may
-have encountered errors on subsequent folios, but it handles these by
-flushing the batch and trying again next time it's called.
+Ryusuke Konishi
 
-The ceph_writepages_start() loop that calls it, today, does not
-differentiate between the ERROR and EMPTY result:
-
-if (rc)
-    goto release_folios;
-
-/* did we get anything? */
-if (!ceph_wbc.locked_pages)
-    goto release_folios;
-
-So right now it's just a redundant degree of freedom. Standard
-software engineering principles dictate that a function's API should
-not create complexity beyond the actual needs of its caller. So either
-we remove EMPTY... or remove ERROR.
-
-The current problem with ERROR is that it (often, not always) results
-in a crash: the loop will come around without freeing the page array
-and violate the expectations of the next iteration, and we violate the
-BUG_ON() in ceph_allocate_page_array(). The loop is, today, not
-written in a way that "aborting" a batch is ever appropriate; it
-assumes the page array only exists when LOCKED. We must either add
-logic to the caller to fix it... or remove ERROR.
-
-The only way that the ERROR result could occur today is if fscrypt is
-enabled, the write storm bug is fixed, and a non-first folio fails its
-bounce page allocation. That means that it isn't possible now, and it
-wouldn't be made possible by applying this patchset. The "no dead
-code" rule requires that we either add some logic to
-ceph_allocate_page_array() that can actually result in ERROR... or
-remove ERROR.
-
-Finally, there is a big advantage to removing the return code from
-ceph_process_folio_batch(): it uses C's type system to enforce the
-guarantee that it doesn't abandon the page array. (Note! That does not
-mean that ceph_process_folio_batch() is not allowed to encounter
-failures -- I fully agree that it's a complex function and it may have
-more fallible logic added in the future -- just that it is responsible
-for cleaning up after those failures. Put simply, the lack of a return
-code gives it no way for it to make the cleanup the caller's problem!)
-
-> And I would like still save the path of returning error code from
-> the function. So, I don't agree with this patch.
-
-It can always be brought back in the future if something genuinely
-needs it (such as a hypothetical "major failure" in
-ceph_process_folio_batch() that needs to fail the entire writeback,
-not merely retry). But Linux doesn't keep "vestigial" code around for
-hypothetical future needs. If there isn't a concrete reason to add or
-use it now, then there's no reason to preserve it.
-
-Hope this helps,
-Sam
-
+> ---
+>  fs/nilfs2/dir.c  | 3 ++-
+>  fs/nilfs2/file.c | 2 ++
+>  2 files changed, 4 insertions(+), 1 deletion(-)
 >
-> Thanks,
-> Slava.
+> diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+> index 6ca3d74be1e16d5bc577e2520f1e841287a2511f..b243199036dfa1ab2299efaaa=
+5bdf5da2d159ff2 100644
+> --- a/fs/nilfs2/dir.c
+> +++ b/fs/nilfs2/dir.c
+> @@ -30,6 +30,7 @@
+>   */
+>
+>  #include <linux/pagemap.h>
+> +#include <linux/filelock.h>
+>  #include "nilfs.h"
+>  #include "page.h"
+>
+> @@ -661,5 +662,5 @@ const struct file_operations nilfs_dir_operations =3D=
+ {
+>         .compat_ioctl   =3D nilfs_compat_ioctl,
+>  #endif /* CONFIG_COMPAT */
+>         .fsync          =3D nilfs_sync_file,
+> -
+> +       .setlease       =3D generic_setlease,
+>  };
+> diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
+> index 1b8d754db44d44d25dcd13f008d266ec83c74d3f..f93b68c4877c5ed369e90b723=
+517e117142335de 100644
+> --- a/fs/nilfs2/file.c
+> +++ b/fs/nilfs2/file.c
+> @@ -8,6 +8,7 @@
+>   */
+>
+>  #include <linux/fs.h>
+> +#include <linux/filelock.h>
+>  #include <linux/mm.h>
+>  #include <linux/writeback.h>
+>  #include "nilfs.h"
+> @@ -150,6 +151,7 @@ const struct file_operations nilfs_file_operations =
+=3D {
+>         .fsync          =3D nilfs_sync_file,
+>         .splice_read    =3D filemap_splice_read,
+>         .splice_write   =3D iter_file_splice_write,
+> +       .setlease       =3D generic_setlease,
+>  };
+>
+>  const struct inode_operations nilfs_file_inode_operations =3D {
+>
+> --
+> 2.52.0
+>
 
