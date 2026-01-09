@@ -1,132 +1,210 @@
-Return-Path: <ceph-devel+bounces-4353-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4354-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9C4D0BC36
-	for <lists+ceph-devel@lfdr.de>; Fri, 09 Jan 2026 18:56:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D48ED0BF49
+	for <lists+ceph-devel@lfdr.de>; Fri, 09 Jan 2026 19:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D4137300EA32
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Jan 2026 17:51:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 19330304D868
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Jan 2026 18:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F43A27E05F;
-	Fri,  9 Jan 2026 17:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C7E2DEA64;
+	Fri,  9 Jan 2026 18:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+eHDuLb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TevMVnTO"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B126654763
-	for <ceph-devel@vger.kernel.org>; Fri,  9 Jan 2026 17:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94062DC34B
+	for <ceph-devel@vger.kernel.org>; Fri,  9 Jan 2026 18:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767981086; cv=none; b=QdmA1xk+VH1Q3UuQEZ9zytRXbznv7ULCcGWt5IdegMXrG1QB5aKHmYLqCwhKyK9YOsy6dnCfrI2RQmDdiPU2sBOWVCGb5zOq92/gxEDXSsskHoRnx8x2+ciIDpAdGxTf+D9yOFbbUzXjIvBN1jlx6BbCAXqaE0WEuGTh0f0/Fik=
+	t=1767984794; cv=none; b=e1/SnDWIPO0X2B+SgP5reVq3DituZTEcagR946n2BYysVj4DFwfKJBexoIJ8fKJ6vPEnR4LbJvdrrgobOEjRagWu+nwnmRrRraNwTzLA2ttJz92wJVsXu38hdvGeHHFK2sPZdR74l5W9p+BF6aMFPtrH38ad1wvmfFAHayhwdN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767981086; c=relaxed/simple;
-	bh=nukBL3JnI4nbwdWBAIGHNcArZ4KLANy69KPxQgTfh38=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZDVqGM2Ycu3hQ+sP6GJelrMV3ZQZ+lDObeZnevZY9m3R6YxoOKcgf+WcocKUkJ5imU6Yo3XtqUSUeNcLSJzT2CCfRMGR3PjJVDRZtyiBXRLyDG+wDF3ymn3ct6KDrzGXAWnqhtzPRhK3mAcvaJteYW3iH3zd+Bq0zwBp+Jw53MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j+eHDuLb; arc=none smtp.client-ip=209.85.222.179
+	s=arc-20240116; t=1767984794; c=relaxed/simple;
+	bh=PEO8wbSaGOwwRv5UKfYcgXejOCV3Kmi4mBiob/Mhc5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G9Y7QC2+LAPhAZ16bOdaXDahQsIzAgM75C1K0NT3sIoKKm6xHHGcN4IluSd6XIC+Zr0MQdOKcBznHTlDiLEZC62nYOZC99CgGbRhsTB5lBIxMefYNbFQk0mjg2nNmhj2xF41CMwv/2cggAmNOEuDQ9ci+wfc9UNFRijVc7azaYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TevMVnTO; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8c24f867b75so446540785a.2
-        for <ceph-devel@vger.kernel.org>; Fri, 09 Jan 2026 09:51:24 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64d0d41404cso7021590a12.0
+        for <ceph-devel@vger.kernel.org>; Fri, 09 Jan 2026 10:53:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767981084; x=1768585884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=59pVZqqsEkxF25vG/jfyP2Kz/TpG3GjdkBRW4z0ohCo=;
-        b=j+eHDuLb0hZlRa2B6JFCtTKKYox6YGniWjJW58XYAQXANxZp9SEf+MZNzdsBInTWN9
-         nDwuvjPdf0g2anSm1KKcsn5zs/skHtOURLyMBGAB3q+f0ek6fi//AOEomICAbSAQsNRZ
-         EL6uGh+8OrwY/VOfEnTr/Xt5uNo1+X3X07s1NhIBnDs4oJwOh1QWywGkrxyQ7K9pRFXQ
-         kWyvLxLXYYVB+BaiVFQP6RBpmSxaUE4aU+AH11nNuDHph7GD3UI3t/nkMDPuKbZmPRQ0
-         pIfsRX2OiKNY2S+qJYNrRYaubdYabIkL5UgZiLvYVQ9fkliu490JelkTgEkHr3OgNYzE
-         lxwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767981084; x=1768585884;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1767984790; x=1768589590; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=59pVZqqsEkxF25vG/jfyP2Kz/TpG3GjdkBRW4z0ohCo=;
-        b=o/na98D9LM4oIqfIB0yWzExEfgPfOeEFrILjMQa4MCd10/7CIDcZcYM8XMOEtyOO1u
-         90glvqDYTxiN3QjmGHZ8IdGs2xWadMS4PRgQcHbKxlc5Q+dt4ajkudIzgivk8uiMq8In
-         wW1s0WAouuFcRNH3tiYhSMKorZEWAw9CUQQefrUHT4z/Dgrmu6lrYcDLIfGGGxQnDKyZ
-         EZDWMgYuz5VkDX8+TBOmNw3e0Osr1AQr6Ph3ZJBRLhZ4IRAl+MBi9lFcNu9SSNbmZDRg
-         AW+LCmndMaxmAHQqD5wtNfMJMTCshGCnwqXqwwiWV2PFmergOFb5qTQWbuUnjbHnXsF9
-         9+tg==
-X-Gm-Message-State: AOJu0Yx5jj/kLTcV9OKUT+m95Xre0AfGPqXOC0TJvLC0WBOQE4zclqeK
-	kw+wuXdd4USlkxKyOp7ENh8LzM4u/H1c7Fs2x+u+i5r7X58uOhYuKZJ+bngEHw==
-X-Gm-Gg: AY/fxX7/rTbCFcWyk39Kr/dIDuRwoqwYlrYYY4+CTWGFwgzWjQbEp7+ZsrF+e/yM1cr
-	SCmmGTzJgtmWSBIWku/gZ8oeUt5YsT/PuN2CiOacosZiEYUxz/Rexj/uBPQVvIZpiA280vryAld
-	ukTOgqN+uvEQ5LgTnYIg8/Ysc0XKZgJxmd4Rx+M1Vc9g30ykx9FPWMPkFcNVZ9NVO+zFHOTWXyx
-	q/xWXtMGG7NZkB52F3MynAKAXAaMFPBQg2zBy1lu4IQmY5V1UFtmSlaXCEV+GFG8FfMuyy62xZ1
-	CiBc/NIjS0owdJGlnTQ0dpkepFNCDMRChywzL71TNmmtt1MxxO7CGRaITkNk+1QF7OdOwefP82H
-	U1TEkSkcErsZj6ZHsJP5VRREinDgDRXZonqiOrWVdT6YxqMWPo0eRIPlugvvu/6sP6fyPC4EMWm
-	0wUsTeO1llrIY9txUNco3sbc8ZZMacLMGU1DUzow6Rj5RdrSvAYbxF0A==
-X-Google-Smtp-Source: AGHT+IHB/pkoDa+k1N/dFfOsiAerbCNlfCbYiQwnKaY0L49/NEWS7OIUIfssBA/T108n/KLkUoj9nA==
-X-Received: by 2002:a05:622a:4c11:b0:4ee:49b8:fb7f with SMTP id d75a77b69052e-4ffb49e9d10mr160407031cf.58.1767981083677;
-        Fri, 09 Jan 2026 09:51:23 -0800 (PST)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8907723436fsm90847846d6.34.2026.01.09.09.51.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jan 2026 09:51:23 -0800 (PST)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 6.19-rc5
-Date: Fri,  9 Jan 2026 18:50:57 +0100
-Message-ID: <20260109175103.174536-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        bh=PEO8wbSaGOwwRv5UKfYcgXejOCV3Kmi4mBiob/Mhc5w=;
+        b=TevMVnTO4L/IsXa/A6Yb8C9ZKd7r8e5kfFD1o3TWcjasOa7MuaL5VvuAy4N9Ln9LPA
+         FLwXD7HoXI8YIlKcLYrC4/tOH+MHENDjCv0O/gZ7Y0v8ZB6IIO1Ug+BNU0uzuFI7GdHq
+         7ITmxR9O4u7734h5en21yhxH3bCCBLGCj+DHGUKn7eeak5W9VNbd+qZf/mA1d3slRfIt
+         y/TYWhbCrheCQgmL3EdAvoSSfdZmQCyjzBO83of4dLof/djhazL/OOPeoFp6EcYLrUTX
+         x5iKxv035Tzy8cECnp0l8kNjHQgAJsk0Q0CeyGUY1hJnEDug4AQDx0lWyAf35ifXUBaF
+         qL3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767984790; x=1768589590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PEO8wbSaGOwwRv5UKfYcgXejOCV3Kmi4mBiob/Mhc5w=;
+        b=ilgEQBPx7XMty6TZLjyj1v3vjbrIaeVLRkEd9jfsw11RDQC+IZ2QTh0WAL0zm13v9i
+         aGRte2erZT+sdtQxEx7STZdf1xRY0OHzBZ1u3HYvmtCiW2JMKrn16FEtGkYddkK9bF7/
+         EgtRtYyITevPnugeASnYU/yUm92Z9vJ1BdbUVSb+McBJ9D/S2Ymu2A3T/1ZVXdnrca8G
+         +LcfkQ8Wi2lIspGzD20jC1ot9R75y0kq0tty72weaf3ItoHd2WcDH3o4rZ4F/mKbGMg3
+         AxMsEz3ih6B8Wz8O9YntuhPL//Q/QspQA/5SPawzgfbeND8kNoLFT9OSZLHp0oZyqHF7
+         dz7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUMX8oMFxL/DMvHnq99yY/3gG/1CZc3mddPteyQZ59GbeY7T3EomFweYBA0yH0IU7ENwNFGdG5UQe6J@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTSatKxzhC4QJcQH/ifVcaRhTaaHPVv6rRg4yk4yf4Kphr3CQu
+	oc/RZGLLXJNdee/DMwVdLN9noi/M0w/U7RgCt1EPbm/ay3vKT4p5+Hkxvquels74+zsqUL+fwLz
+	iyfcOq9M2AHzWqKsj3bdubF0oN9eol2o=
+X-Gm-Gg: AY/fxX6gMd8liovD0qcgkPhM9TaDqGl4ooqxssIGxdaSjPtdHj0+GMANkyZZvZW/NN1
+	7XSj+WpBdcadUln4YhWwU8j3rQcuUdvMcoXhT5ONL/g2POi/ZBzDuDEQeoWUgPFBt0dVpJ3Rxrr
+	fdxGr1pnP1DAmABmNbxHuG3Psrm18sgQLC2s2oBqMc6EVFeY5vCBJeEYoryIKwSXJY1ziMVU/9F
+	g59DZIyzZ/EeT7n/jbQxn5Yx6zznr1hfOCXqSPSUh6YMc9j9RNtFvWl6uQTl3edB8oVZepifUxK
+	4IiGxdtjVVMLr1w+iwgeJU9aJK1Snuj9HOd2GrX2
+X-Google-Smtp-Source: AGHT+IFY7MBbUL67We039/hTqFQidfYCDXoLMKl5hH4eJeY3RDGzxdromP5L0kMZXOGuaChoBhGE8PO55vilYs9+TsQ=
+X-Received: by 2002:a05:6402:278f:b0:64b:4333:1ece with SMTP id
+ 4fb4d7f45d1cf-65097e88af5mr10672063a12.34.1767984790069; Fri, 09 Jan 2026
+ 10:53:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
+ <m3mywef74xhcakianlrovrnaadnhzhfqjfusulkcnyioforfml@j2xnk7dzkmv4> <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
+In-Reply-To: <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 9 Jan 2026 19:52:57 +0100
+X-Gm-Features: AQt7F2pw3gC6snSxmHIFjd46zJk7oZ4nEXaveS8flAw1hsLI4KglAqmZVf1WWIg
+Message-ID: <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
+Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
+ lease support
+To: Jeff Layton <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
+	Nicolas Pitre <nico@fluxnic.net>, Christoph Hellwig <hch@infradead.org>, Anders Larsen <al@alarsen.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>, 
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
+	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Viacheslav Dubeyko <slava@dubeyko.com>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, 
+	Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Phillip Lougher <phillip@squashfs.org.uk>, 
+	Carlos Maiolino <cem@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, 
+	Yuezhang Mo <yuezhang.mo@sony.com>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, Andreas Gruenbacher <agruenba@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Bharath SM <bharathsm@microsoft.com>, Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, 
+	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, 
+	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org, 
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-mm@kvack.org, 
+	gfs2@lists.linux.dev, linux-doc@vger.kernel.org, v9fs@lists.linux.dev, 
+	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Thu, Jan 8, 2026 at 7:57=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
+te:
+>
+> On Thu, 2026-01-08 at 18:40 +0100, Jan Kara wrote:
+> > On Thu 08-01-26 12:12:55, Jeff Layton wrote:
+> > > Yesterday, I sent patches to fix how directory delegation support is
+> > > handled on filesystems where the should be disabled [1]. That set is
+> > > appropriate for v6.19. For v7.0, I want to make lease support be more
+> > > opt-in, rather than opt-out:
+> > >
+> > > For historical reasons, when ->setlease() file_operation is set to NU=
+LL,
+> > > the default is to use the kernel-internal lease implementation. This
+> > > means that if you want to disable them, you need to explicitly set th=
+e
+> > > ->setlease() file_operation to simple_nosetlease() or the equivalent.
+> > >
+> > > This has caused a number of problems over the years as some filesyste=
+ms
+> > > have inadvertantly allowed leases to be acquired simply by having lef=
+t
+> > > it set to NULL. It would be better if filesystems had to opt-in to le=
+ase
+> > > support, particularly with the advent of directory delegations.
+> > >
+> > > This series has sets the ->setlease() operation in a pile of existing
+> > > local filesystems to generic_setlease() and then changes
+> > > kernel_setlease() to return -EINVAL when the setlease() operation is =
+not
+> > > set.
+> > >
+> > > With this change, new filesystems will need to explicitly set the
+> > > ->setlease() operations in order to provide lease and delegation
+> > > support.
+> > >
+> > > I mainly focused on filesystems that are NFS exportable, since NFS an=
+d
+> > > SMB are the main users of file leases, and they tend to end up export=
+ing
+> > > the same filesystem types. Let me know if I've missed any.
+> >
+> > So, what about kernfs and fuse? They seem to be exportable and don't ha=
+ve
+> > .setlease set...
+> >
+>
+> Yes, FUSE needs this too. I'll add a patch for that.
+>
+> As far as kernfs goes: AIUI, that's basically what sysfs and resctrl
+> are built on. Do we really expect people to set leases there?
+>
+> I guess it's technically a regression since you could set them on those
+> sorts of files earlier, but people don't usually export kernfs based
+> filesystems via NFS or SMB, and that seems like something that could be
+> used to make mischief.
+>
+> AFAICT, kernfs_export_ops is mostly to support open_by_handle_at(). See
+> commit aa8188253474 ("kernfs: add exportfs operations").
+>
+> One idea: we could add a wrapper around generic_setlease() for
+> filesystems like this that will do a WARN_ONCE() and then call
+> generic_setlease(). That would keep leases working on them but we might
+> get some reports that would tell us who's setting leases on these files
+> and why.
 
-The following changes since commit 9ace4753a5202b02191d54e9fdf7f9e3d02b85eb:
+IMO, you are being too cautious, but whatever.
 
-  Linux 6.19-rc4 (2026-01-04 14:41:55 -0800)
+It is not accurate that kernfs filesystems are NFS exportable in general.
+Only cgroupfs has KERNFS_ROOT_SUPPORT_EXPORTOP.
 
-are available in the Git repository at:
+If any application is using leases on cgroup files, it must be some
+very advanced runtime (i.e. systemd), so we should know about the
+regression sooner rather than later.
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.19-rc5
+There are also the recently added nsfs and pidfs export_operations.
 
-for you to fetch changes up to c0fe2994f9a9d0a2ec9e42441ea5ba74b6a16176:
+I have a recollection about wanting to be explicit about not allowing
+those to be exportable to NFS (nsfs specifically), but I can't see where
+and if that restriction was done.
 
-  libceph: make calc_target() set t->paused, not just clear it (2026-01-06 00:39:43 +0100)
+Christian? Do you remember?
 
-----------------------------------------------------------------
-A bunch of libceph fixes split evenly between memory safety and
-implementation correctness issues (all marked for stable) and a change
-in maintainers for CephFS: Slava and Alex have formally taken over
-Xiubo's role.
-
-----------------------------------------------------------------
-Ilya Dryomov (3):
-      libceph: replace overzealous BUG_ON in osdmap_apply_incremental()
-      libceph: return the handler error from mon_handle_auth_done()
-      libceph: make calc_target() set t->paused, not just clear it
-
-Sam Edwards (1):
-      libceph: reset sparse-read state in osd_fault()
-
-Tuo Li (1):
-      libceph: make free_choose_arg_map() resilient to partial allocation
-
-Viacheslav Dubeyko (1):
-      ceph: update co-maintainers list in MAINTAINERS
-
-ziming zhang (1):
-      libceph: prevent potential out-of-bounds reads in handle_auth_done()
-
- MAINTAINERS             |  6 ++++--
- net/ceph/messenger_v2.c |  2 ++
- net/ceph/mon_client.c   |  2 +-
- net/ceph/osd_client.c   | 14 ++++++++++++--
- net/ceph/osdmap.c       | 24 +++++++++++++++---------
- 5 files changed, 34 insertions(+), 14 deletions(-)
+Thanks,
+Amir.
 
