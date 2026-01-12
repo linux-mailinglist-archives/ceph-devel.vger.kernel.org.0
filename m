@@ -1,328 +1,216 @@
-Return-Path: <ceph-devel+bounces-4364-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4365-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067ABD13608
-	for <lists+ceph-devel@lfdr.de>; Mon, 12 Jan 2026 15:59:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED0CD15579
+	for <lists+ceph-devel@lfdr.de>; Mon, 12 Jan 2026 21:59:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8BCB130C2B6F
-	for <lists+ceph-devel@lfdr.de>; Mon, 12 Jan 2026 14:50:39 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EAB13301227A
+	for <lists+ceph-devel@lfdr.de>; Mon, 12 Jan 2026 20:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE372D94A1;
-	Mon, 12 Jan 2026 14:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086E933F8B3;
+	Mon, 12 Jan 2026 20:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpMEz5TH"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="VpM+IqTK"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9852B2C0294;
-	Mon, 12 Jan 2026 14:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE7330EF65
+	for <ceph-devel@vger.kernel.org>; Mon, 12 Jan 2026 20:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768229429; cv=none; b=AwK8ZP07ezB+Ig3ihqe8AuNpTkRNJ1FWFdpfVWkcocbj0ia1zO5PaSvWCTTEgfsR1Zt9tcnz/GngbRIcGF7hlIhKEjuFwXIjr9RN+t7H9vWiZKm6IXBIZEeldZUZ1gbIMjfJFpj9Kdwdjlq5SEVu0ZzngTggqVzgNax8KHckgnE=
+	t=1768251554; cv=none; b=lLD+ZkbVCrbU5/Ag8t+OFg2r+WRW3GznBrDs2aANZf6mkXnFMO9SlCg+btGnlq8nbW2wrArgOxfQav74InASG2TK1PzHexqUK5cngRw5aES2IM1e22bVMolDH0KDC/BG8HkeUMrPJxyfmzaMv6/9LRoABW4pADpzSlNqBeKzWro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768229429; c=relaxed/simple;
-	bh=cheSnBLxN544y0UKkw10KpgjiO68XnZpyeYuNQCu1SI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kY20/c/FxjOZ2G8iL3Ie10tORBAPO56cvbGteBNzB8l80lSn3jZNqBM9cvPa9MOOgzRRzIk0LnDKINUYoH9XV0FCuGlR5rIKn7y4hpkxsgCGsEdgmFUrT/EqkD+LCI/lTkDhPlT9u7xHEorNnM2nbd8sMDf2VYOGRg7HI+D8Wmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpMEz5TH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8AEC16AAE;
-	Mon, 12 Jan 2026 14:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768229429;
-	bh=cheSnBLxN544y0UKkw10KpgjiO68XnZpyeYuNQCu1SI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=UpMEz5THVo05QbZ/pAisnu0HRhesOIjE2rYftbA7FBhGQj5tCikdbZP3s9Z/gB+1y
-	 k8fYirWnboJmtXtByE43Gev4eWZMrnZp2xsCYHsMHZKKPwK6nyAzNy2SlEd6q6RdQX
-	 E9BsB3Zeg8leNoOsSqkZw9UMTUfEJ1CwpbuRjO/ZsHVZdkTGXi72eLukzZew16H4By
-	 2V8I14GVLtY2HkAvnbTAdK8f8SFRaA/5FSsShCjCBoX+/4KLO8Va98nCZCU0IF7NSt
-	 5mEIqfFpYxDWcq+lTy0EQTI0buuA/J9QluBW76YeWrm5Yt8NF684D6eD5hHIR3dAHu
-	 cDKQUbKLqjwJw==
-Message-ID: <ce700ee20834631eceededc8cd15fc5d00fee28e.camel@kernel.org>
-Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
- lease support
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Amir Goldstein
- <amir73il@gmail.com>,  Christian Brauner	 <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Luis de Bethencourt <luisbg@kernel.org>, Salah
- Triki <salah.triki@gmail.com>, Nicolas Pitre <nico@fluxnic.net>, Christoph
- Hellwig	 <hch@infradead.org>, Anders Larsen <al@alarsen.net>, Alexander
- Viro	 <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Chris
- Mason	 <clm@fb.com>, Gao Xiang <xiang@kernel.org>, Chao Yu
- <chao@kernel.org>, Yue Hu	 <zbestahu@gmail.com>, Jeffle Xu
- <jefflexu@linux.alibaba.com>, Sandeep Dhavale	 <dhavale@google.com>, Hongbo
- Li <lihongbo22@huawei.com>, Chunhai Guo	 <guochunhai@vivo.com>, Jan Kara
- <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger
- <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA
- Hirofumi	 <hirofumi@mail.parknet.co.jp>, David Woodhouse
- <dwmw2@infradead.org>,  Richard Weinberger	 <richard@nod.at>, Dave Kleikamp
- <shaggy@kernel.org>, Ryusuke Konishi	 <konishi.ryusuke@gmail.com>,
- Viacheslav Dubeyko <slava@dubeyko.com>,  Konstantin Komarov
- <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>,
- Joel Becker	 <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
- Mike Marshall	 <hubcap@omnibond.com>, Martin Brandenburg
- <martin@omnibond.com>, Miklos Szeredi	 <miklos@szeredi.hu>, Phillip Lougher
- <phillip@squashfs.org.uk>, Carlos Maiolino	 <cem@kernel.org>, Hugh Dickins
- <hughd@google.com>, Baolin Wang	 <baolin.wang@linux.alibaba.com>, Andrew
- Morton <akpm@linux-foundation.org>,  Namjae Jeon <linkinjeon@kernel.org>,
- Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo	 <yuezhang.mo@sony.com>,
- Alexander Aring <alex.aring@gmail.com>, Andreas Gruenbacher
- <agruenba@redhat.com>, Jonathan Corbet <corbet@lwn.net>, "Matthew Wilcox
- (Oracle)"	 <willy@infradead.org>, Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet
- <asmadeus@codewreck.org>, Christian Schoenebeck	 <linux_oss@crudebyte.com>,
- Xiubo Li <xiubli@redhat.com>, Ilya Dryomov	 <idryomov@gmail.com>, Trond
- Myklebust <trondmy@kernel.org>, Anna Schumaker	 <anna@kernel.org>, Steve
- French <sfrench@samba.org>, Paulo Alcantara	 <pc@manguebit.org>, Ronnie
- Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N	
- <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM	
- <bharathsm@microsoft.com>, Hans de Goede <hansg@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, 
-	linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
- ocfs2-devel@lists.linux.dev, 	devel@lists.orangefs.org,
- linux-unionfs@vger.kernel.org, 	linux-xfs@vger.kernel.org,
- linux-mm@kvack.org, gfs2@lists.linux.dev, 	linux-doc@vger.kernel.org,
- v9fs@lists.linux.dev, ceph-devel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org
-Date: Mon, 12 Jan 2026 09:50:20 -0500
-In-Reply-To: <cb5d2da6-2090-4639-ad96-138342bba56d@oracle.com>
-References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
-	 <m3mywef74xhcakianlrovrnaadnhzhfqjfusulkcnyioforfml@j2xnk7dzkmv4>
-	 <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
-	 <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
-	 <ec78bf021fa1f6243798945943541ba171e337e7.camel@kernel.org>
-	 <cb5d2da6-2090-4639-ad96-138342bba56d@oracle.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	s=arc-20240116; t=1768251554; c=relaxed/simple;
+	bh=xKYRLKpuM+sQImj23PBCnkebqVm/eqDdchxej7U9Apw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P6xqsujDhfI4AgHPL1PjmLMGO+iOYzxWhlSpgtDsDp/iiARZm+RmnZ/KYPvyGOwDSeI5WAOKz8unN34G/FTrztW/uFqbD3Svu4twMJGHVzlZ5pYsKWQEP7XqbGCdY12H366gFYGIfILJzl9+xDdq+3MG+kEZ5ERlXjUuAruB1Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=VpM+IqTK; arc=none smtp.client-ip=74.125.224.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-6468f0d5b1cso6075425d50.1
+        for <ceph-devel@vger.kernel.org>; Mon, 12 Jan 2026 12:59:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1768251552; x=1768856352; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dvo6+EsDKRRfc3HTMCn0lfwSOccr6CCC/pevgcIHrpQ=;
+        b=VpM+IqTKMl7hGiKphf26TwaoqpRXCtvwNfZaZOcFRFgA5LVXiLxaPgNsHiM42Zq8Yn
+         ApiCjKmF6MJAv20k99Fuj72rxJJl96I3sMsXoTgIFekMZzxkoOB06WFWV8k05bNQDlww
+         W/lvsLoTXskPBRd/CuHQv/vTAIIiTAm2DOyjZxi5M/7Ux1Wmu72gKUwADE8wJrXVsFr/
+         EMQKqH9EX+oOl0xaE5AooYPFgyRkne/yJfIEhwww165C2DDkGOVu4g3r1yZuMRW+tkhi
+         hFcu4Wj78HcHXQJk06QYHJetXnXJ5EVmDa2N8R4KD90msqivGmSY/11zJSfLqkJy+yVL
+         7mpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768251552; x=1768856352;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dvo6+EsDKRRfc3HTMCn0lfwSOccr6CCC/pevgcIHrpQ=;
+        b=jNicj8x060f9hfxjlxVk2RVZJ0T4BqL2o1mpxi9JVvMfhFzvSs29rngW9+e5APeS0C
+         20PmisehV6vQcdX8K63jlQU/7CFHjlGM9eDKcznmlyxOX/Ygwp9B4d6z2DYFyAK+piUQ
+         AE0YxB/TolwDKuDyWjvrXkGfTNh1LneLp4Ohyg1t/haKsJHllE1qUByu1IKZnwby+KNr
+         moeoLMvs0wldPqqPNf7HYU8V280iPnGeyiHuAzomROyq1RLb2Tq1UguYLjiAN6A3Ymke
+         MbYRRjDnWzzESkQlncOwAs+q3pfx6nWaMJUEha7vgzEIyf8UWqsoGtAQuRa4NW2zgF1W
+         UdFA==
+X-Gm-Message-State: AOJu0YzGx3hJfEBxILlrcI6k5Hp0rE2Y7/B2I+FBbLohSaLprEmzeQcd
+	nzfeRYzqdAlOv4FBcYKnxf6yrOUqbtnpD04ID1sPM+ExSqSZVFnRHS140g2byCqF2c4=
+X-Gm-Gg: AY/fxX5JXoR11pVK20E2znHKiWbyZvySg2eTTziG/AL2m7pEiC9JKRfWhjq4g1yoKfL
+	/jAW9umiacFPt/9xTQbElenOaX43M9acFkW9eDYVCA31FAnj8rEVgpVSNlxdb4OXr6nptSZArwM
+	PhBlqg8Sly2F4WysPN9UJaMYMZkdZG53twMRE3QAtYoACUASnHHlT2P7lbZFRtytFTVbiNjZeJV
+	cH97tqB5zaozRYK3rqxVqG7Y/ocVaIVZJbleuw2qUtpjsyKMKWTz2bsuhmxzj+iu0v7scks/CP5
+	24TnHlzuvhtywaA7Q0SwYqO+ZIuuo+2eXx7sVdtDjwC0FLp076SfBv/UVoAM+4RXWm7fxA6aeAI
+	JAc5njNvzACq6QSv2BGsg4oYvZTAPLBHsFSRE1M5k1u0XhLwVzlcaNXKJ7ZlazG7ZwmP7HZakLi
+	zrnDJXlQisXpweBzMqeo/fwHwzWmkIhWZzCjn0PNCCW+qeD2NATXIuo/TzlrbOAFHwajLka4SuN
+	ip/88l3Kv9URW1LrAI=
+X-Google-Smtp-Source: AGHT+IENxy+5x2i2xgYMrz0SKExm/H8Y6u2iabD+v8jPA4ysG46WOfa8D8B0YhZSz4/3C2jKDn1FJQ==
+X-Received: by 2002:a05:690e:400a:b0:646:e68a:c886 with SMTP id 956f58d0204a3-64716b34ac7mr16215312d50.19.1768251551980;
+        Mon, 12 Jan 2026 12:59:11 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:5da1:5daf:bcea:9f2c])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6470d7f7c04sm8475793d50.2.2026.01.12.12.59.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jan 2026 12:59:11 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: util-linux@vger.kernel.org,
+	kzak@redhat.com
+Cc: ceph-devel@vger.kernel.org,
+	idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com,
+	Pavan.Rallabhandi@ibm.com
+Subject: [PATCH] mount: (manpage) add CephFS kernel client mount options
+Date: Mon, 12 Jan 2026 12:58:38 -0800
+Message-ID: <20260112205837.975869-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2026-01-12 at 09:31 -0500, Chuck Lever wrote:
-> On 1/12/26 8:34 AM, Jeff Layton wrote:
-> > On Fri, 2026-01-09 at 19:52 +0100, Amir Goldstein wrote:
-> > > On Thu, Jan 8, 2026 at 7:57=E2=80=AFPM Jeff Layton <jlayton@kernel.or=
-g> wrote:
-> > > >=20
-> > > > On Thu, 2026-01-08 at 18:40 +0100, Jan Kara wrote:
-> > > > > On Thu 08-01-26 12:12:55, Jeff Layton wrote:
-> > > > > > Yesterday, I sent patches to fix how directory delegation suppo=
-rt is
-> > > > > > handled on filesystems where the should be disabled [1]. That s=
-et is
-> > > > > > appropriate for v6.19. For v7.0, I want to make lease support b=
-e more
-> > > > > > opt-in, rather than opt-out:
-> > > > > >=20
-> > > > > > For historical reasons, when ->setlease() file_operation is set=
- to NULL,
-> > > > > > the default is to use the kernel-internal lease implementation.=
- This
-> > > > > > means that if you want to disable them, you need to explicitly =
-set the
-> > > > > > ->setlease() file_operation to simple_nosetlease() or the equiv=
-alent.
-> > > > > >=20
-> > > > > > This has caused a number of problems over the years as some fil=
-esystems
-> > > > > > have inadvertantly allowed leases to be acquired simply by havi=
-ng left
-> > > > > > it set to NULL. It would be better if filesystems had to opt-in=
- to lease
-> > > > > > support, particularly with the advent of directory delegations.
-> > > > > >=20
-> > > > > > This series has sets the ->setlease() operation in a pile of ex=
-isting
-> > > > > > local filesystems to generic_setlease() and then changes
-> > > > > > kernel_setlease() to return -EINVAL when the setlease() operati=
-on is not
-> > > > > > set.
-> > > > > >=20
-> > > > > > With this change, new filesystems will need to explicitly set t=
-he
-> > > > > > ->setlease() operations in order to provide lease and delegatio=
-n
-> > > > > > support.
-> > > > > >=20
-> > > > > > I mainly focused on filesystems that are NFS exportable, since =
-NFS and
-> > > > > > SMB are the main users of file leases, and they tend to end up =
-exporting
-> > > > > > the same filesystem types. Let me know if I've missed any.
-> > > > >=20
-> > > > > So, what about kernfs and fuse? They seem to be exportable and do=
-n't have
-> > > > > .setlease set...
-> > > > >=20
-> > > >=20
-> > > > Yes, FUSE needs this too. I'll add a patch for that.
-> > > >=20
-> > > > As far as kernfs goes: AIUI, that's basically what sysfs and resctr=
-l
-> > > > are built on. Do we really expect people to set leases there?
-> > > >=20
-> > > > I guess it's technically a regression since you could set them on t=
-hose
-> > > > sorts of files earlier, but people don't usually export kernfs base=
-d
-> > > > filesystems via NFS or SMB, and that seems like something that coul=
-d be
-> > > > used to make mischief.
-> > > >=20
-> > > > AFAICT, kernfs_export_ops is mostly to support open_by_handle_at().=
- See
-> > > > commit aa8188253474 ("kernfs: add exportfs operations").
-> > > >=20
-> > > > One idea: we could add a wrapper around generic_setlease() for
-> > > > filesystems like this that will do a WARN_ONCE() and then call
-> > > > generic_setlease(). That would keep leases working on them but we m=
-ight
-> > > > get some reports that would tell us who's setting leases on these f=
-iles
-> > > > and why.
-> > >=20
-> > > IMO, you are being too cautious, but whatever.
-> > >=20
-> > > It is not accurate that kernfs filesystems are NFS exportable in gene=
-ral.
-> > > Only cgroupfs has KERNFS_ROOT_SUPPORT_EXPORTOP.
-> > >=20
-> > > If any application is using leases on cgroup files, it must be some
-> > > very advanced runtime (i.e. systemd), so we should know about the
-> > > regression sooner rather than later.
-> > >=20
-> >=20
-> > I think so too. For now, I think I'll not bother with the WARN_ONCE().
-> > Let's just leave kernfs out of the set until someone presents a real
-> > use-case.
-> >=20
-> > > There are also the recently added nsfs and pidfs export_operations.
-> > >=20
-> > > I have a recollection about wanting to be explicit about not allowing
-> > > those to be exportable to NFS (nsfs specifically), but I can't see wh=
-ere
-> > > and if that restriction was done.
-> > >=20
-> > > Christian? Do you remember?
-> > >=20
-> >=20
-> > (cc'ing Chuck)
-> >=20
-> > FWIW, you can currently export and mount /sys/fs/cgroup via NFS. The
-> > directory doesn't show up when you try to get to it via NFSv4, but you
-> > can mount it using v3 and READDIR works. The files are all empty when
-> > you try to read them. I didn't try to do any writes.
-> >=20
-> > Should we add a mechanism to prevent exporting these sorts of
-> > filesystems?
-> >=20
-> > Even better would be to make nfsd exporting explicitly opt-in. What if
-> > we were to add a EXPORT_OP_NFSD flag that explicitly allows filesystems
-> > to opt-in to NFS exporting, and check for that in __fh_verify()? We'd
-> > have to add it to a bunch of existing filesystems, but that's fairly
-> > simple to do with an LLM.
->=20
-> What's the active harm in exporting /sys/fs/cgroup ? It has to be done
-> explicitly via /etc/exports, so this is under the NFS server admin's
-> control. Is it an attack surface?
->=20
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-Potentially?
+Currently, manpage for generic mount tool doesn't contain
+explanation of CephFS kernel client mount options. This patch
+adds the description of CephFS mount options into
+file system specific mount options section.
 
-I don't see any active harm with exporting cgroupfs. It doesn't work
-right via nfsd, but it's not crashing the box or anything.
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+---
+ sys-utils/mount.8.adoc | 86 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
-At one time, those were only defined by filesystems that wanted to
-allow NFS export. Now we've grown them on filesystems that just want to
-provide filehandles for open_by_handle_at() and the like. nfsd doesn't
-care though: if the fs has export operations, it'll happily use them.
+diff --git a/sys-utils/mount.8.adoc b/sys-utils/mount.8.adoc
+index 4571bd2bfd16..191a3fabf501 100644
+--- a/sys-utils/mount.8.adoc
++++ b/sys-utils/mount.8.adoc
+@@ -853,6 +853,7 @@ This section lists options that are specific to particular filesystems. Where po
+ |===
+ |*Filesystem(s)* |*Manual page*
+ |btrfs |*btrfs*(5)
++|cephfs |*mount.ceph*(8)
+ |cifs |*mount.cifs*(8)
+ |ext2, ext3, ext4 |*ext4*(5)
+ |fuse |*fuse*(8)
+@@ -913,6 +914,91 @@ Give blocksize. Allowed values are 512, 1024, 2048, 4096.
+ **grpquota**|**noquota**|**quota**|*usrquota*::
+ These options are accepted but ignored. (However, quota utilities may react to such strings in _/etc/fstab_.)
+ 
++=== Mount options for ceph
++
++CephFS is a POSIX-compliant distributed filesystem provided by Ceph. For more information, see the Linux kernel documentation at _Documentation/filesystems/ceph.rst_ or the Ceph documentation at _https://docs.ceph.com/_.
++
++**mon_addr=**__ip_address__[**:**__port__][**/**__ip_address__[**:**__port__]]::
++Monitor address(es) to bootstrap the connection to the Ceph cluster. Multiple monitor addresses can be specified, separated by forward slashes. If a port is not specified, the default port 6789 is used.
++
++**fsid=**__cluster-id__::
++The cluster FSID (unique identifier). This can be obtained via the *ceph fsid* command.
++
++**ip=**__A.B.C.D__[**:**__N__]::
++Specifies the local IP address and optionally the port that the client should bind to.
++
++**conf=**__path__::
++Path to a _ceph.conf_ configuration file. This can be used for auto-discovery of monitor addresses and authentication secrets.
++
++**secret=**__key__::
++The CephX secret key for authentication. This option is insecure because it exposes the secret on the command line. Use *secretfile* instead when possible.
++
++**secretfile=**__path__::
++Path to a file containing the CephX secret key. This is the preferred method for providing authentication credentials.
++
++**fs=**__name__ or **mds_namespace=**__name__::
++Specify a non-default Ceph filesystem to mount. The *mds_namespace* option is the older syntax.
++
++**mount_timeout=**__seconds__::
++Timeout value for mount operations in seconds. Default is 60 seconds.
++
++**wsize=**__bytes__::
++Maximum write size in bytes. Default is 67108864 (64 MB).
++
++**rsize=**__bytes__::
++Maximum read size in bytes. Default is 67108864 (64 MB).
++
++**rasize=**__bytes__::
++Maximum readahead size in bytes. Default is 8388608 (8 MB).
++
++**caps_max=**__number__::
++Maximum number of capabilities (caps) to retain. When this limit is exceeded, unused caps are released. Default is 0 (no limit).
++
++*rbytes*::
++When *stat*(2) is called on a directory, set the *st_size* field to 'rbytes', the summation of file sizes over all files nested beneath that directory. This is the default behavior.
++
++*norbytes*::
++When *stat*(2) is called on a directory, set the *st_size* field to the number of entries in that directory instead of the recursive byte count.
++
++*dcache*::
++Enable directory entry cache (dcache) for negative lookup caching and readdir operations. This is the default behavior.
++
++*nodcache*::
++Disable directory entry cache usage. This disables negative lookup caching and dcache-assisted readdir operations.
++
++*noasyncreaddir*::
++Disable asynchronous readdir operations that use the dcache.
++
++*nocrc*::
++Disable CRC32C calculation for data writes. If set, the storage nodes must rely on TCP's error correction to detect data corruption in the data payload.
++
++**snapdirname=**__name__::
++Sets the name of the hidden snapshots directory. Default is _.snap_.
++
++*dirstat*::
++Enable reading of directory stats via *cat* on the directory.
++
++*nodirstat*::
++Disable reading of directory stats via *cat* on the directory.
++
++*noquotadf*::
++Report overall filesystem usage in statfs instead of the quota for the root directory.
++
++*nocopyfrom*::
++Disable the use of RADOS copy-from operations in *copy_file_range*(2). The RADOS copy-from operation allows the copy to be performed server-side, which can be more efficient.
++
++**recover_session=**{**no**|*clean*}::
++Control the auto-reconnect behavior when the client has been blocklisted. The default is *no*, which prevents reconnection. The *clean* option (available since Linux kernel 5.4) reconnects automatically when blocklisted, but discards any dirty data and invalidates all caches. This can result in data loss.
++
++**ms_mode=**{**legacy**|**crc**|**secure**|**prefer-crc**|*prefer-secure*}::
++Select the connection transport protocol. *legacy* uses the v1 protocol. *crc* uses the v2 protocol without encryption. *secure* uses the v2 protocol with encryption. *prefer-crc* and *prefer-secure* indicate a preference but will fall back if the preferred mode is not available.
++
++*wsync*::
++Execute namespace operations (file/directory creations, deletions, etc.) synchronously.
++
++*nowsync*::
++Execute namespace operations asynchronously. This is the default behavior since Linux kernel 5.7.
++
+ === Mount options for debugfs
+ 
+ The debugfs filesystem is a pseudo filesystem, traditionally mounted on _/sys/kernel/debug_. As of kernel version 3.4, debugfs has the following options:
+-- 
+2.52.0
 
-Having an explicit "I want to allow nfsd" flag see ms like it might
-save us some headaches in the future when other filesystems add export
-ops for this sort of filehandle use.
---=20
-Jeff Layton <jlayton@kernel.org>
 
