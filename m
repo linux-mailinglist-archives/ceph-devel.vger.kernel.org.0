@@ -1,206 +1,123 @@
-Return-Path: <ceph-devel+bounces-4381-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4382-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99966D1B2AB
-	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jan 2026 21:15:27 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C36BD1B2B8
+	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jan 2026 21:17:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 379BC3005001
-	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jan 2026 20:15:25 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 91451301EC58
+	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jan 2026 20:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0542C318B93;
-	Tue, 13 Jan 2026 20:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBDD30F95F;
+	Tue, 13 Jan 2026 20:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAqOviz9"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="Hwam6yh+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702D5389E02
-	for <ceph-devel@vger.kernel.org>; Tue, 13 Jan 2026 20:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7D62D6611
+	for <ceph-devel@vger.kernel.org>; Tue, 13 Jan 2026 20:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768335323; cv=none; b=Ea9xmdhOCYKWCI3ZdYWQiASMQh4xoQVClDhh7cjpAK7cXBDFaZ0oNDzJw679kCJu7QsbDjvNxw8+dhslidM29FYb8oWN5hgfUYXTc/0NzdjjEestkYBci7pj87ir3ii1LO7lBrySncalwKeIyvjIkZRRZNxRKD9/iucsrUquBmo=
+	t=1768335412; cv=none; b=gOI4WkNlOIjGDJDHDj3av8xW1WX57/DVrEXAq3LI6cEbaoXDCN8fuYl4e2fNWJaSgP6i4SaHJarINNmm9UDon6JRVR5ag7w2CpBqsDGfN4dyGGlZlmIGkxOizLVJj54JNBWLwpfOlhpcbi9f4EOnMl9xTTPwEttnjJbNioENhGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768335323; c=relaxed/simple;
-	bh=fBMFDvmjGqFMniRVSABC95N8ajXU2RTfInErecwWsx4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TJ/WMg5cucSy1uya5R5I0XOlClN6ZcDbxQjEWLhEsrM3mufyxR4+K+UdtnsJrQtjnVLIYSFw1AlzhGUuRYC5QYFoPNUhAnNrrtn6X/6xUhrJNPdDLs1USL707A2UiBAOgRdvltew6zGYJ9QmN7orru5tzZ66Ko3DnodVFPBKckQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAqOviz9; arc=none smtp.client-ip=74.125.82.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-12336f33098so10896c88.0
-        for <ceph-devel@vger.kernel.org>; Tue, 13 Jan 2026 12:15:22 -0800 (PST)
+	s=arc-20240116; t=1768335412; c=relaxed/simple;
+	bh=i7Q0cppGHnXoJlzKDTPAA4Ox8F1xyo7tsBiGT/yZWUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NwH5LWCEVxeIkpevAtcY204mI/7p0G9JH63DG0ocdJlqabuWYLYXxRmrroR0OsaWfAMDGq6BEgacZtDKgSLf1GqA0PjbIuRZ1J6hhurXoUkZxdz4FH4DbNQo9cuZUly+UCs2VM+n6MYUld5Yw9y4epZG+Cu7ih0XYQmzeyj7Dlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=Hwam6yh+; arc=none smtp.client-ip=74.125.224.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-64669a2ecb5so226247d50.1
+        for <ceph-devel@vger.kernel.org>; Tue, 13 Jan 2026 12:16:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768335321; x=1768940121; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tktDzIBgjcupNoJtMOOta90cFLT6qT2A8lnIPlNMlZk=;
-        b=fAqOviz9QHjrkqsT2AWTanegshookULiMPuUjKFO9jwfqSKKHwSHwBZ7gzb54k49Au
-         yU7KBYLuQIMCFuIKfesS1LSNVMreu7MVFkeJCiH56LI4G9VUmSD9QBMEPuDMA9Cvnqva
-         lJjtzOmkhCDNbcvCER2QbxaxmM0rtBrg9pb/0MBXz+4513sND12h8KqWa24NKuNQL3TH
-         q4s+G16Kup43obA6MC3Ux2K9qIrJ4+cABlYFeERXYosJXrc+ole4ysedL9i45D/Pux6r
-         VECfhQMYC6/CCWNNVpeaIbgbzScKUbAxMjEMmks07jJTKzk81zygmrI8kzWbRpd9/2kB
-         iDjQ==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1768335410; x=1768940210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PxakD1KmYQa92a3vZ7/OlBVuBUSn3nQs6Us3iV3sL6Y=;
+        b=Hwam6yh+pF05hqzfKu0TuhGJGLYhBSjVPC6FWINo7k0J/IPSg3/lgBQEAPSnyMukeB
+         sgFz0HM5E89y13JPankrblWGAWXyE9ycWQif9EIJEWLoevFfssnMcIFKQsvrp1CG++uK
+         6Lry/CRqNthQR73KNRXeNLBgn+oA+dNgbMojghyqwIeNWN+1MgxFKpxCtnZ6LOAYwWvM
+         mmMfv6wt96ebEGUGckz/7jrWz4s5G8EbkM9xPftCEfZWvR6aDy67Kl10vlG9kE4aosZw
+         ehZkeUctbmwMU42oM2R1ANwpdBR525/2rAuKujlJJPJ8AefJ9bHNHurWTzJmZ5A6esKC
+         2S2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768335321; x=1768940121;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tktDzIBgjcupNoJtMOOta90cFLT6qT2A8lnIPlNMlZk=;
-        b=OoU6DvCiKqW2ut/xke4NAmYdzIP/p8J2NNp5iIcTv9BwWO5jJQexAaWBgkFb8Y8MKT
-         mTXpP6FvCESkvbWBB4/jabLCeQdlJ+xdnQ6I5MjXA4P+ezk26Ab/PBJ30XM1ecxOWL2F
-         +H8frlggj4Zpo4QbHl2lxQhrTtg9DK2Kga+Pot5kaIGQoHccHO29uJFJCSMeNayX7Bwk
-         lbutk8bG1ZqgTM4NIcVzNyOsgfSIEzCoE8uSe7CksoTqmqECfCwsT/vmLqW2AjbjdRxi
-         4fyHdiNJ7nxOT2SQBz72YwT6hVNzF1eRrG/DSMipbadpkfvjR/DnmETYgRBtvbv7xFQF
-         paCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUichGFfKcIrVDxW0htdyG1Y/OUlrQtRKvswYkZW9f2mJbSSnRbeQZFoTk4uIZxG2Gx78GZoeJNwTuu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/fho5YH5IqxhdFuFS7OsOaaxtq+N0yE+UXbSIzEP5lr4t8u+l
-	Ybu28IJTKZ9bY0U91CWuj6VOfKVtgs3YeXwtIH3fzJUKdJMIEOqJCcMHoewLVzxLeeH6PbOzfpd
-	7EIMWi4xQY8LU86ilypWDX6X8sBbw8Ss=
-X-Gm-Gg: AY/fxX5kgXr7MAWqgDyk5YDjI4k9MTdIxGXKdbGIszULTQSwUqa41SEzrddcS+p5rBF
-	0GK377w4CGrdpBPQLiAbCgqTZiXM2K69jVUQO6oOew1Dx1tSL0f4vv3dfr4Khqy+H8philvCh4j
-	2f4pzzG8ffURmPgrSRY1pPhn06Zx8/4OURTl+658jj24twpzXZBaUlBdWB5RCl+69eHvZuuZTDR
-	pGPesWnxhRBLp07gfOg2E+dhrY4SUDbwv07lmi7dJ+tAzCWIno2j0+EEOZT6Mzk0JK7P5A=
-X-Received: by 2002:a05:701b:2204:b0:123:330b:3a0 with SMTP id
- a92af1059eb24-12336a274b3mr183497c88.14.1768335321399; Tue, 13 Jan 2026
- 12:15:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768335410; x=1768940210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PxakD1KmYQa92a3vZ7/OlBVuBUSn3nQs6Us3iV3sL6Y=;
+        b=VebaWv3Cr6kPDGsKauOXVrpaRloH3NtFjpnQRgKXBL3OoJ97e9cGBKb6k8CRWnAoD5
+         fFUd6DR7UbMABfsgnXcwyIXskT2ats0kt3jsz9vN30gSA6rBvA6+1NUZ5gULbbIzSwkM
+         0CaNFU6LXZbGaBazPQjOdcE5dWqTKl6OByr6BRV01/P53sdtlE9VWUZJCFPtaQ7vA++p
+         AxW0k/YPqxvk/unOdP7grlTBVQ6so8iB2QWyx9VUU/GeehkljwCKS8hg2rp8H6fzi690
+         rx5Cyit0oJupodJ1/pCafW8lqNC6q4zaYw9CLVItMfpGifRTtislta4lEielXocl6i0+
+         HI8A==
+X-Gm-Message-State: AOJu0YwZfj9sZoPKqjSq0klBl5/68xpxjmxukWKWxk5TALg5VtSyOHHK
+	nz4U0cmP+ft8TI229FmuoINS+tHWpnRGIZuXJvs2MqdDMVNYmpGEkmy1xRdxoPvZyAA=
+X-Gm-Gg: AY/fxX4gQmThXcjzYXhIzrXOAuf2QpWVQ6jnWNFowxP62wh3sbtYnYPsTpFJYQdML3C
+	OAMCBOoFaIX8/jALc3gsw1gkMErAeC/5ahXeIf3nnr8eGhzsgX4BWhuxfM0eOjNDXFBbDiMgRAm
+	v9Cr/Y0QVTFzl6oeijSR2BGs/BUCVJZeYOuXmU48Gb7H3+LPMV2idHwQoTYHhbPjXqrZclK/KKM
+	n0IGk8cqzc9tPmRBwj9TzhbFdcty9fXn28c6/6Goypd0Ayptz0EB/w0G9WvJKXLyX2/oD4qrAQt
+	kaTs/w8vb6aGEno39LW+bPVERyWT8xf/sspWHsOvsPG8OJ/Lau6GUVjOIY3ojevtFBESlJfwXMD
+	F4ekIF2WmbZyBLS4mZtDNHnppa+gcjuEIWo+QotmptFqqOmSd64byVFSia461z38AEg6QtTEWK6
+	V2p3C51NvYWQJ/2DNy9IHRkajUBf15fzM65NNs2ovWeXBTbHTgohu9tDLHMVBemEMolItg0f9oI
+	ap3UO34ELY/3aMn0Sk=
+X-Received: by 2002:a53:8543:0:b0:645:5297:3e5d with SMTP id 956f58d0204a3-648f638c88cmr2981073d50.46.1768335410350;
+        Tue, 13 Jan 2026 12:16:50 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:cf4e:ea8f:19ac:63a0])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6470d80be64sm9666151d50.6.2026.01.13.12.16.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Jan 2026 12:16:49 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: util-linux@vger.kernel.org,
+	kzak@redhat.com
+Cc: ceph-devel@vger.kernel.org,
+	idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com,
+	Pavan.Rallabhandi@ibm.com
+Subject: [PATCH v2] mount: (manpage) add CephFS filesystem-specific manual page
+Date: Tue, 13 Jan 2026 12:16:37 -0800
+Message-ID: <20260113201636.993219-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260113033113.149842-1-CFSworks@gmail.com> <CAOi1vP94Eruq7k10fnpA7G+LjEHdxxFvL4jnTeLMqfoxnjrTkw@mail.gmail.com>
- <CAH5Ym4gHUG326s8XoBxVExo1ZspSd0n+x3t=+rJ8N9qgjxgGHg@mail.gmail.com>
-In-Reply-To: <CAH5Ym4gHUG326s8XoBxVExo1ZspSd0n+x3t=+rJ8N9qgjxgGHg@mail.gmail.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 13 Jan 2026 21:15:09 +0100
-X-Gm-Features: AZwV_Qhurd22kOjJ70wmLj50kuVTijX8RizcBckOIi4gaDucpNRmHnXzigAFX4s
-Message-ID: <CAOi1vP99j77p42xRtQSRroVreRoaJoe9a8Rms8se5-2d1YSKHg@mail.gmail.com>
-Subject: Re: [RFC PATCH] libceph: Handle sparse-read replies lacking data length
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 13, 2026 at 8:04=E2=80=AFPM Sam Edwards <cfsworks@gmail.com> wr=
-ote:
->
-> On Tue, Jan 13, 2026 at 9:27=E2=80=AFAM Ilya Dryomov <idryomov@gmail.com>=
- wrote:
-> >
-> > On Tue, Jan 13, 2026 at 4:31=E2=80=AFAM Sam Edwards <cfsworks@gmail.com=
-> wrote:
-> > >
-> > > When the OSD replies to a sparse-read request, but no extents matched
-> > > the read (because the object is empty, the read requested a region
-> > > backed by no extents, ...) it is expected to reply with two 32-bit
-> > > zeroes: one indicating that there are no extents, the other that the
-> > > total bytes read is zero.
-> > >
-> > > In certain circumstances (e.g. on Ceph 19.2.3, when the requested obj=
-ect
-> > > is in an EC pool), the OSD sends back only one 32-bit zero. The
-> > > sparse-read state machine will end up reading something else (such as
-> > > the data CRC in the footer) and get stuck in a retry loop like:
-> > >
-> > >   libceph:  [0] got 0 extents
-> > >   libceph: data len 142248331 !=3D extent len 0
-> > >   libceph: osd0 (1)...:6801 socket error on read
-> > >   libceph: data len 142248331 !=3D extent len 0
-> > >   libceph: osd0 (1)...:6801 socket error on read
-> > >
-> > > This is probably a bug in the OSD, but even so, the kernel must handl=
-e
-> > > it to avoid misinterpreting replies and entering a retry loop.
-> >
-> > Hi Sam,
-> >
->
-> Hey Ilya,
->
-> > Yes, this is definitely a bug in the OSD (and I also see another
-> > related bug in the userspace client code above the OSD...).  The
-> > triggering condition is a sparse read beyond the end of an existing
-> > object on an EC pool.  19.2.3 isn't the problem -- main branch is
-> > affected as well.
-> >
-> > If this was one of the common paths, I'd support adding some sort of
-> > a workaround to "handle" this in the kernel client.  However, sparse
-> > reads are pretty useless on EC pools because they just get converted
-> > into regular thick reads.  Sparse reads offer potential benefits only
-> > on replicated pools, but the kernel client doesn't use them by default
-> > there either.  The sparseread mount option that is necessary for the
-> > reproducer to work isn't documented and was added purely for testing
-> > purposes.
->
-> Note that the kernel client forces sparse reads when using fscrypt
-> (see linux-6.18/fs/ceph/addr.c:361) and I encountered this problem
-> organically as a result. It may still make sense to apply a kernel
-> workaround.
->
-> On the other hand, it sounds like fscrypt+EC is a niche corner case,
-> we've now established that the OSD is definitely not following the
-> protocol, and working around this client-side is more involved than
-> just fixing this in the OSD. So I think simply telling affected users
-> to update their OSDs is also a reasonable way to handle this.
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-fscrypt and EC can't be mixed -- fscrypt+EC doesn't really work.  The
-reason sparse reads are forced for fscrypt is that the client relies on
-the sparseness metadata to be able tell if a given 4K block in the
-encrypted file is a hole (in the PUNCH_HOLE sense) or not.  If it's
-a hole, POSIX dictates that a read should return zeroes.  On an EC pool
-where sparse reads are degraded into regular thick reads by the OSD,
-a hole in the middle of an object wouldn't ever be signaled.  Instead,
-the OSD would synthesize a bunch of zeroes and pass them to the client.
-The client would then run them through the crypto engine (believing
-it's a bona fide ciphertext) and return the resulting gibberish to the
-user, thus violating POSIX and widespread assumptions about generic
-filesystem behavior.
+Currently, manpage for generic mount tool doesn't contain
+mentioning of CephFS kernel client filesystem-specific
+manual page. This patch adds the mount.ceph(8) mentioning into
+file system specific mount options section.
 
->
-> I'll defer to you.
->
-> >
-> > >
-> > > Detect this condition when the extent count is zero by checking the
-> > > `payload_len` field of the op reply. If it is only big enough for the
-> > > extent count, conclude that the data length is omitted and skip to th=
-e
-> > > next op (which is what the state machine would have done immediately
-> > > upon reading and validating the data length, if it were present).
-> > >
-> > > ---
-> > >
-> > > Hi list,
-> > >
-> > > RFC: This patch is submitted for comment only. I've tested it for abo=
-ut
-> > > 2 weeks now and am satisfied that it prevents the hang, but the curre=
-nt
-> > > approach decodes the entire op reply body while still in the
-> > > data-gathering step, which is suboptimal; feedback on cleaner
-> > > alternatives is welcome!
-> > >
-> > > I have not searched for nor opened a report with Ceph proper; I'd lik=
-e a
-> > > second pair of eyes to confirm that this is indeed an OSD bug before =
-I
-> > > proceed with that.
-> >
-> > Let me know if you want me to file a Ceph tracker ticket on your
-> > behalf.  I have a draft patch for the bug in the OSD and would link it
-> > in the PR, crediting you as a reporter.
->
-> Please do! I'm also interested in seeing the patch -- the OSD code is
-> pretty dense and I couldn't find the EC sparse read handler.
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+---
+ sys-utils/mount.8.adoc | 1 +
+ 1 file changed, 1 insertion(+)
 
-https://github.com/ceph/ceph/pull/66912
+diff --git a/sys-utils/mount.8.adoc b/sys-utils/mount.8.adoc
+index 4571bd2bfd16..43d2ef9a58a4 100644
+--- a/sys-utils/mount.8.adoc
++++ b/sys-utils/mount.8.adoc
+@@ -853,6 +853,7 @@ This section lists options that are specific to particular filesystems. Where po
+ |===
+ |*Filesystem(s)* |*Manual page*
+ |btrfs |*btrfs*(5)
++|cephfs |*mount.ceph*(8)
+ |cifs |*mount.cifs*(8)
+ |ext2, ext3, ext4 |*ext4*(5)
+ |fuse |*fuse*(8)
+-- 
+2.52.0
 
-Thanks,
-
-                Ilya
 
