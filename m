@@ -1,197 +1,187 @@
-Return-Path: <ceph-devel+bounces-4387-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4388-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2A9D1E051
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jan 2026 11:26:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60B7D1EFB3
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jan 2026 14:08:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5A72230703D7
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jan 2026 10:23:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CCD373019BBE
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jan 2026 13:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A6A38A73F;
-	Wed, 14 Jan 2026 10:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF96739A7E6;
+	Wed, 14 Jan 2026 13:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6z2LNX9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CsUTToet"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B029389E0C
-	for <ceph-devel@vger.kernel.org>; Wed, 14 Jan 2026 10:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BDA34A771;
+	Wed, 14 Jan 2026 13:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768386205; cv=none; b=BvBR+qNzHZneouCJxaJdeopLbMNqyDztDXF739PuAB2EXf+tG33oXaJ1jjCK8KfSqjfS3UrQ/TQ3m2a54+vFoFh5kBR+IMJv8peYlvg4zd+kV4kJwLRRgG60uBcug2w46Ug/tw2wOpHaH7FXjc+50/ZqDRUUviM2rZcHMl3CcWc=
+	t=1768396021; cv=none; b=fzNvVPesYt9XS9IybPaICM1kOX7KDxqaf6inXgmqj36dGl1eghSnGvtqKRO81wl8KV0g3ozBemNTX9YyMndtUI50IoS/xlJiY3/Me2OGxbjscUBUFk3v8tqBgRoUWcgBnfQXJpIGMiNTzIyTt/Cnqk6V+YBqCtkVN+wtUAgT8JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768386205; c=relaxed/simple;
-	bh=gej0ZY6Rx5cQWaC1k4rXAPj79a1teoZUbokyvThZBZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aRNBDqhSJB345TH3OkeAecUwKsHwuikrviel7a5jDwxAK/oUXrBl0LNfXJQRRlHA7oA8Cs3aPUUc3DNUBBJxV6UthYRT5djtVqcV6Hj9RzBV8Hm8NwbMa+L8hmpUiZDXE10T+8E5Ygo86IcfQ0jTBJ7vqIwHnCHlyN6EKPmrAOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D6z2LNX9; arc=none smtp.client-ip=74.125.82.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-1232d9f25e9so514273c88.0
-        for <ceph-devel@vger.kernel.org>; Wed, 14 Jan 2026 02:23:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768386195; x=1768990995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6kfNT97ng1VGOZpq6gO5qnaKBZ1Z4V1oS1eWPz4Jejk=;
-        b=D6z2LNX9mumdiiPt8xi94RFyiMe1FWJDepuSOEJHK106rgEJbhLv7xqijKcCkFkG+D
-         OMaxKKAb4Z0lEjRRxV96KboDhnd4OKLuU48CE2tNY/a0hmlJJLXHTg6x7dI7wQ5JaggL
-         vSv2OVwWYIl43xBJH1ZYWxS0JROxqCFfSbrMCUm6wMH1YW56pqU8SN/gRThvnN6Sddt3
-         PT/k2NGppSueG52nUj35bEZqpQYxscdkdXEDi6KnQfwlnmqs3HNO08WYfRCCoD5hxsa2
-         HkZqoz8+Ej90pQAMU5+fcX/mEvnFfh9oOPbDDE+cXP6Qfbmx1QHVPLLmY0DbY3+3xja1
-         d+dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768386195; x=1768990995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6kfNT97ng1VGOZpq6gO5qnaKBZ1Z4V1oS1eWPz4Jejk=;
-        b=LpE8Xhn2wl81g7gqnGe8gQRpm/Yspot06Sd9veeswUYlZKgOj8lbK6FiixNSHk7kDA
-         LsaMRHC5p4KaIWaBhcUqB9BCLHOEnFd7KGjoImjQpbNRIo+q4N2kL8jBT9al3xBLywQT
-         /oUjThqi0F8gP1ujp8BIQkF+rQPxo/WrWIyCvegg1JSG+yanKpm9l+aOf4UQR3ztojJ4
-         DTch8b+Y065wQAGPdQtcJ/LNWY/d1B/drJQDjGPt7fSlXlQWEENGI7h36ErS0VQEDQTd
-         0UjOoMHzJhkNKatMBOgIOP5vjKQRt+qvi76Z4k1ifLIVbvOlTo8N/4PswCd/TfT4wS8z
-         0gpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsVQFTFBssJAbYowAeHKrkozFamvzWbvCA4H8mYiddXlIWtxUis2UCJp34KXcwlpX3xGtKPteWEf6A@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuh/IruUjln4eUadkBylcSwzHr4UQWrjSby7BoYE9YmD89u6an
-	Rve8B+XlxtHLPJjRXQ7Z6S6PGpYNNqGMkCdwhHOhhaDhDNnzBPFArGfosQlA2lhaPCAAZeLIZ79
-	Y/fPBblC7nRO1dBwGXMX7tPkY+B/VgqM=
-X-Gm-Gg: AY/fxX7So6XG0yO1F/6vK72up7KQzH/Mo4Y1C+y8LOuEgEb14MLgM218q+1BD0c0Kcl
-	ezIzWSnTBFpuxMeaDOHxCLfQYVS6oZV/AAGeqkbSTIqwclGqSk76mzocIArCRJdFElvAAfeG/+a
-	yrASdtmps60P7Je8ajyOG92T8WXZ5H0VqWiTirOyoH7rGtOhEBfjo5pBmUfDI5xzhd2gF2+YtTw
-	LRtb1XL4IhwteRyfW4o8OIW7uQNJv3LHdKE9FUFlYnkZddqSiybs+dD+De82/PdJmmFuTe/sW7j
-	6l1CGw==
-X-Received: by 2002:a05:701b:230d:b0:121:9f05:7e4c with SMTP id
- a92af1059eb24-12337701abdmr1406143c88.16.1768386195026; Wed, 14 Jan 2026
- 02:23:15 -0800 (PST)
+	s=arc-20240116; t=1768396021; c=relaxed/simple;
+	bh=swA2Z+cvI7i5nnmNw9LviIKuh4fmhAEhMcaz35sVbIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UlJDm21/lq0s/5RKvuUEVZSKxvNE+lqDEW5S3AMXWdNj/e1Hq2gQvx+FxM19ij8w4aj7q8QpoL3vRxcnY3vm7G/N4iinQo7wKmR13wJnhFFei1LNYu+j5F8p50sgMRFSaUZJdjpomlVH8vSpm4qhk7AaWNrvo3mKyFRcgQqjOaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CsUTToet; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=frpDmmp1i4r1AZelS3CVor2fKx/lP0Tq5j8/mhEG/8s=; b=CsUTToetKF+Id6BSRt8PfLBnAS
+	Y0ul3yOPNvK2EqLosGUY3uqxb0rBGjpkb3pFkF+nzL0tn0KOBAl2xhlehcW9SbJloDYCaYos/fI+R
+	/3mikrJStWJrWeOJzR2PeycF0eBRtBI6m7fleAVeDpZJmAWb5/mhUGXdyVHOSGGKP+FgMpRotCkGe
+	U4rxrSW9vdcoJ/4xvbYl6nQLLy/pVnBBXwulC6bpAsoSvSw4Aw1pxxyPY2C1RxEdi/vm7DGCPqLOa
+	XPJH2SpQwhbv/9XjUm+ADr7Kr9Po4kKl3x0XMHBhpwdVI/FJYFR2ISU4AMVB1IFKkKKX1rv/bPqoF
+	Uf0wlX6w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vg0Zb-00000009Gnt-0ut4;
+	Wed, 14 Jan 2026 13:06:07 +0000
+Date: Wed, 14 Jan 2026 05:06:07 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jeff Layton <jlayton@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+	Luis de Bethencourt <luisbg@kernel.org>,
+	Salah Triki <salah.triki@gmail.com>,
+	Nicolas Pitre <nico@fluxnic.net>, Anders Larsen <al@alarsen.net>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Phillip Lougher <phillip@squashfs.org.uk>,
+	Carlos Maiolino <cem@kernel.org>, Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	Yuezhang Mo <yuezhang.mo@sony.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
+	linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+	ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, gfs2@lists.linux.dev, linux-doc@vger.kernel.org,
+	v9fs@lists.linux.dev, ceph-devel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org
+Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
+ lease support
+Message-ID: <aWeUv2UUJ_NdgozS@infradead.org>
+References: <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
+ <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
+ <ec78bf021fa1f6243798945943541ba171e337e7.camel@kernel.org>
+ <cb5d2da6-2090-4639-ad96-138342bba56d@oracle.com>
+ <ce700ee20834631eceededc8cd15fc5d00fee28e.camel@kernel.org>
+ <20260113-mondlicht-raven-82fc4eb70e9d@brauner>
+ <aWZcoyQLvbJKUxDU@infradead.org>
+ <ce418800f06aa61a7f47f0d19394988f87a3da07.camel@kernel.org>
+ <aWc3mwBNs8LNFN4W@infradead.org>
+ <CAOQ4uxhMjitW_DC9WK9eku51gE1Ft+ENhD=qq3uehwrHO=RByA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260113033113.149842-1-CFSworks@gmail.com> <CAOi1vP94Eruq7k10fnpA7G+LjEHdxxFvL4jnTeLMqfoxnjrTkw@mail.gmail.com>
- <CAH5Ym4gHUG326s8XoBxVExo1ZspSd0n+x3t=+rJ8N9qgjxgGHg@mail.gmail.com>
- <CAOi1vP99j77p42xRtQSRroVreRoaJoe9a8Rms8se5-2d1YSKHg@mail.gmail.com> <CAH5Ym4gTKZue4r8URmgo+BBLJcQ+xKzEm7_P4xo1=XEwfUuv1A@mail.gmail.com>
-In-Reply-To: <CAH5Ym4gTKZue4r8URmgo+BBLJcQ+xKzEm7_P4xo1=XEwfUuv1A@mail.gmail.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Wed, 14 Jan 2026 11:23:02 +0100
-X-Gm-Features: AZwV_QifkpbAvycm6ktCWk3ggeJIuHTKvu_oifp-ex1DAqcGJvBAo9zzekojm5I
-Message-ID: <CAOi1vP_y1ZWKUFG92PKry=5xdTdi4704aKAHkV+OtkFnM5zR=g@mail.gmail.com>
-Subject: Re: [RFC PATCH] libceph: Handle sparse-read replies lacking data length
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxhMjitW_DC9WK9eku51gE1Ft+ENhD=qq3uehwrHO=RByA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Jan 14, 2026 at 2:28=E2=80=AFAM Sam Edwards <cfsworks@gmail.com> wr=
-ote:
->
-> On Tue, Jan 13, 2026 at 12:15=E2=80=AFPM Ilya Dryomov <idryomov@gmail.com=
-> wrote:
+On Wed, Jan 14, 2026 at 10:34:04AM +0100, Amir Goldstein wrote:
+> On Wed, Jan 14, 2026 at 7:28 AM Christoph Hellwig <hch@infradead.org> wrote:
 > >
-> > On Tue, Jan 13, 2026 at 8:04=E2=80=AFPM Sam Edwards <cfsworks@gmail.com=
-> wrote:
-> > >
-> > > On Tue, Jan 13, 2026 at 9:27=E2=80=AFAM Ilya Dryomov <idryomov@gmail.=
-com> wrote:
-> > > >
-> > > > On Tue, Jan 13, 2026 at 4:31=E2=80=AFAM Sam Edwards <cfsworks@gmail=
-.com> wrote:
-> > > > >
-> > > > > When the OSD replies to a sparse-read request, but no extents mat=
-ched
-> > > > > the read (because the object is empty, the read requested a regio=
-n
-> > > > > backed by no extents, ...) it is expected to reply with two 32-bi=
-t
-> > > > > zeroes: one indicating that there are no extents, the other that =
-the
-> > > > > total bytes read is zero.
-> > > > >
-> > > > > In certain circumstances (e.g. on Ceph 19.2.3, when the requested=
- object
-> > > > > is in an EC pool), the OSD sends back only one 32-bit zero. The
-> > > > > sparse-read state machine will end up reading something else (suc=
-h as
-> > > > > the data CRC in the footer) and get stuck in a retry loop like:
-> > > > >
-> > > > >   libceph:  [0] got 0 extents
-> > > > >   libceph: data len 142248331 !=3D extent len 0
-> > > > >   libceph: osd0 (1)...:6801 socket error on read
-> > > > >   libceph: data len 142248331 !=3D extent len 0
-> > > > >   libceph: osd0 (1)...:6801 socket error on read
-> > > > >
-> > > > > This is probably a bug in the OSD, but even so, the kernel must h=
-andle
-> > > > > it to avoid misinterpreting replies and entering a retry loop.
-> > > >
-> > > > Hi Sam,
-> > > >
-> > >
-> > > Hey Ilya,
-> > >
-> > > > Yes, this is definitely a bug in the OSD (and I also see another
-> > > > related bug in the userspace client code above the OSD...).  The
-> > > > triggering condition is a sparse read beyond the end of an existing
-> > > > object on an EC pool.  19.2.3 isn't the problem -- main branch is
-> > > > affected as well.
-> > > >
-> > > > If this was one of the common paths, I'd support adding some sort o=
-f
-> > > > a workaround to "handle" this in the kernel client.  However, spars=
-e
-> > > > reads are pretty useless on EC pools because they just get converte=
-d
-> > > > into regular thick reads.  Sparse reads offer potential benefits on=
-ly
-> > > > on replicated pools, but the kernel client doesn't use them by defa=
-ult
-> > > > there either.  The sparseread mount option that is necessary for th=
-e
-> > > > reproducer to work isn't documented and was added purely for testin=
-g
-> > > > purposes.
-> > >
-> > > Note that the kernel client forces sparse reads when using fscrypt
-> > > (see linux-6.18/fs/ceph/addr.c:361) and I encountered this problem
-> > > organically as a result. It may still make sense to apply a kernel
-> > > workaround.
-> > >
-> > > On the other hand, it sounds like fscrypt+EC is a niche corner case,
-> > > we've now established that the OSD is definitely not following the
-> > > protocol, and working around this client-side is more involved than
-> > > just fixing this in the OSD. So I think simply telling affected users
-> > > to update their OSDs is also a reasonable way to handle this.
+> > On Tue, Jan 13, 2026 at 12:06:42PM -0500, Jeff Layton wrote:
+> > > Fair point, but it's not that hard to conceive of a situation where
+> > > someone inadvertantly exports cgroupfs or some similar filesystem:
 > >
-> > fscrypt and EC can't be mixed -- fscrypt+EC doesn't really work.  The
-> > reason sparse reads are forced for fscrypt is that the client relies on
-> > the sparseness metadata to be able tell if a given 4K block in the
-> > encrypted file is a hole (in the PUNCH_HOLE sense) or not.  If it's
-> > a hole, POSIX dictates that a read should return zeroes.  On an EC pool
-> > where sparse reads are degraded into regular thick reads by the OSD,
-> > a hole in the middle of an object wouldn't ever be signaled.  Instead,
-> > the OSD would synthesize a bunch of zeroes and pass them to the client.
-> > The client would then run them through the crypto engine (believing
-> > it's a bona fide ciphertext) and return the resulting gibberish to the
-> > user, thus violating POSIX and widespread assumptions about generic
-> > filesystem behavior.
->
-> Oof, thanks for the heads-up! Fortunately my workload tolerates
-> garbage in holes... with the occasional (now-explained) warning, that
-> is. :)
->
-> I don't see the fscrypt+EC limitation mentioned in the kernel nor Ceph
-> docs, so I'm guessing this is more a "known major limitation" than an
-> out-of-scope use case.
+> > Sure.  But how is this worse than accidentally exporting private data
+> > or any other misconfiguration?
+> >
+> 
+> My POV is that it is less about security (as your question implies), and
+> more about correctness.
 
-Correct, it's tracked under https://tracker.ceph.com/issues/67507.
+I was just replying to Jeff.
 
-Thanks,
+> The special thing about NFS export, as opposed to, say, ksmbd, is
+> open by file handle, IOW, the export_operations.
+> 
+> I perceive this as a very strange and undesired situation when NFS
+> file handles do not behave as persistent file handles.
 
-                Ilya
+That is not just very strange, but actually broken (discounting the
+obscure volatile file handles features not implemented in Linux NFS
+and NFSD).  And the export ops always worked under the assumption
+that these file handles are indeed persistent.  If they're not we
+do have a problem.
+
+> 
+> cgroupfs, pidfs, nsfs, all gained open_by_handle_at() capability for
+> a known reason, which was NOT NFS export.
+> 
+> If the author of open_by_handle_at() support (i.e. brauner) does not
+> wish to imply that those fs should be exported to NFS, why object?
+
+Because "want to export" is a stupid category.
+
+OTOH "NFS exporting doesn't actually properly work because someone
+overloaded export_ops with different semantics" is a valid category.
+
+> We could have the opt-in/out of NFS export fixes per EXPORT_OP_
+> flags and we could even think of allowing admin to make this decision
+> per vfsmount (e.g. for cgroupfs).
+> 
+> In any case, I fail to see how objecting to the possibility of NFS export
+> opt-out serves anyone.
+
+You're still think of it the wrong way.  If we do have file systems
+that break the original exportfs semantics we need to fix that, and
+something like a "stable handles" flag will work well for that.  But
+a totally arbitrary "is exportable" flag is total nonsense.
+
 
