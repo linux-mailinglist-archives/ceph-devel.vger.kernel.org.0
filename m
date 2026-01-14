@@ -1,181 +1,197 @@
-Return-Path: <ceph-devel+bounces-4386-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4387-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABF7D1D9C2
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jan 2026 10:39:39 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2A9D1E051
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jan 2026 11:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8CCA430A21B8
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jan 2026 09:34:23 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 5A72230703D7
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jan 2026 10:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938E838759E;
-	Wed, 14 Jan 2026 09:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A6A38A73F;
+	Wed, 14 Jan 2026 10:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4R9ZtWz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6z2LNX9"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B0E3876A1
-	for <ceph-devel@vger.kernel.org>; Wed, 14 Jan 2026 09:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B029389E0C
+	for <ceph-devel@vger.kernel.org>; Wed, 14 Jan 2026 10:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768383261; cv=none; b=fOQaRjM5vELnlUJ1l3LhGOIZZpaPXFNtiMcagnVjh4PcTDk15h1UGzd2nJGMi+ork2vWAssHDj+o3UBVGwEAgwNvIOGSWLGEj/tNfH8z4TuX97gTJ9qkmH/krNh4E4C1iongbvIikXChIIQrf6Mk6zzLTTP5XLdz/EuqOK92GLQ=
+	t=1768386205; cv=none; b=BvBR+qNzHZneouCJxaJdeopLbMNqyDztDXF739PuAB2EXf+tG33oXaJ1jjCK8KfSqjfS3UrQ/TQ3m2a54+vFoFh5kBR+IMJv8peYlvg4zd+kV4kJwLRRgG60uBcug2w46Ug/tw2wOpHaH7FXjc+50/ZqDRUUviM2rZcHMl3CcWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768383261; c=relaxed/simple;
-	bh=1et5czBbAtdqXmgJG4CYdcCCm2KxQaiqpQUINwrSInw=;
+	s=arc-20240116; t=1768386205; c=relaxed/simple;
+	bh=gej0ZY6Rx5cQWaC1k4rXAPj79a1teoZUbokyvThZBZY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JCSxhdmoPCmagTWEa4Rp8dr1cf0xRjFzS+qg04UqvuDzXS+fQ5JMw2es69tAqqwwJXz05D+vkL4TkDWe9464Bxdre92GVzWdZJMmeZRIgFm6gmOoVTsoFgD58EsVV+20blHLFJnA8WJduuT9rvaqJDj5J7N4uh80wKIQvSvdPvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4R9ZtWz; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=aRNBDqhSJB345TH3OkeAecUwKsHwuikrviel7a5jDwxAK/oUXrBl0LNfXJQRRlHA7oA8Cs3aPUUc3DNUBBJxV6UthYRT5djtVqcV6Hj9RzBV8Hm8NwbMa+L8hmpUiZDXE10T+8E5Ygo86IcfQ0jTBJ7vqIwHnCHlyN6EKPmrAOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D6z2LNX9; arc=none smtp.client-ip=74.125.82.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b86f3e88d4dso533680466b.0
-        for <ceph-devel@vger.kernel.org>; Wed, 14 Jan 2026 01:34:18 -0800 (PST)
+Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-1232d9f25e9so514273c88.0
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Jan 2026 02:23:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768383257; x=1768988057; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768386195; x=1768990995; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cV5qgJhr5qbvOPleJHxrmxwzjsLTEkwpqcVKyAw90ng=;
-        b=l4R9ZtWzmll6jo5HBanFLByjlkqXQwG+AsCW4DICvdDo4WF3sDvpj2eJOv3dVPo/iF
-         B9OPR6yzN5WOr9LnfVQVQPIaZ5dKfwxv8IoCz8sH0q4qgpIQmlJCiHMiUEgcCYj9cDi3
-         LUVEmz63xFT6TSr8KIUhYDMH7bf7fdIC3g1PgC+HFxSzGLjU2b9M5xwvJkmhU9BDl/Ac
-         KA0NrfmQQjuFePgQk3BZMgWoAsJUycNFL5UQClkJzuN2LaTt6y/8PyOUMhcfHveom8Vj
-         eUcATSwIrI17h12uKrpWWvmBOsQosxRHCi9c46TCRMyvB+pTweoBAZ9/mhr3kiRYuQZf
-         09Vg==
+        bh=6kfNT97ng1VGOZpq6gO5qnaKBZ1Z4V1oS1eWPz4Jejk=;
+        b=D6z2LNX9mumdiiPt8xi94RFyiMe1FWJDepuSOEJHK106rgEJbhLv7xqijKcCkFkG+D
+         OMaxKKAb4Z0lEjRRxV96KboDhnd4OKLuU48CE2tNY/a0hmlJJLXHTg6x7dI7wQ5JaggL
+         vSv2OVwWYIl43xBJH1ZYWxS0JROxqCFfSbrMCUm6wMH1YW56pqU8SN/gRThvnN6Sddt3
+         PT/k2NGppSueG52nUj35bEZqpQYxscdkdXEDi6KnQfwlnmqs3HNO08WYfRCCoD5hxsa2
+         HkZqoz8+Ej90pQAMU5+fcX/mEvnFfh9oOPbDDE+cXP6Qfbmx1QHVPLLmY0DbY3+3xja1
+         d+dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768383257; x=1768988057;
+        d=1e100.net; s=20230601; t=1768386195; x=1768990995;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=cV5qgJhr5qbvOPleJHxrmxwzjsLTEkwpqcVKyAw90ng=;
-        b=mEwWrjc1Q15upG3dhAhubHTJNJtnR/JLHyHnhV4Ilt30zVsoV5nBa6QRSz1dJGIaNE
-         RmMmFWQLZkKflZ7bAlMEgrf5mEemwDZAJzDdrg2RLbbgMjRpTQpVWIWjB9cZJMpfS2GS
-         /vZzLWILUEAVF0VbyImz3NPazSeFeFq/5eGCGgSzc4Ttvfngn03mS2MLkmIZV6+aVcZ5
-         BAHl68OvjRENHyc+LsHaBRo8Lh+jWCMmlMKZSwTWTcP1Lsr0iSsx687gRaE8BjH/dGpt
-         rGUjTJaeQERmgAMgEAQbwHgfaC6AYU+wLAcsbK63ApS+BucfqRP6KJHqz78Z1fx+RVAo
-         wWfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcxG3x2ZwgYcBHRYxB7Vvi86aAa5ayXSVTc7KWk6eDdFiQ8QcLtjvQqihzFFEbI3UmxAPmIIUwxZYs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBoEQXvvZXdWZiJT0qmTOVp527BZIpvpjFmfOjZJ9qsiOFPEor
-	PAfWpXwwwTCVc+ZSAE5WOfkJtpE/K4KDQd3yTp7GIXETIbHgcUst+fXRnjQn6kI6PppK203jkfD
-	jowxHOYwQQfIPVr11wuDhhh4JpT8vGDk=
-X-Gm-Gg: AY/fxX6kcUy6dNA7OGCUZLGCwDTxBxRDRhCMd3I6sxiExyVs2qdbtDG1GofHLa5ijCm
-	KNkdCMAXXZBxAdrtdXFXyJOEinnYkSQWZ105wE05DXdwutJGqRFwDEnFN75FcwzLla72sQh/yKk
-	1x8yCPUmNQxcF4whrcv90wB8QGs2j3b7l/czLk9XlgGVFr+RNi5Z29e7Eb+EBvhntgo5y7lbBYw
-	MwV/pqIXjaphUzOcs/ASdN9lDnVeOROBrjWsaljvT7/hBfDh+vb+QW8C6141dSe5ourCbkNEmCR
-	3bmPEy/lV9lIAJV1ZhlIMfafemiZwlUkIl8z6bta
-X-Received: by 2002:a17:906:6a02:b0:b87:25a6:a906 with SMTP id
- a640c23a62f3a-b87677e0680mr108491266b.46.1768383255915; Wed, 14 Jan 2026
- 01:34:15 -0800 (PST)
+        bh=6kfNT97ng1VGOZpq6gO5qnaKBZ1Z4V1oS1eWPz4Jejk=;
+        b=LpE8Xhn2wl81g7gqnGe8gQRpm/Yspot06Sd9veeswUYlZKgOj8lbK6FiixNSHk7kDA
+         LsaMRHC5p4KaIWaBhcUqB9BCLHOEnFd7KGjoImjQpbNRIo+q4N2kL8jBT9al3xBLywQT
+         /oUjThqi0F8gP1ujp8BIQkF+rQPxo/WrWIyCvegg1JSG+yanKpm9l+aOf4UQR3ztojJ4
+         DTch8b+Y065wQAGPdQtcJ/LNWY/d1B/drJQDjGPt7fSlXlQWEENGI7h36ErS0VQEDQTd
+         0UjOoMHzJhkNKatMBOgIOP5vjKQRt+qvi76Z4k1ifLIVbvOlTo8N/4PswCd/TfT4wS8z
+         0gpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsVQFTFBssJAbYowAeHKrkozFamvzWbvCA4H8mYiddXlIWtxUis2UCJp34KXcwlpX3xGtKPteWEf6A@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzuh/IruUjln4eUadkBylcSwzHr4UQWrjSby7BoYE9YmD89u6an
+	Rve8B+XlxtHLPJjRXQ7Z6S6PGpYNNqGMkCdwhHOhhaDhDNnzBPFArGfosQlA2lhaPCAAZeLIZ79
+	Y/fPBblC7nRO1dBwGXMX7tPkY+B/VgqM=
+X-Gm-Gg: AY/fxX7So6XG0yO1F/6vK72up7KQzH/Mo4Y1C+y8LOuEgEb14MLgM218q+1BD0c0Kcl
+	ezIzWSnTBFpuxMeaDOHxCLfQYVS6oZV/AAGeqkbSTIqwclGqSk76mzocIArCRJdFElvAAfeG/+a
+	yrASdtmps60P7Je8ajyOG92T8WXZ5H0VqWiTirOyoH7rGtOhEBfjo5pBmUfDI5xzhd2gF2+YtTw
+	LRtb1XL4IhwteRyfW4o8OIW7uQNJv3LHdKE9FUFlYnkZddqSiybs+dD+De82/PdJmmFuTe/sW7j
+	6l1CGw==
+X-Received: by 2002:a05:701b:230d:b0:121:9f05:7e4c with SMTP id
+ a92af1059eb24-12337701abdmr1406143c88.16.1768386195026; Wed, 14 Jan 2026
+ 02:23:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
- <m3mywef74xhcakianlrovrnaadnhzhfqjfusulkcnyioforfml@j2xnk7dzkmv4>
- <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
- <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
- <ec78bf021fa1f6243798945943541ba171e337e7.camel@kernel.org>
- <cb5d2da6-2090-4639-ad96-138342bba56d@oracle.com> <ce700ee20834631eceededc8cd15fc5d00fee28e.camel@kernel.org>
- <20260113-mondlicht-raven-82fc4eb70e9d@brauner> <aWZcoyQLvbJKUxDU@infradead.org>
- <ce418800f06aa61a7f47f0d19394988f87a3da07.camel@kernel.org> <aWc3mwBNs8LNFN4W@infradead.org>
-In-Reply-To: <aWc3mwBNs8LNFN4W@infradead.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 14 Jan 2026 10:34:04 +0100
-X-Gm-Features: AZwV_QjTKvsgUAM6BTw2rpBHAs0ymZXhE-dNbh6dt2ll27JlZs1InITXkkYC5Xs
-Message-ID: <CAOQ4uxhMjitW_DC9WK9eku51gE1Ft+ENhD=qq3uehwrHO=RByA@mail.gmail.com>
-Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
- lease support
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>, 
-	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Anders Larsen <al@alarsen.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>, 
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Viacheslav Dubeyko <slava@dubeyko.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, 
-	Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Phillip Lougher <phillip@squashfs.org.uk>, 
-	Carlos Maiolino <cem@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, 
-	Yuezhang Mo <yuezhang.mo@sony.com>, Alexander Aring <alex.aring@gmail.com>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, Xiubo Li <xiubli@redhat.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, 
-	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, 
-	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org, 
-	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-mm@kvack.org, 
-	gfs2@lists.linux.dev, linux-doc@vger.kernel.org, v9fs@lists.linux.dev, 
-	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+References: <20260113033113.149842-1-CFSworks@gmail.com> <CAOi1vP94Eruq7k10fnpA7G+LjEHdxxFvL4jnTeLMqfoxnjrTkw@mail.gmail.com>
+ <CAH5Ym4gHUG326s8XoBxVExo1ZspSd0n+x3t=+rJ8N9qgjxgGHg@mail.gmail.com>
+ <CAOi1vP99j77p42xRtQSRroVreRoaJoe9a8Rms8se5-2d1YSKHg@mail.gmail.com> <CAH5Ym4gTKZue4r8URmgo+BBLJcQ+xKzEm7_P4xo1=XEwfUuv1A@mail.gmail.com>
+In-Reply-To: <CAH5Ym4gTKZue4r8URmgo+BBLJcQ+xKzEm7_P4xo1=XEwfUuv1A@mail.gmail.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Wed, 14 Jan 2026 11:23:02 +0100
+X-Gm-Features: AZwV_QifkpbAvycm6ktCWk3ggeJIuHTKvu_oifp-ex1DAqcGJvBAo9zzekojm5I
+Message-ID: <CAOi1vP_y1ZWKUFG92PKry=5xdTdi4704aKAHkV+OtkFnM5zR=g@mail.gmail.com>
+Subject: Re: [RFC PATCH] libceph: Handle sparse-read replies lacking data length
+To: Sam Edwards <cfsworks@gmail.com>
+Cc: Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 14, 2026 at 7:28=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
+On Wed, Jan 14, 2026 at 2:28=E2=80=AFAM Sam Edwards <cfsworks@gmail.com> wr=
+ote:
 >
-> On Tue, Jan 13, 2026 at 12:06:42PM -0500, Jeff Layton wrote:
-> > Fair point, but it's not that hard to conceive of a situation where
-> > someone inadvertantly exports cgroupfs or some similar filesystem:
+> On Tue, Jan 13, 2026 at 12:15=E2=80=AFPM Ilya Dryomov <idryomov@gmail.com=
+> wrote:
+> >
+> > On Tue, Jan 13, 2026 at 8:04=E2=80=AFPM Sam Edwards <cfsworks@gmail.com=
+> wrote:
+> > >
+> > > On Tue, Jan 13, 2026 at 9:27=E2=80=AFAM Ilya Dryomov <idryomov@gmail.=
+com> wrote:
+> > > >
+> > > > On Tue, Jan 13, 2026 at 4:31=E2=80=AFAM Sam Edwards <cfsworks@gmail=
+.com> wrote:
+> > > > >
+> > > > > When the OSD replies to a sparse-read request, but no extents mat=
+ched
+> > > > > the read (because the object is empty, the read requested a regio=
+n
+> > > > > backed by no extents, ...) it is expected to reply with two 32-bi=
+t
+> > > > > zeroes: one indicating that there are no extents, the other that =
+the
+> > > > > total bytes read is zero.
+> > > > >
+> > > > > In certain circumstances (e.g. on Ceph 19.2.3, when the requested=
+ object
+> > > > > is in an EC pool), the OSD sends back only one 32-bit zero. The
+> > > > > sparse-read state machine will end up reading something else (suc=
+h as
+> > > > > the data CRC in the footer) and get stuck in a retry loop like:
+> > > > >
+> > > > >   libceph:  [0] got 0 extents
+> > > > >   libceph: data len 142248331 !=3D extent len 0
+> > > > >   libceph: osd0 (1)...:6801 socket error on read
+> > > > >   libceph: data len 142248331 !=3D extent len 0
+> > > > >   libceph: osd0 (1)...:6801 socket error on read
+> > > > >
+> > > > > This is probably a bug in the OSD, but even so, the kernel must h=
+andle
+> > > > > it to avoid misinterpreting replies and entering a retry loop.
+> > > >
+> > > > Hi Sam,
+> > > >
+> > >
+> > > Hey Ilya,
+> > >
+> > > > Yes, this is definitely a bug in the OSD (and I also see another
+> > > > related bug in the userspace client code above the OSD...).  The
+> > > > triggering condition is a sparse read beyond the end of an existing
+> > > > object on an EC pool.  19.2.3 isn't the problem -- main branch is
+> > > > affected as well.
+> > > >
+> > > > If this was one of the common paths, I'd support adding some sort o=
+f
+> > > > a workaround to "handle" this in the kernel client.  However, spars=
+e
+> > > > reads are pretty useless on EC pools because they just get converte=
+d
+> > > > into regular thick reads.  Sparse reads offer potential benefits on=
+ly
+> > > > on replicated pools, but the kernel client doesn't use them by defa=
+ult
+> > > > there either.  The sparseread mount option that is necessary for th=
+e
+> > > > reproducer to work isn't documented and was added purely for testin=
+g
+> > > > purposes.
+> > >
+> > > Note that the kernel client forces sparse reads when using fscrypt
+> > > (see linux-6.18/fs/ceph/addr.c:361) and I encountered this problem
+> > > organically as a result. It may still make sense to apply a kernel
+> > > workaround.
+> > >
+> > > On the other hand, it sounds like fscrypt+EC is a niche corner case,
+> > > we've now established that the OSD is definitely not following the
+> > > protocol, and working around this client-side is more involved than
+> > > just fixing this in the OSD. So I think simply telling affected users
+> > > to update their OSDs is also a reasonable way to handle this.
+> >
+> > fscrypt and EC can't be mixed -- fscrypt+EC doesn't really work.  The
+> > reason sparse reads are forced for fscrypt is that the client relies on
+> > the sparseness metadata to be able tell if a given 4K block in the
+> > encrypted file is a hole (in the PUNCH_HOLE sense) or not.  If it's
+> > a hole, POSIX dictates that a read should return zeroes.  On an EC pool
+> > where sparse reads are degraded into regular thick reads by the OSD,
+> > a hole in the middle of an object wouldn't ever be signaled.  Instead,
+> > the OSD would synthesize a bunch of zeroes and pass them to the client.
+> > The client would then run them through the crypto engine (believing
+> > it's a bona fide ciphertext) and return the resulting gibberish to the
+> > user, thus violating POSIX and widespread assumptions about generic
+> > filesystem behavior.
 >
-> Sure.  But how is this worse than accidentally exporting private data
-> or any other misconfiguration?
+> Oof, thanks for the heads-up! Fortunately my workload tolerates
+> garbage in holes... with the occasional (now-explained) warning, that
+> is. :)
 >
+> I don't see the fscrypt+EC limitation mentioned in the kernel nor Ceph
+> docs, so I'm guessing this is more a "known major limitation" than an
+> out-of-scope use case.
 
-My POV is that it is less about security (as your question implies), and
-more about correctness.
-
-The special thing about NFS export, as opposed to, say, ksmbd, is
-open by file handle, IOW, the export_operations.
-
-I perceive this as a very strange and undesired situation when NFS
-file handles do not behave as persistent file handles.
-
-FUSE will gladly open a completely different object, sometimes
-a different object type from an NFS client request after server restart.
-
-I suppose that the same could happen with tmpfs and probably some
-other fs.
-
-This problem is old and welded into the system, but IMO adding more
-kernel filesystems, which consciously export file handles that do not
-survive server reboot does not serve users interests well.
-
-One could claim that this is a bug that can be fixed by adding boot_id
-to said file handles, but why fix something that nobody asked for?
-
-cgroupfs, pidfs, nsfs, all gained open_by_handle_at() capability for
-a known reason, which was NOT NFS export.
-
-If the author of open_by_handle_at() support (i.e. brauner) does not
-wish to imply that those fs should be exported to NFS, why object?
-
-We could have the opt-in/out of NFS export fixes per EXPORT_OP_
-flags and we could even think of allowing admin to make this decision
-per vfsmount (e.g. for cgroupfs).
-
-In any case, I fail to see how objecting to the possibility of NFS export
-opt-out serves anyone.
+Correct, it's tracked under https://tracker.ceph.com/issues/67507.
 
 Thanks,
-Amir.
+
+                Ilya
 
