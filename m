@@ -1,48 +1,48 @@
-Return-Path: <ceph-devel+bounces-4489-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-4491-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F040D3B25E
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Jan 2026 17:52:06 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F36D3B23B
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Jan 2026 17:50:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D7F763020166
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Jan 2026 16:35:02 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 0E32830D1EE6
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Jan 2026 16:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C05A3A4AD9;
-	Mon, 19 Jan 2026 16:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A55B3A782F;
+	Mon, 19 Jan 2026 16:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRT/TJNW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Onl1ff2y"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A273D329373;
-	Mon, 19 Jan 2026 16:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E5A32938C;
+	Mon, 19 Jan 2026 16:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768840147; cv=none; b=evArj0mEA7MScDk2Rmlr67fb8w7xWU/etLaoIp8dbcuuDc9h0wSgwmTupOGmTT7Eg/Cnn3I+0A5JQlCFlIHDW7J9dXPT1E5lUoia0JNWy7rwJaFtZmwUP5Hwwx23YUQCn/trnpB19km8rGd98qHe9AP3QZgyRRPvd0mCluP5NVo=
+	t=1768840162; cv=none; b=jJAPFAo/1LIr61JQmQukj6GjpcjHhpl2vlvERXHgvrRoZDizSjasabuGt0GaDTwqBwP757UfbyCWMxOpLt6+O7WnTuVm82I5gtJLmOfyuVS0mWDUJ3ap+gSrB5LFluJGJ7HD0OiuzwYUuaLg36IsFPTTXwGkyZT0RoeKsYzZSeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768840147; c=relaxed/simple;
-	bh=AZAjr5blB9svvv4iy5pFFBzbvOqXSLNmipoZVSEtwIs=;
+	s=arc-20240116; t=1768840162; c=relaxed/simple;
+	bh=xYt2MSPBN08jqB6aoLGRn9g7bVaaZnkp3x/mAo4D07M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GM7EGT4H+5MfQZOwq+Nqpye6Np0pmlWGUh91qFQ9n1Oz+rFs35VIrOapQDF1TX+iKJ60dNc08yYWjKBzU/USuZRGYMzD/7+GGu4oq5y6MXTIzJWVo1hkgPv4xABAeVPP1B3McGCuEZ1ZAnN1H8xqFgc088klnQi0i/c55kStAE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRT/TJNW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A54BC2BC87;
-	Mon, 19 Jan 2026 16:29:00 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ABdAfTmruk2LfTssdBTQ7DgGyYHTuT7tEMhpFTXGxZArGFon79UBayilP1/wLDQePiHtaw9YbqCr9XpcqqQhbXw2eaCa63rfycfJNyVN9zgygNJU+/XcWzq1vgVwEjeWvxJoiSDBfxe6LUXFb7rkzm4u3FKtY5P6HHLyGxB6khI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Onl1ff2y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97545C19423;
+	Mon, 19 Jan 2026 16:29:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768840147;
-	bh=AZAjr5blB9svvv4iy5pFFBzbvOqXSLNmipoZVSEtwIs=;
+	s=k20201202; t=1768840161;
+	bh=xYt2MSPBN08jqB6aoLGRn9g7bVaaZnkp3x/mAo4D07M=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=JRT/TJNWCbMyt7yIyaTJly6FUhnDZuUxeZSzJVjN/nYS1ps9R0rsJvuhvNTrEk+la
-	 1UOENFRaQ+Za0kHHt9AfFI6lZT3tyk/oWRcUSErofVbPjhO/YFqxhdt8WsPnnCiwPM
-	 ItMD9tD5V3IaN6AvbQDQ94y0gWWnR60KsH+Y4szRkrmWQvAvN3aoV3uO1I2xGnFTjV
-	 bb/zy/OjfmmKh+KLGE1ZQLzascQk+/6G4j0/cFuJri28/kIMIdJDY9BFUEXUnxNhAi
-	 KKnnokIJ6qWsyghLwik29BZabKbpjfWWO9IBNOAfp2xo25sBNbzpzF0uEGAuTYvmFn
-	 ruklEykJbu/FQ==
+	b=Onl1ff2yL2rsRhbon2DKTICt3E0fC7f5rf9eTx08Plj/priMZPiOxyC95fr9OlZ1Q
+	 Tj3bc6+F6jeoOP9lW9Omi57BHdrw9hIQi8iW1rYY2TZujDNAKYQmNHfnJF7TQR4jDL
+	 XT2TgTAX8bojPDQ4CH/gyDuKnodpDRa7LoecaI7ZGol1EqqN38/2r2PumyMB6E/3IB
+	 gMmbVJ5th0wfE7wFSrWJe7lDVaMZmMsDz/ijztbFWZezeG1mnnhpSefOWhWvGutvnJ
+	 8P36f5TeigIVo4DvniWSBYfSlTL5nDQeA0+/f1ooF6OXQ+oRCHpAUeCOKIQg6DXWla
+	 m3kUCp2qEriXA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 19 Jan 2026 11:26:32 -0500
-Subject: [PATCH v2 15/31] squashfs: add EXPORT_OP_STABLE_HANDLES flag to
- export operations
+Date: Mon, 19 Jan 2026 11:26:34 -0500
+Subject: [PATCH v2 17/31] ovl: add EXPORT_OP_STABLE_HANDLES flag to export
+ operations
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260119-exportfs-nfsd-v2-15-d93368f903bd@kernel.org>
+Message-Id: <20260119-exportfs-nfsd-v2-17-d93368f903bd@kernel.org>
 References: <20260119-exportfs-nfsd-v2-0-d93368f903bd@kernel.org>
 In-Reply-To: <20260119-exportfs-nfsd-v2-0-d93368f903bd@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -101,43 +101,43 @@ Cc: David Laight <david.laight.linux@gmail.com>,
  gfs2@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net, 
  linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=811; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=AZAjr5blB9svvv4iy5pFFBzbvOqXSLNmipoZVSEtwIs=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpbltcugWXdJNtlW+RKXOXYTtYGJsG/ZI/Kgn62
- QwygZmbY12JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaW5bXAAKCRAADmhBGVaC
- Fa7bEADGBiSWRROuSs8J/91dJopWVmzh98rAZDg+3UJE7SHjCQVSwc1En6E7AttfsLanh4BPsdh
- Ey7dJYDTjb3KJReJoWtnBzgjramNeksgxA+e4U65O6gESkPKGSPLVEuByheDKvRtZxmYTtiqgzQ
- Mq2wEtjCZaCAWDVrRQDMllcwjxwnnBpyGy2HIUVdgPO33orBwlEUy5KumpmMk2e+P8fDAdOdqmW
- McggNOU1g1zZKrHp5rGDw/zrD58y7ffoAo0LgxBIwRV/PXjnMWNB/qD9ShCqpQ4BTly2NhUdW9h
- vle0WG/ufE0iU82wXme1sD/eCdiyuDlzLr0gcz/A6spq6D3CzkOznL6gAdqAk2wy39TD8KxPkYs
- Z9/zAlzaWQamQps1uwnyUrZYX7AkWLLLxdX0RYn4XKio+Uv3rfn0hTkvaETy6U2dpjRknebcsJR
- IIRnE5cqH7Z6CylksCFnlCxHsDjnnrBGr2HOdEyX7vZAv4lawkMEFUbd4NnnJC99Y90W1T4O9sM
- lz0DCW67haD9hC9Htrx6MMplYEzK08RQaRhpP0rgNkN7e9hP4YyIFLMikzCI3X34Rdbegi4sDxv
- BV1chOMAWIlFLNKsUt1oXQPpErFamRzH7s+wD9wS+rtnGDO2C95CtPLHJywk32fbpo7UxFjaRsT
- NPjT8Wxn0TBT9Gg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=779; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=xYt2MSPBN08jqB6aoLGRn9g7bVaaZnkp3x/mAo4D07M=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpbltdbZC4i859npPwVQCiLrrovPH3Ntgd1inG/
+ 8UBjD2xxyKJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaW5bXQAKCRAADmhBGVaC
+ FYjDD/9hgSSTbDWpgx790fD9kUBlypy6yfUjVl/Cwssq2z749eDvf2KH5eMyxgd/6rOZkPqu2+2
+ gbdvVNbDvUNY8fz7NspCjYiEDexBIC5tfRA9T62LVeoswQLxGM29wl2ixgPWMPBftcv7lAnPkjT
+ S/jzjLHFQyKYcXtCf9pni1rK0jCr3OyBHk3e1lVuA6LafCIrvu6F9+tcmuWu49cVETld5ujnAfQ
+ csp0C5d/6qNeeBHIcn/WZrpHMRm9O0eNuS5umBPhLGYss0OC/KOBEcRdZvSuR2kP/ArcVAuAFwJ
+ 2N5Otod+F4FKciuxVxlhVxmTUtY6RnEThZ3KAP9eUK7KirA4BUgoX4CEFxcARIfClDzwmm53bIW
+ EdRuC2b1qkPYYuAWU5Xuu1N3uE8cGu8ytttjPbvB9nR/BBaATi2uwYx179nwZfoBchKvdZ5fGGu
+ WC4LLqz6rN2YcqXs4zBkOZJwWzlmTxbob7Ao6GLHKN71Pc7fAWGuHtPXhlCz3lHkPw+aL3hZi/O
+ fFRjI7ZBPIzSqYhm8g3W29oI5wMFvKvJjZ/3C16X/0UB/OpbmSgTYhYdc324ukf4fmF8BbqJsyL
+ L0Sm7ILgw6KpAnenWxla09O1q8wWMSxHIge9mCAibjD2XvZiStJTbi1YtH8cmAIMhaZwCbrFLwN
+ VOQon6cUTc3pFfQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Add the EXPORT_OP_STABLE_HANDLES flag to squashfs export operations to
+Add the EXPORT_OP_STABLE_HANDLES flag to overlayfs export operations to
 indicate that this filesystem can be exported via NFS.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/squashfs/export.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/overlayfs/export.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/squashfs/export.c b/fs/squashfs/export.c
-index 62972f0ff8681c798f0b11e17d501373b2145bd9..c6c4d8f1f115c65b6dac29582bb5b447b823d3b8 100644
---- a/fs/squashfs/export.c
-+++ b/fs/squashfs/export.c
-@@ -176,5 +176,6 @@ const struct export_operations squashfs_export_ops = {
- 	.encode_fh = generic_encode_ino32_fh,
- 	.fh_to_dentry = squashfs_fh_to_dentry,
- 	.fh_to_parent = squashfs_fh_to_parent,
--	.get_parent = squashfs_get_parent
-+	.get_parent = squashfs_get_parent,
-+	.flags = EXPORT_OP_STABLE_HANDLES,
+diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+index 83f80fdb156749e65a4ea0ab708cbff338dacdad..18c6aee9dd23bb450dadbe8eef9360ea268241ff 100644
+--- a/fs/overlayfs/export.c
++++ b/fs/overlayfs/export.c
+@@ -865,6 +865,7 @@ const struct export_operations ovl_export_operations = {
+ 	.fh_to_parent	= ovl_fh_to_parent,
+ 	.get_name	= ovl_get_name,
+ 	.get_parent	= ovl_get_parent,
++	.flags		= EXPORT_OP_STABLE_HANDLES,
  };
+ 
+ /* encode_fh() encodes non-decodable file handles with nfs_export=off */
 
 -- 
 2.52.0
